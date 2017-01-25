@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	<script type='text/javascript' src='javascript/dialogBox.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            document.title="$brander.getBrandElement("lms.accraditation.PageTitle.caption.GlobalCustomField")";
+
+            $("INPUT[type='checkbox'][name='customfield']").click(function(){
+                $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+            });
+            $('#chkAll').click(function(){
+                $("INPUT[type='checkbox'][name='customfield']").attr('checked', $('#chkAll').is(':checked'));
+                $("INPUT[type='checkbox'][name='customfield']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+            });
+            $('#searchfieldLabel').keypress(function(event) {
+                if(event==null){
+                    event = window.event;
+                } 
+                var unicode=event.which? event.which : event.keyCode;
+                if(unicode == 13) {
+                    if(document.all){
+                        window.event.cancelBubble = true;
+                        window.event.returnValue = false;
+                        doSearch();
+                    }else{//firefox
+                        if(event.cancelable){
+                            event.preventDefault();
+                        }
+                        doSearch();
+                    }
+                }
+            });
+        });
+
+        function doSearch() {
+            document.getElementById('action').value="searchGlobalCustomFields";
+            document.getElementById('showAll').value="false";
+            document.manageGlobalCustomField.submit();
+        }
+        function showAllRecords() {
+            document.getElementById('action').value="searchGlobalCustomFields";
+            document.getElementById('showAll').value="true";
+            document.manageGlobalCustomField.submit();
+        }
+        
+        function goToRecordSet(currentIndex){
+        document.getElementById('action').value="searchGlobalCustomFields";            
+        document.getElementById("pageIndex").value=currentIndex;
+        document.manageGlobalCustomField.submit();                            
+        }        
+        
+        function sortCustomField(sortColumnIndex,sortDirection){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('action').value="searchGlobalCustomFields";
+            document.manageGlobalCustomField.submit();
+        }
+        
+        function deleteCustomFields(){            
+			confirmDelete( //conditionResult, successMessage, failureMessage, successCallbackFunction
+				($("INPUT[type='checkbox'][name='customfield']:checked").length>0)
+				, "Are you sure you want to delete the custom field(s)?"
+				, '$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")'
+				, function () {
+					document.getElementById('action').value='deleteCustomField';
+                    document.manageGlobalCustomField.submit();
+				}
+			)
+        }
+    </script>
+    <style type="text/css">
+        /* Confirm Overlay */
+        #confirmModalOverlay {background-color:#eee; cursor:wait;}
+        /* Overlay */
+        #simplemodal-overlay {background-color:#eee; cursor:wait;}
+    </style>
+</head>
+
+<body>
+ <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+        <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <!-- Left Menu Start -->
+            #parse("snippets/accreditation/sidebar_custom_field.vm")
+            <!-- Left Menu End -->
+			</table></td>
+			
+<TD id="content" >
+	<div id="scrollable">
+                <!-- Page Description start -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_credentials">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accreditation.manageCustomField.caption.pageHeading")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accreditation.manageCustomField.caption.inlineText")</div>
+		</td>
+	</tr>
+</table>
+                <!-- Page Description end -->
+
+                <form name="manageGlobalCustomField" method="post" action="acc_manageGlobalCustomField.do">
+
+                    $pager.setItems($!{context.customFieldList})
+                    #set($totalCount = $pager.total)
+                    #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                            #set($pageCurrIndex = $pager.index)
+                    #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                            #set($pageCurrIndex = 0)
+                    #end
+
+                    #if($!{context.showAll})
+                        #set($showAll=${context.showAll})
+                    #else
+                        #set($showAll=false)
+                    #end
+
+                    <input type="hidden" id="action" name="method" value="displayGlobalCustomFields" />
+                    <input type="hidden" id="showAll" name="showAll" value="$showAll" />
+                    <input type="hidden" id="sortDirection" name="sortDirection" value="0" />
+                    <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="0" />
+                    <input type="hidden" id="pageIndex" name="pageIndex" value="$pageCurrIndex" />
+                    <!-- Search Result Start -->
+                    <div id="resultBox" class="search_box_result"><!-- resultBox -->
+
+                        <div id="resultHeader" class="box_header"><!-- resultHeader -->
+
+                            <div style="float:left; height:23px;"><!-- Header Button Container -->
+
+                                <div class="control-button-position"><!-- Add Custom Field Button -->
+                                    <a onclick="javascript:window.location='acc_addGlobalCustomField.do';" href="#">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Add Custom Field</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div><!-- Add Custom Field Button -->
+                                <div class="control-button-position"><!-- Delete Custom Field Button -->
+									<a onclick="deleteCustomFields();">
+										<div class="btn_start"></div>
+										<div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Delete Custom Field</div>
+										<div class="btn_end"></div>
+									</a>
+                                </div><!-- Delete Custom Field Button -->
+
+                            </div><!-- Header Button Container -->
+
+                            <div id="searchBox" style="float:left; height:160px; width:300px; left:37%;" class="visible"><!-- searchBox -->
+                                Search Custom Fields<br/><br/><br/>
+                                <div style="float:left">Field Name</div> <input type="text" style="font-size:9px; float:right; margin-right:15px; width:170px;" id="searchfieldLabel" name="fieldLabel" value="$!{context.fieldLabel}" /><br/><br/>
+                                <div style="float:left">Field Type</div> 
+                                    <select name="fieldType" style="font-size:9px;float:right; margin-right:15px; width:173px">
+									#foreach ($fieldType in ${context.customFieldTypes})
+										<option value="$fieldType" #if($!{context.fieldType} == ${fieldType}) selected #end >$fieldType</option>
+									#end
+                                    </select>
+                                <br/><br/>
+                                <div style="float:left">Entity</div> 
+                                    <select name="fieldEntity" style="font-size:9px;float:right; margin-right:15px; width:173px">
+									#foreach ($entity in ${context.customFieldEntities})
+										<option value="$entity" #if($!{context.fieldEntity}==${entity}) selected #end >$entity</option>
+									#end
+                                    </select>
+                                <br/><br/>
+
+                                <div style="float:right; margin-top:2px; margin-right:15px;"><!-- Search button -->
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="doSearch();">Search</div>
+                                    <div class="btn_end"></div>
+                                </div><!-- Search button -->
+
+                                <div style="float:right; margin-top:2px; "><!-- Cancel button -->
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Cancel</div>
+                                    <div class="btn_end"></div>
+                                </div><!-- Cancel button -->
+
+                            </div><!-- searchBox -->
+
+                            <div class="result_left_side"><!-- result_left_side -->
+                                <!-- Result Description -->
+                                <div class="control-button-position">
+									<a onmousedown="showSearchBox(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Search</div>
+										<div class="btn_end"></div>
+									</a>
+                                </div>
+                                <div class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onclick="javascript:showAllRecords();">&nbsp;</div>
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" onclick="goToRecordSet($pager.nextIndex);" ></div>
+                                #else
+                                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" onclick="goToRecordSet($pager.prevIndex);" ></div>
+                                #else
+                                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                #if($totalCount>1)
+                                     <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                                #else
+                                     <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                                #end
+                            </div><!-- result_left_side -->
+
+                        </div><!-- resultHeader -->
+
+                        <div id="searchResult"><!-- searchResult -->
+                            <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                                    <td class="box_subheader"><a #if($context.sortDirection == 0) onclick="sortCustomField(0,1);" #else onclick="sortCustomField(0,0);" #end ><div id="fieldNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end ></div>Custom Field Name</a></td>
+                                    <td class="box_subheader" width="25%"><a #if($context.sortDirection == 0) onclick="sortCustomField(1,1);" #else onclick="sortCustomField(1,0);" #end ><div id="fieldTypeSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end ></div>Type</a></td>
+                                    <td class="box_subheader" width="25%" style="border-right:none;"><a #if($context.sortDirection == 0) onclick="sortCustomField(2,1);" #else onclick="sortCustomField(2,0);" #end ><div id="entitySort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end ></div>Entity</a></td>
+                                </tr>
+                        #if($currentPageSize > 0)
+                            #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                #set($customfield = $context.customFieldList.get($loopIndex))
+                                #if($loopIndex%2 == 0)
+                                    #set($alternate="row_1")
+                                #else
+                                    #set($alternate="row_2")
+                                #end
+                                <tr>
+                                    <td class="$alternate" width="17px" style="border-bottom:1px;"><input type="checkbox" id="chk$loopIndex" name="customfield" value="${customfield.id}" style="margin-left:-2px" /></td>
+                                    <td class="$alternate" style="border-bottom:1px;"><a href="acc_editCustomField.do?method=displayCustomFieldForEdit&customFieldId=$customfield.id">$!{customfield.fieldLabel}</a></td>
+                                    <td class="$alternate" style="border-bottom:1px;">$!{customfield.fieldType} </td>
+                                    <td class="$alternate" style="border-bottom:1px; border-right:none">$!{customfield.entity}</td>
+                                </tr>
+                            #end
+                        #else
+                                <tr>
+                                    <td width="17px">&nbsp;</td>
+                                    <td colspan="3">
+                                        <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                    </td>
+                                </tr>
+                        #end
+                            </table>
+                        </div><!-- searchResult -->
+
+                    </div><!-- resultBox -->
+                    <!-- Search Result end -->
+
+                </form>
+
+            </div><!-- scrollable -->
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+
+   <!-- Alert Message Box -->
+	#parse("snippets/messageAlert.vm")				
+	<!-- Alert Message Box - Ends -->
+
+	<!-- Delete Message Box -->
+	#parse("snippets/deleteConfirmation.vm")	
+	<!-- Delete Message Box - end-->
+
+</body>
+</html>

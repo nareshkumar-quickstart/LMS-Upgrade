@@ -1,0 +1,50 @@
+#set ( $FieldName = ['First Name','Middle Name','Last Name','Email','Phone','Office Phone'
+					,'Office Extn','Address Line 1','Address Line 2','City','State','Zip Code','Country'
+					,'Address 2 Line 1','Address 2 Line 2','City 2','State 2','Zip Code 2','Country 2'] )
+
+<table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+    <tr>
+        #springBind("reportingFieldForm.creditReportingField.fieldLabel")        
+        <td width="25%"><div class="row_text">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Name")</div></td>
+        <td>#if($status.error)
+        	 <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+            #elseif(! $status.value || $status.value.equals(""))
+             <div class="required_field">*</div>
+            #else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"></div>
+            #end                        
+            	   <select style="height: 20px; width: 182px;" class="input_text_field" name="${status.expression}">	               	               	           	                               
+						#foreach ( $item in $FieldName )
+            				#if(${item}==${status.value})
+            					<option value="${item}" selected="selected">${item}</option>
+            				#else
+            					<option value="${item}">${item}</option>
+            				#end
+        				#end
+						
+                   </select>
+                            	                                  
+        </td>
+        <td width="25%"></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td valign="top"><div class="row_text">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Required")</div></td>
+        <td>
+            #springBind("reportingFieldForm.creditReportingField.fieldRequired")
+            <input type="radio" style="margin-left:14px;" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end />$brander.getBrandElement("lms.accreditation.credential.caption.Yes")
+            <input type="radio" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end />$brander.getBrandElement("lms.accreditation.credential.caption.No")
+        </td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>        
+        #springBind("reportingFieldForm.creditReportingField.fieldEncrypted")            
+        <input type="hidden" name="${status.expression}" value="false"/>               
+    <tr>
+        <td valign="top"><div class="row_text">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Description")</div></td>
+        #springBind("reportingFieldForm.creditReportingField.customFieldDescription")
+        <td><textarea class="input_text_area" style="margin-left:14px;" name="${status.expression}" >$!{status.value}</textarea></td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>

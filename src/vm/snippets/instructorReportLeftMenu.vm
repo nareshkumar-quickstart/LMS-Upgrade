@@ -1,0 +1,285 @@
+<link href="brands/default/en/css/css_sidebar.css" type="text/css" rel="stylesheet">
+<script type="text/javascript">
+
+var leftPaneWidth=0;
+
+function removeSpaces(string) {
+ return string.split(' ').join('');
+}
+
+
+function showHideMenu(){
+
+
+
+    $('#content2r').css({"width":$("#content2r").css("left") == "0px"?"124%":"100%"});
+
+    $('#topBar').css({"width":$("#content2r").css("left") == "0px"?"124%":"100%"});
+
+    $('#sliderImage').attr("title",$("#content2r").css("left") == "0px"?"Click to expand":"Click to collapse");
+
+
+
+    leftPaneWidth = $('#sideBar').width();
+
+    var targetX = $("#content2r").css("left") == "0px"? '-'+leftPaneWidth+'px':'0px';
+
+    $("#content2r").animate({"left": targetX}, 400,function(){
+
+    });
+
+    $("#topBar").animate({"left": targetX}, 400,function(){
+
+    });
+//alert( targetX ) ;
+}
+
+ $(function(){ 
+     function collapseBands(outlineId, bandId){
+
+    if($(outlineId).css("display") == "block"){
+    $(bandId).find("img").attr("src", "brands/default/en/images/icon_right.png");
+    $(bandId).find('p').css('font-weight','100');
+    $(outlineId).animate({"height":0}, function(){
+         $(outlineId).css("display",   "none");
+    });
+    }
+}
+
+
+function expandBand(outlineId, bandId ,size){
+    if( $(outlineId).css("display") == "none"){
+
+        $(bandId).find("img").attr("src", "brands/default/en/images/icon_down.png");
+        $(bandId).find('p').css('font-weight','bold');
+
+
+       $(outlineId).css("display", "none");
+
+   var height = $("#sideBar").height() - $(".search-bar").height() - 160 ;
+  /* 
+     alert(height);
+	if( height > 123 )
+	  height = 123 ; 
+	  
+	if( size < 1 )
+	 height = 70 ;
+	else if( size < 2 )
+	 height = 80 ;
+	else if( size < 3 )
+	 height = 90 ;
+*/
+ 
+       $(outlineId).animate({
+           "height" : 316 /*height /* $("#sideBar").height() - $(".search-bar").height() - 160 */
+       });
+    }else{
+        $(bandId).find("img").attr("src", "brands/default/en/images/icon_right.png");
+        $(bandId).find('p').css('font-weight','100');
+       $(outlineId).animate({
+           "height" : 0
+       }, function(){
+          $(outlineId).css("display", "none");
+       });
+    }
+
+}
+
+
+   
+#set($category=$reportForm.getReportsByCategory())
+//------------------------
+$("#band_favorites").click(function(){
+expandBand("#container_favorites", "#band_favorites" , $reportForm.getFavouriteReports().size() );
+#foreach( $key in $category.keySet() )
+#set( $band_id = "band_${key}" )
+#set( $container_id = "container_${key}" )
+collapseBands("#${container_id}", "#${band_id}"); 
+#end
+});
+
+//------------------------
+#foreach( $key in $category.keySet() )
+#set( $band_id = "band_${key}" )
+#set( $band_id = $band_id.replace(" ","") )
+#set( $container_id = "container_${key}" )
+#set( $container_id = $container_id.replace(" " , "") )
+$("#${band_id}").click(function(){
+    expandBand("#${container_id}", "#${band_id}" , $category.get($key).size() );
+collapseBands("#container_favorites", "#band_favorites");
+#foreach( $value in $category.keySet() )
+#if( ! $value.toString().equals($key.toString()) )
+#set( $band_id = "#band_${value}" )
+#set( $band_id = $band_id.replace(" ","") )
+#set( $container_id = "#container_${value}" )
+#set( $container_id = $container_id.replace(" " , "") )
+collapseBands("$container_id", "$band_id"); 
+#end
+#end
+ });
+#end
+});
+</script>
+
+<div class="side_bar" id="sideBar" style="height: 100%;">
+#if( $request.getParameter('fav') )
+	<div class="band-normal" id="band_favorites"><img src="brands/default/en/images/icon_down.png"/><p style="font-weight: bold;">Favorites</p></div>
+#else
+	<div class="band-normal" id="band_favorites"><img src="brands/default/en/images/icon_right.png"/><p style="font-weight: 100;">Favorites</p></div>
+#end	
+
+#if( $request.getParameter('fav') )
+	<div id="container_favorites" class="side_bar_report_fav">
+#else
+	<div id="container_favorites" class="side_bar_report_fav_none">
+#end
+<table width="195px" cellspacing="0" cellpadding="5" border="0" style="float: left;">
+ <tbody>
+#set($currentReport=$reportForm.getCurrentReport())
+                        #set($favourites=$reportForm.getFavouriteReports())
+                        #foreach($value in $favourites)
+                            #if ($value.title.length()>50)
+                                #set ($btnClass="L-M-4Wrap1")
+                            #elseif ($value.title.length()>25)
+                                #set ($btnClass="L-M-4Wrap")
+                            #else
+                                #set ($btnClass="L-M-4")
+                            #end
+                            
+                            #set($valve=true)
+                            #foreach($item in $favourites)
+                               ##<br/> #dotPadding($value.title,20) <br/>$value.id==$item.derivedFrom.id : $value.systemOwned
+                              #if($value.id==$item.derivedFrom.id && $value.systemOwned)
+                                  ##*
+                                  #set($valve=false)
+                              #end
+                            #end
+  <tr>
+<td style="" class="row_white"><img height="10" width="10" src="brands/default/en/images/icon_all.gif"/></td>
+                            #if($valve)
+                            
+                                #if($currentReport.id==$value.id)
+                                <td id="selectedbold" class="row_white"><b>$value.title</b></td>
+                                #else
+                                <td  onclick="formFavouriteSubmit('$value.id')"  class="row_white">$value.title</td>
+                                #end 
+                                    
+    
+  </tr>
+#else
+<td class="row_white">&nbsp;</td>
+</tr>
+                            #end
+                        #end
+## ***********************************************************
+#if($null.isNotNull($favourites) && $favourites.size() > 0) 
+<tr>
+    <td class="row_white" colspan="2" align="center"><br>
+<a  href="#" onclick="document.location.href='ins_ManageReports.do?method=executeAllFavouriteReports';"
+ class="button" style="float:none"><span class="button">$brander.getBrandElement("lms.reports.reportLeftMenu.caption.runAll") $brander.getBrandElement("lms.reports.reportLeftMenu.caption.favourites")</span></a>
+</td>
+</tr>
+#end
+</tbody></table>
+</div>
+
+## ******************************************************************************************
+#set($category=$reportForm.getReportsByCategory())
+#foreach( $key in $category.keySet() )
+
+	#set( $band_id = "band_${key}" )
+	#set( $band_id = $band_id.replace(" ","") )
+	#set( $container_id = "container_${key}"  )
+	#set( $container_id = $container_id.replace(" " , "") )
+	#set($isActive=0)
+	
+
+	#foreach($value in $category.get($key))
+		
+		#if(($currentReport.id==$value.id)  && ! $request.getParameter('fav') )
+			#set($isActive=1  ) ## ($currentReport.favorite==false)
+			
+		#end
+	#end
+	
+	#set( $reportCount = 0 )
+	#foreach($value in $category.get($key))
+		#set($valve=true)
+		#foreach($item in $favourites)
+			  #if($value.id==$item.derivedFrom.id  && $value.systemOwned)
+				#set($valve = false ) 
+			  #end
+		#end
+		#if($valve)
+			#set( $reportCount = $reportCount + 1  )
+		#end	
+	#end
+	 
+	 
+	#if( $reportCount > 0 )
+	##$category.get($key).size() > 0 ) $category.get($key).size() - , -<br> $key
+	## if there exisits any report in the category
+		#if($isActive==1)
+			<div class="band-normal" id="$band_id"><img src="brands/default/en/images/icon_down.png"/>
+			#set( $str = $!{key} )
+			#if( $str.length() < 35 )
+			<p style="font-weight: bold;">$str</p>
+			#else
+			<p style="font-weight: bold;"  title="$str" >#simpleDotPadding($str , 24 ) </p>
+			#end 
+			</div>
+		#else
+			<div class="band-normal" id="$band_id"><img src="brands/default/en/images/icon_right.png"/>
+			#set( $str = $!{key} )
+			#if( $str.length() < 35 )
+			<p style="font-weight: 100;">$str</p>
+			#else
+			<p style="font-weight: 100;" title="$str " >#simpleDotPadding($str , 24 ) </p>
+			#end 
+			</div>
+
+		#end
+	#end
+## ----------------------------------------------------------------------------------------
+#if($isActive==1 && $reportCount > 0 )
+	<div id="$container_id" class="side_bar_report_fav">
+#else
+	<div id="$container_id" class="side_bar_report_fav_none">
+
+#end	
+<table width="195px" cellspacing="0" cellpadding="5" border="0" style="float: left;">
+<tbody>
+ #foreach($value in $category.get($key))
+   
+
+		#set($valve=true)
+		#foreach($item in $favourites)
+			  #if($value.id==$item.derivedFrom.id  && $value.systemOwned)
+				#set($valve=false)
+			  #end
+		#end
+
+		#if($valve)
+		  <tr class="selected">
+		<td width="10" class="row_white">
+		<img height="10" width="10" src="brands/default/en/images/icon_all.gif"/>
+		</td>
+			#if($currentReport.id==$value.id)
+			<td  width="161" id="selectedbold" class="row_white"><b> $value.title  </b></td>
+			#else
+
+			<td onclick="document.location.href='ins_ManageReports.do?method=selectReport&reportId=$value.id';" width="161" class="row_white">  $value.title  </td>
+
+			#end 
+
+		</tr>
+		#end
+ #end
+          </tbody>
+ </table><!-- End of hdnDiv/hdnDivActive-->
+</div>               
+ #end
+
+## ---------------------------------------------------------------------------------
+        
+        </div>

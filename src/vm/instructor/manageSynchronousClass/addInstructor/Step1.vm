@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script> 
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script> 
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+<script type="text/javascript" language="javascript">
+    function FormSubmit(buttonclick) {
+       if ($("INPUT[type='checkbox'][name='selectedInstructorIds']:checked").length>0) {
+//            document.manageform.action.value=buttonclick;
+  //          document.manageform.submit();
+			submitButtonForm(document.manageform,'wizardSubmitter','_target1');
+        } else {
+            $('#selectLearner').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+        }
+
+    }
+
+    function FormSubmitNew(buttonclick) 
+    {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+        return true;
+    }       
+
+        function onAllSearch() {
+            document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=0;
+            document.getElementById('paging').value="";
+            document.getElementById('showAll').value="true";
+            document.getElementById('showAllAction').value="true";
+            document.manageform.submit();
+        }
+
+        function onNextPage(nextIndex) {
+            //document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=nextIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+            document.manageform.submit();
+        }
+
+        function onPreviousPage(prevIndex) {
+            //document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=prevIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) -  parseInt(itemNo);
+            document.manageform.submit();
+        }
+
+
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='selectedInstructorIds']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedInstructorIds']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedInstructorIds']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+
+
+</script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+</head>
+<body>
+    <div id="main-container"><!-- main-container -->
+        <!-- header -->
+       #parse("snippets/instructor/instructorWizardHeader.vm")
+        <!-- header-end -->
+        <div id="frame_body"><!-- content-area -->
+           
+            <!-- left-pannel-content -->
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.accraditation.instructor.caption.leftMenu.addInstructorWizard") $brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.showing-1-of-3")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step1")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step2")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep3")</div>
+                </div>
+            </div>
+            <!-- left-pannel-content -->
+            <div id="right-pannel" class="scrollable"><!-- right-pannel -->
+                <form name="manageform" id="manageform" action="ins_addSynchronousClassInstructor.do" method="post">
+                #springBind("assignInstructorForm.*")
+                    #if($status.error)  
+                        #set($errorCodes = [])  
+                        #set($temp = true)
+
+                        ##springBind("assignInstructorForm.className")
+                        ##if($status.error)
+                           ##foreach($errorCode in $status.errorCodes)
+                                ##set($temp = $errorCodes.add($errorCode))
+                            ##end
+                        ##end
+
+                        #if($errorCodes.size() > 0)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $errorCodes)         
+                                ##set ($error = $brander.getBrandElement($errorCode))
+                                #set ($error = $errorCode)
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                               #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+                    #end
+                
+
+               
+				<!-- Logo+Manage-User -->
+				<!-- Page Description -->
+		 	  <div class="page_description" id="pageDescription">
+                  <!-- Page Icon -->
+                  <div class="courseLogoCourses" id="pageIcon"></div>
+                  <!-- Page Heading -->
+                  <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.instructor.addSynchronousClass.addInstructor.caption.courseTitle")</div>
+                  <!-- Page Description -->
+                  <div id="pageDescriptionText">$brander.getBrandElement("lms.instructor.addSynchronousClass.addInstructor.caption.courseSubTitle")</div>
+			  </div>
+	
+           
+
+                <!-- Logo+Manage-User-end -->
+
+
+        <div id="resultBox" class="search_box_result" style="border-style:solid solid none solid;">
+    	<!-- Search resultBox start -->
+    	
+    	<!-- Search input window -->
+	<div id="searchBox" class="visible">
+		<div style="padding: 5px">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchInstructors")</div>
+		<div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchFirstName")</div> <div style="float:left">
+		<input type="text" name="firstName" value="$!{context.firstName}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+
+		<div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchLastName")</div> <div style="float:left">
+		<input type="text" name="lastName" value="$!{context.lastName}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+
+		
+		<!--  Search Buttons-->
+							<div style="padding: 5px;margin-left:10px;margin-right:10px;height:10px">
+							<div style="float: left; margin-top: 20px; margin-left: 20px;">
+							  <div>
+							<a  href="javascript:showSearchBox(this);">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+						  
+                        	<div style="float: left; margin-top: 20px; margin-left: 5px;">
+							  <div>
+							 <a  onClick="return FormSubmitNew('advanceSearch');">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>	
+						</div>
+						<!--  Search Buttons-->
+				<input id="action" type="hidden" name="action" value="selectedInstructor" />
+				<input id="direction" type="hidden" name="direction" value="prev" />
+				<input id="pageIndex" type="hidden" name="pageIndex" value="0" />
+
+	</div><!-- Search input window -->
+
+        
+        
+            <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+
+                <!-- Result Heading Start -->
+                <div style="float:left; height:23px;">
+                    <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>$brander.getBrandElement("lms.instructor.addCourseInstructor.table.title.selectInstructor")</b></div>
+                </div>
+                <!-- Result Heading End -->
+
+                <!-- Search Box Start -->
+                <div id="searchBox" style="float:left; height:120px; left:47%;" class="visible">
+                   $brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchInstructors")<br/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchFirstName")</div> <input type="text" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchLastName")</div> <input type="text" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                   
+					<div style="float: right; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a  onClick="showResult();">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+						  
+						  <div style="float: left; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a  onClick="showSearchBox(this);">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+						  
+                        
+                   
+                    
+                </div>
+                <!-- Search Box End -->
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div> -->
+                <div style="float: left; margin-top: 2px; margin-right: 0px;">
+						  <div>
+							  <a  onclick="">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.searchSynchronousClass.messageBox.OK")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+			  
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+                
+                <!-- navigation Start -->
+                <div class="result_left_side">
+                        #springBind("assignInstructorForm.instructors")
+                        $pager.setItems($!{status.value})
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                                #set($pageFirstIndex = $pager.firstIndex)
+                                #set($pageLastIndex = $pager.lastIndex)
+                                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                #set($currentPageCount = $pageLastIndex + 1)
+                                #set($pageCurrIndex = $pager.index)
+                        #else
+                                #set($pageFirstIndex = 0)
+                                #set($pageLastIndex = 0)
+                                #set($currentPageSize = 0)
+                                #set($currentPageCount = 0)
+                                #set($pageCurrIndex = 0)
+                        #end
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                    <div style="float: left; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a  onClick="showSearchBox(document.getElementById('srch'));">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+				  
+
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onclick="return onAllSearch();"></div>
+                    <input type="hidden" id="showAllAction" name="showAllAction" value="" >
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="return onNextPage($pager.nextIndex);"></div>
+                    #else
+                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"onclick="return onPreviousPage($pager.prevIndex);"></div>
+                    #else
+                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                    #end
+                </div>
+                <!-- navigation Start -->
+                
+            </div>
+            <!-- Result Header End -->
+            
+             <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px" height="20px"><input id="chkAll" type="checkbox" name="chkAll" /></td>
+                    <td class="box_subheader"><div class="icon_up" ></div>$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchFirstName")</td>
+                    <td class="box_subheader" style="border-right:none;"><div style="margin-left:15px;" >$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchLastName")</div></td>
+                  </tr>
+				  #if($!assignInstructorForm.instructors.size() > 0)
+                  #springBind("assignInstructorForm.instructors")
+                  #set($instructors = ${status.value})
+                  #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                      #if($velocityCount%2==0)
+                          #set($alternate="row_2")
+                      #else
+                          #set($alternate="row_1")
+                      #end
+                      <tr>
+                            #springBind("assignInstructorForm.instructors[$loopIndex].id")
+                            #set($instID = $!{status.value} )
+                            #springBind("assignInstructorForm.selectedInstructorIds")
+                            <td class=$alternate width="17px"><input type="checkbox" name="selectedInstructorIds" value="$instID" id="chk$velocityCount" /></td>
+                            #springBind("assignInstructorForm.instructors[$loopIndex].user.firstName")
+                            <td class=$alternate>$!{status.value}</td>
+                            #springBind("assignInstructorForm.instructors[$loopIndex].user.lastName")
+                            <td class=$alternate style="border-right:none;">$!{status.value}</td>
+                      </tr>
+				  #end
+				  #else
+					<tr>
+						<td colspan="3" class="row_1" style="border-right:none; !Important;">	                            
+							<div class="result_blank">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.noInstructorFound")</div>
+						</td>
+	                  </tr>
+				  #end
+                </table>
+                  
+            </div>
+
+	    </div>
+
+	    <!-- button-div -->
+		<input type="hidden" id="currentpage" name="_page" value="0"/>
+		<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+	   	
+		<div style="float: right; margin-top: 15px;">
+			  <div>
+				  <a  onClick="FormSubmit('Next');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.instructor.addSCORMPackage.btnNext")</div>
+					  <div class="btn_end"></div>
+				  </a>
+			  </div>
+		  </div>
+		  
+		  #springBind("assignInstructorForm.id")
+		 <div style="float: left; margin-top: 15px; margin-left: 10px;">
+			  <div>
+				  <a onClick="location.href='ins_editSynchronousClassInstructor.do?id=${status.value}';">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+			  </div>
+		  </div>
+			
+	    <!-- button-div -->
+	    
+	    <!-- space -->
+	    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+	    <!-- space -->
+	    </form>
+
+            </div><!-- right-pannel -->
+        </div><!-- content-area -->
+        <!-- footer -->
+      #parse("snippets/instructor/instructorFooter.vm")
+        <!-- footer-end -->
+     
+    </div><!-- main-container -->
+</body>
+</html>

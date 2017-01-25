@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-password-strength.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-tooltip.js"> </script>
+
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel').height()<$('#frame_body').height()) {
+        $('#right-pannel').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel').height());
+	
+	$('#frame_body').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+});
+</script> 
+</head>
+<body >
+<form name="addCustomCourses" method="post" action="ins_addCourse.do" >   
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	#parse("snippets/managerWizardHeader.vm")
+	</td></tr>
+		
+	<!-- header-end -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-pannel-content -->
+		<div>
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.title")$brander.getBrandElement("lms.instructor.addCourse.leftPanel.showing1of2")</div>
+            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step1")</div>
+            <div class="l-menu-back-text">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step2")</div>
+          </div>
+        </div>
+		<!-- left-pannel-content-end -->
+		</table></td>
+		
+		<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+  					<!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addCourse.page.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addCourse.page.subTitle")</div>
+			</td>
+		    </tr>
+		</table>
+			<!-- Review-&-Confirm -->
+			<div class="table-frame" id="table-frame" style="padding-bottom: 10px;_width:96%;" >
+                        <div class="table-header" id="table-header" style="height:10px;">
+                            <div class="table-heading">$brander.getBrandElement("lms.instructor.addCourse.section.title")</div>
+                        </div>
+						#springBind("courseForm.courseType")
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td height="35">
+                                    <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.section.subTitle")</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                        <tbody><tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" checked="true" value="discussionForum" id="disscussionForum" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.DFC")</span>
+                                            </td>
+                                        </tr>
+										
+ 										#if($showSCORM==1) 
+                                        <tr>
+                                            <td height="25" align="right">
+                                                <input type="radio" id="scormCourse" value="scormPackage" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.SCORM")</span>
+                                            </td>
+                                        </tr>
+										#end
+										
+                                        <tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" id="synchronousCourse" value="synchronousCourse" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")</span>
+                                            </td>
+                                        </tr>
+                                        <!-- Webinar Course -->
+                                        <tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" id="webinarCourse" value="webinarCourse" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" id="weblinkCourse" value="weblinkCourse" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.WBLNK")</span>
+                                            </td>
+                                        </tr>
+
+										##if($showHomeworkAssignment==1) 
+										<tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" id="homeworkAssignment" value="homeworkAssignment" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.HWASSIGN")</span>
+                                            </td>
+                                        </tr>
+										##end
+										<tr>
+                                            <td height="25" width="70" align="right">
+                                                <input type="radio" id="instructorConnect" value="instructorConnect" name="${status.expression}">
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.instructor.addCourse.courseType.INSCONNECT")</span>
+                                            </td>
+                                        </tr>
+										
+										
+                                    </tbody></table>
+                                </td>
+                            </tr>
+                        </tbody></table>
+
+                    </div>
+			<!-- Review-&-Confirm-end -->
+
+			<!-- button-div -->
+			<div style="float: right; margin-top: 15px; _margin-right: 5px;">
+              <a onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_target1');">
+                   <div class="btn_start"></div>
+                  <div class="btn_normal">$brander.getBrandElement("lms.instructor.addCourse.button.next")</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>
+		   <div style="float: left; margin-top: 15px; margin-left: 10px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_cancel');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.addCourse.button.cancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+                        
+		
+			<!-- scrollable-div -->
+			 <input type="hidden" id="currentpage" name="_page" value="0" />
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />			
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content-area-end -->
+	</td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	</td></tr>	
+	<!-- footer-end -->
+</table>
+</form>
+</body>
+</html>

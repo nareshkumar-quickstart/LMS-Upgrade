@@ -1,0 +1,937 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructor/instructorHead.vm")
+<head>
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+<!--<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> --> 
+<script type="text/javascript" src="javascript/jquery-1.8.3.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<style type="text/css">
+input.file2 {
+    position: relative;
+    text-align: right;
+    z-index: 2;
+    *text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    height: 22px;
+    width: 505px;
+    cursor:pointer
+}
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+
+<script type="text/javascript" language="javascript" src="javascript/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-password-strength.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-tooltip.js"> </script>
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+
+
+<script type="text/javascript">
+
+
+
+ function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+            }
+
+
+
+function setInstructorConnect(){
+
+                if(document.getElementById('selOpt').selectedIndex == 1){
+	 			//alert(document.getElementById('selOpt').selectedIndex);
+	 			document.getElementById('columnShow').style.display = "none";
+	 			
+	 			} 
+	  		else{
+	   			document.getElementById('rowShow').style.display = "none";
+	   			document.getElementById('columnShow').style.display = "block";
+	   			}
+	   			
+			/*
+			if(document.getElementById('selOpt').selectedIndex == 2){
+	 			document.getElementById('rowShow').style.display = "block";} 
+	  		else{
+	   			document.getElementById('rowShow').style.display = "none";}
+	   			*/
+}
+
+function setHomeworkAssignment(){
+     if(document.getElementById('selOpt').selectedIndex == 0){
+	 	document.getElementById('rowShow').style.display = "none";} 
+	  else{
+	   document.getElementById('rowShow').style.display = "block";}
+	 
+     }
+     
+function fncCreateElement(){
+		
+	   var hdnval;
+	   var mySpan = document.getElementById('fileinputs');
+
+	   var myLine = document.getElementById('hdnLine');
+	   
+	   myLine.value++;
+	   
+	   //var fileid = "files["+ myLine.value +"]";
+	   var fileid = "impFile"+myLine.value;
+	   //var filename = "impFile"+myLine.value;
+	   var filename = "file";
+	   
+	   //alert(fileid);
+	   //alert(filename);	   
+	   
+	   
+	   var myElement2 = document.createElement('input');
+	   myElement2.setAttribute('type',"file");
+	   myElement2.setAttribute('name',filename);
+	   myElement2.setAttribute('className',"file2");
+       myElement2.style.cssText="width:608px;float:left";	   
+	   myElement2.setAttribute('id',fileid);
+	   
+
+	   mySpan.appendChild(myElement2);
+	   
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+		fakeFileUpload.style.left = '5px';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:408px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+		image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        fakeFileUpload.appendChild(image);
+        
+        
+        
+        var x = document.getElementById(fileid);
+        
+        x.className = 'file2';
+        var clone = fakeFileUpload.cloneNode(true);
+        x.parentNode.appendChild(clone);
+        x.relatedElement = clone.getElementsByTagName('input')[0];
+        //alert(clone.getElementsByTagName('input')[0]);
+        x.onchange = x.onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+           
+        
+	   	
+    }
+     
+var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+	    if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+		fakeFileUpload.style.left = '5px';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:350px;*width:350px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+		image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file hidden';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+	
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelEditCourse';
+        document.editCourseForm.submit();
+}
+
+function saveInformation(){
+		updateTextArea("description1");
+		if (document.getElementById('description1').value == "<br>"){
+		document.getElementById('description1').value = "";
+		}
+        document.getElementById('actionmethod').value='saveAllInfo';
+        document.editCourseForm.submit();
+}
+
+function FormSubmit(methodName){
+	updateTextArea("description1");
+	if (document.getElementById('description1').value == "<br>"){
+		document.getElementById('description1').value = "";
+	}
+	document.getElementById('actionmethod').value=methodName;
+	document.editCourseForm.submit();
+}
+
+function DeleteDocument(id) {
+ 
+  confirm("", function () { 
+        
+        document.getElementById('actionmethod').value='deleteDocument';
+        document.getElementById('documentid').value=id;
+        document.editCourseForm.submit();
+  });   
+
+   }
+ 
+ 
+ function PublishCourse() {
+        document.getElementById('actionmethod').value='publishSFCourse';
+        document.editCourseForm.submit();
+    }
+function finishAction(){
+     document.editCourseForm.submit();
+}
+
+function openFileOption(id)
+{
+  document.getElementById(id).click();
+  
+  tr = document.getElementById('lsDoctbl').rows;
+ 
+  for (var i = 0; i < tr.length; ++i) {
+        td = tr[i].cells;
+        for (var j = 0; j < td.length; ++j) {
+          
+          
+          if(j==1)
+          {
+           file = td[j].innerHTML;
+           var str = file.substring(11,19);
+           str = str.substring(0,str.length-2);
+           
+           if(str == id)
+           {
+             //alert(document.getElementById(id).value);
+             td[j].innerHTML = document.getElementById(id).value;
+           }
+          }
+          
+          
+        }        
+      }      
+
+  
+}
+
+function show(){
+		
+			if(document.getElementById('selOpt').selectedIndex == 0){
+	 			document.getElementById('rowShow').style.display = "none";} 
+	  		else{
+	   			document.getElementById('rowShow').style.display = "block";}
+				
+				
+	 
+     }
+	$(document).ready(function()
+	{
+	  $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+		 if ($('#right-pannel').height()>$('#frame_body').height()) {
+        $('#frame_body').height($('#right-pannel').height());
+		}
+        $('#sideBar').height($('#right-pannel').height());
+		$('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        }); $("#assignmentDueDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+		initFileUploads();
+		show();
+		var cType = document.editCourseForm.courseType.value;
+		if(cType == 'Instructor Connect')
+		{
+			setInstructorConnect();
+		
+		}else if(cType == 'Homework Assignment'){
+			setHomeworkAssignment();
+		
+		}
+		
+		
+
+}); 
+
+	
+function openLinkInPopup(	)
+{	
+	var link = document.getElementById("link").value;
+	if(link=="")
+	{
+		alert("Please provide a link first !!!");
+		return;
+	}	
+	//var regex = "^(http|https|ftp)\://[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$";
+	//alert(regex.match(link));
+	//if(regex.match(link)!=null)
+	window.open (link,"mywindow"); 
+}
+</script>
+
+</head>
+
+<body>
+
+<form name="editCourseForm" method="POST" action="ins_viewCourse.do"  enctype="multipart/form-data">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+<input type="hidden" id="tabName" name="tabName" value="summeryTab"/>
+<input type="hidden" id="documentid" name="documentid" value=""/>
+
+ 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+	 </td></tr>
+   
+<td  id="row-tabs" class="tab_bar" colspan="2">
+
+     <table width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody><tr>
+                <td width="194"><div class="tab_blank"></div></td>
+                <td>&nbsp;</td>
+                <td width="697">
+					#springBind("courseForm.id")
+					<a onclick="FormSubmit('viewCourseSummary');"><div class="tab_selected">$brander.getBrandElement("lms.instructor.tabBar.summary")</div></a>
+					#if($courseForm.courseType == "Learner Assignment" || $courseForm.courseType == "Instructor Connect")
+					#else	
+					<a onclick="FormSubmit('viewCourseOverView');"><div style="width: 120px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.courseOverview")</div></a>
+					<a onclick="FormSubmit('viewCourseExamOverView');"><div style="width: 120px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.examOverview")</div></a>
+					#end
+					<a onclick="FormSubmit('viewCourseAdditionalDetails');"><div style="width: 140px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.additionalDetails")</div></a>
+					#if($courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || $courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) 
+					<a href="ins_manageSynchronousClass.do?id=$status.value"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>
+					#elseif($courseForm.courseType == "DFC" || $courseForm.courseType == "Learner Assignment") 					
+					<a href="ins_searchCourseInstructor.do?id=$status.value&courseType=$courseForm.courseType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#elseif($courseForm.courseType == "Instructor Connect")
+					#if($courseForm.instructorType == "Email Online")
+					<a href="ins_searchCourseInstructor.do?id=$status.value&courseType=$courseForm.courseType&instructorCourseType=$courseForm.instructorType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#elseif($courseForm.instructorType == "Webinar")
+					
+					<a href="ins_manageSynchronousClass.do?id=$status.value&courseType=$courseForm.courseType&instructorCourseType=$courseForm.instructorType""><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>	
+					#end
+					#end
+					<a href="ins_manageCourseCourseGroups.do?id=$status.value&courseType=$courseForm.courseType&instructorCourseType=$courseForm.instructorType"><div style="border-right-style: solid; " class="tab">$brander.getBrandElement("lms.instructor.tabBar.courseGroups")</div></a>
+					
+				</td>
+                <td>&nbsp;</td>
+            </tr>
+    </tbody></table>
+	<input type="hidden" name="id" value="$status.value">
+</td>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			<!-- left-pannel-content -->
+			#parse("snippets/instructorCourseLeftMenu.vm")
+		<!-- left-pannel-content -->
+        
+		</table></td>
+					
+<TD id="content" >
+	<div id="scrollable">
+                       #springBind("courseForm.*")
+					   #if($status.error)
+							<!-- error-box -->
+							 <div id="message_box">
+								<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+								#foreach($errorCode in $status.errorCodes)
+							#set ($error = $brander.getBrandElement($errorCode))
+							<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+								<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+								<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+								</div>
+								#end
+							</div>
+							<!-- error-box -->
+							#end
+							
+							#if($context.lstErrors)
+		                        <!-- error-box -->
+		                        
+		                         <div id="message_box">
+		                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+		                                #foreach($errorCode in $context.lstErrors)
+		                        #set ($error = $brander.getBrandElement($errorCode))
+		                        <div class="width40pct">
+		                        
+		                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+		                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+		                                </div>
+		                                #end
+		                        </div>
+		                        <!-- error-box -->
+	                        #end
+                        
+							
+
+                        <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.courseSummary.caption.title.courseSummary")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.courseSummary.caption.subTitle.courseSummary")</div>
+			</td>
+		    </tr>
+		</table>
+                        <!-- Logo+Manage-User-end -->
+                        
+                        <!-- [09/21/2010] LMS-7113 :: Course publishing option for all type of courses, Instructor Mode only. -->
+                        <!-- [25/05/2011] LMS-10308 :: Remove Publish button for course types Weblink and Scorm Course. -->
+                        #if($!{courseForm.courseType} != "Weblink" && $!{courseForm.courseType} != "Scorm Course") 
+                            <div class="buttonContainereditmessage"  style="height:auto;width:100%">
+                              <div style="float: center; margin-top: 3px; margin-left: 10px;">
+                                  <div>
+                                      <a onClick="PublishCourse();">
+                                          <div class="btn_start"></div>
+                                          <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnPublish")</div>
+                                          <div class="btn_end"></div>
+                                      </a>
+                                  </div>
+                               </div>
+                            </div>
+                        #end
+						
+					 
+					  #if($courseForm.courseType == "Scorm Course") 
+						<!--
+						<div class="buttonContainereditmessage">
+							  <div style="float: center; margin-top: 3px; margin-left: 20px;">
+								  <div>
+									  <a onClick="">
+										  <div class="btn_start"></div>
+										  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnPreview")</div>
+										  <div class="btn_end"></div>
+									  </a>
+								  </div>
+							   </div>
+							
+						</div>
+						-->
+					  #end
+					  #if($courseForm.courseType == "Instructor Connect") 
+						<div class="search_box_result" style="margin-bottom:15px">
+                        <div class="box_header">
+                            <span class="box_heading">$brander.getBrandElement("lms.instructor.courseSummary.caption.instConnectDetails")</span>
+                        </div>
+						<table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                         <tbody>
+							<tr>
+                                <td height="30" width="150"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.instType")</span></td>
+                                <td style="width: 30px;"></td>
+                                <td>
+                                   #springBind("courseForm.instructorType")
+                                    <select id="selOpt" name="${status.expression}" style="width: 150px; margin-left: 19px; border: 1px solid rgb(222, 221, 221);" onchange="setInstructorConnect();">
+									#foreach($instructorType in $context.instructorTypes)
+										<option value="$instructorType" #if($instructorType == $!{status.value}) selected #end>$instructorType</option>
+									#end
+									 </select>
+                                </td>
+                            </tr>
+							 <tr>
+								<td colspan="3">
+									<table  id="rowShow" style="display:none;" cellpadding="0" cellspacing="3" width="100%">
+										<tr height="20" >
+											<td width="150" ><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.meetingId")</span></td>
+                                			</td>
+                                			<td style="width: 30px;"></td>
+											<td>
+												#springBind("courseForm.meetingId")
+												#if (${status.error})
+													<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+												#elseif(! $status.value || $status.value == "" )<div class="required_field">*</div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 2px; " id="field_mscore" class="input_text_field" maxlength='50'/>
+												#else
+													<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+												#end	
+											</td>
+										</tr>
+										<tr height="20" >
+											<td width="150" ><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.meetingPasscode")</span></td>
+                                			</td>
+                                			<td style="width: 30px;"></td>
+											<td>
+												#springBind("courseForm.meetingPasscode")
+												#if (${status.error})
+													<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+												#elseif(! $status.value || $status.value == "" )<div class="required_field">*</div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width:500px; margin-left:2px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+												#else
+													<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>
+													<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+												#end	
+											</td>
+										</tr>
+									</table>
+                                </td>
+							</tr>
+							<tr>
+							 <td colspan="3">
+							    <table  id="columnShow" style="display:none;" cellpadding="0" cellspacing="3" width="100%">
+										<tr height="20" >
+											<td width="150"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.emailAddress")</span></td>
+                                			</td>
+                                			<td style="width: 30px;"></td>
+											<td>
+									#springBind("courseForm.emailAddress")
+									 <div id="survey-name-required">
+                                       #if($status.error) <div class="required_field">*</div>#end
+                                    </div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: #if($status.error)5px; #else 19px; #end" id="field_mscore" class="input_text_field" maxlength='50'/>
+									
+
+                                    
+                                </td>
+										</tr>
+										</table>
+										
+							 </td>
+							</tr>
+							
+							</tbody>
+						</table>
+			</div>
+					  #end
+					  #if($courseForm.courseType == "Learner Assignment")
+					  
+                      <input type="hidden" id="activeHWEnrollments" name="activeHWEnrollments" value="$status.value"/>  
+						
+						<input type="hidden" name="$status.id" value="$status.value">
+					   <div class="search_box_result" style="margin-bottom:15px">
+                        <div class="box_header">
+                            <span class="box_heading">$brander.getBrandElement("lms.instructor.courseSummary.caption.hwAssDetails")</span>
+                        </div>
+						<table width="100%" cellspacing="2" cellpadding="0" border="0" heigth="100%">
+                         <tbody>
+							<tr>
+                                <td height="30" width="26%" valign="top"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.importFile")</span></td>
+                                <td>
+                                    
+                                    
+                                    
+                                   
+									<input name="hdnLine" id = "hdnLine" type="hidden" value="0">
+                                    <div id = "fileinputs" class="fileinputs" style="overflow-y: auto; height:150px;">
+                                    <table id="lsDoctbl" width="50%">
+                                    
+											#springBind("courseForm.lstHomeWorkAssignmentAsset")
+											#set ($lstHomeWorkAssignmentAsset=$!{status.value})
+			                               
+			                                <tr>
+			                                <td colspan = "2">
+			                                <td>
+			                                <a onclick="fncCreateElement();"><div class="btn_start"></div> <div class="btn_normal">Add</div><div class="btn_end"></div>
+			                                </td>
+			                                </tr>
+			                                #foreach($option in $lstHomeWorkAssignmentAsset)
+			                                <tr>
+			                                <td>$option.Asset.fileName</td>
+			                                <!-- <td><input type="file" id="$option.id" style="display:none"></td> -->
+			                                <!-- <td><a onClick="openFileOption($option.id);">Edit</a></td> -->
+			                                
+			                                <td align="left" colspan = "2">
+			                                <a onClick="DeleteDocument($option.id);">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal">Delete</div>
+                                            <div class="btn_end"></div>
+                                            </a>
+			                               </td>
+			                                </tr>
+			                                #end
+			                                
+			                                </table>
+			                                
+			                                
+                                    
+                                     
+                                     <!-- <div id = "fileinputs" class="fileinputs">  -->  
+											<!-- <input name="file" id="file0" type="file" /> -->
+											
+									
+									</div>
+                                     #if($courseForm.activeEnrollment > 0)
+											
+									<!-- <input type="file" name="file1"  id="impFile" class="file" /> -->
+									
+									#end
+									 
+                                </td>
+                            </tr>
+							<tr>
+                                <td width="26%"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.assDueDate")</span></td>
+                                <td>
+									#springBind("courseForm.assignmentDueDate")
+									#set ($assignmentDueDate=$!{status.value})
+									#if($status.error) <div class="required_field">*</div>
+							        <input type="text" style="width:150px;margin-left: 5px;" id="assignmentDueDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="assignmentDueDate" value="$assignmentDueDate" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+									#elseif ($!{status.value})
+										<input type="text" style="width:150px;margin-left: 19px;" id="assignmentDueDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="assignmentDueDate" value="$assignmentDueDate" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+									#else
+                                    <input type="text" style="width:150px;margin-left: 19px;" id="assignmentDueDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="assignmentDueDate" value="" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+									#end 
+									
+								</td>
+                            </tr>
+							<tr >
+								<td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.gradeMethod")</span></td>
+                                <td>
+								#springBind("courseForm.gradingMethod")
+                                    <select id="selOpt" name="${status.expression}" style="width: 150px; margin-left: 19px; border: 1px solid rgb(222, 221, 221);" onchange="setHomeworkAssignment();">
+                                #foreach($gradingMethod in $context.gradingMethods)
+										<option value="$gradingMethod" #if($gradingMethod == $!{status.value}) selected #end>$gradingMethod</option>
+								#end
+
+                                    </select>
+                                </td>
+                            </tr>
+							<tr >
+								<td colspan="2">
+								<table  id="rowShow" style="display:none;" cellpadding="0" cellspacing="3">
+												<tr >
+								<td height="30" width="196" ><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.masteryScore")</span></td>
+                                </td>
+								<td width="150">
+                                  	#springBind("courseForm.masterScore")
+									#if (${status.error})
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 35px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+									#elseif(! $status.value || $status.value == "" )<div class="required_field">*</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 35px; margin-left: 5px; " id="field_mscore" class="input_text_field" maxlength='50'/>
+									#else
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 35px; margin-left: 0px;" id="field_mscore" class="input_text_field" maxlength='50'/>
+									#end	
+										<div style="float: left; margin-left: 8px; margin-top: 2px;">%</div>
+                                
+                                </td>
+												</tr>
+								</table>
+                                </td>
+                            </tr>
+							<div>
+							</tbody>
+						</table>
+			</div>
+					   #end
+			 <!-- search_box_result -->
+						<div class="search_box_result">
+                        <div class="box_header">
+                            <span class="box_heading">$brander.getBrandElement("lms.instructor.courseSummary.caption.summary")</span>
+                        </div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                            <td>
+                             <table>
+                              <tr>
+                                <td height="30" width="26%"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.courseName")</span></td>
+                                <td>
+                                    #springBind("courseForm.courseName")
+									#if(! $status.value)<div class="required_field">*</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 5px;" id="field_name1" class="input_text_field">	
+									#elseif (${status.error})
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_name1" class="input_text_field">
+									#else
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_name1" class="input_text_field">
+									#end	
+                                </td>
+                            </tr>
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.courseID")</span></td>
+                                <td>
+								#springBind("courseForm.courseID")
+                                    <input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 19px;" id="field_id1" class="input_text_field" maxlength='25'>
+                                </td>
+                            </tr>
+							<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.courseType")</span></td>
+    					<td>
+						#springBind("courseForm.courseType")
+                            <input type="text" disabled="" value="$!{status.value}" name="${status.expression}"  style="width: 500px; margin-left: 19px; background: none repeat scroll 0% 0% white;" id="field_id2" class="input_text_field" maxlength='50'>
+                        </td>
+					</tr>
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.keywords")</span></td>
+                                <td>
+								 #springBind("courseForm.keywords")
+								 #if(! $status.value)<div class="required_field">*</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 5px;" id="field_keywords1" class="input_text_field" maxlength='1000'>
+									#elseif (${status.error})
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_keywords1" class="input_text_field" maxlength='1000'>
+									#else
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_keywords1" class="input_text_field" maxlength='1000'>
+									#end	
+							    </td>
+                            </tr>
+							#if($courseForm.courseType == "Weblink")
+							<tr>
+                        <td height="30" width="150"><span class="row_text">$brander.getBrandElement("lms.instructor.addCourse.courseLink.caption")</span></td>
+    					<td>
+                            <div id="survey-name-required">
+                                <div class="required_field">*</div>
+                            </div>
+							#springBind("courseForm.link")
+                            <input type="text" value="$!{status.value}" name="${status.expression}"   style="width: 500px; margin-left: 4px;"  id="link" class="input_text_field" maxlength='1000'>
+							<a  onClick="openLinkInPopup();" style="margin-left: 10px; text-decoration: underline; cursor: pointer;">$brander.getBrandElement("lms.instructor.addCourse.testLink.caption.testLink")</span>
+                        </td>
+					</tr>
+					#end
+							
+							
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.creditHours")</span></td>
+                                <td>
+								#springBind("courseForm.creditHours")
+								<div id="survey-name-required">
+                                      #if($status.error)  <div class="required_field">*</div>#end
+                                    </div>
+                                    <input type="text" value="$!{status.value}" name="${status.expression}" style="width: 35px; margin-left:  #if($status.error) 4px; #else 19px; #end" id="field_hours1" class="input_text_field" maxlength='50'>
+                                    <div style="float: left; margin-left: 8px; margin-top: 2px;">$brander.getBrandElement("lms.instructor.courseSummary.caption.creditHoursUnit")</div>
+                                </td>
+                            </tr>
+                            
+                            <tr height="20px">
+								<td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.durationHours")</span></td>
+								<td>
+								#springBind("courseForm.durationHours")
+								 <div id="survey-name-required">
+									   #if($status.error) <div class="required_field">*</div>#end
+									</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 35px; margin-left: #if($status.error)5px; #else 19px; #end" id="field_duration1" class="input_text_field" maxlength='50'>
+									<div style="float: left; margin-left: 8px; margin-top: 2px;">$brander.getBrandElement("lms.instructor.courseSummary.caption.durationUnit")</div>
+								</td>
+							</tr>
+							
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.version")</span></td>
+                                <td>
+								#springBind("courseForm.version")
+								#if(! $status.value)<div class="required_field">*</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 5px;" id="field_version1" class="input_text_field" maxlength='50'>	
+								#elseif (${status.error})
+									<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 0px;" id="field_version1" class="input_text_field" maxlength='50'>
+								#else
+									<div class="required_field">*</div>
+									<input type="text" value="$!{status.value}" name="${status.expression}" style="width: 500px; margin-left: 5px;" id="field_version1" class="input_text_field" maxlength='50'>
+								#end	
+								
+                                    
+                                </td>
+                            </tr>
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.businessUnit")</span></td>
+                                <td>
+								#springBind("courseForm.businessUnit")
+                                    <select name="${status.expression}" style="width: 150px; margin-left: 19px; border: 1px solid rgb(222, 221, 221);">
+                                #foreach($businessUnit in $context.businessUnits)
+										<option value="$businessUnit" #if($businessUnit == $!{status.value}) selected #end>$businessUnit</option>
+								#end
+
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr height="20px">
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.language")</span></td>
+                                <td>
+								#springBind("courseForm.language")
+                                    <select name="${status.expression}" style="width: 150px; margin-left: 19px; border: 1px solid rgb(222, 221, 221);">
+                                      #foreach($language in $context.languages)
+										<option value="1" #if($language == $!{status.value}) selected #end>$language</option><!-- need to change this to become dynamic... can be done when service is present-->
+								#end
+                                    </select>
+                                </td>
+                            </tr>
+                             <tr>
+                                <td valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.description")</div></td>
+                                <td>
+                                    <div style="margin-left:0px;">
+								   #springBind("courseForm.description")
+								 	#if(! $status.value)<div class="required_field">*</div>
+									<textarea id="description1" name="$!{status.expression}" style="width: 500px; height: 100px; margin-left: 5px;">$!{status.value}</textarea>
+ 									#elseif (${status.error})
+										<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>
+										<div><textarea id="description1" name="$!{status.expression}" style="width: 500px; height: 100px; margin-left: 0px;">$!{status.value}</textarea></div>
+									#else
+										<div class="required_field">*</div>
+										<div><textarea id="description1" name="$!{status.expression}" style="width: 500px; height: 100px; margin-left: 5px;">$!{status.value}</textarea></div>
+									#end
+									
+ 									  <script type="text/javascript" language="javascript">
+                                 		  generate_wysiwyg_withMargin('description1', 20);
+                               		  </script>			
+								   </div>
+                                </td>
+                                </tr>
+                                </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="3" colspan="2">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+                      
+
+                        <!-- button-div -->
+			<div style="float: right; margin-top: 15px; ">
+				<a onClick="saveInformation();">
+                  <div class="btn_start"></div>
+                  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>
+		   <div style="float: right; margin-top: 15px; margin-right: 5px;">
+              <div>
+                  <a onClick="cancelInformation();">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+                        
+                        <!-- scrollable-div -->
+ <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end   
+<!-- footer-end -->
+</td></tr>
+</table>
+
+<div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+        <div class='header'><span>Attention</span></div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text" style="width:400px;">If students are enrolled in this assignment, they may already have begun work based on this document. Are you sure you want to delete it?"</div>
+        <br style="clear:both" />
+        
+	
+	<div class='buttons'>
+            <div class='simplemodal-close'>
+               
+
+				<a class="button" onClick=""><span class="no button">No</span></a>
+            <!-- </div>
+            <div class='yes'> -->
+                
+				<a class="button" onClick=""><span class="yes button">Yes</span></a>
+            </div>
+
+    <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <!--<div class="btn_start">&nbsp;</div>
+                <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+                <div class="btn_end">&nbsp;</div>-->
+				<a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div><!-- Alert Message Box Ends -->
+</form>
+</body>
+</html>

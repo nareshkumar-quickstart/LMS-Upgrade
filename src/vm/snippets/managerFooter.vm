@@ -1,0 +1,83 @@
+#parse("snippets/macroUtils.vm")
+#set ($isfirstsmallprint=true)
+<div id="universal-footer">
+    <div class="link">
+        $brander.getBrandElement("lms.login.footerLinksCopyright") - 
+        #if ($brander.getBrandElement("lms.login.footer.aboutus.caption")=='') #else #set ($isfirstsmallprint=false) #end
+                <a href=$brander.getBrandElement("lms.login.footer.aboutusURL") style="font-size:11px;color:#999999;text-decoration: underline;" target=_newwin> $brander.getBrandElement("lms.login.footer.aboutus.caption")</a>
+                #if ($brander.getBrandElement("lms.login.footer.contactus.caption")=='') 
+                    #else #if (!$isfirstsmallprint) | #else #set ($isfirstsmallprint=false) #end
+                #end
+                <a href=$brander.getBrandElement("lms.login.footer.contactusURL") style="font-size:11px;color:#999999;text-decoration: underline;" target=_newwin> $brander.getBrandElement("lms.login.footer.contactus.caption")</a>
+                #if ($brander.getBrandElement("lms.login.footer.termofuse.caption")=='') 
+                    #else #if (!$isfirstsmallprint) | #else #set ($isfirstsmallprint=false) #end
+                #end
+                <a href=$brander.getBrandElement("lms.login.footer.termofuserURL") style="font-size:11px;color:#999999;text-decoration: underline;" target=_newwin> $brander.getBrandElement("lms.login.footer.termofuse.caption")</a>
+                #if ($brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")=='') 
+                    #else #if (!$isfirstsmallprint) | #else #set ($isfirstsmallprint=false) #end
+                #end
+                <a href=$brander.getBrandElement("lms.login.footer.onlineprivacypracticesURL") style="font-size:11px;color:#999999;text-decoration: underline;" target=_newwin> $brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")</a>
+                #if ($brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")=='') 
+                    
+                #end                
+    </div>
+    
+    ##LMS-16713
+	<script>
+	function go(thiss, lmsadmin){
+		if(thiss.value=='7'){
+			window.location.href= '$!{authorModeRedirectionURL}' ;
+		}else{
+			setpage(thiss,lmsadmin);
+		}
+	}
+	</script>
+	
+    <div class="log" style="width:55%;padding:3px 10px 0 0;">
+        <label > $userData.getName() </label>
+        |
+        #if ( ! $request.getAttribute("switchBackUrl") || $request.getAttribute("switchBackUrl")=="")
+            #if($!{userData.isInLearnerRole()} || $!{userData.isProctor()}  || $!{userData.isInstructorMode()} || $!{userData.isRegulatoryAnalyst()} || $!{userData.isLMSAdministrator()})	
+                <select style="width:110px;hieght:16px;font-size:9px;" id="drpMode" onChange="go(this,$!{userData.isLMSAdministrator()});">
+                    #if($!{userData.isInLearnerRole()})
+                        <option value="2" #if($!adminCurrentMode == 'ROLE_LEARNER') selected #end>$brander.getBrandElement("lms.mycourses.learnerMode")</option>
+                    #end
+                    #if($!{userData.isInstructorMode()})
+                        <option value="5" #if($!adminCurrentMode == 'ROLE_INSTRUCTOR') selected #end>$brander.getBrandElement("lms.admin.InstructorMode")</option>
+                    #end
+                    #if($!{userData.isProctor()})
+	                    <option value="6" #if($!adminCurrentMode == 'ROLE_PROCTOR') selected #end>$brander.getBrandElement("lms.admin.Proctor")</option>
+	                #end	                  
+                    #if($!{userData.isTrainingAdministrator()})
+                        <option value="1" #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') selected #end>$brander.getBrandElement("lms.manager.manangerMode")</option>
+                    #end
+                    #if($!{userData.isRegulatoryAnalyst()})
+                        <option value="4" #if($!adminCurrentMode == 'ROLE_REGULATORYANALYST') selected #end>$brander.getBrandElement("lms.admin.AccreditationMode")</option>
+                    #end
+                    #if($!{userData.isLMSAdministrator()})
+                        <option value="3" #if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') selected #end>$brander.getBrandElement("lms.admin.AdminMode")</option>
+                    #end
+                    ##LMS-16713
+                    #if($!{authorMode})
+                        <option value="7" #if($!adminCurrentMode == 'ROLE_AUTHOR') selected #end>$brander.getBrandElement("lms.admin.AuthorMode")</option>
+                    #end
+                    
+                </select>
+            #end
+            #else
+                #set ($var=$!{request.getAttribute("switchBackUrl")})
+                #if($!var.lastIndexOf('?')>0)
+                    #set($switchBackUrl="$var&switchBackReuest=true")
+                    #else
+                        #set($switchBackUrl="$var?switchBackReuest=true")
+                #end
+                <a href="$!switchBackUrl" style="color:#999999;font-size:9px;text-decoration:none;">$brander.getBrandElement("lms.login.switchback")</a>
+        #end
+        |#if($hasSwitchedAuth) <a href="switchexituser.do" class="log-out" >$brander.getBrandElement("lms.login.switchback")</a>
+            #else 
+               #LogoutURL($brander $logoutSuccessUrl)
+        #end
+    </div>
+</div>
+<div id="tooltipForPageList" class="tooltip" ></div> 
+<script>window['adrum-start-time'] = new Date().getTime();</script><script src="javascript/adrum.js"></script>

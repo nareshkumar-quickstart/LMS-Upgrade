@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script language="javascript" type="text/javascript">
+    
+	function FormSubmit3(buttonclick) {
+        if ($("INPUT[type='checkbox'][name='selectedCourses']:checked").length>0) {
+            document.searchManageForm.action.value=buttonclick;
+            document.searchManageForm.submit();
+        } else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+	
+	function doSearch(buttonclick) {
+		if (buttonclick != "") {
+			document.getElementById('action').value = buttonclick;
+		}		
+		document.searchManageForm.submit();
+	} 
+	
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='selectedCourses']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedCourses']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedCourses']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+</script>
+</head>
+
+<body>
+<!-- main-container -->
+<div id="main-container">
+<form name="searchManageForm" id="searchManageForm" method="post" action="ins_addCourseInCourseGroup.do">
+
+	<!-- header -->
+	#parse("snippets/instructor/instructorWizardHeader.vm")
+	<!-- header-end -->
+	
+	<!-- content-area -->
+	<div id="frame_body">
+		
+		<!-- left-pannel-content -->
+        <div id="sideBar" class="side_bar">
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.leftPanel.step1.title")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.leftPanel.caption.step1")</div>                
+            </div>
+        </div>
+        <!-- left-pannel-content - end -->
+		
+		<!-- right-pannel -->
+		<div id="right-pannel" class="scrollable">
+			<!-- Logo+Manage-User -->
+			<div class="page_description" id="pageDescription">
+				<!-- Page Icon -->
+				<div id="logoHolder" class="courseLogoCourses">&nbsp;</div>
+				<!-- Page Heading -->
+				<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.caption.title")</div>
+				<!-- Page Description -->
+				<div id="pageDescriptionText">$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.caption.subtitle")</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Search Box -->
+			<div class="search_box_result" style="border-bottom:none">
+				<!-- Search input window -->
+				<div id="searchBox" class="visible" style="height:142px;width:273px;">	
+					<div style="padding: 5px">$brander.getBrandElement("lms.instructor.searchCourses.caption.searchCourses")</div>
+                    <div style="padding: 5px">
+						<div style="width:75px; float:left">$brander.getBrandElement("lms.instructor.searchSynchronousCourse.caption.courseName") </div> 
+						<div style="float:left">
+							<input type="text" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}" name="courseTitle" value="$!{context.courseTitle}" style="font-size:9px; width:170px" class="search_field" />							
+						</div>
+						<br style="clear:both" />
+					</div>
+						
+					<div style="padding: 5px">
+						<div style="width:75px; float:left">$brander.getBrandElement("lms.instructor.searchSynchronousCourse.caption.courseID") </div>
+						<div style="float:left">
+							<input type="text" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}"  name="courseId" value="$!{context.courseId}" style="font-size:9px; width:170px" class="search_field" />								
+						</div>
+						<br style="clear:both" />
+					</div>
+					
+					<div style="padding: 5px">
+						<div style="width:75px; float:left">$brander.getBrandElement("lms.instructor.searchSynchronousCourse.caption.courseType") </div>
+						<div style="float:left">  
+							<select name="courseType" style="width: 172px; margin-left: 0px; border: 1px solid rgb(222, 221, 221);" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}"  >
+							#foreach($courseType in ${context.courseTypes})										 
+								<option value="$courseType" #if($courseType == $!{context.courseType}) selected #end>$courseType</option>										
+							#end
+							</select>
+						</div>
+						<br style="clear:both" />
+					</div>
+					
+					<div style="float:right; margin-top:2px; margin-right:27px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="return doSearch('advanceSearch');">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                        <div class="btn_end"></div>
+                    </div>					
+                </div><!-- Search input window -->
+				
+				<!-- Result Header Start -->
+                <div id="resultHeader" class="box_header">
+									
+					<!-- Search & Pagination -->
+                    <div class="result_left_side" style="width:55%;border:0px solid red;">
+                    
+						<!-- Button panel -->
+						<div style="float:left; height:23px;">	
+							<div class="table-heading"></div>
+						</div>
+						<!-- Button panel - end -->
+						
+						<!-- Search Button Start -->
+						<div style="float: left; margin-top: 3px; margin-left: 10px;">
+						  <div>
+							  <a onClick="showSearchBox(document.getElementById('srch'));">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnSearch")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+					   </div>
+						<!-- Search Button End -->
+					   						
+						<!-- Pagination -->						
+						<!-- Show All Icon -->
+						#if (($!{context.totalRecords} > 0) && ( ($!{context.recordShowing} != $!{context.totalRecords}) || ($!{context.pageIndex} > 0)) )
+						<div id="showAll" class="icon_all" onClick="doSearch('showAll');"  onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+						#end
+						
+						<!-- Next/Back Icon -->
+	                    #if($!{context.totalRecords}==-1)
+	                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+	                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+	                    #else
+                            <!-- Next Icon -->
+							#if($!{context.recordShowing} == $!{context.totalRecords})
+								<div id="goNext" class="icon_disabled">&nbsp;</div>
+							#else
+								<div id="goNext" onClick="doSearch('showNext');" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>								
+							#end						
+							<!-- Back Icon -->
+							#if ($!{context.pageIndex} == 0)
+								<div id="goBack" class="icon_disabled">&nbsp;</div>
+							#else
+								<div id="goBack" onClick="doSearch('showPrev');" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>								
+							#end
+						#end
+						
+						<!-- Showing Results -->
+	                    #set($lPpageNum = $!{context.pageIndex} * 10 + 1)
+	                    #set($rPpageNum = $!{context.recordShowing})
+	                    <div id="resultDescription" class="box_description">#if($!{context.totalRecords} <= 0) Showing 0 - 0 of 0 #else Showing $lPpageNum - $rPpageNum of $!{context.totalRecords} #end</div>							
+                         
+                    </div>
+                </div>
+				<!-- Result Header End -->
+				
+				<!-- Search Result Start -->
+                <div id="searchResult">
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						#if ($context.sortDirection == 0)
+							#set ($sortIconClass = 'icon_up')
+						#else
+							#set ($sortIconClass = 'icon_down')
+						#end
+						<tr bgcolor="#efefef">
+							<td class="check_box_top" style="padding-left:0px;" width="2%"><input type="checkbox" id="chkAll" name="selectedLearner"/></td> 
+							<td class="box_subheader" style="height: 25px; padding-left: 5px; width:80%;" >$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.table.title.courseName")</td>							
+							<td class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;" >$brander.getBrandElement("lms.instructor.manageCourseGroup.course.add.table.title.courseType")</td>
+						</tr>
+					#if ($!{context.totalRecords} > 0)
+                        #foreach($course in ${context.courseList})
+                            #if($velocityCount%2==0)
+								#set($alternate="row_2")
+                            #else
+								#set($alternate="row_1")
+                            #end
+                            <tr>
+                                <td class="$alternate" width="17" style="padding-left:0px;">
+									<input type="checkbox" name="selectedCourses" value="${course.getId()}" id="chk$velocityCount" />
+								</td>
+                                <td class="$alternate" ><a href="ins_viewCourse.do?method=viewCourseSummary&id=${course.getId()}&start=1" style="text-decoration: underline;" title="$!{course.getCourseTitle()}">#dotPaddingWithOutTitle($!{course.getCourseTitle()}, 50)</a></td>
+								<td class="$alternate" style="border-right:none" title="$!{course.getCourseId()}"> #dotPaddingWithOutTitle($!{course.getCourseType()}, 50)</td>
+                            </tr>
+						#end
+					#else
+                            <tr>
+                                <td colspan="3" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                    <div class="result_blank">#if($request.getAttribute("newPage")) To search click on the Search button above. #else $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #end</div>
+                                </td>
+                            </tr>
+					#end
+					</table>					
+				</div>
+			</div>
+			
+			<!-- Wizard Footer button-div -->
+           <div style="float: right; margin-top:15px; margin-right:0px;">
+				<div>												
+					<a onClick="javascript:FormSubmit3('update');">
+						<div class="btn_start"></div>
+						<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnFinish")</div>
+						<div class="btn_end"></div>
+					</a>
+				</div>
+			</div>      
+			
+			<div style="float: left; margin-top:15px; margin-left:10px;">
+				<div>
+					<a href="ins_viewCourseGroupCourses.do?courseGroupId=$!{context.courseGroup.id}">
+						<div class="btn_start"></div>
+						<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnCancel")</div>
+						<div class="btn_end"></div>
+					</a>
+				</div>
+			</div>
+			<!-- Wizard Footer button-div - end -->
+			
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+		</div>		
+		<!-- right-pannel end -->
+		
+		<!-- hidden fields -->
+		<input id="action" type="hidden" name="action" value="${context.action}" />
+		<input id="pageIndex" type="hidden" name="pageIndex" value="${context.pageIndex}" />
+		<input type="hidden" name="courseGroupId" id="courseGroupId" value="$context.courseGroup.id"/>
+
+    </div>
+    <!-- content-area end -->
+    
+    <!-- footer -->
+    #parse("snippets/instructor/instructorFooter.vm")
+    <!-- footer-end -->
+	
+	<!-- tooltip -->
+    
+    <!-- tooltip -->
+</form>
+</div>
+<!-- main-container end -->
+
+</body>
+</html>
+
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+		    <div style="float: right; margin-top: 3px; margin-left: 1px;">
+				  <div>
+					  <a onClick="">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+						  <div class="btn_end"></div>
+					  </a>
+				  </div>
+				  
+			   </div>               
+			  
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->

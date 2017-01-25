@@ -1,0 +1,107 @@
+SET TRANSACTION ISOLATION LEVEL read uncommitted;
+#set ($numFields = $selectedFields.size())
+#set ($count = 1)
+
+#set ($filters = $filters.replaceFirst("WHERE", "AND"))
+#set ($filters = $filters.replaceFirst("DISTRIBUTOR_ID", "DIST.ID"))
+
+SELECT DISTINCT
+#foreach( $field in $selectedFields)
+ #if ($field.dbColumnName.equalsIgnoreCase("CUSTOMERNAME") )
+  CUS.NAME as 'CUSTOMERNAME' #if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTNAME") )
+  CUS.FIRSTNAME + ' ' + CUS.LASTNAME AS 'CONTACTNAME'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("REPNAME") )
+  NULL AS 'REPNAME'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTPHONENUMBER") )
+  CUS.PHONENUMBER as 'CONTACTPHONENUMBER'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTEMAILADDRESS") )
+  CUS.EMAIL as 'CONTACTEMAILADDRESS'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTENTLIBRARY") )
+  CASE CG.ROOTCOURSEGROUP_ID WHEN 1205 THEN
+    (CASE WHEN PCG4.NAME IS NULL THEN
+      (CASE WHEN PCG3.NAME IS NULL THEN
+        (CASE WHEN PCG2.NAME IS NULL THEN
+          (CASE WHEN PCG1.NAME IS NULL THEN
+            (CASE WHEN PCG.NAME IS NULL THEN CG.NAME ELSE CG.NAME END)
+          ELSE PCG.NAME END)
+        ELSE PCG1.NAME END)
+      ELSE PCG2.NAME END)
+    ELSE PCG3.NAME END)
+  ELSE cg.NAME END as 'CONTENTLIBRARY'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTENTPARTNER") )
+  RP.ROYALTYPARTNERNAME 'CONTENTPARTNER'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERUSERS") )
+  COUNT(DISTINCT LRN.ID) AS 'NUMBERUSERS'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERENROLLMENTS") )
+  COUNT(DISTINCT LE.ID) AS 'NUMBERENROLLMENTS'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERAUTHORIZEDUSERS") )
+  NULL AS 'NUMBERAUTHORIZEDUSERS'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERAUTHORIZEDSEATS") )
+  SUM(CASE CE.ALLOWUNLIMITEDENROLLMENTS WHEN 1 THEN 1000000 ELSE CE.SEATS END) 'NUMBERAUTHORIZEDSEATS'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("PERCENTUSERSFILLED") )
+  NULL AS 'PERCENTUSERSFILLED'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERCOMPLETEDCOURSES") )
+  SUM(CASE LCS.COMPLETED WHEN 1 THEN 1 ELSE 0 END) AS 'NUMBERCOMPLETEDCOURSES'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERCOURSEHOURSCOMPLETED") )
+  SUM(CASE LCS.COMPLETED WHEN 1 THEN CRS.CEUS ELSE 0 END )AS 'NUMBERCOURSEHOURSCOMPLETED'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("NUMBERINPROGRESSCOURSES") )
+  SUM(CASE LCS.STATUS WHEN 'inprogress' THEN 1 ELSE 0 END) AS 'NUMBERINPROGRESSCOURSES'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTRACTNAME") )
+  CE.NAME AS 'CONTRACTNAME'#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CE.ENDDATE") )
+  CE.ENDDATE AS 'CE.ENDDATE'#if ($count < $numFields),#end
+  #end #set ($count = $count + 1)
+#end
+FROM
+  DISTRIBUTOR DIST
+  JOIN CUSTOMER CUS ON DIST.ID = CUS.DISTRIBUTOR_ID
+  LEFT OUTER JOIN CUSTOMERENTITLEMENT CE ON CUS.ID = CE.CUSTOMER_ID
+  JOIN LEARNER LRN ON CUS.ID = LRN.CUSTOMER_ID
+  LEFT OUTER JOIN LEARNERENROLLMENT LE ON LRN.ID = LE.LEARNER_ID AND LE.CUSTOMERENTITLEMENT_ID = CE.ID
+  LEFT OUTER JOIN LEARNERCOURSESTATISTICS LCS ON LE.ID = LCS.LEARNERENROLLMENT_ID
+  LEFT OUTER JOIN COURSE CRS ON LE.COURSE_ID = CRS.ID
+  LEFT OUTER JOIN ROYALTYPARTNER RP ON CRS.ROYALTYPARTNER_ID = RP.ID
+  LEFT OUTER JOIN COURSE_COURSEGROUP CCG ON CRS.ID = CCG.COURSE_ID
+  LEFT OUTER JOIN COURSEGROUP CG ON CCG.COURSEGROUP_ID = CG.ID
+  LEFT OUTER JOIN COURSEGROUP PCG ON CG.PARENTCOURSEGROUP_ID = PCG.ID
+  LEFT OUTER JOIN COURSEGROUP PCG1 ON PCG.PARENTCOURSEGROUP_ID = PCG1.ID
+  LEFT OUTER JOIN COURSEGROUP PCG2 ON PCG1.PARENTCOURSEGROUP_ID = PCG2.ID
+  LEFT OUTER JOIN COURSEGROUP PCG3 ON PCG2.PARENTCOURSEGROUP_ID = PCG3.ID
+  LEFT OUTER JOIN COURSEGROUP PCG4 ON PCG3.PARENTCOURSEGROUP_ID = PCG4.ID
+WHERE
+  CUS.CUSTOMERTYPE = 'B2B'
+  AND (CRS.COURSESTATUS IS NULL OR CRS.COURSESTATUS = 'Published') 
+  AND (LE.ENROLLMENTSTATUS IS NULL OR LE.ENROLLMENTSTATUS = 'Active')
+  #if($filters) $filters #end 
+#set ($first = true)
+#foreach( $field in $selectedFields)
+  #if ($field.dbColumnName.equalsIgnoreCase("CUSTOMERNAME") )
+     #if($first) GROUP BY #set($first = false) #else,#end CUS.NAME
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTNAME") )
+     #if($first) GROUP BY #set($first = false) #else,#end CUS.FIRSTNAME,CUS.LASTNAME
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTPHONENUMBER") )
+     #if($first) GROUP BY #set($first = false) #else,#end CUS.PHONENUMBER
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTACTEMAILADDRESS") )
+     #if($first) GROUP BY #set($first = false) #else,#end CUS.EMAIL
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTENTLIBRARY") )
+  #if($first) GROUP BY #set($first = false)#else,#end CASE CG.ROOTCOURSEGROUP_ID WHEN 1205 THEN
+    (CASE WHEN PCG4.NAME IS NULL THEN
+      (CASE WHEN PCG3.NAME IS NULL THEN
+        (CASE WHEN PCG2.NAME IS NULL THEN
+          (CASE WHEN PCG1.NAME IS NULL THEN
+            (CASE WHEN PCG.NAME IS NULL THEN CG.NAME ELSE CG.NAME END)
+          ELSE PCG.NAME END)
+        ELSE PCG1.NAME END)
+      ELSE PCG2.NAME END)
+    ELSE PCG3.NAME END)
+  ELSE cg.NAME END#if ($count < $numFields),#end
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTENTPARTNER") )
+  #if($first) GROUP BY #set($first = false) #else,#end RP.ROYALTYPARTNERNAME
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CONTRACTNAME") )
+  #if($first) GROUP BY #set($first = false) #else,#end CE.NAME
+  #elseif ($field.dbColumnName.equalsIgnoreCase("CE.ENDDATE") )
+  #if($first) GROUP BY #set($first = false) #else,#end CE.ENDDATE
+  #end
+#end
+#if($sorting)$sorting#end

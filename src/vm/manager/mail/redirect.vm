@@ -1,0 +1,25 @@
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title> Redirecting to Announcement </title>
+#set($ssn=$!{request.getSession(true)})
+#set($cancelUrl = $ssn.getAttribute("cancelUrl"))
+</head>
+<script>
+		#if(! $cancelUrl)
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0017", $userData, $ssn))
+				document.location="mgr_alertCourse.do";
+			#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0019", $userData, $ssn))
+				document.location="mgr_viewAssignSurveyMain.do";
+			#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0020", $userData, $ssn))
+				document.location="mgr_manageSurveys.do";
+			#end
+		#else
+			document.location="$cancelUrl";
+		#end
+	</script>
+	<body>
+		
+	</body>
+
+</html>

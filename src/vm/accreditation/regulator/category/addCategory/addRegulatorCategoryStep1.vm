@@ -1,0 +1,697 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+        <script language="javascript" type="text/javascript">
+
+            $(document).ready(function(){
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+				
+                $("#toggleIconSummary").click(function() {
+                    toggleView('toggleIconSummary', 'collapsibleSummary');
+                });
+                $("#toggleIconReporting").click(function() {
+                    toggleView('toggleIconReporting', 'collapsibleReporting');
+                });
+                $("#toggleIconValidation").click(function() {
+                    toggleView('toggleIconValidation', 'collapsibleValidation');
+                });
+                $("#toggleIconDeliveryMethod").click(function() {
+                    toggleView('toggleIconDeliveryMethod', 'collapsibleDeliveryMethod');
+                });
+                $("#toggleIconRequiremtnInformation").click(function() {
+                    toggleView('toggleIconRequiremtnInformation', 'collapsibleRequiremtnInformation');
+                });
+                $("#toggleIconPreAssesInformation").click(function() {
+                    toggleView('toggleIconPreAssesInformation', 'collapsiblePreAssesInformation');
+                });
+                $("#toggleIconQuizInformation").click(function() {
+                    toggleView('toggleIconQuizInformation', 'collapsibleQuizInformation');
+                });
+                $("#toggleIconFinalAssesmentInformation").click(function() {
+                    toggleView('toggleIconFinalAssesmentInformation', 'collapsibleFinalAssesmentInformation');
+                });
+                $("#toggleIconEndUserInfo").click(function() {
+                    toggleView('toggleIconEndUserInfo', 'collapsibleEndUserInfo');
+                });
+                $("#toggleIconApprovalInfo").click(function() {
+                    toggleView('toggleIconApprovalInfo', 'collapsibleApprovalInfo');
+                });
+                $("#toggleIconForCustomField").click(function() {
+                    toggleView('toggleIconForCustomField', 'collapsibleCustomField');
+                });
+                $("#toggleAddrInfo").click(function() {
+                    toggleView('toggleAddrInfo', 'collapsibleAddrInfo');
+                });
+            });
+
+            function checkAnswer(objCheckBox){
+                if(objCheckBox.checked){
+                    document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+                }else {
+                    document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+                }
+            }
+
+            function stateChangeFormSubmit(dropdown) {
+                if (dropdown.name=="regulator.address.country")
+                {          
+                    document.getElementById('city1').value="";
+                }
+                document.getElementById('wizardSubmitter').name = '_target0';
+                document.getElementById('validateVariable').value='false';
+                document.regulatorCategoryForm.submit();
+            }
+
+            function setValidate() {            
+                document.getElementById('validateVariable').value='true';
+            }
+		
+            function showOtherOption(obj){		 	
+                if(obj.value=="other"){               
+                    document.getElementById("otherJurisdictionTr").style.visibility = "visible";
+                }else{            
+                    document.getElementById("otherJurisdictionTr").style.visibility = "hidden";
+                }			
+            }
+        </script>
+        <style>
+		html, body{
+			overflow-x:auto!important;
+		}
+		#scrollable{
+			overflow:auto!important;
+		}
+		</style>
+    </head>
+
+    <body>
+        <form name="regulatorCategoryForm" method="post" action="acc_addRegulatorCategory.do">
+
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- Header starts -->
+                        #parse("snippets/managerWizardHeader.vm")
+                        <!-- Header ends -->
+                    </td></tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-sidebar" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <div>
+                                <div id="l-menu-back">
+                                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.addRegulator.leftMenu.caption.addRegulatorCategoryWizard")<br>$brander.getBrandElement("lms.accraditation.addRegulator.leftMenu.caption.showing1of2")</div>
+                                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.addRegulator.leftMenu.caption.summary")</div>            
+                                    <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addRegulator.leftMenu.caption.confirmation")</div>
+                                </div>
+                            </div>
+
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable">
+
+                            #springBind("regulatorCategoryForm.*")
+                            #if($status.error)
+                                ##parse("snippets/errorMessage.vm")
+				                <!-- error-box -->
+				                 <div id="message_box">
+				                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				                        #foreach($errorCode in $status.errorCodes)
+						                    #set ($error = $brander.getBrandElement($errorCode))
+							                <div class="width40pct">
+							                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+							                    <div class="message_box_align">$error</div>
+							                </div>
+							               #end
+				                </div>
+				                <!-- error-box -->
+                                
+                            #end
+
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accraditation.editRegulator.addCategory")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorDescription")</div>
+                                    </td>
+                                </tr>
+                            </table>					
+
+                            <div class="search_box_result">
+                                <div id="toggleIconSummary" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editRegulator.tabs.summary")</span></div>
+                                <div id="collapsibleSummary">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                        <tr>
+                                            <td width="17%"><span class="row_text">$brander.getBrandElement("lms.accraditation.editRegulator.categoryType.caption")</span></td>
+                                            #springBind("regulatorCategoryForm.categoryType")
+                                            <td style="width:15px;">
+                                                <div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div>
+                                            </td>
+                                            <td>
+                                                <select #if($status.error) class="empty-required-field" #else class="select-med" #end
+                                                    name="${status.expression}" id="${status.expression}" tabindex="1">
+                                                    <option #if("" == "$!{status.value.toUpperCase()}") selected="selected" #end>Select Category Type</option>
+                                                    #foreach ( $type in ${categoryTypes} )
+                                                    <option value="$type" #if($type == $!{status.value}) selected #end>$type</option>
+                                                    #end
+                                                </select>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.editRegulator.displayName")</span></td>
+                                            #springBind("regulatorCategoryForm.displayName")
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div></td>
+                                            <td colspan="4"><input type="text" name="${status.expression}" value="$!{status.value}" maxlength="250" tabindex="2" style="width: 99%" #if($status.error) class="empty-required-field" #end/></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div style="height:20px;"></div>
+                            <div class="search_box_result">
+                                <div id="toggleIconReporting" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.reportingSchedule.caption")</span></div>
+                                <div id="collapsibleReporting">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                        <tr>
+                                            <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.reportingRequired.caption")</span></td>
+                                            #springBind("regulatorCategoryForm.reportingRequired")
+                                            <td style="width:15px;"></td>
+											<td>
+												<input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+												<div class="radio-text">Yes</div>
+												<input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+												<div class="radio-text">No</div>
+											</td>
+											<td></td>
+											<td style="width:15px;"></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.reportingTimeframe.caption")</span></td>
+											#springBind("regulatorCategoryForm.reportingTimeframeStr")
+											<td style="width:15px;"></td>
+											<td>
+												<input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" maxlength="250" />
+												$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.daysFromCompletionDate.caption")
+											</td>
+											<td width="15%"></td>
+											<td style="width:15px;"></td>
+											<td></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+
+                            <div style="height:20px;"></div>
+                            <div class="search_box_result">
+                                <div id="toggleIconValidation" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.validation.caption")</span></div>
+                                <div id="collapsibleValidation">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                        <tr>
+                                            <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.validationRequired.caption")</span></td>
+                                            #springBind("regulatorCategoryForm.validationRequired")
+                                            <td style="width:15px;"></td>
+                                            <td>
+                                                <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                       <div class="radio-text">Yes</div>
+                                                    <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                           <div class="radio-text">No</div>
+                                                        </td>
+                                                        <td></td>
+                                                        <td style="width:15px;"></td>
+                                                        <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.validationFrequency.caption")</span></td>
+                                                            #springBind("regulatorCategoryForm.validationFrequencyStr")
+                                                            <td style="width:15px;"></td>
+                                                            <td>
+                                                                <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" maxlength="250" />
+                                                                       $brander.getBrandElement("lms.accraditation.regulator.category.editCategory.timesPerHour.caption")
+                                                        </td>
+                                                        <td width="15%"></td>
+                                                        <td style="width:15px;"></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    </table>
+                                                    </div>
+                                                    </div>
+
+                                                    <div style="height:20px;"></div>
+
+                                                    <div class="search_box_result">
+                                                        <div id="toggleIconDeliveryMethod" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.deliveryMethod.caption")</span></div>
+                                                        <div id="collapsibleDeliveryMethod">
+                                                            <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                <tr>
+                                                                    <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.deliveryMethod.modalitiesAllowed.caption")</span></td>
+                                                                    #springBind("regulatorCategoryForm.modalitiesAllowed")
+                                                                    <td style="width:15px;"></td>
+                                                                    <td>
+                                                                        #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.deliveryMethod.modalitiesAllowed.modalitiesTypes"))
+                                                                        #set($modalitySet = false)
+                                                                        #foreach ($option in $options)
+                                                                        #foreach ($modality in $status.value)
+                                                                        #if( $option.value.toUpperCase() == $modality.name.toUpperCase())
+                                                                        #set($modalitySet = true)
+                                                                        #end
+                                                                        #end
+
+                                                                        #if($modalitySet == true)
+                                                                        <input type="checkbox" value="$option.value" name="modalities" class="checkbox" checked="true">
+                                                                            #else
+                                                                            <input type="checkbox" value="$option.value" name="modalities" class="checkbox">
+                                                                                #end
+                                                                                <div class="checkbox-text">$option.value</div>
+                                                                                #set($modalitySet = false)
+                                                                                #end
+                                                                                </td>
+                                                                                <td></td>
+                                                                                <td style="width:15px;"></td>
+                                                                                <td></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.deliveryMethod.maxOnlineHours.caption")</span></td>
+											#springBind("regulatorCategoryForm.maximumOnlineHoursStr")
+                                                                                    <td style="width:15px;"></td>
+                                                                                    <td><input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" /></td>
+                                                                                    <td width="15%"></td>
+                                                                                    <td style="width:15px;"></td>
+                                                                                    <td></td>
+                                                                                </tr>
+                                                                                </table>
+                                                                                </div>
+                                                                                </div>
+
+                                                                                <div style="height:20px;"></div>
+
+                                                                                <div class="search_box_result">
+                                                                                    <div id="toggleIconRequiremtnInformation" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.requirementinformation.caption")</span></div>
+                                                                                    <div id="collapsibleRequiremtnInformation">
+                                                                                        <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                            <tr>
+                                                                                                <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.requirementinformation.minSeatTime.caption")</span></td>
+                                                                                                #springBind("regulatorCategoryForm.minimumSeatTimeStr")
+                                                                                                <td style="width:15px;"></td>
+                                                                                                <td>
+                                                                                                    <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                           #springBind("regulatorCategoryForm.minimimumSeatTimeUnit")
+                                                                                                           #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.requirementinformation.minSeatTimeType"))
+                                                                                                           <select  class="select-small" name="${status.expression}" id="${status.expression}" tabindex="1">
+                                                                                                            #foreach ($objState in $options)
+                                                                                                            #if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}")
+                                                                                                            <option value="$objState.value" selected="$objState.label">$objState.label</option>
+                                                                                                            #else
+                                                                                                            <option value="$objState.value">$objState.label</option>
+                                                                                                            #end
+                                                                                                            #end
+                                                                                                        </select>
+                                                                                                </td>
+                                                                                                <td></td>
+                                                                                                <td style="width:15px;"></td>
+                                                                                                <td></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.requirementinformation.preAssesmentRequired.caption")</span></td>
+											#springBind("regulatorCategoryForm.preAssessmentRequired")
+                                                                                                <td style="width:15px;"></td>
+                                                                                                <td>
+                                                                                                    <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                           <div class="radio-text">Yes</div>
+                                                                                                        <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                               <div class="radio-text">No</div>
+                                                                                                            </td>
+                                                                                                            <td width="15%"></td>
+                                                                                                            <td style="width:15px;"></td>
+                                                                                                            <td></td>
+                                                                                                            </tr>
+                                                                                                            <tr>
+                                                                                                                <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.requirementinformation.quizRequired.caption")</span></td>
+											#springBind("regulatorCategoryForm.quizRequired")
+                                                                                                                <td style="width:15px;"></td>
+                                                                                                                <td>
+                                                                                                                    <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                           <div class="radio-text">Yes</div>
+                                                                                                                        <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                               <div class="radio-text">No</div>
+                                                                                                                            </td>
+                                                                                                                            <td width="15%"></td>
+                                                                                                                            <td style="width:15px;"></td>
+                                                                                                                            <td></td>
+                                                                                                                            </tr>
+                                                                                                                            <tr>
+                                                                                                                                <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.requirementinformation.finalAssesmentRequired.caption")</span></td>
+											#springBind("regulatorCategoryForm.finalAssessmentRequired")
+                                                                                                                                <td style="width:15px;"></td>
+                                                                                                                                <td>
+                                                                                                                                    <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                           <div class="radio-text">Yes</div>
+                                                                                                                                        <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                               <div class="radio-text">No</div>
+                                                                                                                                            </td>
+                                                                                                                                            <td width="15%"></td>
+                                                                                                                                            <td style="width:15px;"></td>
+                                                                                                                                            <td></td>
+                                                                                                                                            </tr>
+                                                                                                                                            </table>
+                                                                                                                                            </div>
+                                                                                                                                            </div>
+
+                                                                                                                                            <div style="height:20px;"></div>
+
+                                                                                                                                            <div class="search_box_result">
+                                                                                                                                                <div id="toggleIconPreAssesInformation" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.preAssesmentInformation.caption")</span></div>
+                                                                                                                                                <div id="collapsiblePreAssesInformation">
+                                                                                                                                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                                                                                        <tr>
+                                                                                                                                                            <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.preAssesmentInformation.passingRate.caption")</span></td>
+                                                                                                                                                            #springBind("regulatorCategoryForm.preAssessmentPassingRatePercentageStr")
+                                                                                                                                                            <td style="width:15px;"></td>
+                                                                                                                                                            <td>
+                                                                                                                                                                <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />&nbsp;%
+                                                                                                                                                        </td>
+                                                                                                                                                        <td></td>
+                                                                                                                                                        <td></td>
+                                                                                                                                                        <td></td>
+                                                                                                                                                    </tr>
+                                                                                                                                                    <tr>
+                                                                                                                                                        <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.preAssesmentInformation.numOfQuestions.caption")</span></td>
+											#springBind("regulatorCategoryForm.preAssessmentNumberOfQuestionsStr")
+                                                                                                                                                        <td></td>
+                                                                                                                                                        <td>
+                                                                                                                                                            <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                                                                    </td>
+                                                                                                                                                    <td width="15%"></td>
+                                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                                    <td></td>
+                                                                                                                                                </tr>
+                                                                                                                                            </table>
+                                                                                                                                        </div>
+                                                                                                                                    </div>
+
+                                                                                                                                    <div style="height:20px;"></div>
+
+                                                                                                                                    <div class="search_box_result">
+                                                                                                                                        <div id="toggleIconQuizInformation" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.quizInformation.caption")</span></div>
+                                                                                                                                        <div id="collapsibleQuizInformation">
+                                                                                                                                            <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                                                                                <tr>
+                                                                                                                                                    <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.quizInformation.passingRate.caption")</span></td>
+                                                                                                                                                    #springBind("regulatorCategoryForm.quizPassingRatePercentageStr")
+                                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                                    <td>
+                                                                                                                                                        <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />&nbsp;%
+                                                                                                                                                </td>
+                                                                                                                                                <td ></td>
+                                                                                                                                                <td></td>
+                                                                                                                                                <td></td>
+                                                                                                                                            </tr>
+                                                                                                                                            <tr>
+                                                                                                                                                <td ><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.quizInformation.numOfQuestions.caption")</span></td>
+											#springBind("regulatorCategoryForm.quizNumberOfQuestionsStr")
+                                                                                                                                                <td ></td>
+                                                                                                                                                <td>
+                                                                                                                                                    <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                                                            </td>
+                                                                                                                                            <td width="15%"></td>
+                                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                            <td></td>
+                                                                                                                                        </tr>
+                                                                                                                                    </table>
+                                                                                                                                </div>
+                                                                                                                            </div>
+
+                                                                                                                            <div style="height:20px;"></div>
+
+                                                                                                                            <div class="search_box_result">
+                                                                                                                                <div id="toggleIconFinalAssesmentInformation" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.finalAssesmentInformation.caption")</span></div>
+                                                                                                                                <div id="collapsibleFinalAssesmentInformation">
+                                                                                                                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                                                                        <tr>
+                                                                                                                                            <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.finalAssesmentInformation.passingRate.caption")</span></td>
+                                                                                                                                            #springBind("regulatorCategoryForm.finalAssessmentPassingRatePercentageStr")
+                                                                                                                                            <td style="width:15px;"></td>
+                                                                                                                                            <td>
+                                                                                                                                                <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />&nbsp;%
+                                                                                                                                        </td>
+                                                                                                                                        <td ></td>
+                                                                                                                                        <td style="width:15px;"></td>
+                                                                                                                                        <td></td>
+                                                                                                                                    </tr>
+                                                                                                                                    <tr>
+                                                                                                                                        <td><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.finalAssesmentInformation.numOfQuestions.caption")</span></td>
+                                                                                                                                        #springBind("regulatorCategoryForm.finalAssessmentNumberOfQuestionsStr")
+                                                                                                                                        <td style="width:15px;"></td>
+                                                                                                                                        <td>
+                                                                                                                                            <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                                                    </td>
+                                                                                                                                    <td></td>
+                                                                                                                                    <td></td>
+                                                                                                                                    <td></td>
+                                                                                                                                </tr>
+                                                                                                                            </table>
+                                                                                                                        </div>
+                                                                                                                    </div>
+
+                                                                                                                    <div style="height:20px;"></div>
+
+                                                                                                                    <div class="search_box_result">
+                                                                                                                        <div id="toggleIconEndUserInfo" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.caption")</span></div>
+                                                                                                                        <div id="collapsibleEndUserInfo">
+                                                                                                                            <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                                                                <tr>
+                                                                                                                                    <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.certificate.caption")</span></td>
+                                                                                                                                    #springBind("regulatorCategoryForm.certificate")
+                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                    <td>
+                                                                                                                                        #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.endUserInformation.certificateTypes"))
+                                                                                                                                        <select class="select-med" name="${status.expression}" id="${status.expression}">
+                                                                                                                                            #foreach ($objState in $options)
+                                                                                                                                            #if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}")
+                                                                                                                                            <option value="$objState.value" selected="$objState.label">$objState.label</option>
+                                                                                                                                            #else
+                                                                                                                                            <option value="$objState.value">$objState.label</option>
+                                                                                                                                            #end
+                                                                                                                                            #end
+                                                                                                                                        </select>
+                                                                                                                                    </td>
+                                                                                                                                    <td ></td>
+                                                                                                                                    <td ></td>
+                                                                                                                                    <td></td>
+                                                                                                                                </tr>
+                                                                                                                                <tr>
+                                                                                                                                    <td ><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.reporting.caption")</span></td>
+                                                                                                                                    #springBind("regulatorCategoryForm.reporting")
+                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                    <td>
+                                                                                                                                        #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.endUserInformation.reportingTypes"))
+                                                                                                                                        <select class="select-med" name="${status.expression}" id="${status.expression}">
+                                                                                                                                            #foreach ($objState in $options)
+                                                                                                                                            #if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}")
+                                                                                                                                            <option value="$objState.value" selected="$objState.label">$objState.label</option>
+                                                                                                                                            #else
+                                                                                                                                            <option value="$objState.value">$objState.label</option>
+                                                                                                                                            #end
+                                                                                                                                            #end
+                                                                                                                                        </select>
+                                                                                                                                    </td>
+                                                                                                                                    <td ></td>
+                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                    <td></td>
+                                                                                                                                </tr>
+                                                                                                                                <tr>
+                                                                                                                                    <td style="width: 15%;vertical-align: top"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.reciprocityNotes.caption")</span></td>
+											#springBind("regulatorCategoryForm.reciprocityNotes")
+                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                    <td colspan="4">
+                                                                                                                                        <textarea class="textarea-lrg" name="${status.expression}" value="$!{status.value}"></textarea>
+                                                                                                                                    </td>
+                                                                                                                                </tr>
+                                                                                                                                <tr>
+                                                                                                                                    <td colspan="2" style="font-size: 11px;width: 15%; height: 40px;vertical-align: center;"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.repeatable.caption")</span></td>
+											#springBind("regulatorCategoryForm.repeatable")
+                                                                                                                                    
+                                                                                                                                    <td colspan="4">
+                                                                                                                                        <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                               <div class="radio-text">Yes</div>
+                                                                                                                                            <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                                   <div class="radio-text">No</div>
+                                                                                                                                                </td>
+                                                                                                                                                </td>
+                                                                                                                                                </tr>
+                                                                                                                                                <tr>
+                                                                                                                                                    <td style="width: 15%;vertical-align: top"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.endUserInformation.repeatabilityNotes.caption")</span></td>
+                                                                                                                                                    #springBind("regulatorCategoryForm.repetabilityNotes")
+                                                                                                                                                    <td style="width:15px;"></td>
+                                                                                                                                                    <td colspan="4">
+                                                                                                                                                        <textarea class="textarea-lrg" name="${status.expression}" value="$!{status.value}"></textarea>
+                                                                                                                                                    </td>
+                                                                                                                                                </tr>
+                                                                                                                                                </table>
+                                                                                                                                                </div>
+                                                                                                                                                </div>
+
+                                                                                                                                                <div style="height:20px;"></div>
+
+                                                                                                                                                <div class="search_box_result">
+                                                                                                                                                    <div id="toggleIconApprovalInfo" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                                                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.approvalInformation.caption")</span></div>
+                                                                                                                                                    <div id="collapsibleApprovalInfo">
+                                                                                                                                                        <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" class="content-input-table">
+                                                                                                                                                            <tr>
+                                                                                                                                                                <td width="18%"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.approvalInformation.providerApprovalRequired.caption")</span></td>
+                                                                                                                                                                #springBind("regulatorCategoryForm.providerApprovalRequired")
+                                                                                                                                                                <td style="width:15px;"></td>
+                                                                                                                                                                <td>
+                                                                                                                                                                    <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                                                           <div class="radio-text">Yes</div>
+                                                                                                                                                                        <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                                                               <div class="radio-text">No</div>
+                                                                                                                                                                            </td>
+                                                                                                                                                                            <td ></td>
+                                                                                                                                                                            <td style="width:15px;"></td>
+                                                                                                                                                                            <td></td>
+                                                                                                                                                                            </tr>
+                                                                                                                                                                            <tr>
+                                                                                                                                                                                <td ><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.approvalInformation.providerApprovalPeriod.caption")</span></td>
+                                                                                                                                                                                #springBind("regulatorCategoryForm.providerApprovalPeriodStr")
+                                                                                                                                                                                <td style="width:15px;"></td>
+                                                                                                                                                                                <td>
+                                                                                                                                                                                    <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                                                                                                           #springBind("regulatorCategoryForm.providerApprovalPeriodUnit")
+                                                                                                                                                                                           #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.approvalInformation.providerApprovalPeriod.types"))
+                                                                                                                                                                                           <select  class="select-small" name="${status.expression}" id="${status.expression}">
+                                                                                                                                                                                            #foreach ($objState in $options)
+                                                                                                                                                                                            #if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}")
+                                                                                                                                                                                            <option value="$objState.value" selected="$objState.label">$objState.label</option>
+                                                                                                                                                                                            #else
+                                                                                                                                                                                            <option value="$objState.value">$objState.label</option>
+                                                                                                                                                                                            #end
+                                                                                                                                                                                            #end
+                                                                                                                                                                                        </select>
+                                                                                                                                                                                </td>
+                                                                                                                                                                                <td></td>
+                                                                                                                                                                                <td></td>
+                                                                                                                                                                                <td></td>
+                                                                                                                                                                            </tr>
+                                                                                                                                                                            <tr>
+                                                                                                                                                                                <td style="width: 15%;vertical-align: top"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.approvalInformation.courseApprovalRequired.caption")</span></td>
+                                                                                                                                                                                #springBind("regulatorCategoryForm.courseApprovalRequired")
+                                                                                                                                                                                <td style="width:15px;"></td>
+                                                                                                                                                                                <td colspan="4">
+                                                                                                                                                                                    <input class="radio" type="radio" value="Yes" #if ($!{status.value} == true) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                                                                           <div class="radio-text">Yes</div>
+                                                                                                                                                                                        <input class="radio" type="radio" value="No"  #if ($!{status.value} == false) checked="true" #end class="radio" name="${status.expression}" />
+                                                                                                                                                                                               <div class="radio-text">No</div>
+                                                                                                                                                                                            </td>
+                                                                                                                                                                                            </tr>
+                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                <td style="width: 15%;vertical-align: top"><span class="row_text">$brander.getBrandElement("lms.accraditation.regulator.category.editCategory.approvalInformation.courseApprovalPeriod.caption")</span></td>
+                                                                                                                                                                                                #springBind("regulatorCategoryForm.courseApprovalPeriodStr")
+                                                                                                                                                                                                <td style="width:15px;"></td>
+                                                                                                                                                                                                <td colspan="4">
+                                                                                                                                                                                                    <input type="text" #if($status.error) class="error-field" #else class="input_text_field_tiny" #end name="${status.expression}" value="$!{status.value}" />
+                                                                                                                                                                                                           #springBind("regulatorCategoryForm.courseApprovalPeriodUnit")
+                                                                                                                                                                                                           #set($options = $brander.getBrandMapElements("lms.accraditation.regulator.category.editCategory.approvalInformation.courseApprovalPeriod.types"))
+                                                                                                                                                                                                           <select class="select-small" name="${status.expression}" id="${status.expression}">
+                                                                                                                                                                                                            #foreach ($objState in $options)
+                                                                                                                                                                                                            #if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}")
+                                                                                                                                                                                                            <option value="$objState.value" selected="$objState.label">$objState.label</option>
+                                                                                                                                                                                                            #else
+                                                                                                                                                                                                            <option value="$objState.value">$objState.label</option>
+                                                                                                                                                                                                            #end
+                                                                                                                                                                                                            #end
+                                                                                                                                                                                                        </select>
+                                                                                                                                                                                                </td>
+                                                                                                                                                                                                </td>
+                                                                                                                                                                                            </tr>
+                                                                                                                                                                                            </table>
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                            </div>
+
+                                                                                                                                                                                            <div style="height:20px;"></div>
+                                                                                                                                                                                            <div class="search_box_result">
+                                                                                                                                                                                                <div id="toggleIconForCustomField" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                                                                                                                                                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editRegulator.caption.customfields")</span></div>
+                                                                                                                                                                                                <div id="collapsibleCustomField">
+                                                                                                                                                                                                    #springBind("regulatorCategoryForm.customFields")
+                                                                                                                                                                                                    #if($status.value.size()>0)
+                                                                                                                                                                                                    <table border="0" width="98%" cellpadding="0" cellspacing="3">
+                                                                                                                                                                                                        #set($count=0)
+                                                                                                                                                                                                        #foreach($customField in $status.value)
+                                                                                                                                                                                                        #set($id = "customField$count")
+                                                                                                                                                                                                        #set($name = "customFields[$count].customFieldValueRef")
+                                                                                                                                                                                                        #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                                                                                                                                                                                                        #set($customFieldIdentifire = "customFields[$count]")
+                                                                                                                                                                                                        $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+                                                                                                                                                                                                        #set($count=$count+1)
+                                                                                                                                                                                                        #end
+                                                                                                                                                                                                    </table>
+                                                                                                                                                                                                    #end
+                                                                                                                                                                                                </div>
+                                                                                                                                                                                            </div>
+
+                                                                                                                                                                                            <input type="hidden" id="currentpage" name="_page" value="0" />
+                                                                                                                                                                                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                                                                                                                                                                                            <div class="btn-div">
+                                                                                                                                                                                                <div style="float:right; margin-top:15px;">
+                                                                                                                                                                                                    <a onClick="submitButtonForm(document.regulatorCategoryForm,'wizardSubmitter','_target1');">
+                                                                                                                                                                                                        <div class="btn_start"></div>
+                                                                                                                                                                                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Next")</div>
+                                                                                                                                                                                                        <div class="btn_end"></div>
+                                                                                                                                                                                                    </a>
+                                                                                                                                                                                                </div>	
+
+                                                                                                                                                                                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                                                                                                                                                                                    <a onClick="javascript:window.location='acc_manageRegulator.do?method=listRegulatorCategories';">
+                                                                                                                                                                                                        <div class="btn_start"></div>
+                                                                                                                                                                                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                                                                                                                                                                                        <div class="btn_end"></div>
+                                                                                                                                                                                                    </a>
+                                                                                                                                                                                                </div>  
+                                                                                                                                                                                            </div>	
+
+                                                                                                                                                                                            <!-- bottom-space -->
+                                                                                                                                                                                            <div class="manage-bottom-space"></div>
+                                                                                                                                                                                            <!-- bottom-space -->
+
+                                                                                                                                                                                            </div>
+                                                                                                                                                                                            </td></tr>
+                                                                                                                                                                                            <!-- Body End -->
+                                                                                                                                                                                            <tr> <!-- Footer BLOCK -->
+                                                                                                                                                                                                <td id="footer" colspan="2">
+                                                                                                                                                                                                    <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                                                                                                                                                                                                    <!-- Footer End -->
+                                                                                                                                                                                                </td></tr>
+                                                                                                                                                                                            </table>
+                                                                                                                                                                                            </form>
+                                                                                                                                                                                            </body>
+                                                                                                                                                                                            </html>

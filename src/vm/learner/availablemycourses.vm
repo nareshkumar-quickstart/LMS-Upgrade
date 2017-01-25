@@ -1,0 +1,660 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style type="text/css" >
+body{
+font-family:Tahoma, Verdana, Arial;
+font-size:11px;
+color:#000000;
+}
+.process_window, .process_window_shadow{
+
+width:400px;
+height:140px;
+padding-top:15px;
+padding-left:15px;
+background-color:#F7F7F7;
+border:1px;
+border-style:solid;
+border-color:#E8E8E8;
+left:312px;
+position:absolute;
+top:40%;
+z-index:0;
+}
+.process_window_shadow{
+margin-left:4px;
+margin-top:4px;
+background-color:#F1F1F1;
+border:none;
+z-index:-1;
+}
+.icon_clock{
+float:left;
+height:55px;
+width:57px;
+margin-left:5px;
+background-image:url(brands/default/en/images/clock.gif);
+background-repeat:no-repeat;
+}
+.process_heading{
+float:left;
+width:300px;
+font-size:18px;
+margin-top:17px;
+margin-left:10px;
+font-weight:bold;
+}
+.processing_text{
+float:left;
+width:500px;
+padding-left:7px;
+margin-top:20px;
+}
+.bars_container{
+float:left;
+height:21px;
+width:375px;
+margin-top:10px;
+margin-left:5px;
+border:1px;
+border-color:#E8E8E8;
+background-color:#FF0000;
+border-style:solid;
+z-index:1;
+}
+.progress_bar, .status_bar{
+position:absolute;
+height:21px;
+width:375px;
+background-color:#FFFFFF;
+}
+.status_bar{
+background-image:url('brands/default/en/images/bluePercentBar.gif');
+z-index:2;
+}
+</style>
+#parse("snippets/learnerNewHead.vm")
+
+<script language="javascript" type="text/javascript">
+//jQuery Functions
+$(function(){
+  
+
+    $('#bar-side-bar1').css('width', $(window).width() - 253 - 31);
+    $("#sideBar").css("height");
+    $(".level1").css("height", $(window).height() - 142);
+    $(".sc").css("height", $(window).height() - 230);
+    $(".custom-scrollbar").css("height",$(".sc").css("height"));
+	
+	if ($(".sc").height()<$(".sc").parent().height()){
+	
+	$(".custom-scrollbar").css("display","none");
+	
+	}
+    $('.scrollable').css('height',  $(window).height() -  $('.bar-shoppingcart-curve').height() - 115 + 'px')
+    $('.scrollable_3').css('height',  $(window).height() -  $('.bar-shoppingcart-curve').height() - 115 + 'px')
+    $("#transcriptBox").height($(window).height() - $("#frame_header").height() - $(".tab_bar").height() - $("#frame_footer").height() - $("#pageDescription").height() - 76);
+
+  if($('#sideBar').css('width') != undefined){
+        
+        $('.scrollable').css('width', $(window).width() - 230 + 'px');
+        $('.scrollable_3').css('width', $(window).width() - 232 + 'px');
+    }else{
+    //
+    }
+
+    $('#table-frame').css('width', $('.scrollable').width() - 40 + 'px');
+
+$(window).resize(function(){
+        $(".level1").css("height", $(window).height() - 142);
+        $(".sc").css("height", $(window).height() - 19);
+        $(".custom-scrollbar").css("height",$(".sc").css("height"));
+        $('.scrollable').css('height',  $(window).height() -  $('.bar-shoppingcart-curve').height() - 115 + 'px')
+        $('.scrollable_3').css('height',  $(window).height() -  $('.bar-shoppingcart-curve').height() - 115 + 'px')
+        if( $(window).width() > 400 && $('#sideBar').css('width') != undefined){
+            $('.scrollable').css('width', $(window).width() - 230 + 'px');
+            $('.scrollable_3').css('width', $(window).width() - 232 + 'px');
+        }
+        $('#table-frame').css('width', $('.scrollable').width() - 40 + 'px');
+    });
+
+
+$("#sideBar").mouseenter(function(){
+        $(".flyout-menu").css("display", "none");
+    });
+
+    	function flyoutmenu_l1(cid, lid){
+        $(".flyout-menu").height($(window).height() - 144)
+     
+        $("#"+cid).mouseenter(function(){
+            $("#"+lid).css("top", "87px");
+            $("#"+lid).css("left", "203px");
+            $(".flyout-menu").css("display", "none");
+            $("#"+lid).fadeIn();
+
+            if($("#"+lid).find("ul").height() > $("#"+lid).height()){
+              $("#"+lid).find(".custom-scrollbar").css("display", "block");
+            }else{
+              $("#"+lid).find(".custom-scrollbar").css("display", "none");
+            }
+
+            $("#"+lid).find(".custom-scrollbar").find(".scroller").height($(".sc").height() -  ($(".sc ul").height() - $(".sc").height()));
+
+        });
+
+    }
+
+    function flyoutmenu_l2(cid, lid){
+        $(".flyout-menu").height($(window).height() - 144)
+
+        $("#"+cid).mouseenter(function(){
+            $("#"+lid).css("top", "87px");
+            $("#"+lid).css("left", "426px");
+            $("#level2").find(".flyout-menu").css("display", "none");
+            $("#"+lid).fadeIn();
+
+            if($("#"+lid).find("ul").height() > $("#"+lid).height()){
+              $("#"+lid).find(".custom-scrollbar").css("display", "block");
+            }else{
+              $("#"+lid).find(".custom-scrollbar").css("display", "none");
+            }
+
+            $("#"+lid).find(".custom-scrollbar").find(".scroller").height($(".sc").height() -  ($(".sc ul").height() - $(".sc").height()));
+
+        });
+
+    }
+
+        function flyoutmenu_l3(cid, lid){
+        $(".flyout-menu").height($(window).height() - 144)
+
+        $("#"+cid).mouseenter(function(){
+            $("#"+lid).css("top", "87px");
+            $("#"+lid).css("left", "649px");
+            $("#level3").find(".flyout-menu").css("display", "none");
+            $("#"+lid).fadeIn();
+
+            if($("#"+lid).find("ul").height() > $("#"+lid).height()){
+              $("#"+lid).find(".custom-scrollbar").css("display", "block");
+            }else{
+              $("#"+lid).find(".custom-scrollbar").css("display", "none");
+            }
+
+            $("#"+lid).find(".custom-scrollbar").find(".scroller").height($(".sc").height() -  ($(".sc ul").height() - $(".sc").height()));
+
+        });
+
+    }
+    $("#rootlevel").mouseover(function(e){
+        $(".level1").scrollTop(e.pageY-114);
+        if(e.pageY + $(".scroller").height() - 170> $(".sc").height()){
+            //
+
+        }else{
+            $(".scroller").css("top", e.pageY -170)
+        }
+    });
+
+    $(".sc").mouseover(function(e){
+        $(this).scrollTop(e.pageY-170);
+        if(e.pageY + $(".scroller").height() - 170> $(".sc").height()){
+            //
+        }else{
+            $(".scroller").css("top", e.pageY -170)
+        }
+    });
+
+
+
+${context.catalogMap.jsFunctions}
+
+#foreach ($courseGroup in ${context.catalogMap.courseGroupsList})
+$('#$courseGroup.id').click(function(){
+$('#$courseGroup.id').attr("class", "")
+$(this).attr("class", "selected-category")		
+#foreach ($courseGroup in ${context.catalogMap.courseGroupsList})
+$('#$courseGroup.id').attr("class", "")
+$(this).attr("class", " ")
+#end
+$('#$courseGroup.id').attr("class", "")
+$(this).attr("class", "selected-category")
+});
+#end
+
+function flyoutmenuhide_l1(lid){
+$("#"+lid).mouseleave(function(){
+$("#"+lid).fadeOut();
+});
+}
+
+});
+		
+
+</script>
+<script language="javascript" type="text/javascript">
+var launchWindow;
+function launchCourse(courseId, enrollmentId) {
+var url = "#springUrl("/lrn_launchCourse.do")";
+var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+if ( launchWindow != null ) {
+launchWindow.close();
+}
+launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+launchWindow.focus();
+launchWindow.opener=this.window;
+}
+
+function findCourseType(courseId) {
+#foreach ($courseGroup in ${context.catalogMap.courses})    		    		
+	#foreach ($course in ${courseGroup.getCourses()}))    					 				
+			if('${course.courseId}' == courseId)
+			{    					
+				if($course.type.equals("Scorm Course"))
+				{
+					return true;
+		    	}
+		    }			    			
+	#end
+#end
+	return false;
+}
+
+
+       function ie_ver(){  
+	    var iev=0;
+	    var ieold = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
+	    var trident = !!navigator.userAgent.match(/Trident\/7.0/);
+	    var rv=navigator.userAgent.indexOf("rv:11.0");
+	
+	    if (ieold) iev=new Number(RegExp.$1);
+	    if (navigator.appVersion.indexOf("MSIE 10") != -1) iev=10;
+	    if (trident&&rv!=-1) iev=11;
+	
+	    return iev;         
+   }
+
+function selfEnroll(courseId) {
+stopBothTimers();
+
+        	
+IS_LS360_SCORM = false;
+IS_LS360_SCORM = findCourseType(courseId);
+
+var url = "#springUrl("/lrn_selfEnrollment.do")";
+var params = "?courseId="+courseId +"&method=displayLearnerProfile";
+if ( launchWindow != null ) {
+launchWindow.close();
+}
+var launchHeight = screen.height;
+var launchWidth = screen.width;
+if ( launchWindow != null ) {
+launchWindow.close();
+}
+if(ie_ver() > 0){
+launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1366,height=768,left=0,top=0');
+launchWindow.focus();
+launchWindow.opener=this.window;
+}
+else{
+var launchHeight = screen.height;
+var launchWidth = screen.width;
+launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=launchWidth,height=launchHeight,left=0,top=0');
+if (launchWindow.outerWidth < screen.availWidth || launchWindow.outerHeight < screen.availHeight)
+	{
+	            launchWindow.moveTo(0,0);
+	            launchWindow.resizeTo(screen.availWidth, screen.availHeight);
+	}
+launchWindow.focus();
+launchWindow.opener=this.window;
+}
+}
+
+
+function selfEnroll(courseId, courseType) {
+stopBothTimers();
+IS_LS360_SCORM = false;        	
+IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+        	
+var url = "#springUrl("/lrn_selfEnrollment.do")";
+var params = "?courseId="+courseId +"&method=displayLearnerProfile";
+if ( launchWindow != null ) {
+launchWindow.close();
+}
+if(ie_ver() > 0){
+launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1366,height=768,left=0,top=0');
+launchWindow.focus();
+launchWindow.opener=this.window;
+}
+else{
+var launchHeight = screen.height;
+var launchWidth = screen.width;
+launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=launchWidth,height=launchHeight,left=0,top=0');
+if (launchWindow.outerWidth < screen.availWidth || launchWindow.outerHeight < screen.availHeight)
+	{
+	            launchWindow.moveTo(0,0);
+	            launchWindow.resizeTo(screen.availWidth, screen.availHeight);
+	}
+launchWindow.focus();
+launchWindow.opener=this.window;
+}
+}
+
+/*This script helps to show the tooltip on the text element.*/
+function showToolTip(id) {
+document.getElementById(id).style.display = 'block';
+}
+function hideToolTip(id) {
+document.getElementById(id).style.display = 'none';
+}
+$(document).ready(function(){
+
+$('#level0').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+$('#level1').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+$(".flyout-menu").height($(window).height()+10 - ($('#header').height()+$('#footer').height()+$('#tabBar').height()+$('#tabBar').height()));		
+});	
+
+function searchSubmit(e)
+{
+var keycode;
+if (window.event) keycode = window.event.keyCode;
+else if (e) keycode = e.which;
+else return true;
+
+if (keycode == 13)
+{
+document.CourseForm.submit();
+return false;
+}
+else
+return true;
+}
+
+function getTrainingPlanCourses(tpId)
+{
+	document.getElementById("trainingPlanId").value = tpId;
+	document.CourseForm.submit();
+}
+
+function getCoursegroupCourses(cgId)
+{
+	document.getElementById("courseGroupId").value = cgId;
+	document.CourseForm.submit();
+}
+
+
+</script>
+#set ($dollar = "$")
+<script>
+## putting this in to keep the session alive while the user is in the course.
+## send message home every 20 minutes
+function keepAlive() {
+${dollar}.getJSON("#springUrl("/view.do?vm=keepalive")", function(json){
+setTimeout("keepAlive()",1200000);
+});
+}
+setTimeout("keepAlive()",1200000);
+</script>
+
+<!--script type="text/javascript" src="javascript/lmsSCORMAdapter.js"></script>
+<script>
+var API_1484_11 = new SCORMAdapter();
+var API = new SCORMAdapter();
+</script-->
+</head>
+<body>
+<form name="CourseForm" >
+<div id="main-container">
+<!-- header -->
+#parse("snippets/learnerNewHeader.vm")
+<!-- header-end -->
+<!-- search Bar -->
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+<input type="hidden" id="courseGroupId" name="courseGroupId" value=#if(!$context.courseGroupId)""#else"$context.courseGroupId"#end "/> 
+<input type="hidden" id="trainingPlanId" name="trainingPlanId" value=#if(!$context.trainingPlanId)""#else"$context.trainingPlanId"#end "/> 
+
+<input type="hidden" id="show" name="show" value="coursecatalog"/> 
+<div id="tabBar">
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tbody><tr>
+<td height="25" width="204" valign="top" id="bar-side-bar1" style="width: 1076px;">
+<div style="width: 204px;" class="side_bar"></div>
+</td>
+<td height="25" width="31" valign="top" class="bar-shoppingcart-curve">
+&nbsp;
+</td>
+<td height="25" width="253" valign="top" class="bar-shoppingcart-right">
+<div>
+<div class="searchfield-start"></div>
+<div class="searchfield-stem">
+<input type="text" onblur="this.value='Search'" onfocus="this.value=''" value="Search" onKeyPress="return searchSubmit(event);" id="search" name="search">
+</div>
+<a onclick="document.CourseForm.submit();">
+<div class="searchfield-end"></div>
+</a>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- search Bar end -->
+<div id="content2a">
+<div id="frame_body">
+<div class="side_bar" id="sideBar"  style="width:204px;">
+<div  id="rootlevel" >
+<div class="level0">
+<div id="sidebar-heading">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.Categories")</div>
+<div class="sc">
+<ul id="category-list">
+
+#foreach ($courseGroup in ${context.catalogMap.courseGroupsList})
+<li #if($velocityCount==1)  class="selected-category" #end id="$courseGroup.id" title="${courseGroup.name}" onclick="javascript:getCoursegroupCourses('$courseGroup.getId()');">$courseGroup.name</li>
+#end
+</ul>
+</div>  <div class="custom-scrollbar"><div class="scroller"></div></div>
+<div class="sidebar-heading" id="tp_1" style="margin-bottom: 10px;" title="Available Training Plans">Training Plans</div>
+<div id="mc_1" title="Available Miscellaneous Courses" class="sidebar-heading">Miscellaneous</div>
+
+</div>
+</div>
+</div>
+<div id="right-pannel"  style="padding-left:20px">
+
+<!-- Logo+Manage-User -->
+<div class="page_description" id="pageDescription">
+<div class="courseLogoCourses" id="pageIcon"></div>
+<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.pageHeading")</div>
+<div id="pageDescriptionText">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.pageDescriptionText")</div>
+ 
+</div>
+
+<!-- Logo+Manage-User-end -->
+<table width="100%" cellspacing="0" cellpadding="0" border="0" id="course-table">
+<tbody><tr>
+<td id="breadcrumb-text">
+You Are here: <u>$!{context.catalogMap.youAreHere}</u>
+</td>
+<td style="padding-right:20px">
+<div style="float:right;">
+<a href="lrn_myCourses.do">
+<div class="btn_start_1"></div>
+<div class="btn_normal_1">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.backToCoursesButton")</div>
+<div class="btn_end_1"></div>
+</a>
+</div>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+
+#set($courseGroupViews = $context.catalogMap.courses)		
+#foreach ($courseGroup in $courseGroupViews) 
+#set ($courseCounter = 0)
+<table id="course-list" width="98%" cellpadding="5" cellspacing="0" class="subvertical-table-1" style="border:1px solid  #CCCCCC;border-bottom:none;#if($velocityCount!=1)display:none;#end">
+<tr bgcolor="#efefef" style="border:1px solid #CCCCCC;">
+<td class="header" style="border-bottom:1px solid #CCCCCC;" colspan="2"><span >$courseGroup.groupName</span></td>
+</tr>
+
+#set ($evenOdd = 0)
+#foreach ($course in ${courseGroup.getCourses()})
+#set ($courseCounter = $courseCounter+1)
+#if(! $course.completionPercent)
+#set($remainingPct=100)
+#else
+#set($remainingPct=100-$!{course.completionPercent})
+#end
+#if( $evenOdd == 0 )
+#set( $evenOdd = 1 )
+#else
+#set($evenOdd = 0 )	
+#end
+<tr class=#if( $evenOdd == 0)"borderRow-alt" #else "borderRow" #end><td width="31" valign="top">
+<img src="$brander.getBrandElement("$course.get('courseIconToShow')")">
+</td>
+
+<td align="left" valign="top">
+<a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}" #else "javascript:selfEnroll('$!{course.courseId}','$!{$course.type}')"#end>$course.name</a>
+#if(!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))&& !$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))<br/>
+<span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">&nbsp;  </span>
+<a style="text-decoration:none;" class="$brander.getBrandElement("lms.mycourses.cssClass.view-details")" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType")">$brander.getBrandElement("lms.mycourses.viewDetails")</a>
+#end &nbsp; 
+</td>
+</tr>
+#* #else
+#set( $evenOdd = 0 )
+<tr class="borderRow"><td width="31">
+<img src=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"$brander.getBrandElement("lms.pixel.iconOnlineSync")"#else "$brander.getBrandElement("lms.pixel.iconOnlineGif")" #end>
+</td>
+<td width="80%" valign="top"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}" #else"javascript:selfEnroll('$!{course.courseId}','$!{$course.type}')"#end>$!{course.name}</a>#if(!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))&&!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))<br/><span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">&nbsp;  </span><a class="$brander.getBrandElement("lms.mycourses.cssClass.view-details")" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType")">$brander.getBrandElement("lms.mycourses.viewDetails")</a>#end&nbsp;</td>
+
+</tr>
+#end
+*#
+#end 
+#if($courseCounter == 0)
+<tr class="borderRow-alt"><td colspan="3" align="left" valign="top">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.infoText")</td></tr>
+#end
+</table>
+
+#end
+
+
+
+
+
+#set($courseGroupViews = $context.catalogMap.miscCourses)		
+#foreach ($courseGroup in $courseGroupViews) 
+#set ($courseCounter = 0)
+<table id="course-list" width="98%" cellpadding="5" cellspacing="0" class="subvertical-table-1" style="border:1px solid  #CCCCCC;border-bottom:none;#if($velocityCount!=1)display:none;#end">
+<tr bgcolor="#efefef" style="border:1px solid #CCCCCC;">
+<td class="header" style="border-bottom:1px solid #CCCCCC;" colspan="2"><span >$courseGroup.groupName</span></td>
+</tr>
+
+#set ($evenOdd = 0)
+#foreach ($course in ${courseGroup.getCourses()})
+#set ($courseCounter = $courseCounter+1)
+#if(! $course.completionPercent)
+#set($remainingPct=100)
+#else
+#set($remainingPct=100-$!{course.completionPercent})
+#end
+#if( $evenOdd == 0 )
+#set( $evenOdd = 1 )
+#else
+#set($evenOdd = 0 )	
+#end
+<tr class=#if( $evenOdd == 0)"borderRow-alt" #else "borderRow" #end><td width="31" valign="top">
+<img src="$brander.getBrandElement("$course.get('courseIconToShow')")">
+</td>
+
+<td align="left" valign="top">
+<a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}" #else "javascript:selfEnroll('$!{course.courseId}','$!{$course.type}')"#end>$course.name</a>
+#if(!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))&&!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))<br/>
+<span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">&nbsp;  </span>
+<a style="text-decoration:none;" class="$brander.getBrandElement("lms.mycourses.cssClass.view-details")" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType")">$brander.getBrandElement("lms.mycourses.viewDetails")</a>
+#end &nbsp; 
+</td>
+</tr>
+#* #else
+#set( $evenOdd = 0 )
+<tr class="borderRow"><td width="31">
+<img src=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"$brander.getBrandElement("lms.pixel.iconOnlineSync")"#else "$brander.getBrandElement("lms.pixel.iconOnlineGif")" #end>
+</td>
+<td width="80%" valign="top"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}" #else"javascript:selfEnroll('$!{course.courseId}','$!{$course.type}')"#end>$!{course.name}</a>#if(!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))&&!$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))<br/><span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">&nbsp;  </span><a class="$brander.getBrandElement("lms.mycourses.cssClass.view-details")" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType")">$brander.getBrandElement("lms.mycourses.viewDetails")</a>#end&nbsp;</td>
+
+</tr>
+#end
+*#
+#end 
+#if($courseCounter == 0)
+<tr class="borderRow-alt"><td colspan="3" align="left" valign="top">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.infoText")</td></tr>
+#end
+</table>
+
+#end
+
+
+</td>
+</tr>
+</tbody></table>
+<!-- <td align="center" valign="middle">
+#if( $course.courseStatus.equals("notstarted"))
+<span class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-blue")">
+$brander.getBrandElement("lms.learner.myAvailableCourses.caption.notStarted")&nbsp;
+</span>
+#elseif( $course.courseStatus.equals("complete"))
+<span id="c23" class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-green")">$brander.getBrandElement("lms.learner.myAvailableCourses.caption.Completed")</span>
+#else
+<img src="$brander.getBrandElement("lms.pixel.statusBarStartJpg")"><img src="$brander.getBrandElement("lms.pixel.progressBarJpg")" width="$!{course.completionPercent}" alt="$math.round($!{course.completionPercent})%" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarsJpg")" width="$remainingPct" alt="$math.round($!{course.completionPercent})%" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarEndJpg")">
+#end </td> -->
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+<!-- space -->
+</div>
+
+${context.catalogMap.subMenus}
+
+<!-- 
+#set($levelsMap = ${context.catalogMap.levelMap})
+#foreach ($key1 in ${levelsMap.keySet()})
+
+<div id="level$key1">
+#set($childCourseGroupsMap = ${levelsMap.get($key1)})
+#foreach ($key in ${childCourseGroupsMap.keySet()})
+
+<div class="flyout-menu" id="$key" style="height: 431px; top: 87px; left: 203px; display: block;">
+#set($courseGroupList = ${childCourseGroupsMap.get($key)})
+
+<div id="sidebar-heading-l2" title="${customerEntitlement.name}">#simpleDotPadding(${courseGroupList.get(0).getParentCourseGroup().getName()},16)</div>
+<ul>						
+#foreach ($courseGroup in $courseGroupList)
+<li id="$courseGroup.id" title="${courseGroup.name}">#simpleDotPadding(${courseGroup.name},23)</li>  
+#end
+</ul>
+</div>
+#end
+</div>
+#end
+ -->
+</div>
+</div>
+<!-- footer -->
+
+#parse("snippets/learnerNewFooter.vm")
+<!-- footer-end -->
+</div>
+</form>
+<div id="process" style="display:none;">
+<div class="process_window">
+<div class="icon_clock"></div>
+<div class="process_heading">$brander.getBrandElement("lms.learner.mycourses.caption.wait.defaulttext")</div>
+<div id="process_text" class="processing_text">$brander.getBrandElement("lms.learner.mycourses.caption.wpage.defaulttext")</div>
+<div class="bars_container">
+<div class="progress_bar"></div>
+<div id="status_bar" class="status_bar"></div>
+</div>
+</div>
+<div class="process_window_shadow"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+
+    var defaultRole = false;
+
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer',
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function FormSubmit(buttonclick) {
+        var rdDefaultRegY=document.getElementById('rdDefaultRegY').value;
+        if(document.getElementById('rdDefaultRegY') !=null || document.getElementById('defaultForRegistration') !=null){
+            if( document.getElementById('rdDefaultRegX') !=null && document.getElementById('rdDefaultRegX').checked && document.getElementById('defaultForRegistration') !=null && document.getElementById('defaultForRegistration').value == "false" ){
+                confirm("$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.manageLearnerGroup.deleteConfirm")", function () {
+                document.getElementById('action').value=buttonclick;
+                document.RoleForm.submit();
+                });
+            }
+            else{
+                document.getElementById('action').value=buttonclick;
+                document.RoleForm.submit();
+            }
+        }else{
+            document.getElementById('action').value=buttonclick;
+            document.RoleForm.submit();
+        }
+    }
+
+    function enableDependents(feature){
+        if(feature=="LMS-MGR-0011"){
+            var enabled_EnrollLearners=document.getElementById("enabled_EnrollLearners");
+            var disabled_EnrollLearners=document.getElementById("disabled_EnrollLearners");
+			if(enabled_EnrollLearners !=null)
+				enabled_EnrollLearners.disabled=false;
+			if(disabled_EnrollLearners !=null)
+				disabled_EnrollLearners.disabled=false;
+
+ 			var hid_prdEnrollLearners = document.getElementById("hid_prdEnrollLearners");
+            hid_prdEnrollLearners.value="false";				
+        }
+        if(feature=="LMS-MGR-0009"){
+            var enabled_AssignTrainingPlans=document.getElementById("enabled_AssignTrainingPlans");
+            var disabled_AssignTrainingPlans=document.getElementById("disabled_AssignTrainingPlans");
+            if(enabled_AssignTrainingPlans !=null)
+				enabled_AssignTrainingPlans.disabled=false;
+			if(disabled_AssignTrainingPlans !=null)
+				disabled_AssignTrainingPlans.disabled=false;
+			
+			var hid_prdAssignTrainingPlans = document.getElementById("hid_prdAssignTrainingPlans");
+            hid_prdAssignTrainingPlans.value="false";	
+        }
+        if(feature=="LMS-MGR-0006"){
+            var enabled_AssignSecurityRoles=document.getElementById("enabled_AssignSecurityRoles");
+            var disabled_AssignSecurityRoles=document.getElementById("disabled_AssignSecurityRoles");
+            if(enabled_AssignSecurityRoles !=null)
+				enabled_AssignSecurityRoles.disabled=false;
+            
+			if(disabled_AssignSecurityRoles !=null)
+				disabled_AssignSecurityRoles.disabled=false;
+			
+			 var hid_prdAssignSecurityRoles = document.getElementById("hid_prdAssignSecurityRoles");
+             hid_prdAssignSecurityRoles.value="false";	
+        }
+    }
+
+    function disableDependents(feature){
+        if(feature=="LMS-MGR-0011"){
+            var enabled_EnrollLearners=document.getElementById("enabled_EnrollLearners");
+            var disabled_EnrollLearners=document.getElementById("disabled_EnrollLearners");
+           if(enabled_EnrollLearners !=null) {
+				enabled_EnrollLearners.checked=false;
+				enabled_EnrollLearners.disabled=true;
+			}
+			
+		    if(disabled_EnrollLearners !=null) {
+				disabled_EnrollLearners.checked=true;
+				disabled_EnrollLearners.disabled=true;
+			}
+			
+			var hid_prdEnrollLearners = document.getElementById("hid_prdEnrollLearners");
+            hid_prdEnrollLearners.value="true";
+        }
+        if(feature=="LMS-MGR-0009"){
+            var enabled_AssignTrainingPlans=document.getElementById("enabled_AssignTrainingPlans");
+            var disabled_AssignTrainingPlans=document.getElementById("disabled_AssignTrainingPlans");
+			if(enabled_AssignTrainingPlans !=null) {
+				enabled_AssignTrainingPlans.checked=false;
+				enabled_AssignTrainingPlans.disabled=true;
+			}
+			if(disabled_AssignTrainingPlans !=null)	{	
+				disabled_AssignTrainingPlans.checked=true;
+				disabled_AssignTrainingPlans.disabled=true;
+			}
+			
+	        var hid_prdAssignTrainingPlans = document.getElementById("hid_prdAssignTrainingPlans");
+        	hid_prdAssignTrainingPlans.value="true";
+        }
+        if(feature=="LMS-MGR-0006"){
+            var enabled_AssignSecurityRoles=document.getElementById("enabled_AssignSecurityRoles");
+            var disabled_AssignSecurityRoles=document.getElementById("disabled_AssignSecurityRoles");
+            if(enabled_AssignSecurityRoles !=null) {
+				enabled_AssignSecurityRoles.checked=false;
+				enabled_AssignSecurityRoles.disabled=true;
+			}
+			if(disabled_AssignSecurityRoles !=null) {
+				disabled_AssignSecurityRoles.checked=true;
+				disabled_AssignSecurityRoles.disabled=true;
+			}
+			
+			 var hid_prdAssignSecurityRoles = document.getElementById("hid_prdAssignSecurityRoles");
+             hid_prdAssignSecurityRoles.value="true";
+        }
+    }
+
+    function editDependents(feature){
+        if(feature=="LMS-MGR-0008"){
+            var enabled_EnrollLearners=document.getElementById("enabled_EnrollLearners");
+            var disabled_EnrollLearners=document.getElementById("disabled_EnrollLearners");
+            var disabled_ViewEntitlements=document.getElementById("disabled_ViewEntitlements");
+            if(disabled_ViewEntitlements != null && disabled_ViewEntitlements.checked){
+                if(enabled_EnrollLearners !=null){
+					enabled_EnrollLearners.checked=false;
+					enabled_EnrollLearners.disabled=true;
+				}
+				
+			    if(disabled_EnrollLearners !=null) {
+					disabled_EnrollLearners.checked=true;
+					disabled_EnrollLearners.disabled=true;
+				}
+            }
+        }
+        if(feature=="AssignTrainingPlans"){
+            var enabled_AssignTrainingPlans=document.getElementById("enabled_AssignTrainingPlans");
+            var disabled_AssignTrainingPlans=document.getElementById("disabled_AssignTrainingPlans");
+            var disabled_ManageTrainingPlans=document.getElementById("disabled_ManageTrainingPlans");
+            if(disabled_ManageTrainingPlans != null && disabled_ManageTrainingPlans.checked){
+				if(enabled_AssignTrainingPlans !=null){
+					enabled_AssignTrainingPlans.checked=false;
+					enabled_AssignTrainingPlans.disabled=true;
+				}
+				if(disabled_AssignTrainingPlans !=null) {
+					disabled_AssignTrainingPlans.checked=true;
+					disabled_AssignTrainingPlans.disabled=true;
+				}
+            }
+        }
+        if(feature=="LMS-MGR-0007"){
+            var enabled_AssignSecurityRoles=document.getElementById("enabled_AssignSecurityRoles");
+            var disabled_AssignSecurityRoles=document.getElementById("disabled_AssignSecurityRoles");
+            var disabled_ManageSecurityRoles=document.getElementById("disabled_ManageSecurityRoles");
+            if(disabled_ManageSecurityRoles != null && disabled_ManageSecurityRoles.checked){
+				if(enabled_AssignSecurityRoles !=null) {
+					enabled_AssignSecurityRoles.checked=false;
+					enabled_AssignSecurityRoles.disabled=true;
+				}
+			
+				if(disabled_AssignSecurityRoles !=null) {
+					disabled_AssignSecurityRoles.checked=true;
+					disabled_AssignSecurityRoles.disabled=true;
+				}
+            }
+        }
+    }
+	
+	function setFormField()
+	{
+		var enabled_AssignTrainingPlans = document.getElementById("enabled_AssignTrainingPlans");
+		var disabled_AssignTrainingPlans = document.getElementById("disabled_AssignTrainingPlans");
+		var enabled_EnrollLearners = document.getElementById("enabled_EnrollLearners");
+		var disabled_EnrollLearners = document.getElementById("disabled_EnrollLearners");
+		var enabled_AssignSecurityRoles = document.getElementById("enabled_AssignSecurityRoles");
+		var disabled_AssignSecurityRoles = document.getElementById("disabled_AssignSecurityRoles");
+	
+	
+		var disabled_ManageTrainingPlans = document.getElementById("disabled_ManageTrainingPlans");
+		if(disabled_ManageTrainingPlans.checked){
+				enabled_AssignTrainingPlans.disabled=true;
+                disabled_AssignTrainingPlans.disabled=true;
+                
+                var hid_prdAssignTrainingPlans = document.getElementById("hid_prdAssignTrainingPlans");
+                hid_prdAssignTrainingPlans.value="true";
+		}
+		
+		var disabled_ViewEntitlements = document.getElementById("disabled_ViewEntitlements");
+		if(disabled_ViewEntitlements.checked){
+				enabled_EnrollLearners.disabled=true;
+                disabled_EnrollLearners.disabled=true;
+                
+                var hid_prdEnrollLearners = document.getElementById("hid_prdEnrollLearners");
+                hid_prdEnrollLearners.value="true";
+        }        
+
+		var disabled_ManageSecurityRoles = document.getElementById("disabled_ManageSecurityRoles") ;          
+        if(disabled_ManageSecurityRoles.checked){        
+				enabled_AssignSecurityRoles.disabled=true;
+                disabled_AssignSecurityRoles.disabled=true;
+                
+                var hid_prdAssignSecurityRoles = document.getElementById("hid_prdAssignSecurityRoles");
+                hid_prdAssignSecurityRoles.value="true";
+		}	
+		
+		
+	}
+    $(document).ready(function(){
+       
+    });
+	
+	
+</script>
+</head>
+
+<body onload="setFormField()">
+<form name="RoleForm" method="post" action="">
+<input type="hidden" name="hid_prdAssignTrainingPlans" id="hid_prdAssignTrainingPlans">
+<input type="hidden" name="hid_prdEnrollLearners" id="hid_prdEnrollLearners">
+<input type="hidden" name="hid_prdAssignSecurityRoles" id="hid_prdAssignSecurityRoles">
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<!-- <div id="main-container"> --><!-- main-container -->
+        
+		<tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+<!-- <div id="main-container">-->
+              <!-- header -->
+              #if($userData.isLMSAdministrator() && $adminCurrentMode ==  'ROLE_LMSADMINISTRATOR')
+                   #parse("snippets/adminHeader.vm")
+              #else
+                 #parse("snippets/managerHeader.vm")
+              #end
+              <!-- header-end -->
+		    </td>
+		</tr>
+			  
+			  
+  <!--  <div id="content2a"> --></div>
+    <!-- content-area -->
+	<tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td  id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                   <!-- left-pannel-content -->
+                   #if($userData.isLMSAdministrator() && $adminCurrentMode == $brander.getBrandElement("lms.addSecurityRole.lmsRoleAdmin"))
+                      #parse("snippets/adminSecurityLeftMenu.vm")
+                   #else
+                      #parse("snippets/managerLeftMenu.vm")
+                   #end
+                   <!-- left-menu-content-end -->
+				</table>
+			</td>
+			
+        <!-- right-pannel-content -->
+     <!--   <div id="right-pannel"> -->
+	 
+	<TD id="content" >
+	<div id="scrollable">
+        #if($!{context.validateRoleName} || $!{context.validateDefaultForRegistration})
+                #set($errorCodes = [])
+                #set($temp = true)
+                #if($!{context.validateRoleName})
+                 #set($temp = $errorCodes.add(${context.validateRoleName}))
+                #end
+                #if($!{context.validateDefaultForRegistration})
+                 #set($temp = $errorCodes.add(${context.validateDefaultForRegistration}))
+                #end
+                <!-- error-box -->
+                <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                    </div>
+                #end
+                </div>
+                <!-- error-box -->
+            #end
+
+            <!-- Logo+Manage-User -->
+        	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	    		    <tr>
+	    			<td id="page-icon" class="page-icon-users">
+	    			    &nbsp;
+	    			</td>
+	    			<td id="page-description">
+	    			    <div id="page-heading">$brander.getBrandElement("lms.manageSecurityRoles.caption.viewSecurityRole")</div>
+	    			    <div id="page-help">$brander.getBrandElement("lms.manageSecurityRoles.caption.viewSecurityRoleText")</div>
+	    			</td>
+	    		    </tr>
+		</table> 
+            
+            <!-- Logo+Manage-User-end -->
+
+            <div style="float:left; margin-top:3px;">
+			  <a onClick="window.location.href='mgr_changeMemberRole.do?roleId=${context.roleToEdit.getId()}&roleType=${context.selectedType}'" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.addSecurityRole.changeMember")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- Details -->
+            <div class="content-Block">
+                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e13" class="Search-Containerheaderleft">Security role information</div>
+                </div>
+                #set($RoleToEdit=${context.roleToEdit})
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                    <!-- 1 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">Name</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")"><input type="text" value="$!{RoleToEdit.getRoleName()}" name="txtRoleName" class="input_field" maxlength="250" /></div>
+                    </div>
+                    <!-- 2 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.addSecurityRole.RoleType")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                            <select disabled class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1")" name="rdRoleType" type="select">
+                                    <option value="${RoleToEdit.getRoleType()}" selected>$brander.getBrandElement($brander.getBrandElement($RoleToEdit.roleType))</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- 3 $!{context.selectedType} -->
+                    #if($!{context.selectedType}=="ROLE_LEARNER")
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">Is the default role for new learners?</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                            #if($RoleToEdit.defaultForRegistration)
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" value="true" id="rdDefaultRegX" name="rdDefaultReg"  checked  #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" value="false" id="rdDefaultRegY" name="rdDefaultReg"  #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                            #else
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" value="true" id="rdDefaultRegX" name="rdDefaultReg"  #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" value="false" id="rdDefaultRegY" name="rdDefaultReg" checked  #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                            #end
+                            </div>
+                        </div>
+                    #else
+                        <div style="display: none;" ><input type="radio" value="dddd" id="rdDefaultRegY" name="rdDefaultReg" checked /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                    #end
+
+                    <input type="hidden" id="defaultForRegistration" name="defaultForRegistration" value="$RoleToEdit.defaultForRegistration" />
+                    <!-- 10 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.input_field_area-user")"></div>
+                    </div>
+                    <!--  -->
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- End-Details -->
+             <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- Permissions -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e13" class="Search-Containerheaderleft")">$brander.getBrandElement("lms.addSecurityRole.permissions")</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+
+		    		<!-- 1 -->
+		            <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+		                    #if(${context.selectedType}=="ROLE_TRAININGADMINISTRATOR")
+		                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsManagerPermission")</div>
+		                    #elseif(${context.selectedType}=="ROLE_REGULATORYANALYST")
+		                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsAccreditationPermission")</div>
+		                    #elseif(${context.selectedType}=="ROLE_INSTRUCTOR")
+		                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsInstructorPermission")</div>                                
+		                    #elseif(${context.selectedType}=="ROLE_LMSADMINISTRATOR")
+		                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsAdminPermission")</div>
+		                    #else
+		                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsLearnerPermission")</div>
+		                    #end
+		            </div>
+
+                    #set($Permissions=${context.finalPermissions})
+                    #set($permissionGroups=$context.permisionForm.getFeatureGroups())
+                    #foreach($permissionGroup in $permissionGroups)
+                        <!-- 2 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")" style="font-weight:bold;">$permissionGroup</div>
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                            </div>
+                        </div>
+                        #set($permissions=$context.permisionForm.getFeatures($permissionGroup))
+                        #foreach($Permission in $permissions)
+                            <!-- 3a -->
+                            <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                                <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                                <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")">$Permission.getLmsFeature().getFeatureName()</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+								
+                                    #if($Permission.getEnabled())
+                                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" id="enabled_$Permission.getLmsFeature().getFeatureCode()" onClick="enableDependents('$Permission.getLmsFeature().getFeatureCode()');" value="true" name="prd$Permission.getLmsFeature().getFeatureCode()" checked #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioEnabled") </div>
+                                        <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" id="disabled_$Permission.getLmsFeature().getFeatureCode()" onClick="disableDependents('$Permission.getLmsFeature().getFeatureCode()')" value="false" name="prd$Permission.getLmsFeature().getFeatureCode()" #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioDisabled") </div>
+                                    #else
+                                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" id="enabled_$Permission.getLmsFeature().getFeatureCode()" onClick="enableDependents('$Permission.getLmsFeature().getFeatureCode()');" value="true" name="prd$Permission.getLmsFeature().getFeatureCode()" #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioEnabled") </div>
+                                        <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" id="disabled_$Permission.getLmsFeature().getFeatureCode()" onClick="disableDependents('$Permission.getLmsFeature().getFeatureCode()')" value="false" name="prd$Permission.getLmsFeature().getFeatureCode()" checked #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioDisabled") </div>
+                                    #end
+                                    #if($Permission.getEnabled())
+                                        <script> editDependents('$Permission.getLmsFeature().getFeatureCode()'); </script>
+                                    #end
+                                </div>
+                            </div>
+                        #end
+                    #end
+                    <!-- Foreach for Permissions Ends-->
+
+                    <!-- 10 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.input_field_area-user")"></div>
+                    </div>
+                    <!--  -->
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- End-Permissions -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                <div style="float:right; margin-top:3px;margin-right:5px;">
+				  <a onClick="FormSubmit('Save');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Save</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				  <div style="float:right; margin-top:3px;margin-right:5px;">
+					  <a onClick="javascript:window.location='mgr_manageSecurityRoles.do';" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Cancel</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+                <input type="hidden" id="action" name="action" />
+            </div>
+            <!-- scrollable-div -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+        <!-- right-pannel-content-end -->
+      <!--  </div> -->
+	  		</td>
+    <!-- content-area-end -->
+   <!-- </div>-->
+   		</tr>
+	<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+                <!-- footer -->
+                #if($userData.isLMSAdministrator() && $adminCurrentMode ==  'ROLE_LMSADMINISTRATOR')
+                   #parse("snippets/adminFooter.vm")
+                #else
+                   #parse("snippets/managerFooter.vm")
+                #end
+			</td>
+	</tr>
+	</table>
+</form>
+
+<div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+    <div class='header'><span>$brander.getBrandElement("lms.addSecurityRole.messageBox.caption")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.addSecurityRole.defaultRegConfirm")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/dialogBox.js' ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                $('#frame_body').height($(window).height() - ($('#frame_header').height()+$('#footer').height()+$('#tabBar').height()));
+                if ($('#right-pannel').height()<$('#frame_body').height()) {
+                    $('#right-pannel').height($('#frame_body').height());
+                }            
+                $('#sideBar').height($('#right-pannel').height());
+                $('#chkAll').click(
+                    function(){
+                        $("INPUT[type='checkbox'][name='reportingField']").attr('checked', $('#chkAll').is(':checked'));
+                        $("INPUT[type='checkbox'][name='reportingField']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+                    }
+                )
+
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+            });
+
+            function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+            }
+
+            function unAssignReportingField(){
+                confirmDelete( //conditionResult, successMessage, failureMessage, successCallbackFunction
+                    ($("INPUT[type='checkbox'][name='reportingField']:checked").length>0)
+                    , "Are you sure you want to delete credit reporting field(s)?"
+                    , '$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")'
+                    , function () {
+                        document.getElementById('actionmethod').value='unAssignReportingFields';
+                        document.manageCategoryForm.submit();
+                    }
+                );
+            }
+
+            function changeRowColor(checkbox) {
+                var tr=checkbox.parentNode.parentNode;
+                var tdarr=$(tr).find("td");
+                if (checkbox.checked) {
+                    for(i=0;i<tdarr.size();i++){
+                        tdarr[i].style.background="#E9F9FE";
+                    }
+
+                } else {  
+                    for(i=0;i<tdarr.size();i++){
+                        tdarr[i].removeAttribute("style");
+                    }
+                }
+            }
+
+            function sortReportingField(sortColumnIndex,sortDirection,pageIndex,showAll){
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('pageIndex').value=pageIndex;
+                document.getElementById('actionmethod').value='showRegulatorCategoryReportingFields';
+                document.manageCategoryForm.submit();
+            }
+
+        </script>
+    </head>
+    <body>
+        <form name="manageCategoryForm" method="post" action="acc_manageRegulatorCategory.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+                        <!--Header Start -->
+		#parse("snippets/accreditation/accreditationDefaultHeader.vm")
+                        <!-- Header End -->
+                    </td></tr>
+
+                <!-- Tabs Start -->
+                <td  id="row-tabs" class="tab_bar" colspan="2">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td width="192"><div class="tab_blank"></div></td>
+                            <td>&nbsp;</td>
+                            <td width="620">
+                                <a onclick="javascript:window.location='acc_manageRegulatorCategory.do?method=editRegulatorCategory&id=${regulatorCategoryForm.id}'"><div class="tab">$brander.getBrandElement("lms.accraditation.editRegulator.tabs.summary")</div></a>
+                                <a href="#"><div class="tab_selected" style="width:110px">$brander.getBrandElement("lms.accraditation.editRegulator.reportingFields")</div></a>
+                                <a onClick="javascript:window.location='acc_manageRegulatorCategory.do?method=listRegulatorCategoryCustomFields';"><div class="tab">$brander.getBrandElement("lms.accraditation.editRegulator.customFields")</div></a>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </table>
+                </td>
+
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-navigation" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            #parse("snippets/accreditation/sidebar_regulator.vm")   
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable">
+		    #springBind("regulatorCategoryForm.*")
+                            #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                     #foreach($errorCode in $status.errorCodes)
+                                     #set ($error = $brander.getBrandElement($errorCode))
+                                     <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                    </div>
+                                    #end
+
+                            </div>
+                            <!-- error-box -->
+                            #end
+
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accreditation.editCategory.page.title")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.editCourseApproval.caption.document.subTitle")</div>
+                                    </td>
+                                </tr>
+                            </table>			
+                            <!-- Search Result Start -->
+                            <div id="resultBox" class="search_box_result">
+                                <!-- Result Header Start -->
+                                <div id="resultHeader" class="box_header">
+                                    <!-- Result Heading -->
+                                    <div style="float:left; height:23px;">
+                                        <div class="control-button-position"">
+                                             #springBind("regulatorCategoryForm.id")
+                                             <a onClick="javascript:window.location='acc_manageRegulatorCategory.do?method=showReportingFieldsForSelection&appID=$!{status.value}&entity=CredentialCategory';" >
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.AddReportingField")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+                                        <div class="control-button-position">
+                                            <a  onClick="unAssignReportingField();">
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >$brander.getBrandElement("lms.accraditation.editApproval.caption.DeleteReportingField")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!-- Result Header End -->
+                                    #springBind("regulatorCategoryForm.manageCreditReportingField")
+                                    $pager.setItems($!{status.value})
+                                    #set($totalCount = $pager.total)
+                                    #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                                    #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                                    #end
+                                    <input type="hidden" id="gridShowAll" name="showAll" value="false" />
+                                    <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                                    <input type="hidden" id="paging" name="paging" value="" />
+                                    <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                                    <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                                    <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                                    #if($!{context.showAll})
+                                    #set($showAll=${context.showAll})
+                                    #else
+                                    #set($showAll=false)
+                                    #end
+                                    <div class="result_left_side">
+                                        <!-- Result Description -->
+                                        <!-- All Icon -->
+                                        <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageRegulatorCategory.do?method=showRegulatorCategoryReportingFields&showAll=true';" value="Search" ></div>
+                                        <!-- Next Icon -->
+                                        #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" onclick="javascript:window.location='acc_manageRegulatorCategory.do?method=showRegulatorCategoryReportingFields&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                                        #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                        #end
+
+                                        <!-- Back Icon -->
+                                        #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" onclick="javascript:window.location='acc_manageRegulatorCategory.do?method=showRegulatorCategoryReportingFields&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                                        #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                        #end
+                                        <!-- Showing Results -->
+                                        #if($totalCount>1)
+                                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                                        #else
+                                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                                        #end
+                                    </div>  
+                                </div>
+
+                                <div id="searchResult_2">
+                                    #if($currentPageSize > 0)
+                                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                                        <tr bgcolor="#efefef">
+                                            <td class="check_box_top" width="2%"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                                            <td class="box_subheader" width="49%"><div #if($context.sortDirection == 0) onclick="sortReportingField(0,1,$pageCurrIndex,$showAll);" #else onclick="sortReportingField(0,0,$pageCurrIndex,$showAll);" #end ><div id="nameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.FieldName")</div></td>
+                                            <td class="box_subheader" width="49%" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="sortReportingField(1,1,$pageCurrIndex,$showAll);" #else onclick="sortReportingField(1,0,$pageCurrIndex,$showAll);" #end ><div id="jurisdictionSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Type")</div></td>
+                                        </tr>
+                                        #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                        #if($loopIndex%2 == 0)
+                                        #set($alternate="row_1")
+                                        #else
+                                        #set($alternate="row_2")
+                                        #end
+                                        <tr>
+                                            <td class="$alternate" width="17px" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none; border-left:none;" #else style="border-left:none;" #end>
+                                                #springBind("regulatorCategoryForm.manageCreditReportingField[$loopIndex].id")
+                                                <input type="checkbox" id="chk$loopIndex" name="reportingField" value="$!{status.value}" onclick="changeRowColor(this);" style="margin-left:-2px"/>
+                                            </td>
+                                            <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end>                                            
+                                                #springBind("regulatorCategoryForm.manageCreditReportingField[$loopIndex].fieldName")
+                                                $!{status.value}                                            
+                                        </td>
+                                        #springBind("regulatorCategoryForm.manageCreditReportingField[$loopIndex].fieldType")
+                                        <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none; border-right:none;" #else style="border-right:none;" #end>$!{status.value}</td>
+                                    </tr>
+                                    #end
+                                </table>
+                                #else
+                                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                                        <td class="box_subheader"><a onmousedown="switchSort('firstNameSort')"><div id="firstNameSort" class="icon_up" ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.FieldName")</a></td>
+                                        <td class="box_subheader" style="border-right:none;"><a onmousedown="switchSort('accountSort')"><div id="accountSort" class="icon_up" ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Type")</a></td>
+                                    </tr>
+
+                                </table>
+                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                #end
+
+                            </div>
+
+                        </div>
+                    </div>
+                </td></tr>
+            <!-- Body End -->
+            <tr> <!-- Footer BLOCK -->
+                <td id="footer" colspan="2">
+                    <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                    <!-- Footer End -->
+                </td></tr>
+        </table>
+
+        <!-- Alert Message Box -->
+	#parse("snippets/messageAlert.vm")				
+	<!-- Alert Message Box - Ends -->
+
+	<!-- Delete Message Box -->
+	#parse("snippets/deleteConfirmation.vm")
+	<!-- Delete Message Box - end-->
+    </form>
+</body>
+</html>

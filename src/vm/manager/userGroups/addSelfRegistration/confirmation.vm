@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    ## this must be included on every page for all head items
+    #parse("snippets/learnerNewHead.vm")
+
+ 	
+    <script src="javascript/360js.js" language="javascript" type="text/javascript"/>
+    <script type="text/javascript">
+        function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.manageform.submit();
+        }
+		
+		alert("confirmatin");
+    </script>
+</head>
+#macro( encryptedPassword $password )
+    #set($passwordLength = $password.length())
+    #set( $encPassword ='')
+        #foreach($i in [1..$passwordLength])
+        #set($encPassword="${encPassword}*")
+        #end
+    $encPassword
+#end
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+   			 <!-- header -->
+    		 #parse("snippets/managerWizardHeader.vm")
+    		 <!-- header-end -->
+			 </td>
+		</tr>
+		
+
+   <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-pannel-content -->
+        	 	<div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Self-Registration-Wizard") <br> showing 3 of 3</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Invitation-Details")</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Invitation-Message")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Confirmation")</div>
+                    </div>
+                </div>
+				</table>
+			</td>
+			
+        <!-- left-pannel-content-end -->
+
+        <TD id="content">
+			 	 <div id="scrollable">
+
+            <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.AddRegInvitation.confirmation.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.AddRegInvitation.confirmation.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>            
+                           
+            <!-- Logo+Manage-User-end -->
+
+            <form name="selfRegistration" method="post" action="mgr_addRegInvitation.do">
+
+                <!-- Review-&-Confirm -->
+                <div class="content-Block"><!-- content-Block -->
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.reviewConfirm")</div>
+                    </div>
+                    <div id="e7b" class="Search-inputfield-box"><!-- User-left-right-list -->
+                        <!-- 1 -->
+                        <div id="e12" class="search-content-row">
+                            <div class="block_text_in-r-b">$brander.getBrandElement("lms.manageUser.regInvitation.caption.InvitationName")</div>
+                            #springBind( "selfRegistrationForm.invitationName" )
+                            <div class="block_text_in2">$!{status.value}</div>
+                        </div>
+                        <!-- 2 -->
+                        <div id="e13" class="search-content-row">
+                            <div class="block_text_in-r-b">$brander.getBrandElement("lms.learnerSelfRegistrationlogin.login")</div>
+                            #springBind("selfRegistrationForm.passCode")
+                            <div class="block_text_in2">#encryptedPassword($!{status.value})</div>
+                        </div>
+                        <!-- 3 -->
+                        <div id="e13" class="search-content-row">
+                            <div class="block_text_in-r-b">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.noOfReg")</div>
+                            #springBind( "selfRegistrationForm.registrationUnlimited" )
+                            #if($status.value == "true")
+                            <div class="block_text_in2">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.Unlimited")</div>
+                            #else
+                            #springBind( "selfRegistrationForm.maximumLimitedRegistration" )
+                            <div class="block_text_in2">$status.value</div>
+                            #end
+                        </div>
+                        <!-- 4 -->
+                        <div id="e13" class="">
+							#foreach ($orgGroups in $orgGroupNameList)
+							<div id="e12" class="search-content-row">
+								#if($velocityCount==1)<div class="block_text_in-r-b">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.orgGroups")</div>
+								#else
+								<div class="block_text_in-r-b" style="height:auto;width:25%;">&nbsp;</div>
+								#end
+								<div class="block_text_in2" style="height:auto;width:74%;">$!orgGroups</div>
+							</div>
+							#end                           
+                        </div>
+                        <!-- 5 -->
+						  <div id="e13" class="">
+							#foreach ($learnerGroup in $selectedLearnersGroupList)
+							<div id="e12" class="search-content-row">
+							#if($velocityCount==1)<div class="block_text_in-r-b">$brander.getBrandElement("lms.manageUser.addNewLearner.learnerGroups.text")</div>
+							#else
+								<div class="block_text_in-r-b" style="height:auto;width:25%;">&nbsp;</div>
+							#end
+							<div class="block_text_in2" style="height:auto;width:74%;">$!{learnerGroup.name}</div>
+							</div>
+                                #end
+						</div>
+                        <!-- 6 -->
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.search-content-row2")">
+                             <div class="block_text_in-r-b" style="width:25%;_width:24.5%;">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.message")</div>
+                             <div class="" style="margin-left:25%;_margin-left:24.7%;">
+                            #springBind( "selfRegistrationForm.message" )
+                                <textarea class="inputfield-box-L2-in-a" style="margin-top:2px;">$!{status.value}</textarea>
+                            </div>
+						 	 </div>
+                        <!-- 7 -->
+                        <div id="e13" class="search-content-row">
+                            <div class="block_text_in-r-b"></div>
+                            <div class="block_text_in2"></div>
+                        </div>
+                    </div><!-- End-User-left-right-list -->
+                </div><!-- content-Block -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <div class="content-Block2"><!-- content-Block2 -->
+                    <div id="e16" class="search-content-row">
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_1")"><input type="checkbox" id="sendMail" name="sendMail" /></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_4")">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.sendCopy")</div>
+                    </div>
+                </div><!-- content-Block2 -->
+
+                <!-- Review-&-Confirm -->
+
+                <!-- button -->
+                <div class="managerBtn">
+                    <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                    <div style="float:right; margin-top:3px;">
+					  <a onClick="submitButtonForm(document.selfRegistration,'wizardSubmitter','_finish');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:3px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.selfRegistration,'wizardSubmitter','_target1');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					  <div style="float:left; margin-top:3px;">
+					  <a onClick="submitButtonForm(document.selfRegistration,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>	
+                    <input type="hidden" id="currentpage" name="_page" value="2"/>
+                </div>
+                <!-- button -->
+
+            </form>
+
+        </div><!-- right-pannel -->
+		</td>
+		
+     <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+			  <!-- footer -->
+    		  #parse("snippets/managerFooter.vm")
+    		  <!-- footer-end -->
+  			  </td>
+	</tr>
+
+</table><!-- main-container -->
+</body>
+</html>

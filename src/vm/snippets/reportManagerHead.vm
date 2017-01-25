@@ -1,0 +1,98 @@
+<!-- Report Manager Head -->
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-password-strength.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-tooltip.js"> </script>
+
+
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+<link href="brands/default/en/css/css_sidebar.css" type="text/css" rel="stylesheet">
+	
+	
+	<meta name="keywords" content="$brander.getBrandElement("lms.metaKeywords")">
+    <meta name="description" content="$brander.getBrandElement("lms.metaDescription")">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="X-UA-Compatible" content="EmulateIE7;FF=3;OtherUA=4" />
+	
+
+    <link rel="shortcut icon" href="$brander.getBrandElement("lms.common.pixel.favicon.ico")" type="image/x-icon">
+	   <!-- title for Modes  -->
+		<title>
+			#if($!adminCurrentMode == 'ROLE_LEARNER')
+				$brander.getBrandElement("lms.learner.header.title")
+			#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+				$brander.getBrandElement("lms.manager.header.title")
+			#elseif($!adminCurrentMode == 'ROLE_REGULATORYANALYST')
+				$brander.getBrandElement("lms.accreditation.header.title")
+			#elseif($!adminCurrentMode == 'ROLE_INSTRUCTOR')
+				$brander.getBrandElement("lms.instructor.header.title")
+			#elseif($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+				$brander.getBrandElement("lms.admin.header.title")
+			#end
+		</title>
+	     <!-- title for Modes ends -->
+    <!--[if IE 6]>
+    <style type="text/css">
+    img, div, h1, h2, h3, h4 { 
+    behavior: url($brander.getBrandElement("lms.pngfix.href"));
+    }
+    </style>
+    <![endif]-->
+    <script type="text/javascript" src="javascript/jquerySlider.js"></script>
+    <script type="text/javascript" src="javascript/report.js"></script>
+    <script type="text/javascript" >
+        function submitForm(featureGroup,feature,location){
+            var params="featureGroup="+featureGroup+"&feature="+feature+"&actionUrl="+location;
+            document.location="lms_handleMenu.do?"+params;
+        }
+
+        function setpage(isAdmin){
+            var drp=document.getElementById("drpMode");
+            if(isAdmin){
+                if (drp.value=="1"){
+                    document.location="#springUrl('/admSwitchManagerMode.do')";
+                }else if (drp.value=="2"){
+                    document.location="#springUrl('/admSwitchLearnerMode.do')";
+                }else if(drp.value=="3"){
+                	    document.location="#springUrl('/admSwitchAdminMode.do')";
+                }else {
+                    document.location="#springUrl('/acc_search.do')";
+                }
+            }else{
+                if (drp.value=="1"){
+                    document.location="#springUrl('/lrnSwitchBackManagerMode.do')";
+                }else if (drp.value=="2"){
+                    document.location="#springUrl('/mgrSwitchLearnerMode.do')";
+                }
+            }
+        }
+		
+        function formFavouriteSubmit(reportId){
+            document.location.href="mgr_ManageReports.do?method=selectReport&reportId="+reportId+"&fav";
+        }
+		
+        function formSubmit(reportId){
+            document.location.href="mgr_ManageReports.do?method=selectReport&reportId="+reportId;
+        }
+        function executeFavouriteReports(){
+            document.location.href="mgr_ManageReports.do?method=executeAllFavouriteReports";
+        }
+     
+       
+        $(document).ready(function(){
+            $("#adminHeaderLink").bind('mouseover', function(){
+                $("#adminHeaderLinkWindow").css({"visibility":"visible"});
+            });
+            $('#adminHeaderLinkWindow div[class="headerAdmin"]').bind('click', function(){
+                $("#adminHeaderLinkWindow").css({"visibility":"hidden"});
+            });
+        });
+        $(document).ready(function(){
+            var totalHeight =$("#titleHolder").height() + $("#detailsHolder").height();
+            if (totalHeight<75) {
+                $("#detailsHolder").css({"bottom":"-"+(75-totalHeight)+"px"});
+            }
+        });
+    </script>
+    #parse("snippets/macroUtils.vm")

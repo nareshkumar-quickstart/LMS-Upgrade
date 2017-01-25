@@ -1,0 +1,322 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+       
+			$(document).ready(function(){
+                $('#chkAll').click(
+                function(){
+                    $("INPUT[type='checkbox'][name='reportingField']").attr('checked', $('#chkAll').is(':checked'));
+                    $("INPUT[type='checkbox'][name='reportingField']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+                }
+            )
+
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+            });
+            
+            
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+    function search() {
+        document.getElementById('actionmethod').value='searchCourseConfig';
+        document.manageTemplateForm.submit();
+    }
+
+    function editCourseConfig(templateId) {
+        document.getElementById('actionmethod').value='editCourseConfig';
+        document.getElementById('templateId').value=templateId;
+        document.manageTemplateForm.submit();
+    }
+
+    function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                width: 410, 
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteCourseConfig(){
+            if ($("INPUT[type='checkbox'][name='row']:checked").length>0) {
+                confirm("Are you sure you want to delete the template(s)?", function () {
+                    document.getElementById('actionmethod').value='deleteCourseConfig';
+                    document.manageTemplateForm.submit();
+                });
+            }else {
+                $('#selectRegulutor').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+    function checkAll( countCheckBoxes ) {
+        var objCheckAll=document.getElementById("chkAll");
+        if (objCheckAll.checked) {
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = true;
+                changeRowColor(objCheckBox);
+            }
+        }else{
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = false;
+                changeRowColor(objCheckBox);
+            }
+        }
+    }
+
+</script>
+</head>
+
+#macro( dotPadding $pValue $pLength )
+		#set($strlen=$pValue.length())
+	#if($strlen<=$pLength)
+		$pValue
+	#else
+		#set($actLen=$math.sub($strlen,$pLength))
+		$stringUtil.chop($pValue,$actLen)...
+	#end
+#end
+
+<body>
+
+<form name="manageTemplateForm" method="post" action="acc_manageCourseConfig.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="templateId" name="templateId" value="">
+	
+
+     <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+<!--Header Start -->
+#parse("snippets/accreditation/accreditationDefaultHeader.vm")
+<!-- Header End -->
+	 </td></tr>
+	 
+<!-- Body Start -->
+  <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+      <TD id="content" >
+	<div id="scrollable">
+	
+	
+            #if($context.errorMessage)  
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                          
+                        #set ($error = $brander.getBrandElement($context.errorMessage))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    
+                </div>
+                <!-- error-box -->
+            #end
+
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.PageTitle.caption.CourseConfigurations")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation..PageTitle.caption.ManageCourseConfigDesc")</div>
+		</td>
+	</tr>
+</table>
+
+        <!-- Page Description -->
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                <div class="control-button-position">
+                        <a href="acc_addCourseConfig.do">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >Add Template</div>
+                        <div class="btn_end"></div>
+                        </a>
+                    </div>
+                    <div class="control-button-position">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="deleteCourseConfig();">Delete Template</div>
+                        <div class="btn_end"></div>
+                     </div>
+                </div>
+                <div id="searchBox" style="float:left; height:130px; left:37%;width: 300px" class="visible">
+                    Search Template<br/><br/><br/>
+                    <div style="float:left">Name</div> <input type="text" name="templateName" onkeypress="doEnter(event);" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">Last Updated</div> <input type="text" name="templateDate" onkeypress="doEnter(event);" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="search();">Search</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Cancel</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+                <div class="result_left_side">
+
+                $pager.setItems($!{context.templates})
+                    #set($totalCount = $pager.total)
+                    #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                            #set($pageCurrIndex = $pager.index)
+                    #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                            #set($pageCurrIndex = 0)
+                    #end
+
+                    <input type="hidden" id="pageIndex" name="pageIndex" value="$pageCurrIndex" />
+                    <input type="hidden" id="gridShowAll" name="showAll" value="false" />
+                    <input type="hidden" id="paging" name="paging" value="" />
+                    #if($!{context.showAll})
+                        #set($showAll=${context.showAll})
+                      #else
+                       #set($showAll=false)
+                     #end
+                    <!-- Result Description -->
+                    <div class="control-button-position">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Search</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageCourseConfig.do?method=searchCourseConfig&showAll=true&templateName=$!context.name&templateDate=$!context.date';" ></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageCourseConfig.do?method=searchCourseConfig&pageIndex=$pager.nextIndex&paging=paging&pageIndex=$pageCurrIndex&showAll=$showAll&templateName=$!context.name&templateDate=$!context.date';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageCourseConfig.do?method=searchCourseConfig&pageIndex=$pager.prevIndex&paging=paging&pageIndex=$pageCurrIndex&showAll=$showAll&templateName=$!context.name&templateDate=$!context.date';" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+        #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox"/></td>
+                    <td class="box_subheader"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>Template Name</td>
+                    <td class="box_subheader" width="40%" style="border-right:none;"><div #if($context.sortColumnIndex==1 )class="icon_up" #end></div>Last Updated</td>
+                  </tr>
+                </table>
+                  <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.accreditation.caption.No-records-found-message") #else To find a course configuration click on the Search button above #end</div>
+            </div>
+        #else
+            <!-- Result Subheader End -->
+            <!-- Search Result Start -->
+            <div id="searchResult_2">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                    <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="window.location.href='acc_manageCourseConfig.do?method=searchCourseConfig&sortColumnIndex=0&sortDirection=1&showAll=$context.showAll&pageIndex=$pageCurrIndex';" #else onclick="window.location.href='acc_manageCourseConfig.do?method=searchCourseConfig&sortColumnIndex=0&sortDirection=0&showAll=$context.showAll&pageIndex=$pageCurrIndex';" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>Template Name</div></td>
+                    <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="window.location.href='acc_manageCourseConfig.do?method=searchCourseConfig&sortColumnIndex=1&sortDirection=1&showAll=$context.showAll&pageIndex=$pageCurrIndex';" #else onclick="window.location.href='acc_manageCourseConfig.do?method=searchCourseConfig&sortColumnIndex=1&sortDirection=0&showAll=$context.showAll&pageIndex=$pageCurrIndex';" #end ><div id="firstNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>Last Updated</div></td>
+                  </tr>
+                #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                        #set($template = $context.templates.get($loopIndex))
+                        #if($loopIndex%2 == 0)
+                        #set($alternate="row_1")
+                        #else
+                        #set($alternate="row_2")
+                        #end
+                  <tr>
+                    <td class="$alternate" width="17px" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><input type="checkbox" name="row" value="$!{template.id}" style="margin-left:-1px" onclick="changeRowColor(this);"/></td>
+                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end>
+	                    <a class="list-item-underline-a" href="#" onClick="editCourseConfig('$!{template.id}');">
+	                    	#if($!{template.name})  #dotPadding($!{template.name} 70) #else &nbsp;&nbsp; #end
+						</a>
+					</td>
+                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none; border-right:none;" #else style="border-right:none;" #end>$!{template.lastUpdatedDate}&nbsp;<td>
+                  </tr>
+                #end
+
+                </table>
+            </div>
+        #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        </div>
+      
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+
+    #set($select="Regulutor")
+    #parse("snippets/selectAtleastOnRecord.vm")
+    #parse("snippets/deleteConfirmation.vm")
+
+</body>
+</html>

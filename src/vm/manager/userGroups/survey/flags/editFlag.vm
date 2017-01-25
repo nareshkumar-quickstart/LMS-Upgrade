@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+    <script type="text/javascript" language="javascript" src="javascript/wisiwig/richtext.js" ></script>
+    <script type="text/javascript" language="javascript" src="javascript/wisiwig/config.js" ></script>
+    <script type="text/javascript" language="javascript" >
+        function updateFlag() {
+        try{
+                if (document.getElementById(rteFormName).style.display == ""){ 
+                    var newHTML = getXHTML(trim(document.getElementById(rteFormName).value));}
+                else { 
+                    var newHTML = getXHTML(trim(document.getElementById(rteName).contentWindow.document.body.innerHTML));
+                }
+                document.getElementById(rteFormName).value=newHTML;
+           //     alert(newHTML);
+               // submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target2');
+            }catch(e){
+                //alert(e);
+            }
+            document.getElementById('actionmethod').value='updateFlagDetails';
+            document.updateFlagForm.submit();
+        }
+         function getAnswerItems(){
+     document.getElementById('actionmethod').value='answerItems';
+        document.addFlagForm.submit();
+    }
+    </script>
+    <script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('.scrollable').height());
+
+        $('#content2a').scroll(function()
+        {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+</script>
+</head>
+
+<body>
+<form name="updateFlagForm" method="POST" action="mgr_manageSurveys.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+<div id="main-container">
+<!--Header Start -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminHeader.vm")
+    #else
+       #parse("snippets/managerHeader.vm")
+    #end
+<!-- Header End -->
+
+<!-- Body Start -->
+     <div id="content2a">
+
+		#parse("snippets/compliance/complianceLeftMenu.vm")
+
+		 <div id="right-pannel">
+              <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.administrator.searchMember.caption.editflag")</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.manageSurvey.manageFlag.editFlag.textDescription")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+
+          #springBind("manageSurveyForm.*")
+                    #if($status.error)
+                        <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                        </div><!-- error-box -->
+                    #end
+
+            <div id="resultBox" class="search_box_result">
+            <!-- Result Header Start -->
+                <div id="resultHeader" class="box_header">
+					<div class="table-heading">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</div>
+                </div>
+
+                <!-- Result Header End -->
+                <!-- Result Subheader Start -->
+                <div id="searchResult">
+                    <table border="0" cellpadding="0" cellspacing="0">
+                   <tr>
+
+                       <td height="30" width="100">
+                           <div class="table-text">$brander.getBrandElement("lms.administrator.searchMember.caption.flagname")</div>
+                       </td>
+                       <td>
+                            #springBind("manageSurveyForm.flag.flagName")
+                           <div class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div>
+                           <input type="text" class="input-text" name="$!{status.expression}" value="$!{status.value}" style="width:500px;"/>
+                       </td>
+                   </tr>
+
+                   <tr>
+                       <td height="30" width="150">
+                           <div class="table-text">$brander.getBrandElement("lms.listServeyQuestions.caption.Question")</div>
+                       </td>
+                       <td>
+                            <div class="required_field"></div>
+                            #springBind("manageSurveyForm.flagSurveyQuestions")
+                            #set( $surveyQuestions = $!{status.value})
+                            #springBind("manageSurveyForm.selectedQuestionId")
+                            <select name="$!{status.expression}" value="$!{status.value}"  onchange="getAnswerItems();" style="width:502px; border:1px solid #CCCCCC; margin-left:12px;">
+                                #foreach($surveyQuestion in $surveyQuestions )
+                                    <option value=$surveyQuestion.id  #if ("$!{status.value}" == $surveyQuestion.id) selected #end>$surveyQuestion.text</option>
+                                #end
+                            </select>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td height="30" width="150">
+                           <div class="table-text">$brander.getBrandElement("lms.administrator.searchMember.caption.trigger")</div>
+                       </td>
+
+                       <td>
+                            #springBind("manageSurveyForm.selectedAnswerItems")
+                            <div class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div>
+                            #springBind("manageSurveyForm.flag.surveyAnswers")
+                            #set($flagAnswerItems =  $!{status.value})
+                            #springBind("manageSurveyForm.surveyAnswers")
+                            #set( $surveyAnswers = $!{status.value})
+                            <select name="selectedAnswerItems" style="width:502px; border:1px solid #CCCCCC; margin-top:5px;" multiple="multiple" size="4">
+                                #foreach($surveyAnswer in $surveyAnswers )
+                                    #set($isSelected = "false")
+                                    #foreach($flagAnswerItem in $flagAnswerItems)
+                                        #if( $flagAnswerItem.id == $surveyAnswer.id)
+                                            #set($isSelected = "true")
+                                            break
+                                        #end
+                                    #end
+                                    <option value=$surveyAnswer.id  #if ($isSelected == "true") selected #end>$surveyAnswer.label</option>
+                                #end
+                           </select>
+
+                       </td>
+                   </tr>
+                   <tr>
+                       <td height="30" width="100">
+                           <div class="table-text">$brander.getBrandElement("lms.administrator.searchMember.caption.to")</div>
+                       </td>
+                       <td>
+                            #springBind("manageSurveyForm.flag.to")
+                           <div class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div>
+                           <input type="text" class="input-text" name="$!{status.expression}" value="$!{status.value}" style="width:500px;"/>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td height="30" width="100">
+                           <div class="table-text">$brander.getBrandElement("lms.administrator.searchMember.caption.subject")</div>
+                       </td>
+                       <td>
+                            #springBind("manageSurveyForm.flag.subject")
+                           <div class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div>
+                           <input type="text" class="input-text" name="$!{status.expression}" value="$!{status.value}" style="width:500px;"/>
+                       </td>
+                   </tr>
+                   <tr>
+                       <td height="30" valign="top">
+                           <div class="table-text">$brander.getBrandElement("lms.administrator.searchMember.caption.message")</div>
+                       </td>
+
+                       <td>
+                                #springBind("manageSurveyForm.flag.message")
+                           <div class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:15px; width:12px; background-color: #66FF00"/></div>
+                            <!-- WISIWIG START -->
+                            <div class="addEditPropertyLeftAdmin" style="width:505px; padding-left:17px;">
+                                <script type="text/javascript" language="javascript">
+                                  var strSource = "$escapeTool.unescapeHtml($status.value)" ;
+                              
+                                initRTE(strSource, '');
+                                </script>
+                            </div>
+                            <!-- WISIWIG END  -->
+                           <!--<textarea style="width:450px; height:150px; border:1px solid #CCCCCC; margin-bottom:10px;"></textarea>-->
+
+                       </td>
+                   </tr>
+					<tr>
+    					<td height="25" colspan="2">
+                            #springBind("manageSurveyForm.flag.sendMe")
+                            <input type="checkbox" name="$!{status.expression}" #if($!{status.value}) checked #end style="margin-left:12px; float:left;" />
+                            <div class="row_text" style="margin-top:3px; margin-left:20px;">$brander.getBrandElement("lms.manageUser.regInvitation4.caption.sendCopy")</div>
+                        </td>
+					</tr>
+               </table>
+
+              </div>
+</div>
+				
+				<div style="float:right; margin-top:15px;">
+				  <a onClick="updateFlag();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:right; margin-top:15px;margin-right:5px;">
+				  <a onClick="location.href='mgr_manageSurveys.do?method=showManageFlags';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+				<div style="height:30px;"></div>
+				
+           </div>
+	</div>
+	
+
+<!-- Body End -->
+
+    <!-- Footer Start -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+	   #parse("snippets/adminFooter.vm")
+	#else
+	  #parse("snippets/managerFooter.vm")
+	#end
+    <!-- Footer End -->	
+</form>
+</body>
+</html>

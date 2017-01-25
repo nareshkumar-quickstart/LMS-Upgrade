@@ -1,0 +1,32 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+    <div id="header" class="page_header">
+    
+        <div style="width:200px; float:left;">
+            <img src="brands/default/en/images/logo_360_52.gif" class="logo360" alt=""/>
+        </div>
+        <div >
+        	#if($userPermissionChecker.hasAccessToFeatureGroup("Profile", $userData, $ssn))
+	            <div class="header_icon">
+		        	<div onclick="submitForm('My Profile','LMS-LRN-0003','proctorProfile.do?method=showProctorProfileForm' )" class="header_icon" onmouseover="document.getElementById('profile_icon').src='brands/default/en/images/headericons/hover/profile.png'" onmouseout="document.getElementById('profile_icon').src='brands/default/en/images/headericons/profile.png'" align="center">
+		                <a tabindex="2" href="#" class="top-nav" #if($menu == "My Profile") style="font-weight:bold" #end>
+			                <img id="profile_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconProfileGif")" alt="" />
+			                <br />
+			                $brander.getBrandElement("lms.learner.mycourses.header.myProfile")</a>
+		            </div>
+	            </div>
+        	#end
+        	
+        	#if($userPermissionChecker.hasAccessToFeatureGroup("Completions", $userData, $ssn))
+	            <div class="header_icon">
+		            <div onclick="submitForm('Completions','LMS-LRN-0001','proctorCompletionCertificate.do?method=displayProctorLearners')" class="header_icon" onmouseover="document.getElementById('mycourses_icon').src='brands/default/en/images/headericons/hover/trainingplans.png'" onmouseout="document.getElementById('mycourses_icon').src='brands/default/en/images/headericons/trainingplans.png'">
+		                <a tabindex="1" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "Completions") style="font-weight:bold" #end>
+		                    <img id="mycourses_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconMyCoursesGif")" alt="" />
+		                    <br />
+		                    $brander.getBrandElement("lms.proctor.proctorProfile.caption.Competions")</a>
+		            </div>
+            	</div>
+			#end
+			
+        </div>
+    </div>

@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script language="javascript" type="text/javascript">
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+
+    function MakeUrl(){
+        window.location.href='adm_searchCourseGroup.do';
+        return true;
+    }
+
+    $(document).ready(function() {
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("#startDate").datepicker({ 
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true
+        });
+        $("#endDate").datepicker({ 
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true 
+        });
+
+        $('#content2a').scroll(function() {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+ </script>
+</head>
+<body>
+<form name="manageform" method="post" action="">
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#parse("snippets/adminHeader.vm")
+<!-- header-end -->
+                </td>
+        </tr>
+        <tr>
+            <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                        <td width="270"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="304">
+                            <a href="#"><div class="tab_selected">Summary</div></a>
+                            <a href="adm_updateContractItems.do?method=showContractItems&distributorEntitlementId=$!{context.distributorEntitlementId}">
+                                <div style="border-right-style: solid;" class="tab">$brander.getBrandElement("lms.administrator.adddistributorentitlement.caption.CourseGroups")</div>
+                            </a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+	 
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+<!-- content-area -->
+        <!-- left-pannel-content -->
+        #parse("snippets/adminDistributorLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+        <!-- right-pannel-content -->
+        <TD id="content" >
+	<div id="scrollable">
+
+        #if($!{context.validateName} || $!{context.validateDuplicateName} || $!{context.validateStartDate} || $!{context.validateMaximumEnrollments} || $!{context.validateMaximumEnrollmentsNumericField} || $!{context.validateTermsofServices} || $!{context.validateTermsofServicesInDate} || $!{context.validateTermsofServicesNumericField} || $!{context.validateTransactionAmount})
+                #set($errorCodes = [])  
+                    #set($temp = true)
+                    #if($!{context.validateName})
+                         #set($temp = $errorCodes.add(${context.validateName}))
+                    #end
+                    #if($!{context.validateDuplicateName})
+                         #set($temp = $errorCodes.add(${context.validateDuplicateName}))
+                    #end
+                    #if($!{context.validateStartDate})
+                         #set($temp = $errorCodes.add(${context.validateStartDate}))
+                    #end
+                    #if($!{context.validateMaximumEnrollments})
+                         #set($temp = $errorCodes.add(${context.validateMaximumEnrollments}))
+                    #end
+                    #if($!{context.validateMaximumEnrollmentsNumericField})
+                         #set($temp = $errorCodes.add(${context.validateMaximumEnrollmentsNumericField}))
+                    #end
+                    #if($!{context.validateTermsofServices})
+                         #set($temp = $errorCodes.add(${context.validateTermsofServices}))
+                    #end
+                    #if($!{context.validateTermsofServicesInDate})
+                         #set($temp = $errorCodes.add(${context.validateTermsofServicesInDate}))
+                    #end
+                    #if($!{context.validateTermsofServicesNumericField})
+                         #set($temp = $errorCodes.add(${context.validateTermsofServicesNumericField}))
+                    #end
+                    #if($!{context.validateTransactionAmount})
+                    	 #set($temp = $errorCodes.add(${context.validateTransactionAmount}))
+                    #end
+                    	
+                <!-- error-box -->
+                <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                        </div>
+                #end
+                </div>
+                <!-- error-box -->
+        #end
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoDistributor">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.distributorEntiltlement.caption.distEntitlementsDetails")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.distributorEntiltlement.caption.editSubtitle")</div>
+			</td>
+		    </tr>
+		</table>            
+                
+                
+                <!-- Logo+Manage-User-end -->
+
+                <!--Group-Name-div -->
+                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.group-name")">
+                    <div>$!{context.distributorEntitlement.Name}</div>
+                </div>
+                
+                <!-- Group-Name-div -->                
+
+                <!-- button-div -->
+                <div style="float:right; margin-right:20px; margin-bottom:10px" >
+                        <div style="float:right; margin-top:3px;">
+                          <a href="adm_distributorEntitlements.do?action=ShowAlldistributorEntitlement" style="text-decoration:none;">
+                                  <div class="btn_start"></div>
+                                  <div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementView.BackButton")</div>
+                                  <div class="btn_end"></div>
+                          </a>
+                        </div>
+                </div>
+                <!-- button-div -->
+                
+                <!-- Entitlements-Details -->
+                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.content-Block")">
+                        <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Block-Contain-header")">
+                        <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.updateEntitlements.colHeader.entitlementsDetails")</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Search-inputfield-box")">
+                        <!-- 1 -->
+                        <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.EntitlementName")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-f")">
+                                        <input type="text" value="$!{context.distributorEntitlement.Name}" name="entitlementName" maxlength="254" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/>
+                                </div>
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">
+                                        #*#if($!{context.validateName})
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                                $brander.getBrandElement($!{context.validateName})
+                                        #end*#
+                                </div>
+                        </div>
+                        <!-- 2 -->
+                        <!-- <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.MaximumEnrollments")</div>
+                                #if($!{context.distributorEntitlement.AllowUnlimitedEnrollments})
+                                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1a")"><input type="radio" name="maximumEnrollmentsRadio" id="unlimited" value="Unlimited" checked />$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Unlimited")</div>
+                                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1c")"><input type="radio" name="maximumEnrollmentsRadio" id="notUnlimited" value="NotUnlimited"/></div>
+                                #else
+                                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1a")"><input type="radio" name="maximumEnrollmentsRadio" id="unlimited" value="Unlimited"/>$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Unlimited")</div>
+                                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1c")"><input type="radio" name="maximumEnrollmentsRadio" id="notUnlimited" value="NotUnlimited" checked/></div>
+                                #end
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")">
+                                        <input type="text" id="maximumEnrollments" #if($!{context.distributorEntitlement.maxNumberSeats}) value="$!{context.distributorEntitlement.maxNumberSeats}" #else value="" #end name="maximumEnrollments" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/>
+                                </div>
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">
+                                        #* #if($!{context.validateMaximumEnrollments})
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                                $brander.getBrandElement($!{context.validateMaximumEnrollments})
+                                        #end
+                                        #if($!{context.validateMaximumEnrollmentsNumericField})
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                                $brander.getBrandElement($!{context.validateMaximumEnrollmentsNumericField})
+                                        #end *#
+                                </div>
+                        </div> -->
+                        <!-- 3 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.AllowSelfEnrollment")</div>
+                                <div class="com-star-r-t"></div>                                
+                                    <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")">
+                                         <input type="radio" name="allowSelfEnrollment" id="" value="true" #if($!{context.distributorEntitlement.allowSelfEnrollment}==true) checked #end />
+                                            $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Yes")
+                                    </div>
+                                    <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")">
+                                         <input type="radio" name="allowSelfEnrollment" id="" value="false" #if($!{context.distributorEntitlement.allowSelfEnrollment}==false) checked #end/>
+                                            $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.No")
+                                    </div>
+                                
+                                 
+                        </div>
+                        <!-- 4 -->
+                        #* <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.EntitlementType")</div>
+                        #if($!{context.courseGroup})
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1a")"><input type="radio" name="entitlementType" id="cg1" value="courseGroup" checked/> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.CourseGroup") </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")"><input type="radio" name="entitlementType" id="c1" value="course"/> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Courses") </div>
+                        #elseif($!{context.Course})
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1a")"><input type="radio" name="entitlementType" id="entitlementTypeCG" value="courseGroup"/> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.CourseGroup") </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")"><input type="radio" name="entitlementType" id="entitlementTypeC" value="course" checked/> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Courses") </div>
+                        #else
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1a")"><input type="radio" name="entitlementType" id="entitlementTypeCG" value="courseGroup"/> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.CourseGroup") </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")"><input type="radio" name="entitlementType" id="entitlementTypeC" value="course" /> $brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Courses") </div>
+                        #end
+                        </div>*#
+                        <!-- 5 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.EntitlementType.StartDate")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")" >
+                                        #if ($!{context.startDate})
+                                                <input type="text" style="width:140px;" id="startDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="startDate" value="$!{context.startDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                        #else
+                                                <input type="text" style="width:140px;" id="startDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" EndDatename="startDate" value="$!{context.startDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                        #end
+                                </div>
+                        </div>
+                        <!-- 6 -->
+                        <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.updateEntitlements.TermsofServices")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="btn_radio1a" style="width: 190px">
+                                    #if($!{context.distributorEntitlement.defaultTermOfServiceInDays})
+                                        <input style="float: left" type="radio" id="" name="termsOfServicesRadio" value="days" checked/>
+                                    #else
+                                        <input style="float: left" type="radio" id="" name="termsOfServicesRadio" value="days" />
+                                    #end
+                                    <div style="width: 65%" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")">
+                                         <input maxlength="9" type="text" style="width:120px;" #if($!{context.distributorEntitlement.defaultTermOfServiceInDays}) value="$!{context.distributorEntitlement.defaultTermOfServiceInDays}" #else value="" #end name="termsOfServices" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/>
+                                    </div>&nbsp;&nbsp;days
+                                </div>
+                                <div class="btn_radio1b" style="width: 40%">
+                                    #if($!{context.endDate})
+                                        <input style="float: left;" type="radio" id="" name="termsOfServicesRadio" value="date" checked/>
+                                    #else
+                                        <input style="float: left;" type="radio" id="" name="termsOfServicesRadio" value="date" />
+                                    #end
+                                    <div>
+                                        <div style="float: left">$brander.getBrandElement("lms.updateEntitlements.fixedEndDate")</div>
+                                        <div style="width: 55%; margin-left: 5px;"  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                            #if ($!{context.endDate})
+                                                <input type="text" style="width:50%" id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" name="endDate" value="$!{context.endDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                            #else
+                                                <input type="text" style="width:50%" id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" name="endDate" value="$!{context.endDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                            #end
+                                        </div>
+                                    </div>
+                                </div>
+                                #* #if($!{context.validateTermsofServices})
+                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                        $brander.getBrandElement($!{context.validateTermsofServices})
+                                #end
+                                #if($!{context.validateTermsofServicesInDate})
+                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                        $brander.getBrandElement($!{context.validateTermsofServicesInDate})
+                                #end
+                                #if($!{context.validateTermsofServicesNumericField})
+                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                        $brander.getBrandElement($!{context.validateTermsofServicesNumericField})
+                                #end *#
+                                
+                        </div>
+                        
+                        <div id="e11" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        	<div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.adddistributorentitlement.caption.TrannsactionAmount")</div>
+                        	<span style="padding: 0 4px 0 12px;float:left;">$</span>
+							#set($am = $!{context.distributorEntitlement.transactionAmount})
+							<input type="text" value="$!{number.format('0.00',$am)}" name="transactionAmount" maxlength="25" style="width: 140px" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/>
+                        </div>
+
+                        <!-- <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.SeatsUsed")</div>
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")"><input type="text" disabled="true" name="NumberSeatsUsed" value="$!{context.distributorEntitlement.NumberSeatsUsed}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/></div>
+                        </div> -->
+                        <!-- 6 -->
+                        <!-- <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.SeatsRemaining")</div>
+                                #if($!{context.distributorEntitlement.allowUnlimitedEnrollments})
+                                        #set($seatsRemain ="Unlimited")
+                                #else
+                                        #set($seatsRemain = $!{context.distributorEntitlement.MaxNumberSeats} - $!{context.distributorEntitlement.numberSeatsUsed})
+                                #end
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")"><input type="text" disabled="true" name="seatsRemain" value="$!{seatsRemain}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/></div>
+
+                        </div> -->
+                        <!-- 00 -->
+                        <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space3")"></div>
+                                        
+                </div>
+                <!-- End-User-left-right-list -->
+        </div>
+        <!-- End-Entitlements-Details -->
+
+        <!-- space -->
+        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+        <!-- space -->
+
+        <!-- scrollable-div -->
+        <!-- button-div -->
+        <div class="managerBtn">
+				<div style="float:right; margin-top:3px;">
+				  <a onclick="FormSubmit('Save');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Save</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:right; margin-top:3px;margin-right:5px;">
+				  <a onclick="window.location.href='adm_distributorEntitlements.do'" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Cancel</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+				<input type="hidden" id="action" name="action" />
+        </div>
+        <!-- space -->
+        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+        <!-- space -->
+        <!-- right-pannel-content-end -->
+</div>
+
+<!-- content2-area-end -->
+</td></tr>
+        <tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+<!-- footer -->
+#parse("snippets/adminFooter.vm")
+<!-- footer-end -->
+</td></tr>
+</table>
+</form>
+</body>
+</html>

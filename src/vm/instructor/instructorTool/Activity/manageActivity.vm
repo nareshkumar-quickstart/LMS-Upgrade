@@ -1,0 +1,576 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+   <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+		
+		
+           $('#chkAll').click(
+               function(){
+                $("INPUT[type='checkbox'][name='selectedActivity']").attr('checked', $('#chkAll').is(':checked'));
+                $("INPUT[type='checkbox'][name='selectedActivity']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+                
+                var ourCheckBoxes = $("INPUT[type='checkbox'][name='selectedActivity']");
+                if(ourCheckBoxes.length>0)
+                	ourCheckBoxes[ourCheckBoxes.length-1].checked = false;
+               }
+            )
+			
+			
+			/** To check the change of values */
+			$("input[name*='gridActivityScore']").change(
+				function () {
+					document.getElementById("activityDirty").value = 'true';
+				}
+			)
+			
+			
+        });
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+        function search() {
+            document.getElementById('actionmethod').value='searchActivity';
+            document.getElementById('showAll').value=false;
+            document.manageActivityForm.submit();
+        }
+
+        function editResources() {
+            document.getElementById('actionmethod').value='editResource';
+            document.manageActivityForm.submit();
+        }
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer',
+                onShow: function (dialog) {
+					dialog.container.css('width', 'auto');
+                    dialog.data.find('.message').append(message);
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteActivity(){
+            if ($("INPUT[type='checkbox'][name='selectedActivity']:checked").length>0) {
+                confirm("$brander.getBrandElement("error.manageActivity.DeleteConfirmation")", function () {
+                    document.getElementById('actionmethod').value='deleteActivity';
+                    document.manageActivityForm.submit();
+                });
+            }else {
+                $('#selectRegulutor').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+		function changeActivityOrder(aid,param)
+		{
+			
+			 document.getElementById('actionmethod').value="moveActivity";
+			 document.getElementById('moveParam').value=param;
+			 document.getElementById('aid').value=aid;
+			 
+			 document.manageActivityForm.submit();
+		}
+        function sortActivity(sortColumnIndex,sortDirection,pageIndex,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('showAll').value=showAll;
+            document.getElementById('pageIndex').value=pageIndex;
+            document.getElementById('actionmethod').value='searchActivity';
+            document.manageActivityForm.submit();
+        }
+
+        function checkAll( countCheckBoxes ) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    changeRowColor(objCheckBox);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    changeRowColor(objCheckBox);
+                }
+            }
+        }
+
+
+		function checkInputNumber(event){
+            var key = window.event ? event.keyCode : event.which;
+        	//alert(key);
+            if (event.keyCode == 8 || event.keyCode == 37 || event.keyCode == 39 ) {
+                return true;
+            }
+            else if ( key < 48 || key > 57 ) {
+                return false;
+            }
+            else return true;
+        }
+		
+        function validateInputValue(inpObj){
+        	var numbers = /^[0-9]+$/;  
+        	
+        	if(inpObj.value.match(numbers) && (parseInt(inpObj.value)>=0 && parseInt(inpObj.value)<=100)) {  
+        		//alert('number is accepted....');  
+        		//document.form1.text1.focus();  
+        		// return true;  
+        	}  
+        	else {  
+        		//alert('Please input numeric characters only');  
+        		inpObj.value = 0;
+        	}  
+			
+			var sumScore = calculateSum();
+			if(sumScore==0)
+				document.getElementById("finalScorePercent_idMain").value = 100;
+			else
+				document.getElementById("finalScorePercent_idMain").value = sumScore;
+			
+        }   
+		
+		function submitActivities(){
+			
+			var sumScore = calculateSum();
+			//alert('sumScore'+sumScore);
+			if(parseInt(sumScore)==100 || parseInt(sumScore) == 0){
+				//alert('Inside');
+				document.getElementById('message_box').style.display='none';
+				document.getElementById("activityDirty").value = 'false';
+				document.getElementById("actionmethod").value = 'saveFinalScoreActivity';
+				document.manageActivityForm.submit();
+			}
+			else{
+				document.getElementById('message_box').style.display='';
+				//$('#invalidFinalScore').modal({'width':'auto',overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			}
+		}
+		
+		function calculateSum(){
+			//var totalActivities = document.getElementById("activityCount").value;
+			///document.getElementById();
+			
+			var sumActivityScore = 0;
+            //iterate through each textboxes and add the values
+            $("input[name*='gridActivityScore']").each(function () {
+                //add only if the value is number
+                if (!isNaN(this.value) && this.value.length != 0) {
+                	sumActivityScore += parseFloat(this.value);
+                }
+            });
+		
+			//alert('sum: '+sumActivityScore);
+			
+			return sumActivityScore;
+		}
+		
+		/** To check the leaving of page and prompt user if there is any change made */
+		window.onbeforeunload = checkNavigationCondition; 
+		function checkNavigationCondition(event) { 
+			//alert('here1');
+			var msg = "Data you have entered may not be saved."; 
+			event = event || window.event; 
+			
+			var dirtyActivityScore = document.getElementById("activityDirty").value;
+
+			if(document.getElementById("actionmethod").value=='saveFinalScoreActivity'){
+				dirtyActivityScore = 'false';
+				//document.getElementById("activityDirty").value = 'false';
+			}
+			
+			if(dirtyActivityScore == 'true'){
+				event.returnValue = msg; 
+				//document.getElementById("activityDirty").value = 'false';
+			}
+			else{
+				return NULL;
+			}
+		}
+		/** (End) To check the leaving of page and prompt user if there is any change made */
+
+    </script>
+</head>
+<body>
+<form name="manageActivityForm" id="manageActivityForm" method="post" action="ins_mngActivity.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+	<input type="hidden" id="activityDirty" name="activityDirty" value="false"/><!-- The field will be set true if any change is made by field 'gridActivityScore' -->
+	 <input type="hidden" id="aid" name="aid" value=""/>
+	 <input type="hidden" id="moveParam" name="moveParam" value=""/>
+	 <input type="hidden" id="grdBkId" name="grdBkId" value="$!{context.grdBkId}"/>
+	 
+    <div id="main-container">
+        <!-- Header starts -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header ends -->
+        <!-- Body Start -->
+        <div id="frame_body" >
+           <div id="sideBar" class="side_bar" style="border-right:1px solid lightgrey;">
+                <!-- Manage Gradebooks Start -->
+                <a onclick="location.href='ins_mngGradeBook.do';">
+                    <div class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+                        <img src="brands/default/en/images/icon_users_mini.gif" class="band_image">
+                        <div class="band_image">$brander.getBrandElement("lms.Instructor.PageTitle.caption.ManageGradeBook")</div>
+                    </div>
+                </a>
+                <!-- Manage Gradebooks End -->
+			</div>
+		
+            <div class="scrollable" style="overflow-y: scroll; ">
+    			<!-- error-box -->
+                <div id="message_box" style="display:none">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">% of FINAL SCORE fields must equal 100. Please adjust the numbers until the value in the Final Score field is 100</div>
+                                </div>
+                </div>
+                <!-- error-box -->
+                
+				<table border="0" cellpadding="0" cellspacing="0" width=98% style="margin-bottom:10px;">
+                    <tr>
+                        <td >
+                            <!-- Page Description -->
+                            	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                          		    <tr>
+                          			<td id="page-icon" class="page-icon-tools">
+                          			</td>
+                          			<td id="page-description">
+										<div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.caption.editActivity")</div>
+                                		<!-- Page Description -->
+                               			 <div id="pageDescriptionText">To add an activity, click the Add Activity button. To delete an activity, select the activity and then click the Delete Activity button. Click an activity name to edit that activity. For each activity, enter the percentage of the final grade, that the activity is worth. The sum of these fields must equal 100%.</div>                          			
+                               		</td>
+                          		    </tr>
+                          		</table>     
+                        </td>
+                    </tr>
+		    
+                    <tr>
+                        <!--<td width=>
+                            <div class="selected_object" >$!{context.className}</div>
+                        </td>-->
+                        <td>
+                            <div style="float:right; margin-top:10px;margin-right:10px;">
+                                <a onclick="location.href='ins_mngGradeBook.do?method=searchGradeBook';">
+                                    <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Back")</div>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Search Result Start -->
+                <div id="resultBox" class="search_box_result" style="width:98%">
+                    <!-- Result Header Start -->
+                    <div id="resultHeader" class="box_header">
+                        <!-- Result Heading -->
+                        <div style="float:left; height:23px;">
+                            <div style="float:left; margin-top:2px;">
+                                <a href="javascript:void(0)" onclick="location.href='ins_addActivity.do?Id=$!{context.grdBkId}';">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.instructor.editActivity.addActv")</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+                            <div style="float:left; margin-top:2px;" onclick="deleteActivity();">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.instructor.editActivity.deleteActv")</div>
+                                <div class="btn_end"></div>
+                             </div>
+                        </div>
+
+                        <div id="searchBox" style="float:left; height:120px; left:47%;" class="visible">
+                            $brander.getBrandElement("lms.instructor.manageActivity.SearchActivities")<br/><br/><br/>
+                            <div style="float:left">$brander.getBrandElement("lms.instructor.editActivity.actvName")</div> <input type="text" onkeypress="doEnter(event);" name="activityName" value="$!{context.activityName}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/><br/><br/>
+                            <div style="float:right; margin-top:2px; margin-right:15px;">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onclick="search();">$brander.getBrandElement("lms.Instructor.button.Search")</div>
+                                <div class="btn_end"></div>
+
+                            </div>
+                            <div style="float:right; margin-top:2px; ">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                <div class="btn_end"></div>
+                            </div>
+                        </div>
+                        <div class="result_left_side">
+							#springBind("activityForm.activityList")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+							#set($pager.itemsPerPage=$pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pager.total)
+									#set($currentPageCount = 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                            <input type="hidden" id="paging" name="paging" value="" />
+                            <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                            <input type="hidden" id="showAll" name="showAll" value="false" />
+                            <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+							<input type="hidden" id="activityCount" name="activityCount" value="$totalCount" />
+							
+                            #if($!{context.showAll})
+                                #set($showAll=$!{context.showAll})
+                            #else
+                                #set($showAll=false)
+                            #end
+
+                            <!--Commented as per the instruction in LMS-7966 <div style="float:left; margin-top:2px;" >
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="showSearchBox(this);">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+                                <div class="btn_end"></div>
+                            </div> -->
+
+                            <!-- All Icon 
+                            #if($totalCount>10)
+                                <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='ins_mngActivity.do?method=searchActivity&showAll=true';" ></div>
+                            #end-->
+                            <!-- Next Icon 
+                            #if($pager.nextIndex)
+                                <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_mngActivity.do?method=searchActivity&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                            #else
+                                <div id="goNext" class="icon_disabled"></div>
+                            #end-->
+                            <!-- Back Icon 
+                            #if ($pager.prevIndex)
+                                <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_mngActivity.do?method=searchActivity&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                            #else
+                                <div id="goBack" class="icon_disabled"></div>
+                            #end-->
+                            <!-- Showing Results -->
+                            #if($totalCount>0)
+                                <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                            #end
+                        </div>
+                    </div>
+                    <!-- Result Header End -->
+                    #if($currentPageSize == 0)
+                        <!-- Result Subheader Start -->
+
+                        <div id="searchResult_1">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                                    <td class="box_subheader"  height="23px" ><div style="margin-left:5px;">$brander.getBrandElement("lms.instructor.editActivity.actvName")</div></td>
+                                    <td class="box_subheader"  height="23px" ><div style="margin-left:5px;">$brander.getBrandElement("lms.instructor.editActivity.actvType")</div></td>
+                                    <td class="box_subheader"  height="23px" width="125px" ><div> </div><div align="center">% of FINAL SCORE</div></div></td>
+									 <td class="box_subheader" height="23px" width="200px" style="border-right:none;" ><div style="margin-left:5px;"> $brander.getBrandElement("lms.listServeyQuestions.caption.Order")</div></td>
+                                </tr>
+								
+								<tr>
+									<td class="row_1" width="17px" style="border-bottom:none;"><input type="checkbox" disabled class="row_2" id="" name="selectedActivity" value="" style="margin-left:3px" /></td>
+                                            #springBind("activityForm.manageActivity.name")
+											<td class="row_1" style="border-bottom:none;">$!{status.value}</td>
+											 #springBind("activityForm.manageActivity.type")
+                                            <td class="row_1" style="border-bottom:none;" >$!{status.value}</td>
+                                            <td class="row_1" style="border-bottom:none;" align="center">
+												#springBind("activityForm.description")
+												<input type="text" maxlength="3" readonly id="finalScorePercent_idMain" size="3" style="text-align: center; background-color:#D2D2D2;" name="finalScorePercentSum" value="100"> %
+											</td>
+											<td class="row_1" style="border-bottom:none;">
+									</td>
+								</tr>
+                            </table>
+                            <!--<div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div>-->
+                        </div>
+                        <!-- Result Subheader End -->
+                    #else
+
+                        <!-- Search Result Start -->
+                        <div id="searchResult_2" >
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                                    <td class="box_subheader"  height="23px" ><div #if($context.sortDirection == 0) onclick="sortActivity(0,1,$pageCurrIndex,$showAll);" #else onclick="sortActivity(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down"#end></div><div style="margin-left:5px;">$brander.getBrandElement("lms.instructor.editActivity.actvName")</div></div></td>
+                                    <td class="box_subheader"  height="23px" ><div #if($context.sortDirection == 0) onclick="sortActivity(1,1,$pageCurrIndex,$showAll);" #else onclick="sortActivity(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down"#end></div><div style="margin-left:5px;">$brander.getBrandElement("lms.instructor.editActivity.actvType")</div></div></td>
+                                    <td class="box_subheader"  height="23px" width="125px" ><div> </div><div align="center">% of FINAL SCORE</div></div></td>
+									 <td class="box_subheader" height="23px" width="200px" style="border-right:none;" ><div style="margin-left:5px;"> $brander.getBrandElement("lms.listServeyQuestions.caption.Order")</div></td>
+									
+									
+                                </tr>
+								#springBind("activityForm.activityList")
+								#set($count = ${status.value.size()} - 1)
+								#set($activityScoreSum = 0)
+                                #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex]) 
+									#set($index = $loopindex)
+                                    #set($activity = $context.activityList.get($loopIndex))
+                                    #if( $loopIndex%2 == 0)
+                                        #set($alternate="row_1")
+                                    #else
+                                        #set($alternate="row_2")
+                                    #end
+									
+										#set($activityScoreSum = $activityScoreSum + $activity.activityScore)
+                                        <tr>
+                                            <td class="$alternate" width="17px">
+												<input type="checkbox" id="chk$loopIndex" name="selectedActivity" value="$!{activity.id}"  style="margin-left:3px" onclick="changeRowColor(this);"/>
+												<!--Holding Activity primary key-->
+												<input type="hidden" id="gridActivityId$loopIndex" name="gridActivityId" value="$!{activity.id}" >
+											</td>
+                                            <td class="$alternate" height="23px"><div><a href="ins_mngActivity.do?method=editActivity&id=$activity.id"><u>$!{activity.name}</u></a></div></td>
+                                            <td class="$alternate" >$!{activity.type}</td>
+											<td class="$alternate" align="center">
+												#springBind("activityForm.activityList[$loopIndex].activityScore")
+												<input type="text" onblur="validateInputValue(this);" onkeypress="return checkInputNumber(event);" size="3" style="text-align: center;" maxlength="3" class="" id="${status.expression}" name="gridActivityScore" value="$!{status.value}" > %
+										    </td>											
+										
+											<td class="$alternate">
+											   #if($loopIndex == 0)
+												<div class="move-icons-two">
+													<div class="icon-move-down" id="q1md" onclick="javascript:changeActivityOrder($loopIndex, 'down');" ></div>
+													<div class="icon-move-bottom" id="q1mb" onclick="javascript:changeActivityOrder($loopIndex, 'bottom');"></div>
+												</div>
+												#elseif($loopIndex == ($totalCount - 1))
+    											<div class="move-icons-two">
+    												<div class="icon-move-top" id="q2mt" onclick="javascript:changeActivityOrder($loopIndex, 'top');"></div>
+    												<div class="icon-move-up" id="q2mu" onclick="javascript:changeActivityOrder($loopIndex, 'up');"></div>
+    											</div>
+    											#else
+												<div class="move-icons-all">
+													<div class="icon-move-top" id="q2mt" onclick="javascript:changeActivityOrder($loopIndex,'top');"></div>
+													<div class="icon-move-up" id="q2mu" onclick="javascript:changeActivityOrder($loopIndex, 'up');"></div>
+													<div class="icon-move-down" id="q2md" onclick="javascript:changeActivityOrder($loopIndex, 'down');"></div>
+													<div class="icon-move-bottom" id="q2mb" onclick="javascript:changeActivityOrder($loopIndex,'bottom');"></div>
+    											</div>
+    											#end
+                                            </td>
+                                        </tr>
+										#set($count = $count+1)
+                                #end
+								
+								#if( $alternate=="row_1")
+                                        #set($alternate="row_2")
+								#else
+									    #set($alternate="row_1")
+								#end
+								
+								
+								#if($activityScoreSum<=0)
+									#set($activityScoreSum=100)
+								#end
+								
+								#springBind("activityForm.manageActivity.name")
+								<tr>
+									<td class="row_1" width="17px" style="border-bottom:none;"><input type="checkbox" disabled class="row_2" id="" name="selectedActivity" value="" style="margin-left:3px" /></td>
+                                            <td class="row_1" style="border-bottom:none;">$!{status.value}</td>
+											 #springBind("activityForm.manageActivity.type")
+                                            <td class="row_1" style="border-bottom:none;" >$!{status.value}</td>
+                                            <td class="row_1" style="border-bottom:none;" align="center">
+												#springBind("activityForm.description")
+												<input type="text" maxlength="3" readonly id="finalScorePercent_idMain" size="3" style="text-align: center; background-color:#D2D2D2;" name="finalScorePercentSum" value="$activityScoreSum"> %
+											</td>
+											<td class="row_1" style="border-bottom:none;">
+									</td>
+								</tr>
+                            </table>
+                        </div>
+                        <!-- Search Result End -->
+                    #end
+                </div>
+				<div style="width:98%; float:right; margin-right:15px">
+    				<a href="#" onclick="javascript:submitActivities();" >
+                        <div style="float:right; margin-top:15px; margin-right:10px;">
+                        <div class="btn_normal">Save</div>
+                        </div>
+                    </a>
+				</div>
+            </div>
+
+			
+        </div>
+		<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+        <!-- Body End -->
+        <!-- Footer Start -->
+        #parse("snippets/instructor/instructorFooter.vm")
+        <!-- Footer End -->
+       
+    </div>
+		
+    <div id="selectRegulutor" style="display:none" class="message_box">
+    	<div class="alert_message_box_title" style="width: 99%">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+    	<div class="alert_message_box_icon"></div>
+    	<div class="alert_message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+    	<center>
+    		<div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="simplemodal-close">
+    			<div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+    		</div>
+    	</center>
+    </div>	
+		
+    <div id="deleteConfirmation" style="display:none" class="message_box">
+    	<div class="alert_message_box_title" style="width: 480px">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+    	<div class="alert_message_box_icon"></div>
+    	<div class="alert_message_box_text">Are you sure you want to delete the selected activity or activities?</div>
+    	<center>
+    		<div id="btn_ok_select" style="margin-left:140px; margin-top:60px;" class="no simplemodal-close">
+    			<div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+    		</div>
+    		<div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="yes">
+    			<div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+    		</div>
+    	</center>
+    </div>	
+	
+    <!-- Message if Sum not equal to 100 -->
+    <div id="invalidFinalScore" style="display:none;" class="message_box" >
+    	<div class="alert_message_box_title" style="width: 99%">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+    	<div class="alert_message_box_icon"></div>
+    	<div class="alert_message_box_text" style="width:380px;margin-left: 10px" >The total of the numbers in the “% of FINAL SCORE” fields must equal 100. Please adjust the numbers until the value in the Final Score field is 100.</div>
+    	<center>
+    		<div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="simplemodal-close">
+    			<div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+    		</div>
+    	</center>
+    </div>	
+
+	
+	
+	
+</form>
+</body>
+
+</html>

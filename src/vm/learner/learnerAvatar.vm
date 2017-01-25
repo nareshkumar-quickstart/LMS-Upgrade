@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+</head>
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+
+<script type="text/javascript" language="javascript">	
+	
+	$(document).ready(function(){
+		
+		$('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            $('#message_box_saved').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		
+		initFileUploads();
+    });
+	
+	var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+        if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:250px;*width:240px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="margin-left:-2px;";
+        image.style.cssText="margin-left:5px;";
+        image.appendChild(span);
+              
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file hidden';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+</script>
+
+<body>
+<form name="uploadAvatarForm" method="post" action="lrn_learnerAvatar.do" enctype="multipart/form-data">
+
+<!-- main-container -->
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	#parse("snippets/learnerWizardHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+		
+	<!-- content-area -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-pannel-content -->
+		<div>
+			<div id="l-menu-back">
+				<div class="l-menu-back-text-h">$brander.getBrandElement("lms.learner.avatar.wizard.title")</div>
+				<div class="l-menu-back-text-act">$brander.getBrandElement("lms.learner.avatar.wizard.step1")</div>
+			</div>
+		</div>
+		<!-- left-pannel-content - end -->
+		</table></td>
+		
+		<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable" style="position: relative;">
+			<!-- error-box -->
+			#springBind("learnerAvatarForm.*")
+            #if($status.error)
+            <div id="error-message-box">
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)                        
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$!error</div>
+                        </div>
+                    #end                   
+                </div>
+                <!-- error-box -->
+                </div>
+            #end		
+			
+			<!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoProfile">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.learner.changeAvatar.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.learner.changeAvatar.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- right-content -->	           	
+			<div class="search_box_result" style="margin-left:5px">
+				<div class="table-header" id="table-header"><div class="table-heading" style="margin-bottom:15px;">$brander.getBrandElement("lms.learner.avatar.wizard.header")</div></div>
+											
+				<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">				
+			#set($index = 0)
+			#foreach($defaultAvatar in ${learnerAvatarForm.defaultAvatarList})
+				#if ($index%6 == 0) 
+					#if ($index > 0) </tr><tr><td>&nbsp;</td></tr> #end	
+					<tr height="30">
+				#end
+						<td align="center">
+							<input type="radio" name="defaultAvatar" id="avatar$index" value="$index" checked /><br><br>
+							<label for="avatar$index" onclick="document.getElementById('avatar$index').click();"><img alt="" src="${learnerAvatarForm.avatarURL}${learnerAvatarForm.defaultAvatarList.get($index)}"/></label>
+						</td>						
+					#set($index = $index + 1 )
+				#end	
+					<tr><td>&nbsp;</td></tr>								
+					<tr>
+						<td colspan="6" >
+                            <!-- Browse File -->
+                            <div id="e12" class="search-content-row" style="width: 70%; float:right; margin-top:15px; margin-right:15px;">
+								<div class="input_field_browse" style="float:right;margin-right:5px;">
+									<div class="fileinputs" ><input type="file" name="avatar"   class="file" ></div>
+								</div>
+                            </div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="6" height="55" style="margin-bottom:15px;">	
+							<div style="float:right; margin-right:17px;">$brander.getBrandElement("lms.learner.avatar.wizard.caption.selectImage")</div><br/>
+							<div style="float:right; margin-right:17px;">$brander.getBrandElement("lms.learner.avatar.wizard.caption.legalNote")</div>
+						</td>
+					</tr>				
+				</table>
+			</div>
+			<!-- right-content - end -->
+			
+			<!-- button-div -->
+             <div id="e13" style="auto;">   
+				<div style="float: left; margin-top: 15px;">
+				  <a href="lrn_learnerPreferences.do" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.learner.avatar.button.cancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float: right; margin-top: 15px;">
+				  <a onClick="document.uploadAvatarForm.submit();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.learner.avatar.button.Finish")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+					       
+            </div>
+			<!-- button-div - end -->
+	    	
+	    	<!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+		</div>
+		<!-- right-pannel-content - end-->
+	</td></tr>
+	<!-- content-area - end-->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- footer -->
+    #parse("snippets/learnerNewFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+<!-- main-container -->
+
+</form>
+</body>
+</html>

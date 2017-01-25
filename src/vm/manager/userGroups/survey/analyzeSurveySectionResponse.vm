@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+
+    document.title="$brander.getBrandElement("lms.surveyPreview.caption.title")";
+
+    function backForm(){
+        document.getElementById("actionmethod").value='backDisplaySurvey';
+        document.previewSurveyForm.submit();
+    }
+
+    function nextForm(){
+        document.getElementById("actionmethod").value='showSurveyView';
+        document.previewSurveyForm.submit();
+    }
+
+    function sendMail(){
+        document.getElementById("actionmethod").value='sendMail';
+        document.previewSurveyForm.submit();
+    }
+    
+    function showCommentDiv(divId) {
+        var obj = document.getElementById(divId);
+        if ($(obj).is(":hidden")) {
+            $(obj).animate({ height: "show" }, 700, "");
+          } else {
+            $(obj).animate({ height: "hide" }, 700, "");
+          }
+    }
+    
+    function saveResponse(userId) {
+        document.getElementById('actionmethod').value='saveSurveyAnalizeResponse';
+        document.getElementById('vuId').value = userId;
+        document.surveyResponseForm.submit();
+    }
+    function cancelResponse() {
+        document.getElementById('actionmethod').value='cancelSurveyAnalizeResponse';
+        document.surveyResponseForm.submit();
+    }
+	
+	$(document).ready(function(){
+		$(".analyzeViewResponseQuestion :input").attr("disabled", true);
+	});
+
+</script>
+</head>
+#macro(mgrAnalyzeSections $sections $isChild)
+	#foreach($surveySection in $sections)
+		<!-- 1 -->
+        #if($isChild)
+        	#set($className="fwk_name")
+        #else
+        	#set($className="group-name")
+        #end
+    		
+        <div id="e12" class="${className}">
+            <span class="floatLeft sectionLabel">${surveySection.name}</span>
+        </div>
+        
+        #set($questionNumber = 1)
+        #foreach($surveyQuestionBank in ${surveySection.surveyQuestionBanks})
+            #foreach($surveyQuestion in $surveyQuestionBank.surveyQuestions)
+                <div class="preview_responses">
+                     <p>
+                        $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                     #set($key="${surveyQuestion.surveyQuestionRef.id}.${surveyQuestionBank.id}.${surveySection.id}")
+                     #if(${context.surveyResultAnswers.get($key)})
+                            <img src="brands/default/en/images/icon-mini-notes.png" class="floatRight" onClick="showCommentDiv('feedback-${surveySection.id}-${idx}');" />
+                     #end
+                     </p>
+                     #if($!{surveyQuestion.surveyQuestionRef.notes})
+                        <p>
+                           $!{surveyQuestion.surveyQuestionRef.notes}
+                        </p>
+                     #end
+                     
+                    <div>
+                        <input type="hidden" name="sectionsArray" value="$!{surveySection.id}" />
+                        <input type="hidden" name="questionBanksArray" value="$!{surveyQuestionBank.id}" />
+                        <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" />
+						#set($fileDivKey = "${surveySection.id}-${surveyQuestionBank.id}-${surveyQuestion.surveyQuestionRef.id}")
+						<input type="hidden" name="fileRequired" value="$!{surveyQuestion.fileRequired}-${fileDivKey}" />
+                        #set($prefix = "survey.questionList[$idx]")
+                        $surveyQuestion.renderQuestion($prefix)
+                        #if(${surveyQuestion.canHaveFile})
+							<div class="fileUploadDiv" id="fileUploadDiv-${fileDivKey}" >
+								<fieldset>
+									<legend>
+										$brander.getBrandElement("lms.survey.preview.files") #if(${surveyQuestion.fileRequired})<span class="required-field">*</span>#end
+									</legend>
+    								<div class="fileUploadDivList" id="fileUploadDivList-${fileDivKey}">
+										#foreach($answerFile in $surveyQuestion.answerFiles)
+											#if(${context.controller} && ${context.controller}=='admin')
+												#set($controller="adm_manageSyrvey.do")
+											#else
+												#set($controller="mgr_manageSurveys.do")
+											#end
+											<div class="fileUploadItem"><a href="$controller?method=showSurveyFile&fileId=${answerFile.id}" target="_new">$answerFile.fileName</a></div>
+										#end
+									</div>
+                                </fieldset>
+							</div>
+						#end
+                        <div id="feedback-${surveySection.id}-${idx}" style="display:none;float:left;width:100%;padding-bottom:10px;">
+                            <div class="User_coll_1"></div>
+                            <input type="hidden" name="reviewcommentid" value="#if(${context.surveyResultAnswers.get($key)} && $context.surveyResultAnswers.get($key).comments.size()>0)${context.surveyResultAnswers.get($key).comments.get(0).id}#end" >
+                            <textarea rows="" cols="" class="inputfield-box-L2-in-a" name="reviewcomment" >#if(${context.surveyResultAnswers.get($key)} && $context.surveyResultAnswers.get($key).comments.size()>0)${context.surveyResultAnswers.get($key).comments.get(0).comment}#end</textarea>
+                        </div>
+                    </div>
+                </div>
+                #set($questionNumber = $questionNumber + 1)
+                #set($idx=($idx+1))
+            #end
+        #end
+        <!-- End-User-left-right-list -->
+        <!-- 1-end -->
+		#if(${surveySection.children} && ${surveySection.children.size()}>0)
+			#mgrAnalyzeSections(${surveySection.children} true)
+		#end
+		
+	#end
+#end
+<body>
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+    #set($actionName = 'adm_manageSyrvey.do')
+#else
+	#set($actionName = 'mgr_manageSurveys.do')
+#end
+<form name="surveyResponseForm" method="POST" action="${actionName}">
+
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="surveyId" name="surveyId" value="" />
+    <input type="hidden" id="vuId" name="vuId" value="" />
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             <!-- header -->
+             #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                 #parse("snippets/adminHeader.vm")
+             #else
+                 #parse("snippets/managerHeader.vm")
+             #end
+             <!-- header-end -->
+			 </td>
+		</tr>
+		
+         <tr id="main"> <!-- SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+				<td id="left-navigation" valign="top">
+					 <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+
+        <!-- left-pannel-content -->
+           
+				#parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table>
+			</td>
+			
+             <TD id="content" >
+					<div id="scrollable">
+
+                <!-- Logo+Manage-User -->
+                
+                            <!-- Page Description -->
+                            <div id="pageDescription" class="page_description">
+
+                  			<div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  			<div id="pageHeading" class="page_heading">Survey Response</div>
+
+                  			<div id="detailsHolder">You are currently previewing a survey. All survey questions and their possible responses are listed below. Any responses entered on this preview will not be saved.</div>
+
+            				</div>
+                        
+                            <div style="overflow:hidden;margin-bottom:10px;">
+							
+							  #if($!{context.nextPageIndex} != '0')
+							<div style="float:right; margin-top:3px;">
+						  <a onclick="window.print();return false;" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Print</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+							 #end
+							<div style="float:right; margin-top:3px;margin-right:5px;">
+							  <a onClick="cancelResponse();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>				
+                             
+                            </div>
+                        
+                <!-- Logo+Manage-User-end -->
+                <div id="resultBox" class="search_box_result">
+                  <h2 class="box_header">$brander.getBrandElement("lms.mycourses.dropdown.survey") : ${context.survey.survey.name}</h2>
+  
+                  <div id="searchBox" class="visible" style="height:100px;"><!-- Search input window -->
+                      <div style="padding: 5px">$brander.getBrandElement("lms.administrator.searchMember.caption.sendsurvey")</div>
+                      <div style="padding: 5px">
+                          <div style="width:75px; float:left">$brander.getBrandElement("lms.login.caption.EmailAddress")</div>
+                          <div style="float:left">
+                              <input type="text" onKeyPress="if(event.keyCode==13){sendMail();}" id="mailAddress" name="mailAddress" style="font-size:9px; width:170px" class="search_field" />
+                          </div>
+                          <br style="clear:both" />
+                      </div>
+                      <div style="padding: 5px"></div>
+                      <div style="padding: 5px;margin-left:40px;height:20px;">
+                          <div id="search-survey-search" style="margin-left:27px;" onClick="showSearchBox(this);">
+                              <a class="button"><span class="button">$brander.getBrandElement("lms.manageUser.regInvitation4.preview.button.cancel.caption")</span></a>
+                          </div>
+                          <div id="search-survey-search"  onClick="sendMail();">
+                              <a class="button"><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.send")</span></a>
+                          </div>
+                          
+                      </div>
+                  </div><!-- Search input window -->
+                  
+                  #set($idx=0)
+                  #mgrAnalyzeSections(${context.survey.surveySectionVO} false)
+                  #set($userId = $request.getParameter("vuId"))
+                  
+                  <div style="float:right; margin-top:15px;">
+                      <a onClick="saveResponse($userId);" style="text-decoration:none;">
+                          <div class="btn_start"></div>
+                          <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+                          <div class="btn_end"></div>
+                      </a>
+                  </div>
+                  <div style="float:right; margin-top:15px;margin-right:5px;">
+                    <a onClick="cancelResponse();" style="text-decoration:none;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+                        <div class="btn_end"></div>
+                    </a>
+                  </div>
+                </div>
+            </div><!-- right-pannel -->
+        </td></tr><!-- content2a -->
+
+		<tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            #parse("snippets/adminFooter.vm")
+        #else
+            #parse("snippets/managerFooter.vm")
+        #end
+        <!-- footer-end -->
+		</td>
+		</tr>
+
+    </table><!-- main-container -->
+</form>
+</body>
+</html>

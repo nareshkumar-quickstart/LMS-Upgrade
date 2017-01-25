@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function(){
+            
+        });
+
+        function selectClass(id, idsArray){
+            var myIds="";
+            myIds=idsArray.split('|');
+
+            for(i=0;i<myIds.length;i++){
+		if(myIds[i].length>0){
+                    if(id == 'myField'+ myIds[i]){
+                        document.getElementById(id).value="true";
+                    }else{
+                        document.getElementById('myField'+ myIds[i]).value="false";
+                    }
+		}
+            }
+        }
+
+        function ShowMyDiv(divName){
+            var myDiv=document.getElementById(divName);
+            if(myDiv!=null){
+		if(myDiv.style.display=='none'){
+			myDiv.style.display = 'block';
+			myDiv.style.position='relative';
+                }else{
+                    myDiv.style.display='none';
+                }
+            }
+        }
+
+        function showCourses(e,imgId){
+            var expandDiv1 = document.getElementById(e);
+            var expandCl= document.getElementById(imgId);
+            if(expandDiv1.style.display == 'none'){
+                expandDiv1.style.display = 'block';
+		document.getElementById('colOne'+imgId).src=	'brands/default/en/images/icon_collapse.gif';
+            }else{
+                expandDiv1.style.display = 'none';
+                document.getElementById('colOne'+imgId).src='brands/default/en/images/icon_expand.gif';
+            }
+	}
+    </script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <link type="text/css" href="brands/default/en/css/css_body.css" rel="stylesheet"/>
+   
+        
+    </script>
+    
+        
+    </script>
+</head>
+<body>
+    <form name="selectDatesForm" method="post" action="mgr_assignEnrollments.do">
+        <input type="hidden" id="currentpage" name="_page" value="6" />
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td id="header" colspan="2">
+                    #parse("snippets/managerWizardHeader.vm")
+                </td>
+            </tr>
+            <tr id="main">
+                <td id="left-navigation">
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignEnrollment.caption.wizard") </br>
+                            #if(!$enrollmentForm.isNonSyncCourseSelected())Showing 4 of 6
+                            #else
+                                Showing 5 of 7
+                            #end
+                        </div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1a")</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2a")</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep3")</div>
+                        #if(!$enrollmentForm.isNonSyncCourseSelected())
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep5a")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7")</div>
+                        #else
+                                <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep4")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep5")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6b")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7a")</div>
+                        #end
+                    </div>
+                </td>
+                <td id="content">
+                    <div id="scrollable">
+                        #springBind("enrollmentForm.*")
+                        #if($status.error)
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                        #set ($error = $brander.getBrandElement($errorCode))
+                                        <div class="width40pct">
+                                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                                <div class="message_box_align">$error</div>
+                                        </div>
+                                #end
+                            </div>
+                        #end
+                     
+                   <!-- Logo+Manage-User -->
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-plan">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.assignEnrollment.step5a.caption.title")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.assignEnrollment.step5a.caption.description").</div>
+						        </td>
+						    </tr>
+						</table>
+            		<!-- Logo+Manage-User-end -->
+                        
+                        <table id="table-content" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+
+#springBind("enrollmentForm.enrollmentCourseViewList")
+					#set($count = ${status.value.size()} - 1)
+
+
+
+#foreach($index in [0..$count])
+
+								#springBind("enrollmentForm.enrollmentCourseViewList[$index]")
+								#set($courseList = ${status.value})
+								#set($i = -1)
+								#set($classCounter=0)
+
+								#set($myNewCoutner=0)
+								#set($evenOdd=0)
+
+
+
+
+				#set($course=${status.value})
+
+
+				##foreach($course in $courseList)
+
+			#if($evenOdd==0)
+				#set($evenOdd=1)
+			#else
+				#set($evenOdd=1)
+			#end
+
+					#set($i = $i + 1)
+						#if($course.selected == "true" && (
+							$course.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || 
+							$course.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR"))
+							)
+						)
+
+						<div id="divCourseList" style="float:left; width:98%" >
+                        <table id="course-list" border="0" cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <td class="header" colspan="3">
+				$course.courseName
+                                </td>
+                                <td class="header" width="140px">
+                                    Start Date
+                                </td>
+                                <td class="header" width="140px">
+                                    End Date
+                                </td>
+                            </tr>
+                            <!-- Schedule One -->
+#set($syncClassIds="")
+
+						#foreach($syncClass in $course.syncClasses)
+								#set($syncClassIds=$syncClassIds+$syncClass.id+"|")
+
+
+						#end
+
+						#set($a=-1)
+
+						#foreach($syncClass in $course.syncClasses)
+
+							<!-- doubtful code -->
+							<input type="hidden" value="$myNewCoutner" id="testField"/>
+
+
+							#set($classCounter=$classCounter+1)
+							#set($a=$a+1)
+#if($evenOdd==0)
+				#set($evenOdd=1)
+			#else
+				#set($evenOdd=0)
+			#end
+
+
+
+                            <tr bgcolor="#F4F4F4" height="25">
+
+
+
+                                <td class="table-row" style="width:2%;">
+
+#springBind("enrollmentForm.enrollmentCourseViewList[$index].syncClasses[$a].selected")
+                                    <input type="radio" #if(${status.value}) checked #end  name="selectSyncClass$course.courseId" class="table-row2" id=selectSyncClass$course.courseId  value=$syncClass.id onClick=selectClass("myField$syncClass.id","$syncClassIds") />
+
+								 <input type="hidden" name="${status.expression}" id="myField$syncClass.id" value="${status.value}"/>
+
+                                </td>
+                                <td class="table-row" width="15" style="width:2%;">
+                                     <img id="colOne$syncClass.id" class="icon-expand" onclick="return showCourses('showCourse$syncClass.id',$syncClass.id)" src="brands/default/en/images/icon_expand.gif"/>
+                                </td>
+                                <td class="table-row" style="width:60%;">
+                                   <b> $syncClass.sectionName</b>
+
+                                </td>
+                                <td class="table-row" style="width:18%;">
+									$syncClass.getClassStartDateString()
+                                </td>
+
+                                <td class="table-row" style="width:18%;">
+									$syncClass.getClassEndDateString()
+                                </td>
+                            </tr>
+
+
+                            <tr bgcolor="#FFFFFF">
+                                <td colspan="5">
+<div id="showCourse$syncClass.id" style="display: none" >
+			#foreach($syncSession in $syncClass.synchronousSessions)
+
+#if($evenOdd==0)
+				#set($evenOdd=1)
+			#else
+				#set($evenOdd=0)
+			#end
+
+
+                      				<table id="course-list1" border="0" cellpadding="0" cellspacing="0" width="100%">
+
+                  			          <tr #if($evenOdd==0)bgcolor="#FFFFFF" #else bgcolor="#F4F4F4" #end height="25">
+                      				          <td class="table-row">
+                     				               &nbsp;
+                    				            </td>
+
+                    				            <td class="table-row">
+                     				               $syncSession.getDayOfStartSession() $syncSession.getStartTime() - $syncSession.getEndTime()
+
+                   				             </td>
+
+                				            </tr>
+                   			         </table>
+
+
+
+                 #end
+                                </div>
+ </td>
+
+                            </tr>
+		#end
+               </table>
+			   </div>
+
+##end
+#end
+#if($course.selected == "true" && $course.courseType.equals("Instructor Connect"))
+
+						<div id="divCourseList" style="float:left; width:98%" >
+                        <table id="course-list" border="0" cellspacing="0" cellpadding="0" width="100%">
+                            <tr>
+                                <td class="header" colspan="3">
+				$course.courseName
+                                </td>
+                                <td class="header" width="140px">
+                                    Start Date
+                                </td>
+                                <td class="header" width="140px">
+                                    End Date
+                                </td>
+                            </tr>
+                            <!-- Schedule One -->
+#set($syncClassIds="")
+
+						#foreach($syncClass in $course.syncClasses)
+								#set($syncClassIds=$syncClassIds+$syncClass.id+"|")
+
+
+						#end
+
+						#set($a=-1)
+
+						#foreach($syncClass in $course.syncClasses)
+
+							<!-- doubtful code -->
+							<input type="hidden" value="$myNewCoutner" id="testField"/>
+
+
+							#set($classCounter=$classCounter+1)
+							#set($a=$a+1)
+#if($evenOdd==0)
+				#set($evenOdd=1)
+			#else
+				#set($evenOdd=0)
+			#end
+
+
+
+                            <tr bgcolor="#F4F4F4" height="25">
+
+
+
+                                <td class="table-row" style="width:2%;">
+
+#springBind("enrollmentForm.enrollmentCourseViewList[$index].syncClasses[$a].selected")
+                                    <input type="radio" #if(${status.value}) checked #end  name="selectSyncClass$course.courseId" class="table-row2" id=selectSyncClass$course.courseId  value=$syncClass.id onClick=selectClass("myField$syncClass.id","$syncClassIds") />
+
+								 <input type="hidden" name="${status.expression}" id="myField$syncClass.id" value="${status.value}"/>
+
+                                </td>
+                                <td class="table-row" width="15" style="width:2%;">
+                                     <img id="colOne$syncClass.id" class="icon-expand" onclick="return showCourses('showCourse$syncClass.id',$syncClass.id)" src="brands/default/en/images/icon_expand.gif"/>
+                                </td>
+                                <td class="table-row" style="width:60%;">
+                                   <b> $syncClass.sectionName</b>
+
+                                </td>
+                                <td class="table-row" style="width:18%;">
+									$syncClass.getClassStartDateString()
+                                </td>
+
+                                <td class="table-row" style="width:18%;">
+									$syncClass.getClassEndDateString()
+                                </td>
+                            </tr>
+
+
+                            <tr bgcolor="#FFFFFF">
+                                <td colspan="5">
+<div id="showCourse$syncClass.id" style="display: none" >
+			#foreach($syncSession in $syncClass.synchronousSessions)
+
+#if($evenOdd==0)
+				#set($evenOdd=1)
+			#else
+				#set($evenOdd=0)
+			#end
+
+
+                      				<table id="course-list1" border="0" cellpadding="0" cellspacing="0" width="100%">
+
+                  			          <tr #if($evenOdd==0)bgcolor="#FFFFFF" #else bgcolor="#F4F4F4" #end height="25">
+                      				          <td class="table-row">
+                     				               &nbsp;
+                    				            </td>
+
+                    				            <td class="table-row">
+                     				               $syncSession.getDayOfStartSession() $syncSession.getStartTime() - $syncSession.getEndTime()
+
+                   				             </td>
+
+                				            </tr>
+                   			         </table>
+
+
+
+                 #end
+                                </div>
+ </td>
+
+                            </tr>
+		#end
+               </table>
+			   </div>
+
+##end
+#end
+#end
+
+
+                                </td>
+                            </tr>
+                        </table>
+                        <div class="managerBtn">
+                            <div style="float:right; margin-top:3px;">
+                                <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target7');" style="text-decoration:none;">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal">Next</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+                            #springBind("enrollmentForm.currentPage")
+                            #if($status.value == "10")
+                                <div style="float:right; margin-top:3px;margin-right:5px;">
+                                    <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target10');"style="text-decoration:none;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">Previous</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                            #elseif(!$enrollmentForm.isNonSyncCourseSelected())
+                                <div style="float:right; margin-top:3px;margin-right:5px;">
+                                    <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">Previous</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                            #else
+                                <div style="float:right; margin-top:3px;margin-right:5px;">
+                                    <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target5');" style="text-decoration:none;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">Previous</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                            #end
+                            <div style="float:left; margin-top:3px;">
+                                <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal">Cancel</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+			</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td id="footer" colspan="2">
+                    #parse("snippets/managerFooter.vm")
+                </td>
+            </tr>
+        </table>
+        </form>
+    </body>
+</html>

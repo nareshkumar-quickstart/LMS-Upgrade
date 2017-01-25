@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+            #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("INPUT[type='checkbox'][name='chkAll']").click(
+               function(){
+                  var chkName=$(this).parent().parent().parent().find("INPUT[type='checkbox'][js_name='credentials']");
+                  $(chkName).attr('checked', $(this).is(':checked'));
+                  $(chkName).parent().parent().find("td").css("background-color", $(this).is(':checked')?"#E9F9FE":"");
+                  $(chkName).parent().parent().find("INPUT[type='hidden'][js_hdn='credentials']").attr('value', $(this).is(':checked'));
+               }
+            );
+            $("INPUT[type='checkbox'][js_name='credentials']").click(
+               function(){
+                    $(this).parent().parent().find("td").css("background-color",$(this).is(':checked')?"#E9F9FE":"");
+                    var hdn_id=document.getElementById($(this).attr('hdn_id'));
+                    hdn_id.value=$(this).is(':checked');
+               }
+            )
+        });
+
+    </script>
+</head>
+
+<body>
+<form name="approvalForm" method="post" action="acc_addApproval.do">
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!--
+        <div>
+                <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.addApproval.caption.addApp_selRequirement_leftpannelheading")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step1")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step2")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step3")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step4")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step5")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.addApproval.caption.step6")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addApproval.caption.step8")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addApproval.caption.step9")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addApproval.caption.step10")</div>
+                </div>
+        </div>
+        -->
+        #parse("snippets/accreditation/addCourseApprovalLeftMenu.vm")
+		</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+
+        #springBind("approvalForm.*")
+        #if($status.error)
+           #set($errorCodes = [])
+           #set($temp = true)
+                #springBind("approvalForm.method")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+            #if($errorCodes.size() > 0)
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                </div>
+                #end
+            </div>
+            <!-- error-box -->
+            #end
+        #end
+
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Add-Approvals")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.addApproval.caption.addApp_selRequirement_pgDesc")</div>
+		</td>
+	</tr>
+</table>			
+
+
+       <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+        #springBind("approvalForm.credentials")
+        #set($credentials = $!{status.value})
+        #set($credIndex = 0)
+            #foreach($cred in $credentials)
+            #if($cred.selected == "true")
+            #if($credentials.get($credIndex).requirements.size() > 0)
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                #springBind("approvalForm.credentials[$credIndex].credential.officialLicenseName")
+                 <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>$!{status.value}</b></div>
+
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader" style="border-right:none;">&nbsp;$brander.getBrandElement("lms.administrator.searchMember.caption.Name")</td>
+                    </tr>
+                    #set($requirements = $credentials.get($credIndex).requirements)
+                    #set($reqIndex = 0)
+                    #foreach($req in $requirements)
+                            #if($reqIndex%2==0)
+                                    #set($alternate="row_1")
+                            #else
+                                    #set($alternate="row_2")
+                            #end
+                    <tr>
+                        #springBind("approvalForm.credentials[$credIndex].requirements[$reqIndex].selected")
+                        <td class="$alternate" #if ($reqIndex==$!{requirements.size()} - 1) style="border-bottom:none;border-left:none;" #else style="border-left:none;" #end width="17px"><input type="checkbox" js_name="credentials" hdn_id="${status.expression}" name="row" style="margin-left:-2px" #if(${status.value}=="true") checked #end /><input type="hidden" js_hdn="credentials" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/></td>
+                        #springBind("approvalForm.credentials[$credIndex].requirements[$reqIndex].requirement.name")
+                        <td class="$alternate" #if ($reqIndex==$!{requirements.size()} - 1) style="border-bottom:none;border-right:none;" #else style="border-right:none;" #end>$!{status.value}&nbsp;</td>
+                    </tr>
+                    #set($reqIndex = $reqIndex + 1)
+                    #end
+                </table>
+            </div>
+            <!-- Result Subheader End -->
+            #end
+            #end
+            #set($credIndex = $credIndex + 1)
+            #end
+        </div>
+        <!-- Search Result End -->
+
+		<input type="hidden" id="currentpage" name="_page" value="12" />
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_target$!{nextStepValue}');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_target$!{previousStepValue}');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+       </div>
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

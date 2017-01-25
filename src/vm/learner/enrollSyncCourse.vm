@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+ <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>    
+
+<link type="text/css" href="brands/default/en/css/css_body.css" rel="stylesheet"/>
+<link type="text/css" href="brands/default/en/css/css_button.css" rel="stylesheet"/>
+</script>
+
+<script type="text/javascript" language="javascript" src="javascript/js_lms.js">
+    //
+</script>
+
+<script language="javascript" type="text/javascript">
+    /*this script converts from seconds to <Hours:Minute> format*/
+    var launchWindow;
+    function launchCourse(courseId, enrollmentId) {
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=no,menubar=no,status=yes,width=900,height=700,left=0,top=0');
+        launchWindow.focus();
+    }
+
+    function showDescription(){
+        document.location="#springUrl("/lrn_courseDescription.do?courseId=$!{context.course.id}")";
+    }
+
+    function backToCourses() {
+        document.location="#springUrl("/lrn_myCourses.do?show=$context.viewType")";
+    }
+
+    function courseCompletionReport() {
+        document.location="#springUrl("/lrn_courseCompletionReport.do?courseId=$!{context.course.courseGUID}&learnerEnrollmentId=$!{context.learnerEnrollment.id}")";
+    }
+    $(document).ready(function(){
+        
+    });
+</script>
+
+<script language="javascript" type="text/javascript">
+function showCourses(e,imgId)
+	{
+
+
+		var expandDiv1 = document.getElementById(e);
+		var expandCl= document.getElementById(imgId);
+		//alert(expandDiv1.style.display);
+		if(expandDiv1.style.display == 'none')
+		{
+		expandDiv1.style.display = 'block';
+		document.getElementById('colOne'+imgId).src=	'brands/default/en/images/icon_collapse.gif';
+
+//		document['colOne'+imgId].src ='brands/default/en/images/icon_collapse.gif';
+//		alert (document['colOne'+imgId].src) ;
+		
+		
+		}else{
+			expandDiv1.style.display = 'none';
+//		document['colOne'+imgId].src ='brands/default/en/images/icon_expand.gif';
+//		alert (document['colOne'+imgId].src) ;
+		document.getElementById('colOne'+imgId).src='brands/default/en/images/icon_expand.gif';
+
+		}
+
+
+
+		
+	}
+
+</script>
+</head>
+<body>
+<form id=selfEnrollmentForm>
+<div id="main-container">
+<!-- Header -->
+#parse("snippets/learnerNewHeader.vm")
+<!-- header-end -->
+<div id="content2a">
+  
+  <div id="right-pannel" style="margin-left:20px">
+
+    <!-- Logo+Manage-User -->
+    <div class="logoContainer" id="logomainContainer">
+      <div id="logoHolder" class="courseLogoCourses">&nbsp;</div>
+      <div id="titleHolder" class="courseTitle1">Schedule for $context.course.courseTitle</div>
+      <div id="detailsHolder" class="courseSchedule">$brander.getBrandElement("lms.courseSchedule.header.description")</div>
+      </div>
+    <!-- Logo+Manage-User-end -->
+
+    <table width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="2">
+                <div class="managerBtn1">
+<div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return window.print();" ><span class="button">Print Page</span></a></div>
+
+<div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return showDescription();" ><span class="button">Course Description</span></a></div>
+                    <div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return backToCourses();" ><span class="button">Back To Courses</span></a></div>
+                    
+
+
+
+                    
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table id="courseSchedule" width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td valign="middle" style="width:40px"> 
+			<img src="$brander.getBrandElement("$context.courseIconToShow")">
+		</td>
+            <td valign="middle" nowrap>
+                <a class="courseName" href="#">$context.course.courseTitle</a>
+            </td>
+        </tr>
+    </table>
+
+
+    <br/>
+
+
+
+
+<table id="courseSchedule" width="98%" cellpadding="0" cellspacing="0" style="border:1px solid #CCCCCC;">
+        <tr class="borderRow"><td><span class="headerRow">$brander.getBrandElement("lms.courseSchedule.description.tableheader.secondcol.text")</span></td>
+			<td><span class="headerRow">Start Date</span></td>
+			<td><span class="headerRow">End Date</span></td>
+			<td>&nbsp;</td>
+
+	</tr>
+	
+	
+	#set($myCounter="0")
+	#foreach($syncClass in $context.syncClasses)
+
+	<tr class=#if($myCounter=="0")"borderRow-alt"#else"borderRow-alt" #end>
+		
+		<td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")"> 
+
+			<img id="colOne$syncClass.id" class="icon-expand" onclick="return showCourses('showCourse$syncClass.id',$syncClass.id)" src="brands/default/en/images/icon_expand.gif"/>
+			&nbsp;$syncClass.sectionName
+
+		</td>
+		<td>$syncClass.getClassStartDateString()</td>
+		<td>$syncClass.getClassEndDateString() </td>
+		<td> #if(!$context.alreadyEnrolled)<a class="button" href="lrn_selfEnrollment.do?courseId=$context.course.id&syncId=$syncClass.id" ><span class="button">Enroll Now</span></a> #end</td>
+
+	</tr>
+				<tr>
+				<td colspan=4>
+
+			<div id="showCourse$syncClass.id" style="display: none" >
+
+				<table border="0" cellpadding="0" cellspacing="0" width=100%>
+	
+					#foreach($syncSession in $syncClass.synchronousSessions)
+	  
+					        <tr bgcolor=#if($myCounter=="0")"#F4F4F4" #else "#FFFFFF" #end>
+			
+						<td class="table-row" width="100%" >&nbsp;&nbsp;&nbsp;<img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$syncSession.getDayOfStartSession(), $syncSession.getStartDate("MMM dd yyyy") - $syncSession.getStartTime() - $syncSession.getEndTime()</td>
+	
+		
+
+
+						</tr>
+						  #if($myCounter=="0") #set($myCounter="1") #else #set($myCounter="0") #end	
+					#end
+
+				</table>
+		<br>
+		</div>
+	</td>
+		</tr>
+	
+	#end
+
+    </table>
+
+
+
+
+
+  </div>
+</div>
+
+<!-- Footer -->
+#parse("snippets/learnerNewFooter.vm")
+</div>
+</form>
+</body>
+</html>

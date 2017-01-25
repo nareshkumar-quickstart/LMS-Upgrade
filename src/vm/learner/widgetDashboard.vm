@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script type="text/javascript" src="javascript/jquery-1.8.3.js"></script>
+<script type='text/javascript' src='javascript/j360player.js' ></script>
+<script type='text/javascript' src='javascript/init.js' ></script>
+<script type="text/javascript" src="javascript/ls360-widget-dashboard.js"></script>
+<script type="text/javascript" src="javascript/jquery-ui-1.9.2.js"></script>
+<script type="text/javascript" src="javascript/tinysort.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/jquery.showLoading.min.js' ></script>
+<script type='text/javascript' src='javascript/js_courses.js' ></script>
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/learner-dashboard.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/showLoading.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/styles.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css" />
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>      
+<!--script type="text/javascript" language="javascript" src="javascript/lmsSCORMAdapter.js"></script-->
+        
+<script type="text/javascript" language="javascript">         
+     var launchWindow;
+    // Declare Learner Widget Layout Plugin
+	var widgetDashboard = new WidgetDashboardLayout();
+
+	// Document Ready
+	jQuery(function() {
+		jQuery.ajaxSetup({ cache: false });
+		var contentWidth = jQuery('#content').width();
+		var contentIntroWidth = jQuery('#dashboardIntro').width();
+		var contentMargin = ((contentWidth - contentIntroWidth) / 2);
+		if (contentMargin > 0) {
+			jQuery('#dashboardIntro').css("margin-left", contentMargin);
+		}
+
+		var uFooter = jQuery('#universal-footer').height();
+		var uWindow = jQuery(window).height();
+		var uHeader = jQuery('#learner-header').height();
+		
+		jQuery('.dashboard-content').height(uWindow - (uFooter + uHeader) +"px");
+		jQuery('.dashboard-content').width("100%");
+		
+		// Initialize Widget Layout Plugin}
+		widgetDashboard.init({
+			availableWidgetZones : [ "widget-zone-01", "widget-zone-02", "widget-zone-03","widget-zone-04" , "widget-zone-05", "widget-zone-06"]
+		});
+
+		jQuery('#universal-footer').css('top',(jQuery(window).height()));
+
+
+		jQuery('.dashboard-content').scroll(function() {
+
+			//jQuery('#universal-footer').css('top', (jQuery(window).height()-24));
+			//console.log(jQuery('#universal-footer').offset().top);
+		});
+		
+		// Window Resize
+		jQuery(window).resize(function() {
+			var contentWidth = jQuery('#content').width();
+			var contentIntroWidth = jQuery('#dashboardIntro').width();
+			//console.log(contentIntroWidth / 2);
+			var contentMargin = ((contentWidth - contentIntroWidth) / 2);
+			if (contentMargin > 0) {
+				jQuery('#dashboardIntro').css("margin-left", contentMargin);
+			}
+			
+			var uFooter = jQuery('#universal-footer').height();
+			var uWindow = jQuery(window).height();
+			var uHeader = jQuery('#learner-header').height();
+			
+			jQuery('.dashboard-content').height(uWindow - (uFooter + uHeader) +"px");
+			
+			jQuery('.dashboard-content').width("100%");
+			jQuery('#videoLayer').css('left', ((jQuery('#droppableZone').offset().left)+20)+'px');
+			
+		});
+	});
+ </script>
+ <style type="text/css">
+	#flashContent_video {
+	    width: 100%;
+	    height: 100%;
+	}
+ </style>
+</head>
+
+<body>
+	<form name="learnerProfileForm" method="post" action="#springUrl("/lrn_learnerProfile.do")">
+		<input type="hidden" id="action" name="method" />
+		<input type="hidden" id="lguid" value='$context.lguid' />
+		
+		<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+			<!-- Table 1 -->
+			<tr>
+				<!-- First Block -->
+				<td id="header" border="0" cellpadding="0" cellspacing="0"
+					colspan="2">
+					<!-- header --> #parse("snippets/learnerNewHeader.vm") <!-- header-end -->
+				</td>
+			</tr>
+
+			<tr id="main">
+				
+				<!-- right-pannel-content -->
+				<td id="content">
+
+						
+						<!-- Widget Dashboard Content -->
+						<div id="content" class="dashboard-content">
+							<!-- Widget Dashboard -->
+							<div id="dashboardIntro" class="dashboard-intro">
+								<!-- Widget Dashboard Intro Logo -->
+								<div id="introLogo" class="dashboard-intro-logo">
+									<img src="brands/default/en/images/icon_dashboard.png" alt="No Image Selected">
+								</div>
+								<!-- Widget Dashboard Intro Text -->
+								<div id="introText" class="dashboard-intro-text">My Dashboard</div>
+								<!-- Widget Dashboard Panel -->
+								<div id="widgetPanel" class="widget-dashboard" style="width:102%; float:left" />
+							</div>
+						</div>
+						
+						
+						<!-- space -->
+						<div class="manager-bottom-space"></div>
+						<!-- space -->
+
+						<!-- right-pannel-content-end -->
+					</div> <!-- content-area-end -->
+				</td>
+			</tr>
+			<tr>
+				<!-- Footer BLOCK -->
+				<td id="footer" colspan="2">
+					<!-- footer --> #parse("snippets/learnerNewFooter.vm")#parse("snippets/deleteConfirmation.vm") <!-- footer-end -->
+				</td>
+			</tr>
+		</table>
+	</form>
+		<script>
+		
+		function ie_ver(){  
+    var iev=0;
+    var ieold = (/MSIE (\d+\.\d+);/.test(navigator.userAgent));
+    var trident = !!navigator.userAgent.match(/Trident\/7.0/);
+    var rv=navigator.userAgent.indexOf("rv:11.0");
+
+    if (ieold) iev=new Number(RegExp.$1);
+    if (navigator.appVersion.indexOf("MSIE 10") != -1) iev=10;
+    if (trident&&rv!=-1) iev=11;
+
+    return iev;         
+}
+
+		
+		
+		if(!($.browser.msie || ie_ver()!=0))
+        {
+        	document.write("<div id='flashContent'></div>");    
+        }else{
+        
+        	document.write("<div id='fadeout-container'></div><div style='left: 279px; top: 17.5px;' id='alert-box'><table border='0' cellpadding='0' cellspacing='0'><tbody><tr>");
+        	document.write("<td><div id='mode-heading'></div><div id='close-video'>Close</div></td></tr><tr><td><div id='flashContent'></div></td></tr></tbody></table></div>");
+        
+        }
+		</script>
+		<!--<div id="flashContent"></div>-->
+		
+		            
+</body>
+
+</html>

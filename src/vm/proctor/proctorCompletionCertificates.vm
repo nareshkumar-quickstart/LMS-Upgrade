@@ -1,0 +1,571 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#if("$!context.sortDirection" == "")
+	#set($context.sortDirection = 0)
+	#set($context.sortColumnIndex = 0)
+#end
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  #parse("snippets/proctor/proctorHead.vm")
+
+	#macro( dotPaddingWithOutTitle $pValue $pLength )
+			#set($strlen=$pValue.length())
+		#if($strlen<=$pLength)
+			$pValue
+		#else
+			#set($actLen=$math.sub($strlen,$pLength))
+			$stringUtil.chop($pValue,$actLen)...
+		#end
+	#end
+  
+  <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+  
+  
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	<script type='text/javascript' src='javascript/dialogBox.js' ></script>
+	<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+	<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+	
+	
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='proctorEnrollmentId']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='proctorEnrollmentId']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+            $("#startDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#endDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+        });
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+
+function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer',
+                onShow: function (dialog) {
+                    dialog.data.find('.alert_message_box_text').append(message);
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+        
+    function search() {
+        document.getElementById('actionmethod').value='displayProctorLearners';
+        document.getElementById('showAll').value=false;
+        
+        var varStartDate = document.getElementById('startDate').value;
+        var varEndDate = document.getElementById('endDate').value;
+        
+        var stDate = new Date(varStartDate);
+		var enDate = new Date(varEndDate);
+		var compDate = enDate - stDate;
+		
+		if(varStartDate==null || varStartDate=="" || varEndDate==null || varEndDate=="" || compDate >= 0)
+			document.manageProctorEnrollmentForm.submit();
+		else
+		{
+			  $('#selectResourceTypes').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+		} 
+    }
+    
+    function printCompletionCertificates(){
+    	if ($("INPUT[type='checkbox'][name='proctorEnrollmentId']:checked").length>0) {
+	        document.manageProctorEnrollmentForm.action= "printProctorCompletionCertificate.pdf";
+	        document.manageProctorEnrollmentForm.submit();
+    	}
+    	else
+    	{
+    		$('#selectRowWarning').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+    	}
+    }
+
+    function sortLearners(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('actionmethod').value='displayProctorLearners';
+        document.manageProctorEnrollmentForm.submit();
+    }
+
+    function checkAll( countCheckBoxes ) {
+        var objCheckAll=document.getElementById("chkAll");
+        if (objCheckAll.checked) {
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = true;
+                changeRowColor(objCheckBox);
+            }
+        }else{
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = false;
+                changeRowColor(objCheckBox);
+            }
+        }
+    }
+    
+    function showSearchBox(divId){
+    var searchBox = document.getElementById('searchBox');
+        if(searchBox.className == "visible"){
+            searchBox.className = "search_box";
+            $('#searchBox input[type="text"]:first').focus();
+        }else{
+            searchBox.className = "visible";
+        }
+    }
+
+    </script>
+    
+    
+    <style type="text/css">  
+    
+    
+    .search_box_result {
+    border-bottom-color: #EBE6E6 !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color-ltr-source: physical !important;
+    border-left-color-rtl-source: physical !important;
+    border-left-color-value: #EBE6E6 !important;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: solid;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 1px;
+    border-right-color-ltr-source: physical !important;
+    border-right-color-rtl-source: physical !important;
+    border-right-color-value: #EBE6E6 !important;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    border-top-color: #EBE6E6 !important;
+    border-top-style: solid;
+    border-top-width: 1px;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    width: auto;
+    margin-left: 5px;
+}
+
+
+
+
+
+.row_1 {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #FFFFFF;
+    border-bottom-color: #DFDFDF !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color-ltr-source: physical !important;
+    border-left-color-rtl-source: physical !important;
+    border-left-color-value: #DFDFDF !important;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: none;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 0;
+    border-right-color-ltr-source: physical !important;
+    border-right-color-rtl-source: physical !important;
+    border-right-color-value: #DFDFDF !important;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    border-top-color: #DFDFDF !important;
+    border-top-style: none;
+    border-top-width: 0;
+    height: 30px;
+    padding-left: 4px;
+    font-size: 11px;
+}
+
+
+
+
+.row_2 {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #F4F4F4;
+    border-bottom-color: #DFDFDF !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color-ltr-source: physical !important;
+    border-left-color-rtl-source: physical !important;
+    border-left-color-value: #DFDFDF !important;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: none;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 0;
+    border-right-color-ltr-source: physical !important;
+    border-right-color-rtl-source: physical !important;
+    border-right-color-value: #DFDFDF !important;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    border-top-color: #DFDFDF !important;
+    border-top-style: none;
+    border-top-width: 0;
+    height: 30px;
+    padding-left: 4px;
+    font-size: 11px;
+}
+</style>
+</head>
+
+<body>
+<form name="manageProctorEnrollmentForm" method="post" action="proctorCompletionCertificate.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/proctor/proctorHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/proctor/proctorLeftMenuCompletion.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.pageHead")</div>
+		<div id="page-help">$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.pageDesc")</div>
+		</td>
+	</tr>
+</table>
+
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; margin-top:7px;margin-left:7px;">
+					  <b>$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.SelectLearner")</b>
+				</div>
+				<div id="searchBox" style="float:left; height:280px; width:320px; left:37%;" class="visible">
+                    <b>$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.searchCompletionCertificates")</b><br/><br/><br/>
+                    
+                    <div  style="width: 100px; float: left;">
+					#springBind("proctorCompletionForm.firstName")
+					$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div >
+						<input type="text" class="input_field" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:15px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>
+					
+					<div  style="width: 100px; float:left">
+					#springBind("proctorCompletionForm.lastName")
+					$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div >
+						<input type="text" class="input_field"  onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:15px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>	
+					
+					<div  style="width: 100px; float:left">
+					#springBind("proctorCompletionForm.emailAddress")
+					$brander.getBrandElement("lms.manageUser.addNewLearner.caption.eMailAddress")
+					</div >
+						<input type="text" class="input_field"  onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:15px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>	
+					
+					<div  style="width: 100px; float:left">
+						#springBind("proctorCompletionForm.courseTitle")
+						$brander.getBrandElement("lms.manageUser.addNewLearner.caption.CourseName")
+					</div >
+					<input type="text" class="input_field" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:15px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>
+					
+					
+					<div  style="width: 100px; float:left">
+					<b>$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.dateRange")</b></div ><br/><br/>
+						
+					<div  style="width: 100px; float:left">
+					#springBind("proctorCompletionForm.startDate")
+					$brander.getBrandElement("lms.enrollment.swapEnrollments.caption.startDate")</div >
+						<input type="text" class="input_field"  id="startDate"  date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:5px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>	
+					
+					<div  style="width: 100px; float:left">
+					#springBind("proctorCompletionForm.endDate")
+					$brander.getBrandElement("lms.enrollment.swapEnrollments.caption.endDate")</div >
+						<input type="text" class="input_field"  id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:5px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/><br/><br/>	
+						
+						
+                    <div style="float: right; margin-top: 2px; margin-right: 45px;">
+                        <div class="btn_start"></div>
+                        <div onclick="search();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float: right; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onmousedown="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>                    
+
+                </div>
+                <div class="result_left_side">
+                    <!-- Result Description -->
+
+                #springBind("proctorCompletionForm.learnerEnrollmentList")
+                $pager.setItems($!{status.value})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                         #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                 #end
+
+					<div class="control-button-position">
+						<a onClick="showSearchBox(this);">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+							<div class="btn_end"></div>
+						</a>
+                    </div>
+
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='proctorCompletionCertificate.do?method=displayProctorLearners&showAll=true';"></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='proctorCompletionCertificate.do?method=displayProctorLearners&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='proctorCompletionCertificate.do?method=displayProctorLearners&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='proctorCompletionCertificate.do?method=displayProctorLearners&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='proctorCompletionCertificate.do?method=displayProctorLearners&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+           #if($currentPageSize > 0)
+	            <!-- Search Result Start -->
+	            <div id="searchResult_2">
+	                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px;">
+	                    <tr bgcolor="#efefef">
+	                        <td class="check_box_top" style="padding-left: 0px; width: 20px;"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+	                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortLearners(0,1,$pageCurrIndex,$showAll);" #else onclick="sortLearners(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div></td>
+	                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortLearners(1,1,$pageCurrIndex,$showAll);" #else onclick="sortLearners(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div></td>
+	                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortLearners(2,1,$pageCurrIndex,$showAll);" #else onclick="sortLearners(2,0,$pageCurrIndex,$showAll);" #end ><div id="userNameSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</div></td>
+	                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortLearners(3,1,$pageCurrIndex,$showAll);" #else onclick="sortLearners(3,0,$pageCurrIndex,$showAll);" #end ><div id="userEmailSort" #if($context.sortColumnIndex==3 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==3) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.CourseName")</div></td>
+	                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortLearners(4,1,$pageCurrIndex,$showAll);" #else onclick="sortLearners(4,0,$pageCurrIndex,$showAll);" #end ><div id="userCompletionDateSort" #if($context.sortColumnIndex==4 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==4) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.CompletionDate")</div></td>
+	                     </tr>
+	                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+	                    #springBind("proctorCompletionForm.learnerEnrollmentList[$loopIndex]")
+	                    #set($proctorEnrollment = $!{status.value})
+	                    #if($loopIndex%2 == 0)
+	                        #set($alternate="row_1")
+	                    #else
+	                        #set($alternate="row_2")
+	                    #end
+	                    	<tr>
+	                            <td class="$alternate" width="17px" #if($loopIndex == $pageLastIndex) style="border-bottom:1px solid;" #end>
+									<input type="checkbox" id="chk$loopIndex" name="proctorEnrollmentId" value="$proctorEnrollment.id" style="margin-left:-2px" onclick="changeRowColor(this);"/>
+								</td>
+	                            <td class="$alternate" title="$!{proctorEnrollment.learner.vu360User.firstName}" ><a class="list-item-underline-a" href="printProctorCompletionCertificate.pdf?proctorEnrollmentId=$proctorEnrollment.id">#dotPaddingWithOutTitle($!{proctorEnrollment.learner.vu360User.firstName} 30)</a>&nbsp;</td>
+	                            <td class="$alternate" title="$!{proctorEnrollment.learner.vu360User.lastName}"><a class="list-item-underline-a" href="printProctorCompletionCertificate.pdf?&proctorEnrollmentId=$proctorEnrollment.id">#dotPaddingWithOutTitle($!{proctorEnrollment.learner.vu360User.lastName} 30)</a>&nbsp;</td>
+                                #if($!{proctorEnrollment.learner} && $!{proctorEnrollment.learner.vu360User.emailAddress})
+                            		<td class="$alternate" title="$!{proctorEnrollment.learner.vu360User.emailAddress}">
+                            			#dotPaddingWithOutTitle($!{proctorEnrollment.learner.vu360User.emailAddress} 30)
+                            		</td>
+                            	#else
+                            		<td class="$alternate">&nbsp;</td>
+                            	#end	
+
+                            	#if($!proctorEnrollment.course)
+		                            <td class="$alternate" title="$!{proctorEnrollment.course.courseTitle}">
+	                            		$!{proctorEnrollment.course.courseTitle}
+		                            </td>	
+                            	#else
+                            		<td class="$alternate">&nbsp;</td>
+                            	#end	
+
+                                #if($!{proctorEnrollment.courseStatistics} && $!{proctorEnrollment.courseStatistics.completionDate})
+		                            <td class="$alternate" title="$formUtil.formatDate( $!{proctorEnrollment.courseStatistics.completionDate}, "MM/dd/yyyy hh:mm aaa z")">
+	                            		$formUtil.formatDate( $!{proctorEnrollment.courseStatistics.completionDate}, "MM/dd/yyyy hh:mm aaa z")
+		                            </td>	
+                            	#else
+                            		<td class="$alternate">&nbsp;</td>
+                            	#end	
+
+	                        </tr>
+	                     
+	                    #end
+	                </table>
+	            </div>
+            #else
+                <div id="searchResult_1">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top"  style="padding-left: 0px; width: 20px;"><input type="checkbox" name="selectAll" /></td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</td>
+                            
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.CourseName")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.CompletionDate")</td>
+                            
+                        </tr>
+                    </table>
+                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.accreditation.caption.No-records-found-message") #else To find an approval click on the Search button above #end</div>
+                </div>
+                <!-- Result Subheader End -->
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        
+        			<div class="control-button-position" style="float: right; padding-right: 7; padding-top: 7px;">
+						<a onClick="printCompletionCertificates(this);">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.print")</div>
+							<div class="btn_end"></div>
+						</a>
+                    </div>
+        </div>
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+
+    <!-- Alert Message Box -->
+	#parse("snippets/messageAlert.vm")				
+	<!-- Alert Message Box - Ends -->
+
+	<!-- Delete Message Box -->
+	#parse("snippets/deleteConfirmation.vm")	
+	<!-- Delete Message Box - end-->
+
+ <div id="selectResourceTypes" style="display:none" class="message_box">
+        <div class="header">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.addCustomerContract.datesCrossed.error")</div>
+        
+            <div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        
+    </div>
+    
+     <div id="selectRowWarning" style="display:none" class="message_box">
+        <div class="header">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+        
+            <div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        
+    </div>
+    
+	<div id="deleteConfirmation" style="display:none" class="message_box">
+        <div class="header">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text"></div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:140px; margin-top:60px;" class="no simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+            </div>
+            <div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="yes">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+</form>
+<form name="printProctorCertificatesForm" method="post" action="printProctorCompletionCertificate.pdf">
+</body>
+</html>

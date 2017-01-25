@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>test
+#parse("snippets/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+
+<script type="text/javascript" language="javascript">
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+/* remove it    
+function writeUserId(ob){
+        document.manageform.userName.value=ob.value;
+    }
+*/    
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        $("#expirationDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+       
+    });
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <!-- left-pannel-content -->
+            <div>
+                <div id="l-menu-back">
+                    <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.wizard") <br> showing 1 of 2</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.wizardStep1")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.wizardStep2")</div>
+                </div>
+            </div>
+		</table></td>
+		
+            <!-- left-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+                <form name="manageform" action="ins_addSynchronousCourse.do" method="post">
+                #springBind("courseForm.*")
+                    #if($status.error)  
+                        #set($errorCodes = [])  
+                        #set($temp = true)
+
+                        #springBind("courseForm.courseName")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+                        #springBind("courseForm.courseID")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+                        #springBind("courseForm.description")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+
+                        #if($errorCodes.size() > 0)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $errorCodes)         
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                               #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+                    #end
+
+                <!-- Logo+Manage-User -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.instructor.addSynchronousCourse.step1.heading")</div>
+		<div id="page-help">$brander.getBrandElement("lms.instructor.addSynchronousCourse.step1.text")</div>
+		</td>
+	</tr>
+</table>
+                <!-- Logo+Manage-User-end -->
+
+                #set ($quoteStr = '"')
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+
+                    <div class="content-Block"><!-- content-Block 1 -->
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.summary")</div>
+                        </div>
+                        <!-- User Profile starts -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="e12" class="search-content-row">
+                            #springBind("courseForm.courseName")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.courseName")</div>
+                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+                           #set ($inputTextCSS8=$inputTextCSS+" tabindex='8' maxlength='255'")
+                                <div class="input_field_area-user-f">
+                           #springFormInput("courseForm.courseName" $inputTextCSS8)</div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                            <!-- 2 -->
+                            <div id="e13" class="search-content-row">
+                            #springBind("courseForm.courseID")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.courseID")</div>
+                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                            #set ($inputTextCSS10=$inputTextCSS+" tabindex='9'  maxlength='255'")
+                                <div class="input_field_area-user-f">
+                            #springFormInput("courseForm.courseID" $inputTextCSS10)</div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                            <!-- 3 -->
+                            <div id="e13" class="search-content-row">
+                            #springBind("courseForm.description")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.courseDescription")</div>
+                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                            #set ($inputTextCSS9=$inputTextCSS+" tabindex='10' maxlength='50'")
+                                <div class="input_field_area-user-f">
+                            <textarea name="description"  class="inputTextArea" tabindex='10'> </textarea> </div>
+                            
+                            </div>
+
+                            <!-- 12 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="block_text_in-r-f"></div>
+                                <div class="input_field_area-user-f"></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                        </div>
+                        <!-- User Profile ends -->
+                    </div><!-- content-Block 1 -->
+
+                    <!-- button-div -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                        <input type="hidden" id="currentpage" name="_page" value="0"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                        <div class="btn-left2"><a class="button" onClick="location.href='ins_manageSynchronousCourse.do';"><span class="button">Cancel</span></a></div>
+                        
+                        <div class="btn-right1"><a class="button" onClick="submitButtonForm(document.manageform,'wizardSubmitter','_target1');"><span class="button">Next</span></a></div>
+                        
+                    </div>
+                    <!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                </form>
+
+            </div><!-- right-pannel -->
+        </td></tr><!-- content-area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+    </table><!-- main-container -->
+</body>
+</html>

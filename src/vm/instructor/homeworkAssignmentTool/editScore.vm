@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+    ##parse("snippets/instructorHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+         	$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+			if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+			}
+			$('#sideBar').height($('#right-pannel').height());
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+        function updateScore() {
+           document.getElementById('actionmethod').value='updateScore';
+           document.hwSubmissionForm.submit();
+        }
+        function cancelEdit() {
+           document.getElementById('actionmethod').value='listLearners';
+           document.hwSubmissionForm.submit();
+        }
+        
+       
+    </script>
+</head>
+
+<body>
+<form name="hwSubmissionForm" method="post" action="ins_manageHomeworkAssignment.do">
+  
+  <input type="hidden" id="pageName" name="pageName" value="1">
+  <input type="hidden" id="actionmethod" name="method" value="editScore"/>
+  #springBind("hwSubmissionForm.id")  
+  <input type="hidden" name="${status.expression}" value="$!{status.value}"/>
+  #springBind("hwSubmissionForm.learnerEnrollment")  
+  <input type="hidden" name="${status.expression}" value="$!{status.value}"/>
+  
+  
+
+<div id="main-container">
+
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+    <tr> <!-- First Block -->
+      <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header ends -->
+    </td></tr>
+    
+    <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+  <td id="left-navigation" valign="top">
+    <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        #parse("snippets/instructorResourcesLeftMenu.vm")
+    </table></td>
+    
+    <TD id="content" >
+        <div id="scrollable">
+            #springBind("hwSubmissionForm.*")
+            
+            #if( $context.deleteError != false )
+            <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #set ($error = $brander.getBrandElement($context.deleteError))
+                    <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                    </div>
+                </div>
+            <!-- error-box -->
+			#end
+    
+    #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                       #foreach($errorCode in $status.errorCodes)
+                            #if($errorCode != 'custom.field.required')
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                            #end
+                        #end
+
+                        #foreach($errorMessage in $status.errorMessages)
+                            #if(!$!errorMessage.equals(""))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$!errorMessage</div>
+                            </div>
+                            #end
+                        #end
+                </div>
+                <!-- error-box -->
+            #end
+            
+            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+        <tr>
+      <td id="page-icon" class="page-icon-tools">
+          &nbsp;
+      </td>
+      <td id="page-description">
+          <div id="page-heading">$brander.getBrandElement("lms.instructor.PageHeading.caption.HomeworkAssignmentTool.editScore")</div>
+          <div id="page-help">$brander.getBrandElement("lms.instructor.PageInlineText.caption.HomeworkAssignmentTool.editScore")</div>
+      </td>
+        </tr>
+    </table>
+    
+    <div class="buttonContainereditmessage"  style="height:auto;width:100%">
+            <!-- Download selected assignment -->   
+              <div style="float:left; margin-top:2px;" >
+                      <div class="btn_start"></div>
+                      <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="window.open('ins_manageHomeworkAssignment.do?method=downloadFile&submissionIds=$!hwSubmissionForm.learnerEnrollment&fileName=$hwSubmissionForm.instructionsFileName')">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.DownloadInstructions")</div>
+                      <div class="btn_end"></div>
+              </div>
+              <div style="float:left; margin-top:2px;margin-left:25px;" >
+                      <div class="btn_start"></div>
+                      <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="window.location.href='ins_manageHomeworkAssignment.do?method=downloadStudentSubmittedAssignment&submissionIds=$!hwSubmissionForm.learnerEnrollment'">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.StudentWork")</div>
+                      <div class="btn_end"></div>
+              </div>
+            </div>
+			
+			  
+
+            <div class="search_box_result" style="float:left; width:100%; clear:both; margin:10px 0px 0px 0px;">
+                
+                    <div class="box_header" style="height:30px;"><span class="box_heading" style="font-size:12px; line-height:30px; margin:0px 0px 0px 10px;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.Heading1")</span></div> 
+
+                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                    <tr>
+                        <td width="232" style="height:30px;"><span class="row_text" style="padding:0px 0px 0px 7px; font-weight:bold;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.AssignmentName")</span></td>
+                        <td><span class="row_text">$!hwSubmissionForm.assignmentName</span></td>
+                    </tr>
+                    <tr>
+                        <td width="232" style="height:30px;"><span class="row_text" style="padding:0px 0px 0px 7px; font-weight:bold;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.StudentName")</span></td>
+                        <td><span class="row_text">$!hwSubmissionForm.fullName</span></td>
+                    </tr>
+                    <tr>
+                        <td width="232" style="height:30px;"><span class="row_text" style="padding:0px 0px 0px 7px; font-weight:bold;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.ScoringMethod")</span></td>
+                        <td><span class="row_text">$!hwSubmissionForm.scoringMethod</span></td>
+                    </tr> 
+                    #if($hwSubmissionForm.scoringMethod.equalsIgnoreCase("Scored"))
+                    <tr>
+                        <td width="232" style="height:30px;"><span class="row_text" style="padding:0px 0px 0px 7px; font-weight:bold;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.MasteryScore")</span></td>
+                        <td><span class="row_text">$!hwSubmissionForm.score</span></td>
+                    </tr> 
+                    #end                      
+                </table>
+            </div>
+            
+            <div style="height:25px;"></div>
+
+            <div class="search_box_result" style="margin:15px 0px 0px 0px; float:left; width:100%;">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.Heading2")</span></div>
+                #springBind("hwSubmissionForm.score")
+                <div style="padding:5px 0px; overflow:hidden;"><input type="radio" style="float:left; margin:0px 0px 0px 14px;" name="${status.expression}" value="Incomplete" #if(${status.value} == "Incomplete") checked #end /><span style="float:left; padding:0px 0px 0px 5px;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.Score.Incomplete")</span></div>
+                  
+                #if($hwSubmissionForm.scoringMethod.equalsIgnoreCase("Scored"))
+                <div style="padding:5px 0px; overflow:hidden;">
+				#springBind("hwSubmissionForm.score")
+                <input onClick="javascript:document.hwSubmissionForm.completionStatus.checked=false;" type="radio"  style="float:left; margin:0px 0px 0px 13px;" name="${status.expression}"   value="scorePercent" #if(${status.value} == "scorePercent") checked #end />&nbsp;
+				#springBind("hwSubmissionForm.percentScore")
+				<input style="float:left; margin:0px 0px 0px 3px;" type="text" id="field_score_tag" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength=50 tabIndex="3" />&nbsp;%
+                #end
+                #if($hwSubmissionForm.scoringMethod.equalsIgnoreCase("Simple"))
+				   #springBind("hwSubmissionForm.score")
+                  <div style="padding:5px 0px; overflow:hidden;"><input onClick="javascript:document.hwSubmissionForm.completionStatus.checked=false;" type="radio"  style="float:left; margin:0px 0px 0px 14px;" name="${status.expression}" value="Pass" #if(${status.value} == "Pass") checked #end /><span style="float:left; padding:0px 0px 0px 5px;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.Score.Pass")</span></div>
+                  <div style="padding:5px 0px; overflow:hidden;"><input onClick="javascript:document.hwSubmissionForm.completionStatus.checked=false;" type="radio"  style="float:left; margin:0px 0px 0px 14px;" name="${status.expression}" value="Fail" #if(${status.value} == "Fail") checked #end /><span style="float:left; padding:0px 0px 0px 5px;">$brander.getBrandElement("lms.Instructor.caption.HomeworkAssignmentTool.editScore.Score.Fail")</span></div>
+                #end
+            </div>
+            
+            #set($tabindexSave=$tabindex+2)
+            <div style="float:right; margin-top:15px; " tabIndex="$tabindexSave">
+        			 <a onClick="updateScore();">
+                <div class="btn_start"></div>                   
+        				<div class="btn_normal" >$brander.getBrandElement("lms.Instructor.button.Save")</div>
+        				<div class="btn_end"></div>
+        			</a>
+            </div>
+
+            #set($tabindex=$tabindex+1)
+            <div style="float:right; margin-top:15px;margin-right:5px;" tabIndex="$tabindex">
+        			<a onclick="cancelEdit();">
+                <div class="btn_start"></div>
+                <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>                    
+                <div class="btn_end"></div>
+        			</a>
+            </div>
+            
+        </div>
+  
+  </div>
+    <!-- Body End -->
+
+      <!-- content-area-end -->
+        </td></tr>
+
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end   
+<!-- footer-end -->
+</td></tr>
+</table>
+</form>
+</body>
+</html>

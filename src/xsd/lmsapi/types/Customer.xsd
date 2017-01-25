@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://customer.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://customer.types.lmsapi.message.webservice.lms.vu360.softech.com" 
+	xmlns:addr="http://address.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<xsd:import namespace="http://address.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="Address.xsd"/>
+	
+	<xsd:complexType name="Customers">  
+    	<xsd:sequence>  
+        	<xsd:element name="Customer" type="Customer" minOccurs="1" maxOccurs="unbounded" nillable="false" />
+   		</xsd:sequence>  
+	</xsd:complexType>
+	
+	<xsd:complexType name="Customer">  
+    	<xsd:sequence>  
+			<xsd:element name="Company" type="Company" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="Manager" type="Manager" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="Address" type="addr:Address" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="AlternateAddress" type="addr:Address" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="UserName" type="xsd:string" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="Password" type="xsd:string" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="CustomerType" type="CustomerType" minOccurs="1" maxOccurs="1" default="B2B" />
+			<!-- <xsd:element name="LcmsAuthoring" type="xsd:boolean" minOccurs="1" maxOccurs="1" fixed="false" />  
+			-->
+			<xsd:element name="BrandId" type="xsd:nonNegativeInteger" minOccurs="0" maxOccurs="1" default="0" />
+    	</xsd:sequence>
+    	<xsd:attribute name="apiEnabled" type="xsd:boolean" use="optional" default="false" />
+    	<xsd:attribute name="accountLocked" type="xsd:boolean"  default="false"/> 
+	    <xsd:attribute name="accountExpired" type="xsd:boolean"  default="false"/> 
+	    <xsd:attribute name="accountDisabled" type="xsd:boolean" default="false"/>    
+	    <xsd:attribute name="visibleOnReport" type="xsd:boolean" default="true"/>  
+	    <xsd:attribute name="accountExpirationDate" type="xsd:date" use="optional" />   
+	   	<xsd:attribute name="changePasswordOnNextLogin" type="xsd:boolean" use="optional" default="false" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Company">  
+    	<xsd:sequence>  
+			<xsd:element name="Name" type="xsd:string" minOccurs="1" maxOccurs="1" />
+			<xsd:element name="Website" type="xsd:string" minOccurs="0" maxOccurs="1" />
+			<xsd:element name="Email" type="xsd:string" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence>
+		<xsd:attribute name="AccountStatus" type="AccountStatus" use="optional" default="Active" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Manager">  
+    	<xsd:sequence>  
+        	<xsd:element name="ManagerFirstName" type="xsd:string" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="ManagerLastName" type="xsd:string" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="ManagerPhone" type="xsd:string" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="Extension" type="xsd:string" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="CustomerType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="B2B"/>
+			<xsd:enumeration value="B2C"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="AccountStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Active"/>
+			<xsd:enumeration value="Inactive"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="RegisterCustomers">  
+    	<xsd:sequence>  
+        	 <xsd:element name="RegisterCustomer" type="RegisterCustomer" minOccurs="1" maxOccurs="unbounded" nillable="true" />
+    	</xsd:sequence>  
+	</xsd:complexType>
+
+	<xsd:element name="RegisterCustomer" type="RegisterCustomer"/>  
+    <xsd:complexType name="RegisterCustomer">  
+    	<xsd:sequence>  
+    	    <xsd:element name="CustomerCode" type="xsd:string" minOccurs="0" maxOccurs="1" />
+    	    <xsd:element name="ApiKey" type="xsd:string" minOccurs="0" maxOccurs="1" />
+    	    <xsd:element name="UserName" type="xsd:string" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="OrganizationGroupName" type="xsd:string" minOccurs="0" maxOccurs="1" />
+        	<xsd:element name="Manager" type="Manager" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="Address" type="addr:Address" minOccurs="0" maxOccurs="1" />
+            <xsd:element name="Company" type="Company" minOccurs="0" maxOccurs="1" />  
+    	</xsd:sequence>  
+    	<xsd:attribute name="errorCode" type="xsd:string" use="required"/>
+	    <xsd:attribute name="errorMessage" type="xsd:string"/>
+	</xsd:complexType>
+	
+</xsd:schema>

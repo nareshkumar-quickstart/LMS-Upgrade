@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<!--        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+<script type="text/javascript">
+function FormSubmit(buttonclick) {
+document.getElementById('action').value=buttonclick;
+document.brandingForm.submit();
+}
+
+function cancel(){	 
+	 document.getElementById('actionmethod').value='basicBranding';	 	 
+	 document.brandingForm.submit();
+ }
+$(document).ready(function(){
+    $('#revert').click(function(){
+        showDefaultValue();
+    });
+});
+
+function saveEmail(){     
+     updateTextArea("email");
+     document.getElementById('actionmethod').value='saveEmail';	 
+	 document.brandingForm.submit();
+ 
+ }
+
+function showDefaultValue(){
+  document.getElementById('actionmethod').value='editEmail';  
+  document.getElementById('showDefaultValue').value='showDefaultValue';  	 
+  document.brandingForm.submit();
+}   
+</script>
+<head>
+     <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+            <td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+                  #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/managerHeader.vm")
+			#end
+            <!-- header-end -->
+            </td>
+			</tr>      
+         <tr id="main">
+           <!-- <LEFT NAGIVATION> -->
+           <td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+					 #parse("snippets/compliance/complianceLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+         <!-- </LEFT NAGIVATION> -->
+                <!-- </LEFT NAGIVATION> -->
+                <td id="content">
+                    <div id="scrollable">
+                    #springBind("brandingForm.*")
+                        #if($status.error)
+                            <!-- error-box -->
+                           <table cellspacing="0" cellpadding="0" border="0" class="table-error" id="error-profile" style="display: table;">
+                                <tbody>
+                                 <tr>
+                                  <td><div class="error">Required field must not be blank. Please provide required information and try again.</div></td>
+                                 </tr>
+                                </tbody>
+                           </table>
+                            <!-- error-box -->
+                        #end	
+                    
+                        <!-- <PAGE DESCRIPTION> -->
+                        <table id="table-description" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <table id="table-page-description" border="0" cellpadding="0" cellspacing="0">
+									    <tr>
+										        <td id="page-icon" class="icon_surveys">
+												            &nbsp;
+										        </td>
+										        <td id="page-description">
+            										<div id="page-heading">$brander.getBrandElement("lms.admin.branding.title")</div>
+            										<div id="table-tabs" style="font-size: 11px;">$brander.getBrandElement("lms.admin.branding.email.subtitle")</div>        										
+            									</td>
+    									</tr>
+									</table>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- </PAGE DESCRIPTION> -->
+                        <!-- <TOP CONTROLS> -->
+
+                        <!-- </TOP CONTROLS> -->
+                    <form name="brandingForm" method="post" action="branding.do" enctype="multipart/form-data">
+                      <input type="hidden" id="actionmethod" name="method" value=""/>
+                      <input type="hidden" id="showDefaultValue" name="showDefaultValue" value=""/>
+                        <!-- <BREADCRUMB> -->
+                        <table id="table-bread-crumb" border="0" cellpadding="0" cellspacing="0" style="width: 99%;">
+                            <tr>
+                                <td class="start">
+                                    &nbsp;
+                                </td>
+                                <td class="stem" width="105">
+                                    <div class="bread-crumb-text" style="float:left;">Make Your Selection: </div>
+                                </td>
+                                <td class="stem">
+                                    #springBind("brandingForm.emailTitle")
+                                    <div class="bread-crumb-text" style="float:left;"><a href="branding.do?method=basicBranding&pageTarget=emailList">Emails</a> > $!{status.value}</div>
+                                </td>
+                                <td class="end">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                        <!--</BREADCRUMB> -->
+                        <!-- <TOP CONTROLS> -->
+                        
+                        <!-- </TOP CONTROLS> -->
+                        <table id="table-content" border="0" cellpadding="0" cellspacing="0">
+                        	
+                        #springBind("brandingForm.emailTopic")
+            			<input type="hidden" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+                            <tr>
+                                <td>
+                                    <table class="content-Block" border="0" cellpadding="0" cellspacing="0" style="width: 99%">
+                                        <tr>
+                                            <td class="content-table-header" colspan="3">
+                                                <div class="icon-caret-down-large" style="float:left; margin-right:5px; padding-left:5px; padding-right:5px;" onclick="restoreTable(this, 'emailContent')"></div>
+                                                #springBind("brandingForm.emailTitle")
+                                                <div class="content-table-heading">$!{status.value}</div>
+                                            </td>
+                                        </tr>
+                                        <tr name="emailContent">
+                                            <td style="padding:5px;width:25%;">
+                                                Subject
+                                            </td>
+                                            <td style="width:2%;">
+                                                &nbsp;
+                                            </td>
+                                            <td style="padding:5px;">
+                                            #springBind("brandingForm.emailSubject")
+            								<input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+                                            </td>
+                                        </tr>
+                                        <tr name="emailContent">
+                                            <td style="padding:5px;">
+                                                From
+                                            </td>
+                                            <td style="width:15px;"></td>
+                                            <td style="padding:5px;">
+                                            #springBind("brandingForm.emailAddresses")
+            								<input type="text" name="${status.expression}" value="$!{status.value}" maxlength="250" style="width: 99%" #if($status.error) class="empty-required-field" #else class="input-lrg" #end  />
+                                            </td>
+                                        </tr>
+                                        <tr name="emailContent">
+                                            <td valign="top" style="padding:5px;">
+                                                Message
+                                            </td>
+                                            <td id="revert" width="10" class="icon-revert" style="background-position:5px 15px;">
+                                                &nbsp;
+                                            </td>
+                                            <td style="padding:5px;">
+                                                #springBind("brandingForm.emailTemplateText")
+                                                <textarea id="email" name="${status.expression}" rows="" cols="" class="textarea-lrg" style="height:270px;">$!{status.value}</textarea>
+                                                <script language="JavaScript" type="text/javascript">
+                                                    generate_wysiwyg('email');
+                                                </script>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="bottom-controls">                           
+	<table cellspacing="0" cellpadding="0" border="0" id="table-bottom-controls" style="width: 99%;">
+	    <tr name="emailContent">
+	         <td>	            
+				<div style="float: right; margin-top: 15px;">
+	                 <a onclick="saveEmail();">
+	                 <div class="btn_start"></div>
+	                 <div class="btn_normal">Save</div>
+	                 <div class="btn_end"></div>
+	                 </a>
+	            </div>
+	            <div style="float: right; margin-top: 15px; margin-right: 5px;">
+                  <a style="text-decoration: none;" onclick="cancel();">
+                  <div class="btn_start"></div>
+                  <div class="btn_normal">Cancel</div>
+                  <div class="btn_end"></div>
+                  </a>
+                  </div>
+	        </td>
+	    </tr>
+	</table>
+ </div>
+</form>                        
+                       <!-- <BOTTOM CONTROLS> -->
+                           
+                        <!-- </BOTTOM CONTROLS> -->
+                    </div>
+                </td>
+            </tr>
+			   <tr> <!-- Footer BLOCK -->
+         <td id="footer" colspan="2">
+         <!-- footer -->
+         #parse("snippets/managerFooter.vm")
+         <!-- footer-end -->
+         </td>
+         </tr>
+        </table>
+    </body>
+
+</html>

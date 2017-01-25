@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script>
+$(document).ready(function() {
+       
+		$('#sideBar').height($('.scrollable').height());
+    });
+	</script>
+</head>
+
+<body>
+<form name="trainingPlanAnalysis" method="post" action="mgr_manageSurveys.do">
+
+    <div id="main-container"><!-- main-container -->
+
+        <!-- header -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+           #parse("snippets/adminHeader.vm")
+        #else
+           #parse("snippets/compliance/complianceHeader.vm")
+        #end
+        <!-- header-end -->
+
+        <div id="content2a"><!-- content-area -->
+
+            <!-- sub-header+arrow -->
+            <!-- <div  id="content3a"></div> -->
+            <!-- sub-header+arrow-end -->
+
+            <!-- left-menu-content -->
+            #parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-menu-content-end -->
+
+            <div id="right-pannel">
+
+                <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                    <tr>
+                        <td style="padding-right:10px;">
+                              <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.administrator.searchMember.caption.trainingplananalysis")</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.ManageLocations")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+							<div style="float:right; margin-top:3px;*margin-right:15px;">
+								<a onClick="window.print();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.print")</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+							
+                           <div style="float:right; margin-top:3px;">
+								<a href="mgr_manageSurveys.do?method=showTrainingPlanAnalysisDetails" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.mycourses.viewDetails")</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+                            
+							 <div style="float:right; margin-top:3px;">
+								<a href="mgr_manageSurveys.do" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Back</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+							
+                         </td>
+                    </tr>
+                </table>
+
+                <div class="search_box_result" style="margin-top:20px; ">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.assignEnrollmentSummary.caption.header")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+                            <td>
+                                <br/>
+                                <div style="margin-left:5px;">
+                                    $brander.getBrandElement("lms.administrator.searchMember.caption.loremipsum")<br/><br/>
+                                    $brander.getBrandElement("lms.administrator.searchMember.caption.perspiciatis")<br/><br/>
+                                </div><br/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="search_box_result" style="margin-top:20px;">
+                    <div class="box_header">
+                        <table border="0" cellspacing="3" cellpadding="0" width="100%">
+                            <tr>
+                                <td>
+                                    <span class="box_heading">$brander.getBrandElement("lms.manageUser.searchLearner.caption.Courses")</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+						#springBind("manageSurveyForm.suggTrainings")
+                        #set($sTraining = $!{status.value})
+                        #if ($!{sTraining.size()} > 0)
+                            #foreach($sTran in $sTraining)
+                                <tr>
+                                    #foreach($course in $sTran.courses)
+                                        <td>
+                                            <div style="margin:5px;">$!{course.courseTitle} ,</div>
+                                        </td>
+                                    #end
+                                </tr>
+                            #end
+                        #end
+                    </table>
+                </div>
+
+                <!--<div class="search_box_result" style="margin-top:20px;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.administrator.searchMember.caption.reps")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+                            <td>
+                                <br/>
+                                <div style="margin-left:5px;">
+                                    $brander.getBrandElement("lms.administrator.searchMember.caption.loremipsum")<br/><br/>
+                                    $brander.getBrandElement("lms.administrator.searchMember.caption.totalnumbersreps") <input type="text" style="width:55px; margin-left:5px;"></input><br/><br/>
+                                </div><br/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="float:right; margin-top:15px; margin-right:8px;">
+                    <a href="storefront/checkout-page.jsp">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.checkout")</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>
+
+                <div style="float:left; margin-top:15px; margin-left:15px;">
+                    <a href="mgr_manageSurveys.do?method=searchSurvey">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>-->
+
+            </div>
+        </div>
+		
+
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            #parse("snippets/adminFooter.vm")
+        #else
+           #parse("snippets/managerFooter.vm")
+        #end
+        <!-- footer-end -->
+	 </div>
+    </form>
+</body>
+</html>

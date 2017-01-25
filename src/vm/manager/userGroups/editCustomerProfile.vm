@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script language="javascript" type="text/javascript">
+var zipType_1 = "" ;
+var zipCodeLength_1 = "" ;
+var zipType_2 = "" ;
+var zipCodeLength_2 = "" ;
+// function to populate state drop downs on on country selection 
+function countryChangeFormSubmit(dropdown)
+ {
+  if (dropdown.name=="billingCountry")
+		{          
+			document.getElementById('city1').value="";
+		}
+		if (dropdown.name=="shippingCountry")
+		{          
+			document.getElementById('city2').value="";
+		}
+    document.getElementById('actionmethod').value='saveCustomerProfile';
+document.getElementById('validateVariable').value='donotValidate'; 
+    document.editCustomerForm.submit();
+}
+
+function EditSave(buttonclick) {
+         document.getElementById('actionmethod').value='saveCustomerProfile';
+         document.editCustomerForm.submit();
+}
+
+function EditCancel(buttonclick) {
+        document.getElementById('actionmethod').value='cancelEditCustomer';
+        document.editCustomerForm.submit();
+}
+</script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+       
+});
+</script>
+</head>
+
+<body>
+<form name="editCustomerForm" method="post" action="mgr_editCustomer.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/managerHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+                #parse("snippets/managerCustomerLeftMenu.vm")
+                <!-- left-pannel-content-end -->
+		</TABLE>
+	</td>
+	
+                <!-- right-pannel-content -->
+    <TD id="content" >
+	<div id="scrollable">
+            #springBind("editCustomerForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                         <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                                </div>
+                                #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+                        
+                        #parse("snippets/macroUtils.vm")
+                        #set ($quoteStr = '"')
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                        #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                        #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                        #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+
+                        <!-- Logo+Manage-User -->
+        	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	    		    <tr>
+	    			<td id="page-icon" class="courseLogoProfile">
+	    			    &nbsp;
+	    			</td>
+	    			<td id="page-description">
+	    			    <div id="page-heading">$brander.getBrandElement("lms.administrator.editCustomerProfile1.caption.editCustomer")</div>
+	    			    <div id="page-help">$brander.getBrandElement("lms.manageUser.learnerProfile.caption.pageDesc")</div>
+	    			</td>
+	    		    </tr>
+		</table> 
+                        
+                        
+                        <!-- Logo+Manage-User-end -->
+
+												
+						#* ============================================================ *#
+						#* -----------adding country \state code for ADDRESS 1 -------- *#
+						#* ============================================================ *#
+
+						#set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+						#set( $StateLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+						#set( $ZipLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+
+						#springBind( "editCustomerForm.billingCountry" )
+
+						#set($Country1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+						 
+						#foreach ($objCountry1 in $Country1)
+						 
+						#if($!{status.value} == $objCountry1.value)
+
+						#set( $State_var1 = "lms.manageUser.AddLearner.")
+						#set( $State_var2 = ".State")
+						#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+						#set( $CurrentCountry1 = "$objCountry1.value")
+
+						#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+						#set( $State_label_var2 = ".label")
+						#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+
+						#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+						#set( $State_zip_var2 = ".label")
+						#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+
+						#set( $State = $brander.getBrandMapElements($State_var) )
+						#set( $StateLabel_1 = $brander.getBrandElement($State_label_var) )
+						#set( $ZipLabel_1 = $brander.getBrandElement($State_zip_var) )
+
+
+						#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+
+						<script type="text/javascript" language="javascript" > 
+						#set( $ZipType2 = ".type" )
+						#set( $ZipLength = ".length" )
+						#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType2" )
+						#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+
+						zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+						zipCodeLength_1 = '$brander.getBrandElement("$ZipLength2")' ;
+						</script> 
+
+						#end
+						#end
+						<!--STATE -->
+													
+							#* ============================================================ *#
+							#* ============================================================ *#
+							#* adding country \state code for ADDRESS 2  *#
+
+							#set( $State2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+							#set( $StateLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+							#set( $ZipLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+
+							#springBind("editCustomerForm.shippingCountry")
+
+							#set($Country2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+							 
+							#foreach ($objCountry1 in $Country2)
+							 
+							#if($!{status.value} == $objCountry1.value)
+
+							#set( $State_var1 = "lms.manageUser.AddLearner.")
+							#set( $State_var2 = ".State")
+							#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+							#set( $CurrentCountry2 = "$objCountry1.value")
+
+							#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+							#set( $State_label_var2 = ".label")
+							#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+
+							#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+							#set( $State_zip_var2 = ".label")
+							#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+							 
+
+							#set( $State2 = $brander.getBrandMapElements($State_var) )
+							#set( $StateLabel_2 = $brander.getBrandElement($State_label_var) )
+							#set( $ZipLabel_2 = $brander.getBrandElement($State_zip_var) )
+
+
+							#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+
+							<script type="text/javascript" language="javascript" > 
+							#set( $ZipType2 = ".type" )
+							#set( $ZipLength = ".length" )
+							#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType2" )
+							#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+
+							zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+							zipCodeLength_1 = '$brander.getBrandElement("$ZipLength2")' ;
+							</script>  
+
+							#end
+							#end 
+                        <!-- User-profile -->
+                        <div class="content-Block">
+                                <div id="e7a" class="Block-Contain-header">
+                                        <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.administrator.editCustomerProfile1.caption.customerProfile")</div>
+                                </div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="Search-inputfield-box">
+                                        <!-- 1 -->
+                                        <div id="e12" class="search-content-row">
+							#springBind("editCustomerForm.eventSource")
+							<input type="hidden" value="validate" id = "validateVariable" name="$status.expression" />
+                                                #springBind("editCustomerForm.name")
+                                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.administrator.editCustomerDistributor.caption.CustomerName")</div>
+                                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")"  #end /></div>
+                                                <div class="input_field_area-user-f"><input type="text" name="${status.expression}" value="$!{status.value}" tabindex="9" class="input_field" maxlength="50" /></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.websiteUrl")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.editDistributorProfile.caption.WebsiteURL")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="20" name="${status.expression}" value="$!{status.value}" class="input_field" maxlength="254" /></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 2 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.firstName")
+                                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.administrator.searchMember.caption.FirstName")</div>
+                                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")"  #end /></div>
+                                                <div class="input_field_area-user-f"><input type="text" name="${status.expression}" tabindex="10" value="$!{status.value}" maxlength="254" class="input_field" /></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.emailAddress")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="21" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 3 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.lastName")
+                                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.LastName")</div>
+                                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")"  #end /></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="11" name="${status.expression}" value="$!{status.value}" maxlength="254" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 4 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.phone")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.Phone")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="12" name="${status.expression}" value="$!{status.value}" maxlength="254" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.status")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewCustomerProfile.caption.accountStatus")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">
+                                                        <div class="btn_radio3"><input type="radio" tabindex="23" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end />$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Active")</div>
+                                                        <div class="btn_radio3"><input type="radio" tabindex="24" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end />$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Inactive")</div>
+                                                </div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 5 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.extension")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.Ext")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="13" name="${status.expression}" value="$!{status.value}" maxlength="254" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 7 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.billingAddress1")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.editDistributorProfile.caption.Address1")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="14" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.shippingAddress1")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.editDistributorProfile.caption.Address2")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="25" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 8 -->
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.billingAddress2")
+                                                <div class="block_text_in-r-f">&nbsp;</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="15" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.shippingAddress2")
+                                                <div class="block_text_in-r-f">&nbsp;</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="26" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+
+                                        <!-- 12 Country -->
+											<div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.billingCity")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.City")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input id="city1" type="text" tabindex="18" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                                #springBind("editCustomerForm.shippingCity")
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.City")</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input id="city2" type="text" tabindex="29" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+
+                                        <!-- 10 State -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind( "editCustomerForm.billingState" )
+                                                #if($CurrentCountry1 == "US" || $CurrentCountry1 == "United States" || $CurrentCountry1 == "AU" || $CurrentCountry1 == "Australia" || $CurrentCountry1 == "AE" || $CurrentCountry1 == "United Arab Emirates" || $CurrentCountry1 == "CA" || $CurrentCountry1 == "Canada" || $CurrentCountry1 == "GB" || $CurrentCountry1 == "United Kingdom")
+                                                <div class="block_text_in-r-f">$!StateLabel_1</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">
+                                                 
+                                                <select class="input_field1c" name="billingState" tabindex="17" maxlength='50'>
+												<OPTION SELECTED VALUE=""></OPTION>                                                
+                                                #foreach ($stat in $State)
+                                                        #if($stat.value == $!{status.value})
+                                                                <option value="$stat.value" selected>$stat.label</option>
+                                                        #else
+                                                                <option value="$stat.value" >$stat.label</option>
+                                                        #end
+                                                #end
+                                                </select>
+                                                </div>
+                                                #else
+							                        <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+							                        <div class="com-star-r-t"></div>
+							                        <div class="input_field_area-user-f">                        
+							                        <input type="text" maxlength="50" name="billingState" tabindex="17" value="" class="input_field"/>
+							                        </div>                        
+                                                #end
+												
+												#springBind( "editCustomerForm.shippingState" )
+												#if($CurrentCountry2 == "US" || $CurrentCountry2 == "United States" || $CurrentCountry2 == "AU" || $CurrentCountry2 == "Australia" || $CurrentCountry2 == "AE" || $CurrentCountry2 == "United Arab Emirates" || $CurrentCountry2 == "CA" || $CurrentCountry2 == "Canada" || $CurrentCountry2 == "GB" || $CurrentCountry2 == "United Kingdom")
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+                                                <div class="block_text_in-r-f">$!StateLabel_2</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+                                                
+                                                <div class="input_field_area-user-f"> 
+												<select class="input_field1c" name="shippingState" tabindex="28" maxlength='50'>
+												<OPTION SELECTED VALUE=""></OPTION>
+                                                
+                                
+                                                #foreach ($state in $State2)
+                                                                                        
+                                                        #if($state.value == $!{status.value})
+                                                                <option value="$state.value" selected>$state.label</option>
+                                                        #else
+                                                                <option value="$state.value" >$state.label</option>
+                                                        #end
+                                                #end
+                                                </select>
+                                                </div>
+                                                #else
+													<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+							                        <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+							                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+							                        <div class="input_field_area-user-f">                        
+							                        <input type="text" maxlength="50" name="shippingState" tabindex="28" value="" class="input_field"/>
+							                        </div>                        
+                                                #end
+                                        </div>
+
+
+                                        <!-- 9 -->
+                                        
+#if($ZipLabel_1 != "_" || $ZipLabel_2 != "_")
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.billingZip")
+                            #if($ZipLabel_1 != "_")
+                                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$ZipLabel_1</div>
+                                                <div class="com-star-r-t">#if( $status.error) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"  /> #end </div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="19" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+										#else 
+                                                <div class="block_text_in-r-f">&nbsp;</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">&nbsp;</div>
+														#end
+                                                <div class="com-star-r-t"></div>
+
+                                                #springBind("editCustomerForm.shippingZip")
+                            #if($ZipLabel_2 != "_")
+                                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$ZipLabel_2</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f"><input type="text" tabindex="30" name="${status.expression}" value="$!{status.value}" maxlength="50" class="input_field"/></div>
+																				#else
+                                                <div class="block_text_in-r-f">&nbsp;</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">&nbsp;</div>
+										#end
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+											#else
+									#springBind("editCustomerForm.billingZip")
+									<input  id="zip1" type="hidden"  name="${status.expression}" value="" />
+									#springBind("editCustomerForm.shippingZip")
+									 <input  id="zip2"  type="hidden"  name="${status.expression}" value="" />  
+								#end
+                                        <!-- 11 -->
+										
+                                        <div id="e13" class="search-content-row">
+                                                #springBind("editCustomerForm.billingCountry")
+                                                <div class="block_text_in-r-f">Country</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">
+                                                        <select name="billingCountry" class="input_field1c" tabindex="16" onChange="countryChangeFormSubmit(this)">
+                                                                #foreach ($country in $Country1)
+                                                                                                        
+                                                                        #if($country.value==$!{status.value})
+                                                                                <option value="$country.value" selected>$country.label</option>
+                                                                        #else
+                                                                                <option value="$country.value" >$country.label</option>
+                                                                        #end
+                                                                #end
+                                                        </select>
+                                                </div>
+                                                <div class="com-star-r-t"></div>
+												 #springBind("editCustomerForm.shippingCountry")
+                                                <div class="block_text_in-r-f">Country</div>
+                                                <div class="com-star-r-t"></div>
+                                                <div class="input_field_area-user-f">
+                                                        <select  onChange="countryChangeFormSubmit(this)"  name="shippingCountry" class="input_field1c" tabindex="27" >
+                                                                #foreach ($country in $Country2)
+                                                                                                        
+                                                                        #if($country.value==$!{status.value})
+                                                                                <option value="$country.value" selected>$country.label</option>
+                                                                        #else
+                                                                                <option value="$country.value" >$country.label</option>
+                                                                        #end
+                                                                #end 
+                                                        </select>
+                                                </div>
+                                                <div class="com-star-r-t"></div>
+                                        </div>
+                                        <!-- 13 -->
+                                </div>
+                                <!-- End-User-left-right-list -->
+                        </div>
+                        <!-- User-profile-end -->
+
+                        <!-- button-div -->
+                        <div class="buttonContainer">
+							<div style="float:right; margin-top:3px;">
+							  <a onClick="EditSave('Update');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:right; margin-top:3px;margin-right:5px;">
+							  <a onClick="EditCancel('Cancel');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+                        </div>
+                        <!-- scrollable-div -->
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+                        
+                        <!-- right-pannel-content-end -->
+                </div>
+                <!-- content-area-end -->
+        </td></tr>
+		
+		<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+	
+</form>
+</table>
+</body>
+</html>

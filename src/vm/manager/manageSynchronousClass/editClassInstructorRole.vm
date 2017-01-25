@@ -1,0 +1,247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+<script type="text/javascript" language="javascript">
+     function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+
+function FormSubmitNew(buttonclick) 
+{
+	document.getElementById('action').value=buttonclick;
+	document.manageform.submit();
+	return true;
+}       
+
+
+function FormSubmit(buttonclick) {
+        document.searchManageForm.submit();
+}
+
+function deleteInstructors(){
+        if ($("INPUT[type='checkbox'][name='selectedInstructors']:checked").length>0) {
+            confirm("Are you sure you want to delete the instructor(s)?", function () {
+                document.deleteManageForm.action.value='deleteInstructor';
+                document.deleteManageForm.submit();
+            });
+        }else {
+            $('#selectInstructor').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+        }
+}
+
+
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#tabBar').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='selectedInstructors']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedInstructors']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedInstructors']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+</head>
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+       <!-- header -->
+	#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+
+		<!-- Tabs Start -->
+<td  id="row-tabs" class="tab_bar" colspan="2">
+		   <table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="192"><div class="tab_blank"></div></td>
+						<td>&nbsp;</td>
+						<td width="405">
+							<a href="mgr_editSynchronousClass.do?id=${context.synchClassId}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a>
+							<a href="mgr_editSynchronousClassSchedule.do?id=${context.synchClassId}"><div class="tab" >$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+							<!-- <a href="mgr_editCourseSchedule.do?method=viewScheduleResources&id=$status.value"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a> -->
+							<a href="mgr_editSynchronousClassInstructor.do?id=${context.synchClassId}"><div style="border-right-style: solid;" class="tab_selected" >$brander.getBrandElement("lms.instructor.schedule.tabBar.instructors")</div></a>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+			</table>
+
+		</td>
+		<!-- Tabs End -->
+
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</table></td>
+
+<TD id="content" >
+	<div id="scrollable">
+                #set($totCount=$context.instructors.size())
+                <!-- Logo+Manage-User -->
+               
+				<!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editInstructor.courseTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addSynchronousClass.instructor.caption.courseSubTitle")</div>
+			</td>
+		    </tr>
+		</table>
+                <!-- Search Result Start -->
+
+	<form name="manageform" id="manageform" method="post" action="mgr_editSynchronousClassInstructor.do?id=${context.synchClassId}" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+	#set($instructorSynchronousClass = ${context.instructorSynchronousClass})
+	<input id="action" type="hidden" name="action" value="advanceSearch" />
+	<input id="id" type="hidden" name="id" value="${context.synchClassId}" />
+	<input id="instructorSynchClassId" type="hidden" name="instructorSynchClassId" value="${instructorSynchronousClass.getId()}" />
+        
+        	<div id="resultBox" class="content-Block">
+	
+			 <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.addSynCourse.caption.summary")</span></div>
+			 <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 
+			 		<tr>
+    					<td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchFirstName")</span></td>
+    					<td width="25%"><input type="text" disabled id="field_course_name" class="input_text_field" value="${instructorSynchronousClass.getInstructor().getFirstName()}"></input></td>
+    					<td width="25%"></td>
+    					<td width="25%"></td>
+					</tr>
+					
+			 		<tr>
+    					<td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchLastName")</span></td>
+    					<td width="25%"><input type="text" disabled id="field_course_name" class="input_text_field" value="$!{instructorSynchronousClass.getInstructor().getLastName()}"></input></td>
+    					<td width="25%"></td>
+    					<td width="25%"></td>
+					</tr>
+                    <tr>
+
+    					<td><span class="row_text">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.searchInstructorType")</span></td>
+                        		<td>
+									<select name="instType" style="width:182px; font-size:11px;">
+										<option #if (${context.instructorSynchronousClass.instructorType} == "Lead") selected #end  value="Lead">$brander.getBrandElement("lms.instructor.footer.select")</option>
+										<option #if (${context.instructorSynchronousClass.instructorType} == "Moderator") selected #end  value="Moderator">$brander.getBrandElement("lms.instructor.footer.select1")</option>
+										<option #if ($${context.instructorSynchronousClass.instructorType} == "Teaching Assistant") selected #end  value="Teaching Assistant">$brander.getBrandElement("lms.instructor.footer.select2")</option>
+									</select>
+								</td>
+    					<td></td>
+    					<td></td>
+					</tr>
+			 </table>
+
+	</div>
+	</form><!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+                   
+					<div style="float: right; margin-top: 2px; margin-right: 20px;">
+						  <div>
+							  <a  onClick="FormSubmitNew('updateInstructorRole');">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+						  
+						  	<div style="float: right; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a onClick="location.href='mgr_editSynchronousClassInstructor.do?id=${context.synchClassId}';">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+                    <!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+            </div><!-- right-pannel -->
+        </td></tr><!-- content-area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+    </table><!-- main-container -->
+</body>
+</html>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.searchSynchronousCourse.messageBox.sure")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <!-- </div>
+            <div class='yes'> -->
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+			
+</div>
+
+<div id="selectInstructor" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.instructor.addSynchronousCourse.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.addSynchronousCourse.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">OK</div>
+            <div class="btn_end">&nbsp;</div> -->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.instructor.searchSynchronousClass.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->

@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+        #parse("snippets/learnerNewHead.vm")
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type="text/javascript" language="javascript">
+
+            function changeRowColor(checkbox) {
+                var tr=checkbox.parentNode.parentNode;
+                var tdarr=$(tr).find("td");
+                  if (checkbox.checked) {
+                      for(i=0;i<tdarr.size();i++){
+                        tdarr[i].style.background="#E9F9FE";
+                      }
+                  } else {  
+                      for(i=0;i<tdarr.size();i++){
+                        tdarr[i].removeAttribute("style");
+                      }
+                  }
+            }
+
+            function selectAllCheckBoxes(first, countCheckBoxes) {
+                var objCheckAll=document.getElementById("chkAll");
+                if (objCheckAll.checked) {
+                    for(var i = first; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=true;
+                        onLearnerGroupSelection(objCheckBox,i);
+                    }
+                }else{
+                    for(var i = first; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=false;
+                        onLearnerGroupSelection(objCheckBox,i);
+                    }
+                }
+            }
+
+            function onAllPage(){
+                document.getElementById('pageIndex').value=0;
+                document.getElementById('showAll').value="true";
+                document.getElementById('learnerGroupSearchAction').value="search";
+                document.enrollmentForm.submit();
+            }
+
+            function onNextPage(nextIndex){
+                document.getElementById('pageIndex').value=nextIndex;
+                document.getElementById('showAll').value="false";
+                document.getElementById('learnerGroupSearchAction').value="search";
+                var itemNo = document.getElementById('pageCurrIndex').value;
+                var items = $pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value=parseInt(items) + parseInt(itemNo);
+                document.enrollmentForm.submit();
+            }
+
+            function onPreviousPage(previousIndex){
+                document.getElementById('pageIndex').value=previousIndex;
+                document.getElementById('showAll').value="false";
+                document.getElementById('learnerGroupSearchAction').value="search";
+                var itemNo = document.getElementById('pageCurrIndex').value;
+                var items = $pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+                document.enrollmentForm.submit();
+            }
+
+            function sortLearnerGrp(sortColumnIndex, sortDirection, showAll, currentIndex){
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('pageCurrIndex').value=currentIndex;
+                document.getElementById('learnerGroupSearchAction').value="search";
+                document.enrollmentForm.submit();
+            }
+
+            function FormSubmit() {
+                document.getElementById('learnerGroupSearchAction').value="next";
+                return true;
+            }
+
+            function onLearnerGroupSelection(objCheckbox,hiddenId){
+                document.getElementById("chkHdn"+hiddenId).value=objCheckbox.checked;
+                changeRowColor(objCheckbox);
+            }
+
+            $(document).ready(function(){
+               
+            });
+        </script>
+		<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+#set($ssn=$!{request.getSession(true)})
+#set($sDirection = $ssn.getAttribute("sortDirection"))
+#set($sColumnIndex = $ssn.getAttribute("sortColumnIndex"))
+#set($sAll = $ssn.getAttribute("showAll"))
+
+<body>
+
+<form name="enrollmentForm" action="mgr_assignEnrollments.do" method="POST"> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+        <!-- header -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+		<tr id="main"> <!-- SECOND BLOCK -->
+            <!-- left-pannel-content -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->					
+                <div>
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignEnrollment.caption.wizard") </br>Showing 2 of 3</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1a")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2a")</b></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep3")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep4")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep5")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7")</div>
+                    </div>
+                </div>
+                <!-- left-pannel-content-end -->
+				</table></td>
+				
+                <!-- right-pannel-content -->
+			<td id="content-rightpanel">
+		    <div id="scrollable">
+                #springBind("enrollmentForm.selectedLearnerGroups")
+                #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+          <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.assignEnrollment.step2-learnerGroups.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.assignEnrollment.step2-learnerGroups.caption.description")</div>
+			</td>
+		    </tr>
+		</table>          
+                       
+                <!-- Logo+Manage-User-end -->
+
+                <!-- Courses -->
+                <div class="content-Block-new">
+                    #springBind("enrollmentForm.learnerGroupEnrollmentItems")
+                        $pager.setItems(${status.value})
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                                #set($pageFirstIndex = $pager.firstIndex)
+                                #set($pageLastIndex = $pager.lastIndex)
+                                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                #set($currentPageCount = $pageLastIndex + 1)
+                                #set($pageCurrIndex = $pager.index)
+                        #else
+                                #set($pageFirstIndex = 0)
+                                #set($pageLastIndex = 0)
+                                #set($currentPageSize = 0)
+                                #set($currentPageCount = 0)
+                                #set($pageCurrIndex = 0)
+                        #end
+                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17" style="border-top:0px;"><input type="checkbox" onClick="selectAllCheckBoxes($pageFirstIndex,$pageLastIndex+1)" id="chkAll" name="selectedLearner" /></td>
+                                <td class="box_subheader" style="border-right:0px;border-top:0px;"><div name="_target3" onClick=#if($sDirection == 0) "sortLearnerGrp('0','1','$sAll',$pageCurrIndex);" #else "sortLearnerGrp('0','0','$sAll',$pageCurrIndex);" #end ><div id="nameSort" #if(($sDirection == 1 )&&($sColumnIndex == 0)) class="icon_up" #elseif($sColumnIndex == 0) class="icon_down" #end ></div>User Groups</div></td>
+                            </tr>
+                                <div class="result_left_side">
+                                        <!-- Result Description -->
+                                        <!-- All Icon -->
+                                        <div id="all" class="icon_all" onClick="return onAllPage();" value="Search" name="_target3" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" ></div>
+
+                                        <!-- Next Icon -->
+                                        #if( $pager.nextIndex )
+                                            <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target3" onclick="return onNextPage($pager.nextIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10" /></div>
+                                        #else
+                                            <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                        #end
+
+                                        <!-- Back Icon -->
+                                        #if( $pager.prevIndex )
+                                            <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" value="Search" name="_target3" onclick="return onPreviousPage($pager.prevIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10" /></div>
+                                        #else
+                                            <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                        #end
+                                        <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $pager.pageDescription </div>
+                                </div>
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                            <input type="hidden" id="showAll" name="showAll" value="false" />
+                            <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                            #springBind("enrollmentForm.sortDirection")
+                            <input type="hidden" id="sortDirection" name="sortDirection" value="$status.value" />
+                            #springBind("enrollmentForm.sortColumnIndex")
+                            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$status.value" />
+                            <input type="hidden" id="learnerGroupSearchAction" name="learnerGroupSearchAction" value="" />
+
+                            #foreach($index in [$pageFirstIndex..$pageLastIndex])
+                                    #if($index%2==0)
+                                            #set($alternate="row_1")
+                                    #else
+                                            #set($alternate="row_2")
+                                    #end
+                                <tr>
+                                    <td class="$alternate" width="17px">
+                                        #springBind("enrollmentForm.learnerGroupEnrollmentItems[$index].learnerGroupId")
+                                        <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                                        #springBind("enrollmentForm.learnerGroupEnrollmentItems[$index].selected")
+                                        <input type="checkbox" id="chk$index" #if(${status.value}=="true") checked #end onclick="onLearnerGroupSelection(this,'$index');"/>
+                                        <input type="hidden" id="chkHdn$index" name="${status.expression}" value="${status.value}"/>
+                                    </td>
+                                    #springBind("enrollmentForm.learnerGroupEnrollmentItems[$index].learnerGroupName")
+                                    <td class="$alternate" style="border-right:0px;">#dotPadding($!{status.value} 30)</td>
+                                    <script>
+                                        changeRowColor(document.getElementById('chk$index'));
+                                    </script>
+                                </tr>
+                            #end
+                    </table>
+                </div>
+                <!-- End-Courses -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- button-div -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                        <input type="hidden" id="currentpage" name="_page" value="3"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						<div style="float:right; margin-top:3px;" onClick="return FormSubmit();">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Next</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:3px;margin-right:5px;">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Previous</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+							<a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+								<div class="btn_start"></div>
+								<div class="btn_normal">Cancel</div>
+								<div class="btn_end"></div>
+							</a>
+						</div>	
+                </div>
+
+                <!-- scrollable-div -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- right-pannel-content-end -->
+                </div>
+        <!-- content2-area-end -->
+
+        
+
+        </div>
+		</td></tr>
+				  <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+
+        <!-- footer -->
+                #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+        </table>
+        </form>
+        </body>
+</html>

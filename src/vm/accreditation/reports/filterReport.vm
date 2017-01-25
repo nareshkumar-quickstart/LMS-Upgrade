@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ #parse("snippets/accreditation/accreditationDefaultHead.vm")
+	
+	<link rel="stylesheet" type="text/css" href="$brander.getBrandElement("lms.css.datepicker.css")" />
+	<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+	<script type="text/javascript" src="javascript/reportfilter.js"></script>
+	<script type="text/javascript" language="javascript">
+<!--
+    function saveReportFilters(){
+        document.getElementById("action").value = "saveReportFilters";
+        document.manageReportFiltersForm.submit();
+		
+    }
+
+    function cancelReportFilters(){
+        document.getElementById("action").value = "cancelReportFilters";
+        //document.manageReportFiltersForm.submit();
+		window.location="acc_ManageReports.do";
+    }
+
+
+#if($null.isNotNull($reportForm.currentReport))
+var filterData = {
+#set($fieldList = $reportForm.currentReport.fields)
+        filterfields:[
+                     
+#if($fieldList)
+#set ($fieldIter = $mill.wrap($fieldList))
+#foreach($fieldElem in $fieldIter)
+#set($field = $fieldIter.more())
+#if($field.filterable)
+{id:"$field.id",name:"$field.displayName",datatype:"$field.dataType"} #if($fieldIter.hasMore()),#end
+#end
+#end
+#end
+                     
+                     ],
+#set($stringOpList = $reportForm.operandMap.get("string"))
+       filterOperandString:[
+#if($stringOpList)
+#set ($opIter = $mill.wrap($stringOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+#set($integerOpList = $reportForm.operandMap.get("int"))
+       filterOperandInteger:[
+#if($integerOpList)
+#set ($opIter = $mill.wrap($integerOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+#set($booleanOpList = $reportForm.operandMap.get("boolean"))
+	filterOperandBoolean:[
+#if($booleanOpList)
+#set ($opIter = $mill.wrap($booleanOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+
+#set($dateOpList = $reportForm.operandMap.get("date"))
+       filterOperandDate:[
+#if($dateOpList)
+#set ($opIter = $mill.wrap($dateOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ]
+    };
+#end
+
+$(document).ready(function() {
+	$('#content2r').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#topBar').height()));
+	if ($('#right-pannel-for-report').height()<$('#content2r').height()) {
+		$('#right-pannel-for-report').height($('#content2r').height());
+	}
+	$('#sideBar').height($('#right-pannel-for-report').height());
+    $('#right-pannel-report').scroll(function() {
+        $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+    });
+    $('#close_message').click(function() {
+        $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+    });
+});
+//-->
+
+
+</script>
+</head>
+<body>
+	#set($currentReport=$reportForm.getCurrentReport())
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+    
+	<tr>
+        <td id="header" colspan="2">
+            <!-- header -->
+            #parse("snippets/accreditation/accreditationReportHeader.vm")
+            <!-- header-end -->
+        </td>
+	</tr>
+	
+    <!-- TopBar Start -->
+    <tr id="row-tabs">
+        <td id="blank-tab">
+            &nbsp;
+        </td>
+        <td id="tabs" align="center">
+            <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+						<a href="#springUrl('/acc_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+					</td>
+                    <td>
+						<a href="#springUrl('/acc_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a>
+					</td>
+                    <td id='last' class='selected'>
+						<a href="#springUrl('/acc_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a>
+					</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- TopBar End -->
+
+    <tr id="main" style="background:none;">
+        <td valign="top" id="left-navigation">
+			<!-- content-area -->
+    		<div id="sidebar-scroller" style="overflow-x: hidden;">
+                #parse("snippets/reportLeftMenu.vm")
+            </div>
+		 </td>
+		 <td id="content">
+            <div id="scrollable">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+
+                #springBind("reportForm.*")
+                #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                    </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+					    <tr>
+					        <!-- Page Content Icon -->
+							<td id="page-icon" class="reportLogo">
+					            &nbsp;
+					        </td>
+							<!-- Page Content Description -->
+					        <td id="page-description">
+					            <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.reportFilters")</div>
+					            #if($currentReport.systemOwned)
+					            	<div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.reportFields.systemGeneratedDescription")</div>
+					            #else
+					                <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.filterReport.fieldPageDescription")</div>
+					            #end
+					        </td>
+					    </tr>
+					</table>					
+                <!-- Logo+Manage-User-end -->
+
+                <form name="manageReportFiltersForm" action="#springUrl('/acc_ManageReports.do?')" method="POST">
+                    <input type="hidden" id="action" name="method" value=""/>
+
+                <!-- User-profile -->
+                    <div class="content-Block-filter">
+
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">Filters</div>
+                        </div>
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="Search-inputfield-box4">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="model" style="display:none">
+                                <img src="brands/default/en/images/minus-c.gif" value="Delete" style="cursor:pointer" title="Remove Filter"/>
+                                <select class="c1 input_field_report_select"><option value="" datatype="">Select Filter</option></select>
+                                <select class="c2 input_field_report_select"><option value="">Select Operand</option></select>
+                                <input class="input_field_report" type="text" />
+                                <input type="hidden" class="c3" value=""/>
+                                <input type="hidden" class="c4" value="false"/>
+                                <input type="hidden" class="c5" value=""/>
+                            </div>
+
+                            <div id="noReportFilter" class="search-content-row" style=#if($filterItems && $filterItems.size() > 0)"display:none" #else "display:block" #end>
+                                <div class="">The report has no filter.</div>
+                            </div>
+                            <input type="hidden" name="hasFilters" id="hasFilters" value=#if($filterItems && $filterItems.size() > 0)"true" #else "false" #end/>
+
+#set($filterItems = $reportForm.reportFilterItems)
+                            <div id="filterContainer">
+#set($index = 0)
+#foreach($filterItem in $filterItems)
+                                <div style="padding: 5px; display: block;">
+                                    <img src="brands/default/en/images/minus-c.gif" id="btnDelete$index" value="Delete" style="cursor:pointer" title="Remove Filter"/>
+                                    <select id="reportFilterItems[$index].reportFieldId" name="reportFilterItems[$index].reportFieldId" class="c1 input_field_report_select">
+#set($currentFilterDataType = "")
+#set($fieldList = $reportForm.currentReport.fields)
+#if($fieldList)
+#set ($fieldIter = $mill.wrap($fieldList))
+#foreach($fieldElem in $fieldIter)
+#set($field = $fieldIter.more())
+#if($field.filterable)
+                                        <option value="$field.id" datatype="$field.dataType" #if($filterItem.reportFieldId == $field.id) selected #end>$field.displayName</option>
+#if($filterItem.reportFieldId == $field.id)
+#set($currentFilterDataType = $field.dataType.toLowerCase())
+#end
+#end
+#end
+#end
+                                    </select>
+                                    <select id="reportFilterItems[$index].filterOperandId" class="c2 input_field_report_select">
+#set($opList = $reportForm.operandMap.get($currentFilterDataType))
+#if($opList)
+#set ($opIter = $mill.wrap($opList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+                                        <option value="$op.id" #if($filterItem.filterOperandId == $op.id) selected #end>$op.label</option>
+#end
+#end
+                                    </select>
+#if( $currentFilterDataType.equalsIgnoreCase("string"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterStringValue" type="text" name="reportFilterItems[$index].filterStringValue" value="$!{filterItem.filterStringValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("int") ||  $currentFilterDataType.equalsIgnoreCase("integer"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterIntegerValue" type="text" name="reportFilterItems[$index].filterIntegerValue" value="$!{filterItem.filterIntegerValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("double"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterDoubleValue" type="text" name="reportFilterItems[$index].filterDoubleValue" value="$!{filterItem.filterDoubleValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("date") || $currentFilterDataType.equalsIgnoreCase("datetime"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterDateValue" type="text" name="reportFilterItems[$index].filterDateValue" value="$date.format('MM/dd/yyyy',$!{filterItem.filterDateValue})"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("boolean"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterBooleanValue" type="text" name="reportFilterItems[$index].filterBooleanValue" value="$!formUtil.formatReportField($currentFilterDataType, $!{filterItem.filterBooleanValue})"/>
+#else
+
+#end
+                                    <input type="hidden" class="c3" id="reportFilterItems[$index].id" name="reportFilterItems[$index].id" value="$filterItem.id"/>     
+                                    <input type="hidden" class="c4" id="reportFilterItems[$index].markedForDeletion" name="reportFilterItems[$index].markedForDeletion" value="false"/>     
+                                    <input type="hidden" class="c5" id="reportFilterItems[$index].filterType" name="reportFilterItems[$index].filterType" value="$filterItem.filterType"/>     
+                                </div>
+#set($index = $index + 1)
+#end
+                            </div>
+
+
+                            <!-- 2 -->
+                            <div id="e13" class="search-btn-row">
+                                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")">
+								#if(!$currentReport.systemOwned)
+									<a class="button"  id="btnAdd">
+										<span class="button">Add Filter</span>
+									</a>
+								#end
+								</div>
+                            </div>
+                            <!-- 0 -->
+                        </div>
+
+                    </div>
+                    <!-- User-profile-end -->
+        
+                  <!-- button-div -->
+					
+                	<div class="btn-div">
+						
+						<div style="float:left; margin-top:15px;margin-right:5px;">
+							<a onclick="cancelReportFilters();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Cancel</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div> 
+						
+						#if(!$currentReport.systemOwned)
+						<div style="float:right; margin-top:15px;">
+						  <a onclick="saveReportFilters();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Save</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>								
+						#end
+						 					
+                    </div>
+					 <!-- space -->
+					<div class="manager-bottom-space"></div>
+					<!-- space -->
+                <!-- scrollable-div -->
+                </form>
+			</div>
+            <!-- for center-align-div -->
+        </div>
+    <!-- content-area-end -->
+         </td>
+    </tr>
+    <!-- content-area-end -->
+    <tr>
+    <!-- Footer BLOCK -->
+        <td id="footer" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultFooter.vm")
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

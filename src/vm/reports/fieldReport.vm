@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/reportNewHead.vm")
+</head>
+<body>
+<div id="main-container">
+
+    <!-- header -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminHeader.vm")
+    #else
+       #parse("snippets/managerHeader.vm")
+    #end  
+    <!-- header-end -->
+
+    <!-- TopBar Start -->
+    <div id="topBar" class="Block-Contain-header-report">
+        <div id="reportlistheading" class="master-div">
+            <div name="eTopMenu" class="menu-text">REPORT LIST</div>
+        </div>
+        <div class="master-div2">
+            <div class="master-div3-position"></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=browseReports')" class="sub-top-nav">SUMMARY</a></div></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=reportFieldMenu')" class="sub-top-nav"><b>FIELDS</b></a></div></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=displayReportFilters')" class="sub-top-nav">FILTERS</a></div></div>
+            <div class=""></div>
+        </div>
+    </div>
+    <!-- TopBar End -->
+
+    <div id="content2r">
+    <!-- content-area -->
+        <!-- left-pannel-content -->
+        #parse("snippets/reportLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+        <!-- <div id="right-pannel"> -->
+
+        <div id="right-pannel">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+
+                <!-- Logo+Manage-User -->
+                <div class="page_description" id="pageDescription">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+                    <div id="titleHolder" class="courseTitle1">#dotPadding($reportForm.currentReport.title,45)</div>
+	                <div id="detailsHolder">$!{reportForm.currentReport.description}</div>
+                </div>
+                <!-- Logo+Manage-User-end -->
+
+                #set($currentReport=$reportForm.getCurrentReport())
+
+                <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="Search-Containerheaderleft">Report Fields</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <form name="selectFieldsForm" action="#springUrl('/adm_ManageReports.do?method=displayReportFields')" method="POST">
+                        <input type="hidden" name="method" value="displayReportFields"/>
+                        <div id="e7b" class="Search-inputfield-box4">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="">This option allows you to select your preferred fields from a predefined list for this report.</div>
+                            </div>
+                            <!-- 2 -->
+                            <div class="manager-bottom-space"></div>
+                            <div id="e13" class="search-btn-row">
+                                <div class="btn-left2"><!-- <span class="btn-main-div" align="center"><input type="button" value="Select Fields" onclick="document.location.href='adm_ManageReports.do?method=displayReportFields'" class="btn-submit_n120"/></span> --><a class="button" onclick="document.location.href='adm_ManageReports.do?method=displayReportFields'"><span class="button">Select Fields</span></a></div>
+                            </div>
+                            <!-- 0 -->
+                            <!-- space -->
+                            
+                            <!-- space -->
+                        </div>
+                    </form>
+                    <!-- End-User-left-right-list -->
+                </div>
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+
+                <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="Search-Containerheaderleft">Report Field Ordering</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <form name="orderFieldsForm" action="#springUrl('/adm_ManageReports.do?method=displayReportFieldsOrder')" method="POST">
+                        <input type="hidden" name="method" value="displayReportFieldsOrder"/>
+                        <div id="e7b" class="Search-inputfield-box4">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="">Ordering involves choosing the progression of the report field columns from left to right. Once saved, your preference applies every time this report is run.</div>
+                            </div>
+                            <!-- 2 -->
+                            <div class="manager-bottom-space"></div>
+                            <div id="e13" class="search-btn-row">
+                                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><!-- <span class="btn-main-div" align="center"><input type="button" value="Order Fields" onclick="document.location.href='adm_ManageReports.do?method=displayReportFieldsOrder'" class="btn-submit_n120"/></span> --><a class="button" onclick="document.location.href='adm_ManageReports.do?method=displayReportFieldsOrder'"><span class="button">Order Fields</span></a></div>
+                            </div>
+                            <!-- 0 -->
+                            <!-- space -->
+                            
+                            <!-- space -->
+                        </div>
+                    </form>
+                    <!-- End-User-left-right-list -->
+                </div>
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+
+                <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="Search-Containerheaderleft">Report Field Sorting</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <form name="sortFieldsForm" action="#springUrl('/adm_ManageReports.do?method=displayReportFieldsSortOrder')" method="POST">
+                        <input type="hidden" name="method" value="displayReportFieldsSortOrder"/>
+                        <div id="e7b" class="Search-inputfield-box4">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="">This option allows you to have the report data listed and sorted by a preferred field. For instance, if you wanted everyone with the last name "Jones" to appear at the top of the list, you would sort by last name first.</div>
+                            </div>
+                            <!-- 2 -->
+                            <div class="manager-bottom-space"></div>
+                            <div id="e13" class="search-btn-row">
+                                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><!-- <span class="btn-main-div" align="center"><input type="button" value="Sort Fields" onclick="document.location.href='adm_ManageReports.do?method=displayReportFieldsSortOrder'" class="btn-submit_n120"/></span> --><a class="button" onclick="document.location.href='adm_ManageReports.do?method=displayReportFieldsSortOrder'"><span class="button">Sort Fields</span></a></div>
+                            </div>
+                            <!-- 0 -->
+                            <!-- space -->
+                            
+                            <!-- space -->
+                        </div>
+                    </form>
+                    <!-- End-User-left-right-list -->
+                </div>
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+            </div>
+            <!-- for center-align-div -->
+        </div>
+    <!-- content-area-end -->
+    </div>
+    <!-- footer -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+       #parse("snippets/managerFooter.vm")
+    #end  
+    <!-- footer-end -->
+</div>
+
+</body>
+</html>
+

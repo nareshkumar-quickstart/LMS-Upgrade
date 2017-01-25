@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        #parse("snippets/learnerNewHead.vm")
+         <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+		 
+
+
+         <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+        <script>
+            function FormSubmit(buttonclick) {
+                document.getElementById('action').value=buttonclick;
+                document.enrollmentForm.submit();
+            }
+
+            $(document).ready(function()
+            {
+                
+            });
+        </script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+#macro( EnrollmentTreeviewManageOrgGroup $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end /></div>
+            #set ($padLimit=100-$node.depth*5)
+            <div class="row_title">#dotPaddingWithOutTitle(${node.value.name},$padLimit)</div>
+        </div>
+    #end
+#end
+<body>
+    <form name="enrollmentForm" action="mgr_assignSurveys.do" method="POST"> 
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <!-- -->
+			#parse("snippets/assignSurveyLeftMenu.vm")
+		<!-- left-pannel-content-end -->
+		</table>
+	</td>
+	
+                <!-- right-pannel-content -->
+    <TD id="content" >
+	<div id="scrollable">
+                #springBind("enrollmentForm.groups")
+                    #if($status.error)
+                    <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                    </div><!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+	<div class="page_description" id="pageDescription">
+			  	    <!-- Page Icon -->
+                    <div class="icon_surveys" id="pageIcon"></div>
+                    <!-- Page Heading -->
+                    <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.assignSurvey.step1.caption.title")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.assignSurvey.orgGroups.caption.description")</div>
+		</div>		    
+
+
+                    <!-- Logo+Manage-User-end -->
+
+                    <div class="content-Block-new"><!-- content-Block -->
+                        <div class="Block-Contain-header">
+                            <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.SelectOrganizationGroup")</div>
+                        </div>
+                        #EnrollmentTreeviewManageOrgGroup($orgGroupTreeAsList)
+                    </div><!-- content-Block -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                    <div class="managerBtn"><!-- button-div -->
+                        <input type="hidden" id="currentpage" name="_page" value="2"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						
+						<div style="float:right; margin-top:3px;">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Next</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:3px;margin-right:5px;">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Previous</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+							<a onClick="javascript:window.location='mgr_viewAssignSurveyMain.do';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Cancel</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div>	           					
+                        
+                    </div><!-- button-div -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </td></tr><!-- content2-area-end -->
+			
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+	</td></tr>
+        </table><!-- main-container -->
+    </form>
+</body>
+</html>

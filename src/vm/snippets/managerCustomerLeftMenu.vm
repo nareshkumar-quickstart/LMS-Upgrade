@@ -1,0 +1,31 @@
+<script>
+    function submitForm(featureGroup,feature,location){
+        var params="featureGroup="+featureGroup+"&feature="+feature+"&actionUrl="+location;
+        document.location="lms_handleMenu.do?"+params;
+    }
+</script>
+
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+
+<div>
+	#if($userPermissionChecker.hasAccessToFeatureGroup("Profile", $userData, $ssn) )
+
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0023", $userData, $ssn) )
+		<tr>
+			<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+			<td id="manageUsers" onclick="submitForm('Profile','LMS-MGR-0023','mgr_editCustomer.do?method=editCustomerProfile')" #if($menu == "LMS-MGR-0023") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.manageUser.profile.Profile")</div>
+			</td>
+		</tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0024", $userData, $ssn) )
+		<tr>
+			<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+			<td id="manageUsers" onclick="submitForm('Profile','LMS-MGR-0024','mgr_editCustomer.do?method=editCustomerPreferences')" #if($menu == "LMS-MGR-0024") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.manageUser.profile.Preference")</div>
+			</td>
+		</tr>
+		#end
+	#end
+</div>

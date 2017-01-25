@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Chameleon Namespace Design:
+		This design approach says to give the "main" schema a targetNamespace, and the "supporting" schemas have no targetNamespace.
+		There are two things to note about this design approach:
+
+		First, a schema is able to access components in schemas that have no targetNamespace, using <include>. The User schema uses
+		the components in Address.xsd (and have no targetNamespace).
+
+		Second, note the chameleon-like characteristics of schemas with no targetNamespace:
+
+    	The components in the schemas with no targetNamespace get namespace-coerced. That is, the components "take-on" the 
+    	targetNamespace of the schema that is doing the <include>
+        For example, Address in Address.xsd gets implicitly coerced into the User targetNamespace. This is the reason that the 
+        Address element was able to reference Adress defined in Address.xsd in the default namespace using type="Address".
+
+		"Chameleon effect" ... This is a term coined by Henry Thompson to describe the ability of components in a schema with no 
+		targetNamespace to take-on the namespace of other schemas. This is powerful!
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://orggroup.serviceoperations.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://orggroup.serviceoperations.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns:orgGroup="http://orggroup.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns:tr="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<!--
+		<xsd:import namespace="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="../types/TransactionResultType.xsd"/>
+		<xsd:import namespace="http://orggroup.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="../types/OrganizationGroup.xsd"/>
+	-->
+
+			
+		<xsd:import namespace="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="TransactionResultType.xsd"/>
+		<xsd:import namespace="http://orggroup.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="OrganizationGroup.xsd"/>
+		
+	<xsd:element name="AddOrgGroupByHierarchyRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="ParentOrgGroupHierarchy"
+					type="xsd:string" minOccurs="1" maxOccurs="1" />
+				<xsd:element name="OrgGroup" type="orgGroup:OrgGroup"
+					minOccurs="1" maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="AddOrgGroupByHierarchyResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="NewOrganizationalGroups"
+					type="orgGroup:NewOrganizationalGroups" minOccurs="0" maxOccurs="1"
+					nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="AddOrgGroupByParentIdRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroups"
+					type="orgGroup:AddOrgGroupByParentIdOrganizationalGroups"
+					minOccurs="1" maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="AddOrgGroupByParentIdResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="NewOrganizationalGroups"
+					type="orgGroup:NewOrganizationalGroups" minOccurs="0" maxOccurs="1"
+					nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="UpdateOrganizationGroupRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroup"
+					type="orgGroup:UpdateOrganizationalGroup" minOccurs="1"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="UpdateOrganizationGroupResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="UpdatedOrganizationalGroup"
+					type="orgGroup:ResponseOrganizationalGroup" minOccurs="0"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="DeleteOrganizationGroupRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroups"
+					type="orgGroup:DeleteOrganizationGroups" minOccurs="1"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="DeleteOrganizationGroupResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="DeletedOrganizationalGroups"
+					type="orgGroup:DeletedOrganizationalGroup" minOccurs="0"
+					maxOccurs="1" nillable="false" />
+				<xsd:element name="InvalidOrganizationalGroups"
+					type="orgGroup:InvalidOrganizationalGroups" minOccurs="0"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="GetOrgGroupByIdRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroup"
+					type="orgGroup:GetOrgGroupById" minOccurs="1" maxOccurs="1"
+					nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="GetOrgGroupByIdResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroup"
+					type="orgGroup:ResponseOrganizationalGroup" minOccurs="0"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="GetOrgGroupIdByNameRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroup"
+					type="orgGroup:GetOrgGroupIdByName" minOccurs="1" maxOccurs="1"
+					nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="GetOrgGroupIdByNameResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="OrganizationalGroup"
+					type="orgGroup:ResponseOrganizationalGroup" minOccurs="0"
+					maxOccurs="1" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

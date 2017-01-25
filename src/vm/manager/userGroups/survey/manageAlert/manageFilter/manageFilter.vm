@@ -1,0 +1,333 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+    <head>
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+<script type='text/javascript'>
+	   $(document).ready(function() {
+	    
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='rowone']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='rowone']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+		$('#sideBar').height($('.scrollable').height());
+    });
+	  function deleted(){
+        if ($("INPUT[type='checkbox'][name='rowone']:checked").length>0) {
+            confirm("$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.manageLearnerGroup.deleteConfirm")", function () {
+                document.getElementById('action').value='deleteTriggerFilter';
+                document.manageTriggerFilter.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+
+    function changeRowColor(checkbox) {
+    var tr=checkbox.parentNode.parentNode;
+    var tdarr=$(tr).find("td");
+          if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+          } else {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+          }
+    }
+	  function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer',
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+     function sortTrigger(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('action').value='displayAlertTriggerFilter';
+        document.manageTriggerFilter.submit();
+    }
+        
+    function onNextPage(nextIndex){
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        var pn = parseInt(items) +  parseInt(itemNo);
+        return pn;
+      }
+
+      function onPreviousPage(previousIndex){
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        var pn = parseInt(itemNo) - parseInt(items) ;
+        return pn;
+       }
+  
+</script>
+    </head>
+    <body>
+	<form name="manageTriggerFilter" method="post" action="mgr_manageFilter.do?triggerId=$request.getParameter('triggerId')">
+    <input type="hidden" id="action" name="method" value=""/>
+    <!-- <input type="hidden" name="alertTriggerId" value='$request.getParameter("alertTriggerId")'/> -->
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             <!--Header Start -->
+    		 #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+						#parse("snippets/managerHeader.vm")
+			#end
+		</td></tr>
+		
+    <!-- Header End -->
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="194"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="220">
+
+                            <a href='mgr_manageTrigger.do?method=showEditTriggerPage&triggerId=$request.getParameter("triggerId")'><div class="tab">$brander.getBrandElement("lms.manager.alert.tab.summary")</div></a>
+                            <a href='mgr_manageFilter.do?alertId=$request.getParameter("triggerId")'><div class="tab_selected" style="border-right-style:solid;">Filters</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+			
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+               #parse("snippets/compliance/complianceLeftMenu.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_surveys">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.editTrigger")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageAlert.caption.textDescription")</div>
+			</td>
+		    </tr>
+		</table>
+                    <div id="resultBox" class="search_box_result" STYLE="border-bottom:none; height:auto;">
+                        <div id="resultHeader" class="box_header">
+                            <div style="float:left; height:23px;">
+							
+							<div style="float:left; margin-top:3px;">
+							  <a onClick="javascript:window.location='mgr_addTriggerFilter.do?triggerId=$request.getParameter('triggerId')';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.addFilter")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:3px;">
+							  <a onClick="deleted();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.deleteFilter")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>                               
+                            </div>
+
+                            <div class="result_left_side">
+							#springBind("manageFilterForm.mngAlerts")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+						
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+							
+							 #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+                               <!-- All Icon -->
+                                #if($!{status.value})
+                                    #if($!{status.value.size()} > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageFilter.do?method=displayAlertTriggerFilter&showAll=true&triggerId=$request.getParameter('triggerId')';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='mgr_alertCourse.do?method=displayAlertTrigger&pageIndex=$pager.nextIndex&paging=paging&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='mgr_alertCourse.do?method=displayAlertTrigger&pageIndex=$pager.prevIndex&paging=paging&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                            </div>
+
+                        </div>
+                        <div id="searchResult_1">
+
+                            <form name="myformone" style="padding:0; margin:0;" action="">
+								
+									
+							 #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" style="padding-left:0px;" width="17px" ><input type="checkbox" id="chkAll"   name="selectedLearnerGroup" style="margin-left:3px;"/></td>
+                                        <td class="box_subheader"><div  style="margin-left:5px;" #if($context.sortDirection == 0) onclick="sortTrigger(0,1,$pageCurrIndex,$showAll);" #else onclick="sortTrigger(0,0,$pageCurrIndex,$showAll);" #end ><div  id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_down" #elseif($context.sortColumnIndex == 0) class="icon_up" #else class="icon_down" #end ></div >$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.filterName")</div></td>
+                                        <td class="box_subheader" style="border-right:none;" width="150"><span style="margin-left:10px;">$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.filterType")</span></td>
+
+                                    </tr>
+								#foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+											#springBind("manageFilterForm.mngAlerts[$loopIndex]")
+											   #set($trigger = $!{status.value})
+												
+												#if($loopIndex%2 == 0)
+													#set($alternate="row_1")
+												#else
+													#set($alternate="row_2")
+												#end
+										<tr>
+											<td class="row_1" width="17px"><input type="checkbox" name="rowone" value= "$trigger.id" style="margin-left:-2px" onClick="changeRowColor(this);"/></td>
+
+							
+
+											<td class="row_1"><a href='mgr_manageFilter.do?method=showEditFilterSummaryPage&filterId=$trigger.id'><u>$trigger.filterName</u></a></td>
+											<td class="row_1" style="border-right:none;">
+												#if($!{trigger.filterType} == 'UserGroup')
+													User Group
+												#elseif($!{trigger.filterType} == 'OrganizationalGroup')	
+													Organizational Group
+												#else
+													$!{trigger.filterType}
+												#end		
+											</td>
+										</tr>
+                                   #end
+                                </table> 
+
+								#else
+									<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+							
+										<tr bgcolor="#efefef">
+										<td class="check_box_top" width="17px"><input type="checkbox" name="selectAll"  style="margin-left:3px;"/></td>
+										
+
+										<td class="box_subheader" >$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.filterName")</td>
+										<td class="box_subheader" >$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.filterType")s</td>
+									   
+										</tr>
+										<tr>
+										   <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+											<div class="result_blank" >$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.noRecords")</div>
+										</td>
+										</tr>
+
+
+									</table>
+								
+							#end
+                            </form>
+
+							</div>
+
+                        </div>
+                    </div>
+                </td></tr>
+
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            <!-- Footer Start -->
+   #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+       #parse("snippets/managerFooter.vm")
+    #end   
+    <!-- Footer End -->
+	</td></tr>	
+	</table>
+        </div>
+		</form>
+		  <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                    <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div>
+	<div id='deleteConfirmation' style='display:none'>
+		<div class='header'><span>$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</span></div>
+		<div class="alert_message_box_icon"></div>
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.manageAlert.editTrigger.manageFilter.caption.deleteConfirm")</div>
+		<br style="clear:both" />
+		<div class='buttons'>
+			<div class='simplemodal-close'>
+				<a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.accreditation.caption.Cancel")</span></a>
+				<a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.accreditation.caption.OK")</span></a>
+			</div>
+		</div>
+	</div>
+	
+
+    </body>
+
+</html>

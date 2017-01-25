@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+#parse("snippets/learnerHead.vm")
+
+<body>
+<script language="javascript" type="text/javascript" src="$brander.getBrandElement("lms.manageUser.360js.js")"></script>
+<script language="javascript" type="text/javascript">
+	function changeRowColor(checkbox) {
+	var tr=checkbox.parentNode.parentNode;
+if (checkbox.checked) {
+			 tr.style.background="#E9F9FE";
+		 } else {
+			 tr.style.background="#ffffff";      
+		 }
+	}
+	
+	function selectAllCheckBoxes(countCheckBoxes)
+	{
+		var objCheckAll=document.getElementById("chkAll");
+		if (objCheckAll.checked) {
+			for(var i = 1; i <= countCheckBoxes; i++){
+				var objCheckBox=document.getElementById("chk"+i);
+				objCheckBox.checked=true;
+				changeRowColor(objCheckBox);
+			}
+		}else{
+			for(var i = 1; i <= countCheckBoxes; i++){
+				var objCheckBox=document.getElementById("chk"+i);
+				objCheckBox.checked=false;
+				changeRowColor(objCheckBox);
+			}
+		}
+	}
+	
+	function checkAll(field, caller){
+		var formObject = document.getElementById(caller);
+		var checkboxes = document.getElementsByName(field);
+		if(formObject.checked==true){
+			for (var i = 0; i < checkboxes.length; i++) {
+						checkboxes[i].checked = true;
+		changeRowColor(checkboxes[i]);
+						}
+						}else{
+			for (var i = 0; i < checkboxes.length; i++) {
+						checkboxes[i].checked = false;
+						changeRowColor(checkboxes[i]);
+						}
+			}
+	}
+	
+	function deleteConfirmation() {
+			var answer = confirm("Do You want to delete Learner?")
+			if (answer){
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+	
+	function FormSubmit(buttonclick) {
+		//alert(buttonclick);
+		document.getElementById('action').value=buttonclick;
+		document.editDistributorGroupForm.submit();
+	} 
+</script>
+	<script type="text/javascript" src="javascript/jquerySlider.js"></script>
+<script type="text/javascript">
+		$(document).ready(function(){
+			//hide the all of the element with class msg_body
+			$(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")").show();
+			//toggle the componenet with class msg_body
+			$(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Block-Contain-header")").click(function(){
+				//image object
+				var pImgObject=this.getElementsByTagName("div")[1].getElementsByTagName("img")[0];
+
+				if(pImgObject.getAttribute("isHidden")=="1") {
+					pImgObject.src="brands/default/en/images/minus.gif";
+					pImgObject.setAttribute("isHidden","0"); 
+					pImgObject.title="Collapse";
+				}else{
+					pImgObject.src="brands/default/en/images/plus.gif";
+					pImgObject.setAttribute("isHidden","1");
+					pImgObject.title="Expand";
+				}
+
+				$(this).next(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")").slideToggle(600);
+
+			});
+		});
+	</script>
+	
+  
+<div id="main-container">
+
+	<!-- header -->
+	#parse("snippets/adminHeader.vm")
+	<!-- header-end -->
+	<div id="content2a">
+	<!-- content-area -->
+
+		<!-- sub-header+arrow -->
+		<div  id="content3">
+			<div class="content-show-page">
+				<div id="e14c" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.ContainerheaderRight-ico")"><a href=""><img src="$brander.getBrandElement("lms.administrator.searchMember.pixel.arrow-forward.gif")" width="6" height="10" alt="" /></a></div>
+				<div id="e14b" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.ContainerheaderRight-ico")"><a href=""><img src="$brander.getBrandElement("lms.administrator.searchMember.pixel.arrow-review.gif")" width="6" height="10" alt="" /></a></div>
+				<div id="e14a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")">Showing 4 of 20 </div>
+			</div>
+		</div>
+		<!-- sub-header+arrow-end -->
+
+		<!-- left-pannel-content -->
+		<div id="left-pannel">
+			<!-- left-menu-content -->
+			#parse("snippets/adminDistributorLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</div>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+		
+		<form name="editDistributorGroupForm" method="post" action="adm_editDistributorGroup.do?distributorGroupId=$!context.distributorGroup.id">
+		<input type=hidden name=action>
+		$pager.setItems($context.distributors)
+#set($totalCount = $pager.total)
+#if($pager.hasItems())
+	#set($pageFirstIndex = $pager.firstIndex)
+	#set($pageLastIndex = $pager.lastIndex)
+	#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+
+	#set($currentPageCount = $pageLastIndex + 1)
+#else
+	#set($pageFirstIndex = 0)
+	#set($pageLastIndex = 0)
+	#set($currentPageSize = 0)
+	#set($currentPageCount = 0)
+#end
+
+			<!-- Logo+Manage-User -->
+			<div class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseLogoContainer")">
+				<div id="e3" class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseLogo2")"><img src="$brander.getBrandElement("lms.editDistributorGroup.pixel.icon-new-customer.gif")" alt="" /></div>
+				<div id="e4" class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseTitleDiv")">
+					<div id="e5" class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseTitle1")">$brander.getBrandElement("lms.editDistributorGroup.caption.editDistributorGroup")</div>
+					<div id="e6" class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseDetails")">$brander.getBrandElement("lms.editDistributorGroup.caption.title")</div>
+				</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+
+			<!--Group-Name-div -->
+			<div class="$brander.getBrandElement("lms.viewEntitlementDetails.cssClass.group-name")">
+				<!-- <div>Shuja Interactive LLC</div>  -->
+			</div>
+			<!-- Group-Name-div -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.editDistributorGroup.cssClass.managerBtn1")">
+<!--				<div><input type="button" value="Edit Name" onclick="javascript:window.location='adm_editDistributorGroupName.do?distributorGroupId=$!{context.distributorGroup.id}';" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.btn-91w")" /></div>-->
+			<div class="btn-left2"><input type="button" value="Edit Name" class="btn-submit_n71"  name="Edit Name" title="Edit Name" align="top" onclick="javascript:window.location='adm_editDistributorGroupName.do?distributorGroupId=$!{context.distributorGroup.id}';" /></div>
+
+			</div>
+			<!-- button-div -->
+
+			<!-- Distributor -->
+			<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.content-Block")">
+				<div id="e7a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Block-Contain-header")">
+					<div id="e8" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.editDistributorGroup.caption.currentDistributorGroup")</div>
+					<div id="e9" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")"><img title="Expand" isHidden="0" src="brands/default/en/images/minus.gif"></div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")">
+					<!-- s -->
+					<div id="e12" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.search-content-row1a")"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e12" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.administrator.editDistributorGroup.caption.group-Name")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$!context.distributorGroup.name</div>
+					</div>
+					<!-- 0 -->
+					<div id="e13" class="$brander.getBrandElement("lms.editMultipleChoiceRatingSelect.cssClass.manager-bottom-space3")"></div>
+					<!-- 14 -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- Distributor-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- Search-User -->
+			<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.content-Block")">
+				<div id="e7a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Block-Contain-header")">
+					<div id="e8" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.editDistributorGroup.caption.searchDistributor")</div>
+					<div id="e9" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")"><img title="Expand" isHidden="0" src="brands/default/en/images/minus.gif"></div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")">
+					<!-- s -->
+					<div id="e12" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.search-content-row1a")"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e10" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.block_text_in-r")">$brander.getBrandElement("lms.administrator.editDistributorGroup.caption.distributor-Name")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input type="text" name="distributorName" maxlength="50" class="search_field"/></div>
+					</div>
+					<!-- 2 -->
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">
+<!--					<div><input type="button" value="Search" onclick="FormSubmit('Search');"  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn-66w")" /></div>-->
+	<input type="button" value="Search" class="btn-submit_n71"  name="Search" title="Search"  onclick="FormSubmit('Search');"/>
+	<input type="hidden" id="action" name="action" value=""/>
+					
+					</div>
+
+					<!-- 0 -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- Search-User-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- User-list -->
+			<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.content-Block")">
+				<div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Block-Contain-header2")">
+					<div id="e13" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-Containerheaderleft")">Distributors List</div>
+					<div id="e14d" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.ContainerheaderRight-ico")"><a href="adm_editDistributorGroup.do?distributorGroupId=$!context.distributorGroup.id&action=ShowAll&showAll=true""><img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.checkbox.gif")" width="10" height="10" title="All" alt="" /></a></div>
+					<div id="e14c" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.ContainerheaderRight-ico")">
+					#if( $pager.nextIndex ) <a href="adm_editDistributorGroup.do?distributorGroupId=$!context.distributorGroup.id&action=ShowAll&pageIndex=$pager.nextIndex"><img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.arrow-forward.gif")" width="6" height="10" title="Next"/></a> #else <img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.arrow-forward.gif")" width="6" height="10" title="Next" /> #end</div>
+					<div id="e14b" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.ContainerheaderRight-ico")">
+					#if( $pager.prevIndex ) <a href="adm_editDistributorGroup.do?distributorGroupId=$!context.distributorGroup.id&action=ShowAll&pageIndex=$pager.prevIndex"><img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.arrow-review.gif")" width="6" height="10" title="Previous" /></a> #else <img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.arrow-review.gif")" width="6" height="10" title="Previous" /> #end</div>
+					
+					#if($pageFirstIndex == 0 && $pageLastIndex == 9)
+					#set($x = $pageFirstIndex+1)
+					#elseif($pageFirstIndex > 0)
+					#set($x = $pageFirstIndex+1)
+					#else
+					#if($currentPageSize > 0)
+					#set($x = 1)
+					#else
+					#set($x = 0)
+					#end
+					#end
+					#if($pageLastIndex != 0)
+					#set($y = $pageLastIndex+1)
+					#else
+					#if($currentPageSize > 0)
+					#set($y = 1)
+					#else
+					#set($y = 0)
+					#end
+					#end
+					<div id="e14a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")">Showing $x - $y of $totalCount </div>
+					##<div id="e14e" class="$brander.getBrandElement("lms.administrator.ManageDistributors.cssClass.ContainerheaderRight-ico")"><a href="adm_editDistributorGroup.do?distributorGroupId=$!context.distributorGroup.id&action=ShowAll"><img src="$brander.getBrandElement("lms.administrator.ManageDistributors.pixel.checkbox.gif")" width="10" height="10" title="All" /></a></div>
+				
+				</div>
+				<!-- 1 -->
+				<div id="e7c" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User-checkbox-box")">
+					<div id="e15" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User-checkbox-row-h")">
+						<div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.User_coll_H1")"><input id="chkAll" onClick="checkAll('selectedDistributors', 'chkAll');" type="checkbox" /></div>
+						<div class="$brander.getBrandElement("lms.distributerGroups.cssClass.User_coll_H8")">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.name")</div>
+						<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_H2b")">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.status")</div>
+					</div>
+					
+					#set($selected = 0)
+					
+					#if($currentPageSize > 0)
+					#foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					#set($distributor = $context.distributors.get($loopIndex))
+					<!-- 1 -->
+					<div id="e16" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.search-content-row")">
+						#if(${context.firstTime} == "true")
+					#set($selected = 1)
+					#end
+						#foreach($dis in ${context.previouslySelectedDistributors})
+						#if($distributor.id == $dis.id)
+						#set($selected = 1)
+						#end
+						#end
+						#if($selected == 1)
+						<div class="$brander.getBrandElement("lms.mailContent.cssClass.User_coll_1")"><input type="checkbox" id="chk${distributor.id}" name="selectedDistributors" value="${distributor.id}" onClick="changeRowColor(chk${distributor.id});" /></div>
+						#else
+						<div class="$brander.getBrandElement("lms.mailContent.cssClass.User_coll_1")"><input type="checkbox" id="chk${distributor.id}" name="selectedDistributors" value="${distributor.id}" onClick="changeRowColor(chk${distributor.id});" /></div>
+						#end
+						<div class="$brander.getBrandElement("lms.editDistributorGroup.caption.user-coll-8a")">$!{distributor.name}</div>
+						#if($!{distributor.active})
+							<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2aa")">Active</div>
+						#else
+							<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2aa")">Inctive</div>
+						#end
+					</div>
+					#set($selected = 0)
+					#end
+					#end
+					
+					<div id="e16" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.manager-bottom-space3")"><!-- using for bottom space --></div>
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- End-User-list -->
+			
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.managerBtn")">
+			
+<!--				<div><input type="button" value="Cancel" onclick="javascript:window.location='adm_manageDistributorGroup.do';" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.btn-91w")"/></div> -->
+				<!-- <div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" src="$brander.getBrandElement("lms.addDistributorGroup.pixel.update.gif")" width="67" height="30" alt="" name="imagesubmit1" align="top"/></div> -->
+			<!--	<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" src="$brander.getBrandElement("lms.addDistributorGroup.pixel.update.gif")" value="Delete" onclick="FormSubmit('Delete');" /></div>-->
+
+	<div class="btn-right1"><input type="button" value="Update" class="btn-submit_n71"  name="Update" title="Save" align="top" onclick="FormSubmit('Delete');"/></div>
+	<div class="btn-right1"><input type="button" value="Cancel" class="btn-submit_n71"  name="Cancel" title="Cancel" align="top" onclick="javascript:window.location='adm_manageDistributorGroup.do';" /></div>
+
+
+			</div>
+			<!-- scrollable-div -->
+<input type="hidden" id="action" name="action" value=""/>
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			
+			<!-- right-pannel-content-end -->
+		</div>
+		<!-- content-area-end -->
+	</div>
+	</form>
+	<!-- footer -->
+	#parse("snippets/adminFooter.vm")
+	<!-- footer-end -->
+</div>
+
+</body>
+</html>

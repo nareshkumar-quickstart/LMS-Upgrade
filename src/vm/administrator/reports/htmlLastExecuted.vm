@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/reportAdminHead.vm")
+
+
+<script language="javascript">
+/*
+to resize the screen
+*/
+function reportResize()
+{
+var container = document.getElementById("reportTableContainer");
+
+ var myWidth = 0, myHeight = 0;
+ if( typeof( window.innerWidth ) == 'number' ) {
+   //Non-IE
+   myWidth = window.innerWidth;
+   myHeight = window.innerHeight;
+ } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+   //IE 6+ in 'standards compliant mode'
+   myWidth = document.documentElement.clientWidth;
+   myHeight = document.documentElement.clientHeight;
+ } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+   //IE 4 compatible
+   myWidth = document.body.clientWidth;
+   myHeight = document.body.clientHeight;
+ }
+//alert( 'Width = ' + myWidth );alert( 'Height = ' + myHeight );
+
+var crop = (165 + 87 )/myHeight ; // 165+87 for geader and top header size and other spaces 
+//alert( 'Height = ' + myHeight );alert( 'Crop = ' + crop );
+var reqPercent = 1-crop;
+var newHeight = reqPercent * myHeight;
+//alert( 'newHeight = ' + newHeight );
+
+var container = document.getElementById("reportTableContainer");
+container.style.height = newHeight+'px';
+}
+ 
+</script>
+</head>
+<body onLoad="reportResize()">
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    #set($currentReport=$reportForm.getCurrentReport())
+    <!-- header -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminHeader.vm")
+    #else
+        #parse("snippets/managerHeader.vm")
+    #end  
+    <!-- header-end -->
+	</td></tr>
+	
+    <!-- TopBar Start -->
+      <td  id="row-tabs" class="tab_bar" colspan="2">
+        <div id="reportlistheading" class="master-div">
+            <div name="eTopMenu" class="menu-text"></div>
+        </div>
+        <div class="master-div2">
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3-position")"></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/adm_ManageReports.do?method=browseReports')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")"><b>$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</b></a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/adm_ManageReports.do?method=reportFieldMenu')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/adm_ManageReports.do?method=displayReportFilters')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a></div></div>
+            <div class=""></div>
+        </div>
+    </td>
+    <!-- TopBar End -->
+
+  <tr id="main">
+                <td id="left-navigation"  valign="top">
+		            <div id="sidebar-scroller" style="overflow:hidden">
+                        #parse("snippets/reportLeftMenu.vm")
+                    </div>
+				 </td>
+
+<TD id="content" >
+	<div id="scrollable">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+                <!-- Logo+Manage-User -->
+                <div class="logoContainer">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+                    <div id="e4" class="reportTitleWithButtonContainer">
+                        <div id="titleHolder" title="$!{currentReport.title}" class="courseTitle1" >$!{currentReport.title}</div>
+                        <div class="courseDetails">$!{currentReport.description}</div>
+                    </div>
+                    <div class="btn-right3-new"><a class="button" onclick="return window.print();"><span class="button">Print</span></a></div>
+                    <div class="btn-right3-new"><a class="button" onclick="document.location.href='#springUrl('/adm_ManageReports.do?method=browseReports')';"><span class="button">Back</span></a></div>
+                </div>
+                <!-- Logo+Manage-User-end -->
+
+                <!-- User-list -->
+                <div id="reportTableContainer" style="overflow:auto;width:100%;height:368px;">
+                $htmlData
+                </div>
+            </div>
+            <!-- for center-align-div -->
+        </div>
+
+    <!-- content-area-end -->
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminFooter.vm")
+    #else
+        #parse("snippets/managerFooter.vm")
+    #end  
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+<script type="text/javascript" language="javascript" >
+    $(document).ready(function() {
+	$('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='flag']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='flag']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+		$('#sideBar').height($('.scrollable').height());
+    });
+    
+ function sortSurveyAnalyze(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('action').value='search';
+        document.surveyIndividual.submit();
+    }
+
+    
+	 function onNextPage(nextIndex){
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        var pn = parseInt(items) +  parseInt(itemNo);
+        return pn;
+    }
+
+    function onPreviousPage(previousIndex){
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        var pn = parseInt(itemNo) - parseInt(items) ;
+        return pn;
+    }
+
+</script>
+
+ <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body>
+<form name="surveyIndividual" method="post" action="adm_manageSyrvey.do?method=showSurveyAnalizeForIndividuals&sid=$request.getParameter('sid')">
+<input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!--Header Start -->
+             #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminHeader.vm")
+    #else
+	#parse("snippets/managerHeader.vm")
+    #end
+            <!-- Header End -->
+			</td>
+		</tr>
+	
+
+    <!-- Tabs Start -->
+    #if($manageSurveyForm.sid != 0)
+
+		 <td id="row-tabs" class="tab_bar" colspan="2">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td width="194"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="325">
+                            #springBind("manageSurveyForm.sid")
+                            <a href='adm_manageSyrvey.do?method=showResponseSummaryView&sid=$!{status.value}'><div class="tab">Summary</div></a>
+                            <a href="adm_manageSyrvey.do?method=showSurveyAnalizeForIndividuals&sid=$!{status.value}"><div class="tab_selected"style="border-right-style:solid;">Individuals</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    #end
+    <!-- Tabs End -->
+
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+
+		 #if($manageSurveyForm.sid != 0)
+           #parse("snippets/compliance/complianceLeftMenu.vm")
+		  
+         #end
+
+		#if($manageSurveyForm.sid == 0)
+            <div class="side_bar" id="sideBar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.administrator.searchMember.caption.wizardshowing")</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.survey.caption.wizardStep1")</div>
+                </div>
+            </div>
+        #end
+		</table>
+	</td>
+	
+<TD id="content" >
+	<div id="scrollable">
+
+			#springBind("manageSurveyForm.*")
+            #if($status.error)
+            <!-- error-box -->
+            <div id="message_box">
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				#foreach($errorCode in $status.errorCodes)
+					#set ($error = $brander.getBrandElement($errorCode))
+					<div class="width40pct">
+						<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+						<div class="message_box_align">$error</div>
+					</div>
+				#end
+            </div>
+            <!-- error-box -->
+            #end
+
+              <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+                <!-- Page Icon -->
+                <div id="pageIcon" class="icon_surveys"></div>
+                <!-- Page Heading -->
+                <div id="pageHeading" class="page_heading">Analyze Survey</div>
+                <!-- Page Description -->
+                <div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.searchMember.caption.inlinedescriptive")</div>
+            </div>
+            <!-- Logo+Manage-User-end -->
+
+
+				 <div id="resultBox" class="search_box_result" style="border-bottom:none;">
+            <!-- Result Header Start -->
+                <div id="resultHeader" class="box_header">
+                    <!-- Result Heading -->
+                   
+                    <div class="result_left_side">
+                        #springBind("manageSurveyForm.surveyResults")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						  #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+                             <!-- All Icon -->
+                                #if($!{status.value})
+                                   #if($totalCount > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageSurveys.do?method=showSurveyAnalizeForIndividuals&showAll=true&sid=$request.getParameter('sid')';"  name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='adm_manageSyrvey.do?method=showSurveyAnalizeForIndividuals&sid=$request.getParameter('sid')&pageIndex=$pager.nextIndex&paging=paging&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='adm_manageSyrvey.do?method=showSurveyAnalizeForIndividuals&sid=$request.getParameter('sid')&pageIndex=$pager.prevIndex&paging=paging&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                                </div>
+
+                        </div>
+                        <div id="searchResult_1">
+
+			     #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef" height="20">
+                                        <td class="box_subheader"><div  style="margin-left:5px;" #if($context.sortDirection == 0) onclick="sortSurveyAnalyze(0,1,$pageCurrIndex,$showAll);" #else onclick="sortSurveyAnalyze(0,0,$pageCurrIndex,$showAll);" #end ><div  id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_down" #elseif($context.sortColumnIndex == 0) class="icon_up" #else class="icon_down" #end ></div >First Name</div ></td>
+
+                                        <td class="box_subheader" >Last Name</td>
+										<td class="box_subheader"style="border-right:none;" >Username</td>
+                                    </tr>
+				     #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					    #springBind("manageSurveyForm.surveyResults[$loopIndex]")
+					       #set($survey = $!{status.value})
+						    #if($loopIndex%2 == 0)
+							#set($alternate="row_1")
+						    #else
+							#set($alternate="row_2")
+						    #end
+							<tr height="20">
+						
+						<td class="$alternate"width="25%"><a href='adm_manageSyrvey.do?method=showSurveyAnalizeResponse&vuId= $survey.surveyee.id'><u> $survey.surveyee.firstName</u></a>     </td>
+						<td class="$alternate" width="25%"><a href='adm_manageSyrvey.do?method=showSurveyAnalizeResponse&vuId= $survey.surveyee.id'<u>$survey.surveyee.lastName</u></a> </td>
+						<td class="$alternate" style="border-right:none;"width="50%"><a href='adm_manageSyrvey.do?method=showSurveyAnalizeResponse&vuId= $survey.surveyee.id'<u>$survey.surveyee.username</u></a></td>
+					    </tr>
+					#end
+
+                                </table>
+				#else
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+					    
+						<tr bgcolor="#efefef">
+						
+                        <td class="box_subheader" width="25%">First Name</td>
+                        <td class="box_subheader" width="25%">Last Name</td>
+						<td class="box_subheader"style="border-right:none;" width="50%">Username</td>
+					    </tr>
+					    <tr> 
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+						    <div class="result_blank"> No Records Found</div>
+						</td>
+					    </tr>
+
+
+					</table>
+            
+                  <!-- <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div> -->
+                #end
+
+            </div>
+        </div>
+    </div>
+    </td></tr>
+<!-- Body End -->
+	 <tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+    <!-- Footer Start -->
+      #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+       #parse("snippets/managerFooter.vm")
+    #end   
+    <!-- Footer End -->	
+	</td>
+	</tr>
+    
+    <!-- Footer End -->
+</table>
+
+     <!-- <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div> -->
+
+       
+	</form>
+</body>
+</html>

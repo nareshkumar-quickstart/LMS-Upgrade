@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+<head>
+
+    <!-- Parsed Page Head -->
+
+    #parse("snippets/learnerNewHead.vm")
+
+    <!-- Page Javascript -->
+
+    <style type="text/css" >
+        .process_window, .process_window_shadow{
+            width:400px;
+            height:140px;
+            padding-top:15px;
+            padding-left:15px;
+            background-color:#F7F7F7;
+            border:1px;
+            border-style:solid;
+            border-color:#E8E8E8;
+            position:absolute;
+            z-index:0;
+        }
+        .process_window_shadow{
+            margin-left:4px;
+            margin-top:4px;
+            background-color:#F1F1F1;
+            border:none;
+            z-index:-1;
+        }
+        .icon_clock{
+            float:left;
+            height:55px;
+            width:57px;
+            margin-left:5px;
+            background-image:url(brands/default/en/images/clock.gif);
+            background-repeat:no-repeat;
+        }
+        .process_heading{
+            float:left;
+            width:300px;
+            font-size:18px;
+            margin-top:17px;
+            margin-left:10px;
+            font-weight:bold;
+        }
+        .processing_text{
+            float:left;
+            width:500px;
+            padding-left:7px;
+            margin-top:20px;
+        }
+        .bars_container{
+            float:left;
+            height:21px;
+            width:375px;
+            margin-top:10px;
+            margin-left:5px;
+            border:1px;
+            border-color:#E8E8E8;
+            background-color:#FF0000;
+            border-style:solid;
+            z-index:1;
+        }
+        .progress_bar, .status_bar{
+            position:absolute;
+            height:21px;
+            width:375px;
+            background-color:#FFFFFF;
+        }
+        .status_bar{
+            background-image:url('brands/default/en/images/bluePercentBar.gif');
+            z-index:2;
+        }
+    </style>
+
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function() {
+
+
+            $('a.$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")').click(function(e){
+                if(e.preventDefault) e.preventDefault();
+
+                var href =$(this).attr('href');
+
+                if(confirm("This will open the product page for this course in a second browser window. Do you want to continue?", function () {
+
+                    window.open(href,'_blank');
+                }));
+            });
+
+            function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    width: 410,
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer',
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(message);
+
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+
+                        dialog.data.find('.yes').click(function () {
+
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+    <!-- END: Page Javascript -->
+
+</head>
+
+<body>
+
+<form name="CourseForm" id="CourseForm">
+    <!-- Page Table -->
+    <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+
+        <!-- Header Row -->
+        <tr>
+            <td id="header" colspan="2">
+                #parse("snippets/learnerNewHeader.vm")
+            </td>
+        </tr>
+        <!-- END: Header Row -->
+
+        <!-- Page Header Row Tabs -->
+
+        <!-- END: Page Header Row Tabs -->
+
+        <!-- Page -->
+        <tr id="main">
+
+            <!-- Page Content -->
+            <td id="content">
+
+                <!-- Page Scrollable Area -->
+                <div id="scrollable">
+
+                    <!-- Logo+Manage-User -->
+                    <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                        <tr>
+                            <td id="logoHolder" class="courseLogoCourses">
+                                <img src="brands/default/en/images/headericons/recommendations_on.png">
+                            </td>
+                            <td id="page-description">
+                                <div id="page-heading">$brander.getBrandElement("lms.mycourses.myRecommendations") ${context.FirstName}</div>
+                                <div id="page-help">$brander.getBrandElement("lms.mycourses.recommendationshelpText")</div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Logo+Manage-User-end -->
+
+                    <!-- drop-down-div -->
+                    <div style="width:100%; height:50px;">
+
+                        <div class="header"><img src="brands/default/en/images/recommendations_on_small.png"> Recommended Courses</div>
+
+                    </div>
+                    <div style = "border:1px solid #DDDDDD;float:left;margin:0;min-height:0;padding:0 0 0;position:relative;text-align:left;width:98%;">
+                        #set( $evenOdd = 0 )
+                        #set( $remainingPct=0 )
+                        #set( $fromcourse= "" )
+                        #set( $previousfromcourse= "" )
+                        #set( $coursescount = 0 )
+                        #foreach ($course in ${context.COURSE})
+                            #set( $fromcourse= $course.CourseGuidFrom )
+                            #if( $evenOdd==0 )
+                                #set( $evenOdd = 1 )
+                                #set( $alternateStyle = $brander.getBrandElement("lms.mycourses.cssClass.b-ContainerCourseName-L") )
+                            #else
+                                #set( $evenOdd = 0 )
+                                #set( $alternateStyle = $brander.getBrandElement("lms.mycourses.cssClass.b-ContainerCourseName-D") )
+                            #end
+                            <!--
+							   #if( $previousfromcourse=="" || $previousfromcourse!= $fromcourse  )
+							   <b>Master</b><b>$fromcourse</b>
+							   #end
+                               -->
+                            <div class="$alternateStyle">
+                                <div id="c10" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseLogo")">
+                                    <img src='brands/default/en/images/pageicons/selfpaced.png' width="31" height="31"  alt="" />
+                                </div>
+                                <div class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDivCenter")">
+                                    <div id="c11" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")">
+                                        <a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" target="_blank" href="$!{course.orderItemURL}">$course.CourseName</a>
+                                        #set( $coursescount = $coursescount + 1 )
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<b>$previousfromcourse</b>-->
+                            <!-- #set( $previousfromcourse= $fromcourse ) -->
+
+                        #end
+
+                        #if( $coursescount == 0)
+                            <div style="font-size: 12px;padding:5px;border-right:1px solid;border-bottom:1px solid;border-color:#dfdfdf;font-family:'Verdana';">
+                                $brander.getBrandElement("lms.instructor.caption.No-records-found-NoSearch")
+                            </div>
+                        #end
+
+                    </div>
+
+
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+
+                </div>
+                <!-- END: Page Scrollable Area -->
+
+            </td>
+            <!-- END: Page Content -->
+
+        </tr>
+        <!-- END: Page-->
+
+        <!-- Page Footer-->
+        <tr>
+            <td id="footer" colspan="2">
+                <!-- Footer -->
+
+                #parse("snippets/learnerNewFooter.vm")
+                #parse("snippets/deleteConfirmation.vm")
+
+                <!-- END: Footer-->
+            </td>
+        </tr>
+        <!-- END: Page Footer -->
+
+    </table>
+    <!-- END: Page Table -->
+
+    <div id="process" style="position:absolute; display:none;">
+        <div id="prcWndw" class="process_window">
+            <div class="icon_clock"></div>
+            <div class="process_heading">$brander.getBrandElement("lms.learner.mycourses.caption.wait.defaulttext")</div>
+            <div id="process_text" class="processing_text">$brander.getBrandElement("lms.learner.mycourses.caption.wpage.defaulttext")</div>
+            <div class="bars_container">
+                <div class="progress_bar"></div>
+                <div id="status_bar" class="status_bar"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</form>
+
+</body>
+
+</html>

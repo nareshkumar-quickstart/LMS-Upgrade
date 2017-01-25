@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type="text/javascript" language="javascript">
+function setCourseSelection(checkbox, id){
+        document.getElementById(id).value = checkbox.checked;
+        $("#"+$("#"+checkbox.id).attr("enrollTextboxid")).attr("disabled", !$("#"+checkbox.id).is(':checked')).val("").focus();
+    }
+
+function limitedEnrollments(para){
+    if($(para).attr("checked") == true){
+        $("#max-enrollments-required").css("visibility", "visible")
+    }else{
+         $("#max-enrollments-required").css("visibility", "hidden")
+    }
+}
+function unlimitedEnrollments(para){
+    if($(para).attr("checked") == false){
+        $("#max-enrollments-required").css("visibility", "visible")
+    }else{
+         $("#max-enrollments-required").css("visibility", "hidden")
+    }
+}
+
+function cancelInformation(){
+        document.getElementById('method').value='cancelAddCustomerContract';
+        document.addCustomerContract.submit();
+}
+function submitButtonForm()
+{
+        document.getElementById('method').value='saveCustomerContract';
+        document.addCustomerContract.submit();
+}
+
+ function changeContractType(arg){
+        if(arg == "groups"){
+            $(".contract-type-name").html("Course Groups");
+            $(".contract-type-ids").html("Course Group IDs");
+        }else{
+            $(".contract-type-name").html("Courses");
+            $(".contract-type-ids").html("Course IDs");
+        }
+
+    }
+
+$(document).ready(function()
+{
+	$('#content2a').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+	$("#startDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+		
+		$("#endDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+});
+</script> 
+#macro( treeviewEntitlement $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])
+    #set($index = 0)
+    #set($count = 0)
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${summaryForm.treeAsList.size()});" nodeid="$node.value.organisationalGroupId"></div>
+            #end
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroupSelect${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].selected" #if(${node.value.selected}) checked #end #if(!${node.enabled}) disabled #end onclick="setCourseSelection(this,this.id);" enrollTextboxid="_maxenroll${node.value.organisationalGroupId}"/>
+            <input type="hidden" id="_orgGroup${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].organisationalGroupId" value="${node.value.organisationalGroupId}" />
+            <input type="hidden" id="_orgGroupName$count" name="organisationalGroupEntitlementItems[$index].organisationalGroupName" value="${node.value.organisationalGroupName}" /></div>
+            #set ($padLimit=60-$node.depth*5)
+            <div class="row_title">#dotPaddingWithOutTitle(${node.value.organisationalGroupName},$padLimit)</div>
+            <div class="head_1b-e-1-admin-tree" style="padding-right:25px;"  >
+			<input type="text" id="_maxenroll${node.value.organisationalGroupId}" value="$!{node.value.maxEnrollments}" name="organisationalGroupEntitlementItems[$index].maxEnrollments" class="search_field"  /></div>
+        </div>
+        #set($index = $index + 1)
+        #set($count = $count + 1)
+    #end
+#end
+</head>
+<body>
+<form name="addCustomerContract" method="post" action="adm_addCustomerContract.do" >  
+	
+	<input type="hidden" id="method" name="method" value=""/>  
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	    #parse("snippets/adminWizardHeader.vm")
+		</td></tr>
+			
+	<!-- header-end -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+	<!-- content-area -->
+		<!-- left-pannel-content -->
+		<div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">Add Contract Wizard Showing 1 of 1</div>
+                        <div class="l-menu-back-text-act">1. Add Summary</div>
+                    </div>
+                </div>
+		<!-- left-pannel-content-end -->
+		</table></td>
+		
+		<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+		#springBind("summaryForm.*") 
+			#if($status.error)
+			<!-- error-box -->
+			 <div id="message_box">
+			  
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				#foreach($errorCode in $status.errorCodes)
+			#set ($error = $brander.getBrandElement($errorCode))
+			<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+				<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+				<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+				</div>
+				#end
+			</div>
+			<!-- error-box -->
+			#end
+
+            <!-- Logo+Manage-User -->
+            <div class="page_description" id="pageDescription">
+				<!-- Page Icon -->
+				<div class="courseLogoCustomer" id="pageIcon"></div>
+				<!-- Page Heading -->
+				<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.administrator.addCustomerContract.caption.subtitle")</div>
+				<!-- Page Description -->
+				<div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.addCustomerContract.caption.subtitleDetailsAdd")</div>
+			</div>
+            <!-- Logo+Manage-User-end -->
+			
+			<!-- Review-&-Confirm -->
+			<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">Contract Information</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0">
+                            <tbody><tr>
+							#springBind("summaryForm.contractName")
+                            <td height="30" width="200"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.ContractName")</span></td>
+                            <td>
+                                <div id="survey-name-required">
+                                <div class="required_field">*</div>
+                                </div>
+                                <input type="text" id="field_name" name="${status.expression}" value="$!{status.value}" class="input_text_field">
+                             </td>
+                            </tr>
+                            <tr>
+							
+							<td height="25"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.MaximumEnrollments")</span></td>
+							#springBind("summaryForm.maximumEnrollmentsUnLimited")
+							<td>
+								<input type="radio" id="max-enrollments" onclick="unlimitedEnrollments(this)" style="margin-left: 14px; float: left;" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/>
+									<span style="float: left; padding-top: 4px;">$brander.getBrandElement("lms.administrator.addCustomerContract.MaximumEnrollments.Unlimited")</span>
+								<input type="radio" id="max-enrollments" onclick="limitedEnrollments(this)" style="float: left; margin-left: 67px;" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/>
+								<div style="visibility: hidden;" id="max-enrollments-required">
+									<div style="margin-left: 3px; padding-top: 1px;" class="required_field">*</div>
+								</div>
+								#springBind("summaryForm.maximumEnrollmentsLimitedValue")
+								<input type="text" style="margin-left: 1px; width: 65px;" maxlength="8" id="field_questions" name="${status.expression}" value="$!{status.value}" class="input_text_field">
+							</td>
+                            </tr>
+                            <tr>
+                                <td height="25"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment")</span></td>
+								#springBind("summaryForm.allowSelfEnrollment")
+                                <td>
+								<input type="radio" style="margin-left: 14px;" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/>$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment.Yes")
+								<input type="radio" style="margin-left: 90px;" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/>$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment.No")
+								</td>
+                            </tr>
+                            <tr>
+                                <td height="25"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.EnrollmentType")</span></td>
+								#springBind("summaryForm.enrollmentType")
+                                <td>	
+								<input type="radio"  onclick="changeContractType('groups')" style="margin-left: 14px;" name="${status.expression}" value="CourseGroup" #if(${status.value} == "CourseGroup") checked #end/>Course Group
+								<input type="radio"  onclick="changeContractType('courses')" style="margin-left: 41px;" name="${status.expression}" value="Course" #if(${status.value} == "Course") checked #end/>Courses</td>
+                            </tr>
+                            <tr>
+							<td height="30" width="200"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.ContractType.StartDate")</span></td>
+							#springBind("summaryForm.startDate")
+							<td>
+								<div id="survey-name-required">
+									<div class="required_field">*</div>
+								</div>
+								<input type="text" style="width: 85px;" id="startDate" class="input_text_field" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="${status.expression}" value="$!{status.value}" >
+								</td>
+                            </tr>
+                            <tr>
+                                <td height="30" width="200"><span class="row_text">$brander.getBrandElement("lms.administrator.addCustomerContract.TermsofServices")</span></td>
+								#springBind("summaryForm.termsOfServices")
+                                <td>
+                                    <div id="survey-name-required">
+                                        <div class="required_field">*</div>
+                                    </div>
+                                    <input type="radio" style="float: left; margin-left: 1px;" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/>
+									#springBind("summaryForm.termsOfServicesValue")
+									<input type="text" style="width: 68px; margin-right: 8px;" id="field_name" name="${status.expression}" value="$!{status.value}" class="input_text_field">
+									<div style="float: left; margin-top: 2px;">$brander.getBrandElement("lms.administrator.addCustomerContract.Days")</div>
+									#springBind("summaryForm.termsOfServices")
+                                    <input type="radio" style="float: left; margin-left: 9px;" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/><div style="float: left; margin-top: 2px;">$brander.getBrandElement("lms.administrator.addCustomerContract.FixedEndDate")</div>
+									#springBind("summaryForm.fixedEndDate")
+									<input type="text" style="margin-left: 10px; width: 65px;" id="endDate"  name="${status.expression}" #if($fixedEndDate) value="$!{status.value}" #else value="" #end class="input_text_field">
+									
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                            	<td height="30" width="200"><span class="row_text">$brander.getBrandElement("lms.administrator.adddistributorentitlement.caption.TrannsactionAmount")</span></td>
+                            	#springBind("summaryForm.transactionAmount")
+                            	<td>
+                            		<div id="survey-name-required">
+                            			<div style="float:left;padding:0 4px;">$</div>
+                            			<input type="text" style="width: 85px" id="transactionAmount" name="${status.expression}" #if($transactionAmount) value="${status.value}" #else value="" #end class="input_text_field" />
+                            		</div>
+                            	</td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+					
+
+ <div class="search_box_result" style="margin-top:20px;">
+                        <div class="box_header"><span class="box_heading contract-type-name">Course Groups</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+
+                            <tr>
+                                <td style="padding-right:25px;">
+				 #springBind("summaryForm.courseIds")
+                                    <textarea id="courseIds" name="$status.expression" value="$status.value" rows="5" cols="" style="margin-left:10px; margin-bottom:5px; margin-top:5px; width: 100%"></textarea>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+
+					
+					       <!-- tree -->
+            <div class="content-Block-new" style="margin-top:20px">
+                <div class="Block-Contain-header">
+                    <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.col.header")</div>
+                    <div class="head_1a-a1"></div>
+                    <div class="head_1b-e-tree-adim">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.MaxEnrollments")</div>
+                </div>
+               #treeviewEntitlement($!{summaryForm.treeAsList})
+            </div>
+            <!-- tree-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			#*<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+			<input type="hidden" id="currentpage" name="_page" value="0"/>
+			<div class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.btn-left")"><input type="image" src="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.pixel.cancel.gif")" width="66" height="30" id="cancel" name="_cancel" title="Cancel" align="top" /></div>
+			<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-right")"><input type="image" src="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.pixel.finish.gif")" width="66" height="29" id="finish" name="_finish" title="Finish" align="top"/></div>
+			</div>*#
+
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+			<input type="hidden" id="currentpage" name="_page" value="0"/>
+			<div style="float:right; margin-top:3px;">
+			  <a onClick="submitButtonForm();" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Finish</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:right; margin-top:3px;margin-right:5px;">
+			  <a onClick="cancelInformation();" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Cancel</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			</div>
+			<!-- scrollable-div -->
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />			
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content-area-end -->
+	</td></tr>
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- footer -->
+	#parse("snippets/adminFooter.vm")	
+	<!-- footer-end -->
+	</td></TR>
+</TABLE>
+</form>
+</body>
+</html>

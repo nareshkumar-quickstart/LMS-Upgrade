@@ -1,0 +1,356 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+	
+	function doSearch(buttonclick) {
+		if (buttonclick != "") {
+			document.getElementById('action').value = buttonclick;
+		}		
+		document.searchManageForm.submit();
+	} 
+	
+	function removeCourseGroup(){
+        if ($("INPUT[type='checkbox'][name='courseGroups']:checked").length > 0) {
+			confirm(function () {
+                document.getElementById('action').value = "remove";
+                document.searchManageForm.submit();
+            });			
+        }
+		else {
+            $('#messageAlert').modal({close:false,position: ["40%",]});
+        }
+    }
+	
+	function confirm(callback) {	
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {                
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+	
+	$(document).ready(function(){
+	 	$('#frame_body').height($(window).height() - ($('#header').height() + $('#tabBar').height() +  $('#footer').height()));
+		if ($('#right-pannel').height()<$('#frame_body').height()) {
+			$('#right-pannel').height($('#frame_body').height());
+		}
+		if ($('#right-pannel').height()>$('#frame_body').height()) {
+			$('#frame_body').height($('#right-pannel').height());
+		}		
+		$('#sideBar').height($('#right-pannel').height());	
+	 	$('#frame_body').scroll(function(){
+			$('#message_box').animate({top:$('#right-pannel').scrollTop()+"px" },{queue: false, duration: 350});  
+		});
+		
+		$('#close_message').click(function(){
+			$("#message_box").animate({
+			   opacity: .5
+			}, "slow", "linear", function(){$("#message_box").hide();} );
+		});		
+		
+		$('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='courseGroups']").attr('checked', $('#chkAll').is(':checked'));              
+           }
+        )
+	});
+	
+
+</script>
+
+</head>
+
+
+
+#macro( courseCourseGroupsTree $treeNodes  $treeCount  )
+    #set($lastDepth = 0)
+    #set($arrParent = []) 	
+	<table width="100%" align="left" border="0">
+	<tr >
+		<td width="100%" height="24" align="left" >
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var = $velocityCount + $treeCount )
+		#if ( ($var%2) ==0)
+            #set ($rowColor="tree_node1")
+        #else 
+            #set ($rowColor="tree_node2")
+        #end
+        #set ($val = 0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth} > 0)
+            #set ($val = $node.depth - 1)
+            #set($parentId = $arrParent.get($val))		 	
+        #end
+	
+		<div id="row$treeCount$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" >		
+		#foreach($i in [1..${node.depth}])
+            #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+            #end
+		#end
+		
+		#if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="courseGroupTreeRows(this,${treeNodes.size()} , $treeCount);" nodeid="${node.value.id}"></div>
+        #end			
+			<div class="org_checkbox" ><input type="checkbox" id="_orgGroup${node.value.id}" name="courseGroups" value="${node.value.id}" #if(${node.selected}) checked #end  /></div>
+			<div class="icon-course-group" ></div>
+	
+		#set ($padLimit=60-$node.depth*5)
+		#if(!${node.enabled})
+			<div class="row_title_inst" >#dotPaddingWithOutTitle(${node.value.name},$padLimit)</div>
+		#else
+			<div class="row_title_inst" ><a href="ins_editCourseGroup.do?courseGroupId=${node.value.id}"> #dotPaddingWithOutTitle(${node.value.name},$padLimit)</a></div>
+		#end
+			<input style="display:none;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")" type="text" id="txtNode${node.value.id}" name="txtNode${node.value.id}" maxlength="50" />
+		</div>	
+    #end
+		</td>
+	</tr>
+	</table>
+#end
+
+<body>
+<form name="searchManageForm" id="searchManageForm" method="post" action="ins_manageCourseCourseGroups.do?id=$!{context.courseId}">
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	#parse("snippets/instructorHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+	
+	<!-- Tabs Start -->		
+		        <td  id="row-tabs" class="tab_bar" colspan="2">
+		<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	        <tr>
+	        	<td width="194"><div class="tab_blank"></div></td>
+	            <td>&nbsp;</td>
+	            <td width="697">
+	            	<a href="ins_viewCourse.do?method=viewCourseSummary&id=${context.courseId}"><div class="tab" >$brander.getBrandElement("lms.instructor.tabBar.summary")</div></a>
+					#if($context.courseType == "Learner Assignment" || $context.courseType == "Instructor Connect")
+					#else	
+					<a href="ins_viewCourse.do?method=viewCourseOverView&id=${context.courseId}"><div class="tab" style="width: 120px;" >$brander.getBrandElement("lms.instructor.tabBar.courseOverview")</div></a>
+	            	<a href="ins_viewCourse.do?method=viewCourseExamOverView&id=${context.courseId}"><div class="tab" style="width: 120px;" >$brander.getBrandElement("lms.instructor.tabBar.examOverview")</div></a>
+					#end
+	            	<a href="ins_viewCourse.do?method=viewCourseAdditionalDetails&id=${context.courseId}"><div class="tab" style="width: 140px;" >$brander.getBrandElement("lms.instructor.tabBar.additionalDetails")</div></a>
+					#if($context.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || $context.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR") ) 
+					<a href="ins_manageSynchronousClass.do?id=${context.courseId}"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>
+					#elseif($context.courseType == "DFC" || $context.courseType == "Learner Assignment") 					
+					<a href="ins_searchCourseInstructor.do?id=${context.courseId}&courseType=$context.courseType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#elseif($context.courseType == "Instructor Connect")
+					#if($context.instructorType == "Email Online")
+					<a href="ins_searchCourseInstructor.do?id=${context.courseId}&courseType=$context.courseType&instructorCourseType=$context.instructorType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#elseif($context.instructorType == "Webinar")
+					<a href="ins_manageSynchronousClass.do?id=${context.courseId}&courseType=$context.courseType&instructorCourseType=$context.instructorType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>	
+					#end
+					#end
+					<a href="ins_manageCourseCourseGroups.do?id=${context.courseId}"><div style="border-right-style: solid; " class="tab_selected">$brander.getBrandElement("lms.instructor.tabBar.courseGroups")</div></a>
+	            </td>
+	            <td>&nbsp;</td>
+	        </tr>
+		</table>		
+		</td>
+		<!-- Tabs End -->
+	
+	<!-- content-area -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		#parse("snippets/instructorCourseLeftMenu.vm")
+		<!-- left-pannel-content -->
+		</table></td>
+				
+		<!-- right-pannel -->
+<TD id="content" >
+	<div id="scrollable">
+			<!-- error-box -->				
+			#if( $request.getAttribute("errors") )
+			<div id="message_box">
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />					
+				#set ($error = $brander.getBrandElement($request.getAttribute("errors")))
+				<div class="width40pct">
+					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="message_box_align">$error</div>
+				</div>
+			</div>			
+			#end
+			<!-- error-box - end -->        	        
+	        
+	        <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Search Box -->
+			<div id="resultBox" class="search_box_result">
+			
+				<!-- Alert Message Box -->
+				<div id="messageAlert" style="display:none">
+					<div class="header">&nbsp;&nbsp;$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.error.selectCoureGroup")</div>
+					<br style="clear:both" />
+					<div class='buttons'>
+						<div class='no simplemodal-close'>
+							<div style="float: left; margin-top: 2px; margin-right: 0px;">
+								<div>
+									<a  onclick="">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnOK")</div>
+										<div class="btn_end"></div>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Alert Message Box - Ends -->
+				
+				<!-- Delete Message Box -->
+				<div id='deleteConfirmation' style='display:none'>
+					<div class='header'><span>$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.deleteConfirmation.title")</span></div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.deleteConfirmation.message")</div>
+					<br style="clear:both" />
+					
+					<div class='buttons'>
+           				<div class='simplemodal-close' style="width:220px">
+				  			<div style="float: left; margin-top: 0px; margin-left: 20px;">
+								<div>
+									<a onClick=""><span class="no button">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnCancel")</div>
+										<div class="btn_end"></div>
+									</span></a>
+								</div>
+							</div>
+							   
+				 			<div style="float: center; margin-top: 0px; margin-left: 20px;">
+								<div>
+									<a class="" onClick=""><span class="yes button">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnOK")</div>
+										<div class="btn_end"></div>
+									</span>	</a>
+								</div>
+							</div>							   
+	                    </div>
+					</div>
+				</div>				
+				<!-- Delete Message Box - end-->	
+			
+				<!-- Result Header Start -->
+				<div id="resultHeader" class="box_header">
+					
+					<!-- Button panel -->
+					<div style="float:left; height:23px;">	
+						<!-- Add Instructor button -->
+						<div style="float: left; margin-top: 2px;" >
+							<div>
+								<a #if (${context.courseIsRetired}) href="#" #else href="ins_searchCourseGroupsForCourse.do?id=$!{context.courseId}" #end >
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnAddCourseGroup")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+						<!-- Delete Instructor button -->
+						<div style="float: left; margin-top: 2px; margin-right: 5px;">
+							<div>
+								<a onClick="removeCourseGroup();">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.btnRemoveCourseGroups")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>						
+					</div>
+					<!-- Button panel - end -->					
+				</div>
+	           	<!-- Result Header End -->	
+           	
+	           	<!-- Search Result Start -->
+	           	<div id="searchResult">
+					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						<tr bgcolor="#efefef">
+							<td class="check_box_top" style="padding-left:3px;" width="2%"><input type="checkbox" id="chkAll" name="selectedCourseGroupsAll"/></td> 
+							<td class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:98%;" >$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.courseGroups")</td>							
+						</tr>
+					#if ($context.courseGroupTreeList.size() > 0)						
+						<tr>
+							<td colspan="2" width="100%">
+						#set( $treeCount = 0 )
+						#foreach($courseGroupTree in $context.courseGroupTreeList )
+							#set( $treeCount = $treeCount + 1 )
+							#courseCourseGroupsTree(${courseGroupTree} $treeCount  )
+						#end
+							</td>
+						</tr>
+					#else							
+						<tr>
+	                        <td colspan="2" style=" !Important;">	                            
+	                            <div class="result_blank">$brander.getBrandElement("lms.instructor.manageCourse.courseGroup.caption.noRecordFound")</div>
+	                        </td>
+	                    </tr>
+					#end
+					</table>
+				</div>				
+			    <!-- Search Result End -->
+	    	</div>
+	    	<!-- Search Box - end-->
+	    	
+			<!-- hidden elements for form binding -->
+			<input id="id" type="hidden" name="id" value="${context.courseId}" />
+			<input id="action" type="hidden" name="action" value="${context.action}" />			
+			
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			       
+		</div>
+		<!-- right-pannel end -->
+    </td></tr>
+    <!-- content-area end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</form>	
+</body>
+</html>	

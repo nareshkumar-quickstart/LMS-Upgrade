@@ -1,0 +1,90 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+#set($distributorFeatureGroup = $ssn.getAttribute("distributorFeatureGroup"))
+#set($distributorFeature = $ssn.getAttribute("distributorFeature"))
+
+
+#if(! $distributorFeature)
+	#if($userPermissionChecker.hasAccessToFeatureGroup("Plan & Enroll", $userData, $ssn))
+	
+	
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0011", $userData, $ssn))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')" >
+			<div class="band_text">$brander.getBrandElement("lms.viewAllEntitlements.caption.title")</div>
+		 </td>
+		 </tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0008", $userData, $ssn))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_assignEnrollments.do')">
+			<div class="band_text">Enroll Learners</div>
+		 </td>
+		 </tr>
+		#end
+
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0010", $userData, $ssn))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0010','mgr_manageSynchronousCourse.do')">
+			<div class="band_text">Manage Courses</div>
+		</td>
+		</tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0009", $userData, $ssn))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0009','mgr_searchTrainingPlans.do')">
+			<div class="band_text">Manage Training Plans</div>
+		</td>
+		</tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("AssignTrainingPlans", $userData, $ssn))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','AssignTrainingPlans','mgr_assignTraningPlan.do')">
+			<div class="band_text">Assign Training Plans</div>
+		</td>
+		</tr>
+		#end
+
+	#end
+#else
+	#if($distributorFeatureGroup.contains("Plan & Enroll"))
+
+		#if($distributorFeature.contains("LMS-MGR-0011"))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')">
+			<div class="band_text">View Entitlements</div>
+		 </td>
+		 </tr>
+		#end
+		#if($distributorFeature.contains("LMS-MGR-0008"))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_assignEnrollments.do')">
+			<div class="band_text">Enroll Learners</div>
+		 </td>
+		 </tr>
+		#end
+
+		#if($distributorFeature.contains("LMS-MGR-0010"))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0010','mgr_manageCustomCourses.do')">
+		<div class="band_text">Manage Courses</div>
+		</td>
+		</tr>
+		#end
+		#if($distributorFeature.contains("LMS-MGR-0009"))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0009','mgr_searchTrainingPlans.do')">
+			<div class="band_text">Manage Training Plans</div>
+		</td>
+		</tr>
+		#end
+		#if($distributorFeature.contains("AssignTrainingPlans"))
+		<tr>
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','AssignTrainingPlans','mgr_assignTraningPlan.do')">
+			<div class="band_text">Assign Training Plans</div>
+		</td>
+		</tr>
+		#end
+
+	#end
+#end

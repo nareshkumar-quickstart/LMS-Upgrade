@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script language="javascript" type="text/javascript">
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageDistributorGroupForm.submit();
+    }
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+    });
+    
+</script>
+</head>
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+        <!-- header -->
+        #parse("snippets/adminHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+        <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- left-pannel-content -->
+            #parse("snippets/adminDistributorLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table></td>
+			
+            <TD id="content" >
+	<div id="scrollable">
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoDistributor">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.editDistributorGroup.caption.editDistributorGroup")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.editDistributorGroup.caption.title")</div>
+			</td>
+		    </tr>
+		</table>            
+                                
+                <!-- Logo+Manage-User-end -->
+
+                $pager.setItems($context.distributorGroups)
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                    #set($pageFirstIndex = $pager.firstIndex)
+                    #set($pageLastIndex = $pager.lastIndex)
+                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                    #set($currentPageCount = $pageLastIndex + 1)
+                #else
+                    #set($pageFirstIndex = 0)
+                    #set($pageLastIndex = 0)
+                    #set($currentPageSize = 0)
+                    #set($currentPageCount = 0)
+                #end
+                <form name="manageDistributorGroupForm" method="post" action="adm_manageDistributorGroup.do">
+                    <input type="hidden" id="action" name="action" value=""/>
+                    <div class="content-Block-new"><!-- content-Block -->
+                        <div id="searchBox" class="visible"><!-- Search input window -->
+                            <div style="padding: 5px"><b>$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.searchDistributorGroup")</b></div>
+                            <br />
+                            <div style="padding: 5px">
+                                <div style=" float:left">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.distributor-Group-Name") &nbsp;&nbsp;</div> 
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('Search');}" name="distributorGroupName" size="28" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <br /><br />
+                            
+                            <div style="padding: 5px;margin-left:50px; height:20px">
+                                <a style="float: left; margin-left: 10px;" class="button" onclick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Cancel")</span></a> 
+                                <!--
+                                <div class="btn_start">&nbsp;</div>
+                                <div class="btn_new_normal" onclick="showSearchBox(this);">Cancel</div>
+                                <div class="btn_end">&nbsp;</div>
+                                -->
+                                <a style="float: left; margin-left: 7px;" class="button" onclick="FormSubmit('Search');"><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a> 
+                                <!--
+                                <div class="btn_start">&nbsp;</div>
+                                <div class="btn_new_normal" name="qsearch" onclick="FormSubmit('Search');" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+                                <div class="btn_end">&nbsp;</div>
+                                -->
+                            </div>
+                        </div><!-- Search input window -->
+                        <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                            <div style="float:left; height:23px;">
+                                <div style="float:left; margin-top:2px;">
+								  <a onclick="javascript:window.location='adm_distributorGroup.do';" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.admin.distributor.caption.addDistributorGroup")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+                            </div>
+                            <div class="result_left_side"><!-- result_left_side -->
+                                <!-- Search Button -->
+                                <div style="float:left; margin-top:2px;">
+								  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+                                <!-- Search Button -->
+                                <!-- Show all -->
+                                <a href="adm_manageDistributorGroup.do?action=ShowAll&showAll=true"><div id="e14d" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div></a>
+                                <!-- Show all -->
+                                #if( $pager.nextIndex )
+                                    <a href="adm_manageDistributorGroup.do?action=ShowAll&pageIndex=$pager.nextIndex"><div id="e14c" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div></a> 
+                                #else 
+                                    <div class="icon_disabled">&nbsp;</div> 
+                                #end
+                                 #if( $pager.prevIndex )
+                                <a href="adm_manageDistributorGroup.do?action=ShowAll&pageIndex=$pager.prevIndex"><div id="e14b" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div></a>#else <div class="icon_disabled">&nbsp;</div> #end
+                                #if($pageFirstIndex == 0 && $pageLastIndex == 9)
+                                    #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex > 0)
+                                    #set($x = $pageFirstIndex+1)
+                                #else
+                                    #if($currentPageSize > 0)
+                                        #set($x = 1)
+                                    #else
+                                        #set($x = 0)
+                                    #end
+                                #end
+                                #if($pageLastIndex != 0)
+                                    #set($y = $pageLastIndex+1)
+                                #else
+                                    #if($currentPageSize > 0)
+                                        #set($y = 1)
+                                    #else
+                                        #set($y = 0)
+                                    #end
+                                #end
+                                <div id="e14a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")">Showing $x - $y of $totalCount </div>
+                            </div><!-- result_left_side -->
+                        </div><!-- Result Header End -->
+                        <div id="searchResult"><!-- searchResult -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="box_subheader">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.name")</td>
+                                    <td class="check_box_top" width="18" style="border-right:none;">&nbsp;</td>
+                                </tr>
+                                #if($currentPageSize > 0)
+                                    #set($count = 0)
+                                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                        #if($count%2 == 0)
+                                            #set($alternate="row_1")
+                                        #else
+                                            #set($alternate="row_2")
+                                        #end
+                                        #set($distributorGroup = $context.distributorGroups.get($loopIndex))
+                                        <tr>
+                                            <td class="$alternate">$!{distributorGroup.name}</td>
+                                            <td class="$alternate" style="border-right:none;"  width="100px" nowrap="true">
+											
+											<!--<a href="adm_editDistributorViewAdministrator.do?Id=${distributorGroup.id}"><img src="$brander.getBrandElement("lms.pixel.edit_defGif")" width="11" height="12" onmouseover="showTooltip('View Administrator', event);" onmouseout="hideTooltip();" /></a>-->
+											
+											<a href="adm_editDistributorViewAdministrator.do?Id=${distributorGroup.id}">
+											
+											$brander.getBrandElement("lms.distributerGroups.searchDistributorGroup.caption.viewAdministrator")
+											
+											</a>
+											
+											</td>
+                                        </tr>
+                                        #set($count = $count+1)
+                                    #end
+                                #else
+                                        <tr>
+                                            <td colspan="2" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                            </td>
+                                        </tr>
+                                #end
+                            </table>
+                        </div><!-- searchResult -->
+                    </div><!-- content-Block -->
+                </form>
+            </div><!-- right-pannel-content-end -->
+
+        </td><tr></tr><!-- content-area-end -->
+        
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+    </table><!-- main-container -->
+</body>
+</html>

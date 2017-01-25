@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+         #parse("snippets/compliance/complianceHead.vm")
+
+
+        <script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/js_survey.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $('#sideBar').height($('.scrollable').height());
+    });
+     function sortApproval(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('actionmethod').value='searchApprovals';
+        document.surveyAppForm.submit();
+    }
+
+</script>
+    </head>
+    <body>
+        <form name="addRecipientForm" method="post" action="mgr_addRecipient.do?alertId=$addRecipientForm.alertId">
+        <input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+           #parse("snippets/managerWizardHeader.vm")
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div >
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageAlert.editRecipient.showingWizardStep2")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.summary")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.selectRecipientType")</div>
+
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.manageAlert.editRecipient.selectRecipients")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.confirmation")</div>
+                    </div>
+                </div>
+			</table>
+	</td>
+	
+    <TD id="content" >
+	<div id="scrollable">
+                <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+				<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="icon_surveys">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.addRecipientGroup")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.selectRecipientType")</div>
+						        </td>
+						    </tr>
+						</table>
+
+                    <div id="table-frame" class="table-frame" style="padding-bottom:10px;">
+                        <div id="table-header" class="table-header" style="height:25px;">
+                            <div class="table-heading">$brander.getBrandElement("lms.manageAlert.editRecipient.selectRecipientType")</div>
+                        </div>
+                        #springBind("addRecipientForm.recipientType")
+
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td height="15">
+
+                                    <span class="table-text"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                        <tr>
+                                            <td width="70" align="right" height="25">
+
+                                                <input type="radio" value="learners" name="${status.expression}" id="learners" #if(${status.value} == "learners") checked #end />
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.users")</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right" height="25">
+
+                                                <input type="radio" value="learnergroups" name="${status.expression}" id="learnerGroups" #if(${status.value} == "learnergroups") checked #end />
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.learnerGroups")</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="right" height="25">
+
+                                                <input type="radio" value="organizationgroups" name="${status.expression}" id="organizationGroups" #if(${status.value} == "organizationgroups") checked #end  />
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.orgGroups")</span>
+                                            </td>
+                                        </tr>
+                                     #* 
+                                     	<tr>
+                                            <td align="right" height="25">
+
+                                                <input type="radio" value="emailaddress" name="${status.expression}" id="emailaddress" #if(${status.value} == "emailaddress") checked #end />
+                                            </td>
+                                            <td>
+                                                <span class="table-text">$brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.emailAddress")</span>
+                                            </td>
+                                        </tr>
+                                    *#
+                                    </table>
+                                </td>
+
+                            </tr>
+                        </table>
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="1" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+              
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target2');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>		
+                </div>
+            </td></tr>
+			<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+           #parse("snippets/managerFooter.vm")
+		   </td>
+		   </tr>
+        </table>
+        </form>
+    </body>
+
+</html>

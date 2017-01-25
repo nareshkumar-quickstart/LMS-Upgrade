@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ #parse("snippets/accreditation/accreditationDefaultHead.vm")
+		<script type="text/javascript" language="javascript">
+    function setAction(method){
+        document.getElementById("action").value = method;
+        document.manageReportSummaryForm.submit();
+    }
+
+    function ismaxlength(obj){
+        var mlength=obj.getAttribute? parseInt(obj.getAttribute("maxlength")) : ""
+        if (obj.getAttribute && obj.value.length>mlength)
+        obj.value=obj.value.substring(0,mlength)
+    }
+    $(document).ready(function()
+    {
+        $('#right-pannel-report').scroll(function()
+        {
+            $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function()
+        {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+ </script>
+</head>
+<body>
+#set($currentReport=$reportForm.getCurrentReport())
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="header" colspan="2">
+            <!-- header -->
+            #parse("snippets/accreditation/accreditationReportHeader.vm")
+            <!-- header-end -->
+    	</td>
+	</tr>
+	
+    <!-- TopBar Start -->
+	<tr id="row-tabs">
+        <td id="blank-tab">
+            &nbsp;
+        </td>
+        <td id="tabs" align="center">
+            <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+						<a href="#springUrl('/acc_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+					</td>
+                    <td class='selected'>
+						<a href="#springUrl('/acc_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a>
+					</td>
+                    <td id='last'>
+						<a href="#springUrl('/acc_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a>
+					</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- TopBar End -->
+
+    <tr id="main" style="background:none;">
+        <td valign="top" id="left-navigation">
+    <!-- content-area -->
+    		<div id="sidebar-scroller" style="overflow-x: hidden;">
+                #parse("snippets/reportLeftMenu.vm")
+            </div>
+		 </td>
+        <td id="content">
+            <div id="scrollable">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report-edit">
+
+                #springBind("reportForm.*")
+                #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                    </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+            <!-- Logo+Manage-User -->
+			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+					    <tr>
+					        <!-- Page Content Icon -->
+							<td id="page-icon" class="reportLogo">
+					            &nbsp;
+					        </td>
+							<!-- Page Content Description -->
+					        <td id="page-description">
+					            <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.editReport")</div>
+					            <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.editReport.description")</div>
+					        </td>
+					    </tr>
+					</table>					
+            <!-- Logo+Manage-User-end -->
+
+
+            <form name="manageReportSummaryForm"  action="#springUrl('/acc_ManageReports.do')" method="POST">
+                <input type="hidden" id="action" name="method" value=""/>
+				#springBind("reportForm.reportSummaryEdit.id")
+                <input type="hidden" name="${status.expression}" value="$!{status.value}"/>
+                <!-- Review-&-Confirm -->
+                <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="Search-Containerheaderleft">Report Information</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="Search-inputfield-box">
+                        <!-- s -->
+                        <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                        <!-- 1 -->
+						#springBind("reportForm.reportSummaryEdit.title")
+                        <div id="e12" class="search-content-row">
+                            <div class="block_text_in2">Report Name</div>
+                            <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div>
+                            <div class="input_field_area-user-f2a"><input type="text" name="${status.expression}" value="$!{status.value}" maxlength="254" class="search_field" /></div>
+                        </div>
+                        <!-- 2 -->
+						#springBind("reportForm.reportSummaryEdit.category")
+                        <div id="e13" class="search-content-row">
+                            <div class="block_text_in2">Report Category</div>
+                            <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div>
+                            <div class="input_field_area-user-f2a">
+						<input type="text"  readonly name="${status.expression}" value="$!{status.value}" maxlength="254" class="search_field"/></div>
+                        </div>
+                        <!-- 4 -->
+						#springBind("reportForm.reportSummaryEdit.description")
+                        <div id="e13" class="search-content-row2">
+                            <div class="block_text_in2">Description</div>
+                            <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div>
+                            <div class="input_field_area-user-f2a">
+                                <textarea name="${status.expression}" rows="" cols="" maxlength="254" onkeyup="return ismaxlength(this)" class="inputfield-box-L2-in-e"/>$!{status.value}</textarea>
+                            </div>
+                        </div>
+                        <!-- 00 -->
+                        
+                    </div>
+					  <!-- space -->
+					<div class="manager-bottom-space"></div>
+					<!-- space -->
+
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- Review-&-Confirm-end -->
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+
+                <!-- button-div -->
+               <div class="btn-div">
+				#if(!$currentReport.systemOwned)
+				<div style="float:right; margin-top:15px;">
+				  <a onclick="setAction('saveReportSummary');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Save</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				#if(! ${reportForm.currentReport.derivedFrom})
+				 <!-- Do Nothing -->
+				#else 
+				#springBind("reportForm.currentReport.derivedFrom.systemOwned")
+					#if($status.value)
+						<div style="float:right; margin-top:15px;">
+						  <a onclick="setAction('backToDefaults');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Back To Defaults</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>					
+					#end
+				#end
+
+				#end
+				<div style="float:right; margin-top:15px;">
+				  <a onclick="setAction('cloneReport');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Save As New Report</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+
+				<div style="float:right; margin-top:15px;margin-right:5px;">
+					<a onclick="setAction('cancelReportSummary');">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Cancel</div>
+						  <div class="btn_end"></div>
+					</a>
+				</div>  
+			
+                </div>
+                <!-- scrollable-div -->
+            </form>
+            <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+
+            </div>
+            <!-- for center-align-div -->
+        </div>
+
+        <!-- </div> -->
+        <!-- right-pannel-content-end -->
+
+    <!-- content-area-end -->
+         </td>
+    </tr>
+    <!-- content-area-end -->
+    <tr>
+    <!-- Footer BLOCK -->
+        <td id="footer" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultFooter.vm")
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

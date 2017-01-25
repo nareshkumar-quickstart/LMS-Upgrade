@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Email #1</title>
+<style type="text/css">
+body{
+	font-family:Tahoma;
+	color:#000000;
+	font-size:11px;
+	}
+#frame{
+	float:left;
+	height:auto;
+	width:97%;
+	border-color:#ebe6e6 !Important;
+	border:1px;
+	border-style:solid;
+	overflow:hidden;
+	margin-left:15px;
+	padding:1px;
+	padding-bottom:10px;
+	}
+.frame_header{
+	height:24px;
+	background-color:#f4f4f4;
+	font-size:14px;
+}
+.frame_heading{
+	float:left;
+	width:100%;
+	font-size:12px;
+	font-weight:bold;
+	text-transform:uppercase;
+	margin-top:4px;
+	margin-left:4px;
+}
+.frame_text{
+	float:left;
+	width:100%;
+	font-family:Verdana;
+	font-size:12px;
+	margin-top:15px;
+	margin-left:4px;
+	margin-bottom:5px;
+}
+.frame_subframe{
+	background-color:#F9F9F9;
+	width:98.2%;
+	padding:5px;
+}
+</style>
+</head>
+<body>
+    <div style="float:left;height:auto;width:97%;border-color:#ebe6e6 !Important;border:1px;border-style:solid;overflow:hidden;margin-left:15px;padding:1px;padding-bottom:10px;">
+		<div style="height:24px;background-color:#f4f4f4;font-size:14px;">
+        	<div style="float:left;width:100%;font-size:12px;font-weight:bold;text-transform:uppercase;margin-top:4px;margin-left:4px;">SURVEY ASSIGNMENT</div>
+        </div> 
+	
+            <div style="float:left;width:100%;font-family:Verdana;font-size:13px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+			Dear $!{learner.firstName} $!{learner.lastName}, <br><br>
+			$brander.getBrandElement("lms.email.managerSurveyAssignment.learner.msg1")<br/><br/>
+			<a href="$lmsDomain/lms/login.do?brand=$brander.getName()">$lmsDomain/lms/login.do?brand=$brander.getName()</a><br/><br>
+			<div style="height:24px;background-color:#f4f4f4;font-size:14px;width:99.2%;">
+        		<div style="float:left;width:100%;font-size:12px;font-weight:bold;text-transform:uppercase;margin-top:4px;margin-left:4px;">ASSIGNED SURVEYS</div>
+        	</div>  
+
+			#if( $saveSurveyParam.openSurvey   )
+				These survey assignment(s) will not expire<br>
+			#else
+				This survey assignment(s) will  expire on following dates <br>
+			#end			
+            <br>
+            <table border="0" width="100%" style=" font:Verdana, Arial, Helvetica, sans-serif; font-size:13px;">
+	    	<tr style="background-color:#f4f4f4;">
+	                	<td style="background-color:#f4f4f4;font-family:Verdana; font-size:13px;width:350px" width="350px">SURVEY</td>
+				 
+ 			#if( ! $saveSurveyParam.openSurvey  )
+
+				<td style="font-family:Verdana; font-size:13px;width:450px" width="450px">SURVEY END DATE</td>
+			#end
+	                   
+	                </tr>
+                #foreach( $surveyItem in ${saveSurveyParam.surveyItemList})
+			#if(  $surveyItem.selected )
+				<tr> 
+						<td style="font-family:Verdana; font-size:13px;width:450px" width="450px">$surveyItem.survey.name </td>
+						 
+				#if(   $saveSurveyParam.openSurvey )
+&nbsp;
+				#elseif( $saveSurveyParam.modifyAllSurveys )
+					<td style="font-family:Verdana; font-size:13px;width:450px" width="450px"> $saveSurveyParam.surveyEndDateObject </td>
+				#elseif( !$saveSurveyParam.modifyAllSurveys )
+					<td style="font-family:Verdana; font-size:13px;width:450px" width="450px">$surveyItem.surveyEndDateObject </td>
+				#end
+
+				</tr>
+			#end    
+                #end
+           </table>
+			<br>
+            
+            <br/>			
+			For questions regarding the enrolled courses please contact your training manager.<br/><br/>
+
+			Thank you,<br/>
+			$!{manager.firstName} $!{manager.lastName}<br/>
+			${customer.name}
+            </div>           
+    </div>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+#parse("snippets/learnerNewHead.vm")
+<script>
+    var launchWindow;
+    function launchCourse(courseId, enrollmentId) {
+    	stopBothTimers();
+    	
+    	IS_LS360_SCORM = false;
+    	IS_LS360_SCORM =  ('${context.course.courseType}' == "Scorm Course")? true: false;
+    	
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+        launchWindow.focus();
+    }
+    
+    function launchCourse(courseId, enrollmentId, courseType) {
+    	stopBothTimers();
+    	        	
+    	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+    	        	
+    	        	
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+                    
+        
+        launchWindow.focus();
+        launchWindow.opener=this.window;
+            
+        }
+
+    function backToCourseDetails() {
+        document.location="#springUrl("/lrn_courseDetails.do?courseId=$!{context.course.courseGUID}&learnerEnrollmentId=$!{context.learnerEnrollment.id}")&show=$context.viewType";
+    }
+    $(document).ready(function(){
+        
+    });
+</script>
+</head>
+#macro(toogleRowClass $rowClass)
+    #if($rowClass=='borderRow-alt')
+        #set($rowClass='borderRow')
+    #elseif($rowClass=='borderRow')
+        #set($rowClass='borderRow-alt')
+    #end
+#end
+<body>
+<div id="main-container">
+    <!-- Header -->
+    #parse("snippets/learnerNewHeader.vm")
+    <!-- header-end -->
+    #set($remainingPct=100-$!{context.courseStatistics.percentComplete})
+    <div id="content2a">
+        
+         <div id="right-pannel" style="margin-left:20px">
+            <!-- Logo+Manage-User -->
+            <div class="courseLogoContainer">
+                <div id="e3" class="courseLogo2"><img src="brands/default/en/images/pageicons/trainingplans.png" alt="" /></div>
+                <div id="e4" class="courseTitleDiv">
+                    <div id="e5" class="courseTitle1">Course Completion Report for $context.userName</div>
+                    <div id="e6" class="courseDetails">$brander.getBrandElement("lms.courseCompletion.helpText")</div>
+                </div>
+            </div>
+            <!-- Logo+Manage-User-end -->
+            <table id="courseDetails" width="98%" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td valign="middle" nowrap>
+                        <div class="managerBtn1">
+                           <div style="float:right; margin-top:5px;">
+								<a onclick="return window.print();" style="text-decoration:none;">
+								<div class="btn_start"></div>
+								<div class="btn_normal">Print Page</div>
+								<div class="btn_end"></div>
+								</a>
+							</div>
+							<div style="float:right; margin-top:5px;">
+								<a onclick="return backToCourseDetails();" style="text-decoration:none;">
+								<div class="btn_start"></div>
+								<div class="btn_normal">Back To Course Details</div>
+								<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td nowrap >
+                        <img src="$brander.getBrandElement("lms.pixel.iconOnlineGif")" width="31" height="31" alt="" />
+                    <!-- </td>
+                    <td valign="middle" nowrap> 
+					-->
+                    <span style="vertical-align:top;" >&nbsp;&nbsp;<a style="vertical-align:top" class="courseName" href="javascript:launchCourse('$!{context.course.courseGUID}','$!{context.learnerEnrollment.id}','$!{context.course.courseType}')">$context.course.courseTitle</a>
+					</span>   
+                    </td>
+               </tr>
+            </table>
+            <table id="courseDetails" width="98%" cellpadding="5" cellspacing="0">
+                <tr class="borderRow">
+                    <td colspan="3"><img height="30" src="$brander.getBrandElement("lms.pixel.gif")"></td>
+                </tr>
+                <tr class="borderRow">
+                    <td width="80%"><span class="headerRow">Course Status:</span></td>
+                    <td align="center">&nbsp;</td>
+                    <td align="center">
+                #if( $context.courseStatistics.status.equals("notstarted"))
+                        <span class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-blue")">$brander.getBrandElement("lms.mycourses.notStarted")</span>
+                #elseif( $context.courseStatistics.courseCompleted)
+                        <span id="c23" class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-green")">$brander.getBrandElement("lms.mycourses.status.${course.courseStatus.toLowerCase()}")</span>
+                #else
+                        <img src="$brander.getBrandElement("lms.pixel.statusBarStartJpg")"><img src="$brander.getBrandElement("lms.pixel.progressBarJpg")" width="$!{context.courseStatistics.percentComplete}" alt="$!{context.courseStatistics.percentComplete}" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarsJpg")" width="$remainingPct" alt="$!{context.courseStatistics.percentComplete}" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarEndJpg")">
+                #end 
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3"><img height="30" src="$brander.getBrandElement("lms.pixel.gif")"></td>
+                </tr>
+                #if($context.courseCompletionCriteria)
+                <tr class="borderRow">
+                    <td width="80%"><span class="headerRow">Completion Requirement</span></td>
+                    <td align="center"><span class="headerRow">Required</span></td>
+                    <td align="center"><span class="headerRow">Your Status</span></td>
+                </tr>
+                #end
+                #set($rowClass='borderRow-alt')
+                #if($context.courseCompletionCriteria.isMustViewEverySceneInTheCourse() )
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.playeveryscene")</td>
+                    <td align="center">Yes</td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsPlayEverySceneRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end   
+				
+				
+                #if($context.courseCompletionCriteria.isCanOnlyBeCompleteAfterNumberOfCourseLaunches())      
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.totaluniquelearningsession")</td>
+                    <td align="center">$context.courseCompletionCriteria.numberOfCoursesLaunch </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsUniqueLaunchesRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end
+                #if($context.courseCompletionCriteria.isMustDemonstratePreAssessmentMastery())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.preassessment")</td>
+                    <td align="center"> $formUtil.percent($context.courseCompletionCriteria.getPreassessmentMasteryscore(), 1)%  </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsPreAssessmentScoreRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end
+                #if($context.courseCompletionCriteria.isMustAttemptPostAssessment())      
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.postassessmentattempted")</td>
+                    <td align="center"> Yes</td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsPostAssessmentAttempted($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end    
+                #if($context.courseCompletionCriteria.isMustDemonstratePostAssessmentMastery())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.postassessment") </td>
+                    <td align="center">$formUtil.percent($context.courseCompletionCriteria.getPostassessmentMasteryscore(), 1)% </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsPostAssessmentScoreRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end    
+                #if($context.courseCompletionCriteria.isMustDemonstrateQuizMastery())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.quizzes")</td>
+                    <td align="center"> $formUtil.percent($context.courseCompletionCriteria.getQuizMasteryscore(), 1)% </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsQuizAssessmentScoreRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end    
+                #if($context.courseCompletionCriteria.isCompleteWithinTimePeriod())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.timetocompletefromfirstaccess")</td>
+                    <td align="center">$formUtil.formatTimeVeryShortInt($formUtil.multiply($context.courseCompletionCriteria.getMinutesAfterFirstCourseLaunch(), 60)) </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsTimeInMinutesFromInitialStartRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end    
+                #if($context.courseCompletionCriteria.isCompleteWithinDaysOfRegistration())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.timetocompletefromdateofregistration")</td>
+                    <td align="center"> $context.courseCompletionCriteria.getDaysOfRegistraion() days </td>
+                    <td align="center" valign="center">#if($context.courseCompletionCriteria.meetsTimeInDaysFromRegistrationRequirement($context.courseStatistics)) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end    
+                #if($context.courseCompletionCriteria.isCompleteSurveys())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.completeallsurveys")</td>
+                    <td align="center"> Yes </td>
+                    <td align="center" valign="center">#if($context.surveysRemaining) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else<img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end                   
+                #if($context.courseCompletionCriteria.isCourseEvaluationSpecified())
+                <tr class="$rowClass">
+                    <td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">$brander.getBrandElement("lms.courseCompletion.policy.completeevaluation")</td>
+                    <td align="center"> Yes </td>
+                    <td align="center" valign="center">#if($context.courseEvaluationCompleted) <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")"> #else <img src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")">#end</td>
+                </tr>
+                #toogleRowClass($rowClass)
+                #end   
+                <tr>
+                    <td colspan="3"><img height="30" src="$brander.getBrandElement("lms.pixel.gif")"></td>
+                </tr>
+            </table>
+            <br/>
+        </div>
+    </div>
+    <!-- Footer -->
+    #parse("snippets/learnerNewFooter.vm")
+    <!-- Footer -->
+</div>
+</body>
+</html>

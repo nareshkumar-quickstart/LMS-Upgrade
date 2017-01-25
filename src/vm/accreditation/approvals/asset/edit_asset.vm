@@ -1,0 +1,463 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#if(${assetForm.asset.assetType} == "Affidavit" )	 
+	#set($brandKeyPrefix = "lms.accraditation.affidavit.caption")
+
+#elseif(${assetForm.asset.assetType} == "Certificate")
+	#set($brandKeyPrefix = "lms.accraditation.certificate.caption")	
+#end
+
+#if(${assetForm.asset.assetType} == "Affidavit" )
+	<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+	<script src="javascript/wisiwig/richtext.js" type="text/javascript" language="javascript"></script>
+	<!-- Include the Free Rich Text Editor Variables Page -->
+	<script src="javascript/wisiwig/config.js" type="text/javascript" language="javascript"></script>
+#end
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    
+    <style type="text/css">
+
+input.file2 {
+    position: relative;
+    text-align: right;
+    z-index: 2;
+    *text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    height:22px;
+    width:390px;
+    cursor:pointer
+}
+
+a.browsbutton2 {
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    background: transparent url(../images/button_right.gif) no-repeat center right;
+    white-space: nowrap;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, Geneva, sans-serif;
+    font-size: 10px !important;
+    font-size: 10px;
+    padding: 5px 6px 8px 0 !important;
+    line-height: 8px !important;
+    letter-spacing: 1px;
+    font-weight: normal;
+    float:left;
+    margin-left:10px;
+    width:70px;
+    *width:75px;
+}
+
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+
+.input_field_browse {width:500px;position:static;float: left;margin: 0px 0px 0px 0px;}
+</style>
+    
+    <script language="javascript" type="text/javascript">
+     function searchAsset() {
+        document.getElementById('actionmethod').value='search';
+        document.assetForm.submit();
+    }
+
+    function saveAsset() {
+    	updateProperties();
+        document.getElementById('actionmethod').value='save';
+        document.assetForm.submit();
+    }
+
+    function previewAsset() {
+        document.getElementById('actionmethod').value='preview';
+        document.assetForm.submit();
+    }
+
+    </script>
+
+    <script language="javascript" type="text/javascript">
+
+    var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+        if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile2';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:300px;*width:300px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        fakeinput.id="txtBrowseFile";
+        var span=document.createElement('span');
+        span.className="browsbutton2";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file2';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+
+        $(document).ready(function(){
+          if ($('#right-pannel').height()<$(window).height()) {
+            $('#right-pannel').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        }
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        $('#sideBar').height($('#right-pannel').height());
+        initFileUploads();
+        $('#content2a').scroll(function()   {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()    {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        });
+
+		function updateProperties(){
+		    #if(${assetForm.asset.assetType} == "Affidavit")
+		    	#springBind("assetForm.asset.content")
+		    	updateTextArea('$status.expression');
+		    	
+		    	#springBind("assetForm.asset.content2")
+		    	updateTextArea('$status.expression');
+		    	
+		    	#springBind("assetForm.asset.content3")
+		    	updateTextArea('$status.expression');
+	    	#end
+		}
+
+
+	function setAndDisplayTemplateGuid(selectionType){
+		var selectedTemplateGUID = document.getElementById('asset.templateId');
+		var varTempleteId_GUID = document.getElementById('cboTempleteId_GUID');
+		
+		for (var i=0; i<varTempleteId_GUID.length; i++){
+			if(selectedTemplateGUID.options[selectedTemplateGUID.selectedIndex].value==varTempleteId_GUID.options[i].value){
+				$("#dialog_title_span").text(varTempleteId_GUID.options[i].text);
+			}
+		}
+		
+		if(selectionType=='file'){
+	    	$("#dialog_title_span").text("");
+	    	document.getElementById('asset.templateId').selectedIndex=0;
+	    	document.getElementById('asset.templateId').disabled=true;
+	    	//document.getElementById('txtBrowseFile').disabled=false;
+	    	//document.getElementById('impFile').disabled = false;
+		}else if(selectionType=='template'){
+			//document.getElementById('asset.templateId').disabled=false;
+			document.getElementById('txtBrowseFile').disabled = true;
+			document.getElementById('impFile').disabled = true;
+			document.getElementById('txtBrowseFile').value='';
+		}    	
+	}      
+	
+	
+    function onTemplateTypeChange(selectionType){
+        if(selectionType=='file'){
+	    	$("#dialog_title_span").text("");
+	    	document.getElementById('asset.templateId').selectedIndex=0;
+	    	document.getElementById('asset.templateId').disabled=true;
+	    	document.getElementById('txtBrowseFile').disabled=false;
+	    	document.getElementById('impFile').disabled = false;
+		}else if(selectionType=='template'){
+			document.getElementById('asset.templateId').disabled=false;
+			document.getElementById('txtBrowseFile').disabled = true;
+			document.getElementById('impFile').disabled = true;
+			document.getElementById('txtBrowseFile').value='';
+		}
+    }
+    </script>
+
+</head>
+#set ($varAffidavitType = '')
+#if(${assetForm.asset.assetType} == "Affidavit")
+	#springBind("assetForm.asset.affidavitType")
+	#if(($!{status.value} == 'file') || !(${status.value})) 
+		#set($varAffidavitType="file")
+	#else
+		#set($varAffidavitType="template")
+	#end
+#end
+
+<body  onload="setAndDisplayTemplateGuid('$!{varAffidavitType}')">
+<form name="assetForm" method="post" action="acc_manage$!{assetForm.asset.assetType}.do" enctype="multipart/form-data">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+        <!-- Header starts -->
+        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable"  style="position: relative;">
+            #springBind("assetForm.*")
+             #if($status.error)
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+                #if($errorCode == "typeMismatch")
+                    #set($error = "Number of Certificates can not be left blank")
+                #else
+                    #set($error = $brander.getBrandElement($errorCode))
+                #end
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                </div>
+               #end
+            </div>
+            <!-- error-box -->
+            #end
+
+                <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("$!{brandKeyPrefix}.edit")</div>
+		<div id="page-help">$brander.getBrandElement("$!{brandKeyPrefix}.description")</div>
+		</td>
+	</tr>
+</table>		
+				#if(${assetForm.asset.assetType} == "Affidavit")		
+					#springBind("assetForm.asset.affidavitType")
+					#if((${status.value} == "file") || !(${status.value})) 
+			               <div class="search_box_result" style="border:none;">
+			                    <div style="float:left;">
+			                            <div class="btn_start"></div>
+			                            <div class="btn_normal" onclick="previewAsset();">Preview</div>
+			                            <div class="btn_end"></div>
+			                    </div>
+			                </div>
+					#end
+				#else
+					 <div class="search_box_result" style="border:none;">
+			                    <div style="float:left;">
+			                            <div class="btn_start"></div>
+			                            <div class="btn_normal" onclick="previewAsset();">Preview</div>
+			                            <div class="btn_end"></div>
+			                    </div>
+			                </div>
+				#end
+				
+                 <div style="height:20px;width:94%;"></div>
+
+                <div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editRegulator.tabs.summary")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                <tr>
+                                		#if(${assetForm.asset.assetType} == "Affidavit") <td></td> #end
+                                        <td width="250px"><div class="row_text">$brander.getBrandElement("$!{brandKeyPrefix}.name")</div></td>
+                                        #springBind("assetForm.asset.name")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" size="50" maxlength="50" tabindex="1" ></input></td>
+                                        <td ></td>
+                                        <td></td>
+                                </tr>
+                                <tr>
+                                		#if(${assetForm.asset.assetType} == "Affidavit") <td></td> #end
+                                        <td width=""><div class="row_text">$brander.getBrandElement("$!{brandKeyPrefix}.documentsPerPage")</div></td>
+                                        #springBind("assetForm.asset.noOfDocumentsPerPage")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabindex="2" ></input></td>
+                                        <td ></td>
+                                        <td></td>
+                                </tr>
+                                <tr>
+                                       	#if(${assetForm.asset.assetType} == "Affidavit")
+                                       	<td>
+                                       		#springBind("assetForm.asset.affidavitType")
+                                       		<input type="radio" id="affidavitTypeFile" name="${status.expression}" onclick="onTemplateTypeChange('file');" value="file" #if((${status.value} == "file") || !(${status.value})) checked #end />
+                                       	</td>
+                                       	#end
+                                        <td width=""><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.file")</span></td>
+                                        #springBind("assetForm.asset.fileName")
+                                        <td width="">
+                                        		<div class="com-star-r-t">
+                                        				<img 
+                                        					#if(! $status.error && ! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" 
+                                        					#elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" 
+                                        					#else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" 
+                                        					#end 
+                                    					style="background-color: #66FF00"/>
+                            					</div>
+                    					</td>
+                                        <td>
+                                            <div class="input_field_browse">
+                                                <div class="fileinputs" ><input type="file" name="file" value="" id="impFile" class="file2" tabindex="3"/></div>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                </tr>
+                                 #if(${assetForm.asset.assetType} == "Affidavit")
+                                <tr>
+                                	<td>
+                                       	#springBind("assetForm.asset.affidavitType")
+                                		<input type="radio" name="${status.expression}" onclick="onTemplateTypeChange('template');"  value="template" #if(${status.value} == "template") checked #end />
+                                	</td>
+                                	<td><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.templateName")</span></td>
+                                    #springBind("assetForm.asset.content")
+                                    <td width=""><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                	<td colspan="3">
+                                		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+										  <tr>
+										    <td width="300px">
+		                                		#springBind("assetForm.templatesList")
+		                                		#springBind("assetForm.asset.templateId")
+		                                		#set ($templatesList=${assetForm.templatesList})
+												<select class="input_field1c" name="${status.expression}" id="${status.expression}" class="input_text_field" style="width: 302px; height: 22px;" tabindex="4" onChange="setAndDisplayTemplateGuid()" >
+													<option value="0" ></option>
+													#foreach($objState in $templatesList)
+														<option value="$!{objState.id}" 
+															#if($!{objState.id} == $!{assetForm.asset.templateId}) 
+																selected 
+															#end
+														>$!{objState.templateName}</option>
+													#end
+		                                		</select>
+		                                		
+		                                		
+		                                		
+		                                		
+		                                		<select style="display: none" name="cboTempleteId_GUID" id="cboTempleteId_GUID">
+													<option value="0" ></option>
+													#foreach($objState in $templatesList)
+														<option value="$!{objState.id}">$!{objState.templateId_GUID}</option>
+													#end
+		                                		</select>
+                                	
+                                		<td>
+												    <div id="displayTempleteId">
+			                                			<span> &nbsp;&nbsp;$brander.getBrandElement("lms.accraditation.addDocument.caption.templateid"):</span> 
+			                                			<span id="dialog_title_span"></span>
+		                                			</div>
+		                                	</td>
+										  </tr>
+									</table>
+								
+								
+                                	</td>
+                                
+                                </tr>                    
+                                <tr>
+                                	<td></td>
+                                        <td width=""><div class="row_text">$brander.getBrandElement("$!{brandKeyPrefix}.content")</div></td>
+                                        #springBind("assetForm.asset.content")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td>
+											<!-- WISIWIG START -->
+                                    		<textarea id="${status.expression}" name="${status.expression}" style="display: none;" tabindex="5">$!{status.value}</textarea>
+                                    		<script language="JavaScript">
+                                        		generate_wysiwyg('${status.expression}');
+                                    		</script>
+                                    		<!-- WISIWIG END  -->                                        	
+                                    	</td>
+                                        <td ></td>
+                                        <td></td>
+                                </tr>              
+                                <tr>
+                                	<td></td>
+                                        <td width=""><div class="row_text">$brander.getBrandElement("$!{brandKeyPrefix}.content2")</div></td>
+                                        #springBind("assetForm.asset.content2")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td>
+											<!-- WISIWIG START -->
+                                    		<textarea id="${status.expression}" name="${status.expression}" style="display: none;" tabindex="6">$!{status.value}</textarea>
+                                    		<script language="JavaScript">
+                                        		generate_wysiwyg('${status.expression}');
+                                    		</script>
+                                    		<!-- WISIWIG END  -->                                        	
+                                    	</td>
+                                        <td ></td>
+                                        <td></td>
+                                </tr>           
+                                <tr>
+                                	<td></td>
+                                        <td width=""><div class="row_text">$brander.getBrandElement("$!{brandKeyPrefix}.content3")</div></td>
+                                        #springBind("assetForm.asset.content3")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td>
+											<!-- WISIWIG START -->
+                                    		<textarea id="${status.expression}" name="${status.expression}" style="display: none;" tabindex="7">$!{status.value}</textarea>
+                                    		<script language="JavaScript">
+                                        		generate_wysiwyg('${status.expression}');
+                                    		</script>
+                                    		<!-- WISIWIG END  -->                                        	
+                                    	</td>
+                                        <td ></td>
+                                        <td></td>
+                                </tr>
+                                #end
+                        </table>
+                </div>
+
+                <!-- ******************************************************** -->
+				<div class="btn-div">
+					<div style="float:right; margin-top:15px;">
+					  <a onclick="saveAsset();">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>	
+					
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+						<a onclick="searchAsset();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>  
+				</div>	
+			</div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

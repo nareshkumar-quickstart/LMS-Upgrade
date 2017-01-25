@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>LMS - Manager Mode</title>
+    #parse("snippets/compliance/complianceHead.vm")
+	<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        function checkAnswer(checkbox, id){
+            if( document.getElementById(id).value == "false"  ){ 
+                document.getElementById(id).value = true;}
+            else			
+                document.getElementById(id).value = false;
+        }
+
+		$(document).ready(function() {
+        $('#sideBar').height($('#content2a').height());
+    });
+    </script>
+</head>
+<body>
+<form name="searchCoursesForm" method="post" action="adm_addSuggestedTraining.do">
+<div id="main-container">
+    <!--Header Start -->
+    #parse("snippets/adminWizardHeader.vm")
+    <!-- Header End -->
+<!-- Body Start -->
+    <div id="frame_body"  style="overflow-y:auto;">
+		<div id="sideBar" class="side_bar">
+            <div id="l-menu-back">
+                <div class="l-menu-back-text-h">$brander.getBrandElement("lms.administrator.searchMember.caption.addcourseswizard")</div>
+                <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.manager.addTrainingPlans.leftMenuSelectCourses2")</div>
+                <div class="l-menu-back-text-act">$brander.getBrandElement("lms.administrator.searchMember.caption.selectresponse2")</div>
+            </div>
+        </div>
+		<div id="content2a" style="width:78%; overflow-y:auto;">
+            <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.surveys.managesurveys.caption.AddCourses")</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.accraditation.instructor.caption.description")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+    
+
+         <div id="table-frame" class="table-frame" style="margin-bottom:20px; margin-top:20px; ">
+               <div id="table-header" class="table-header">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+
+                            <td>
+                                <div class="table-heading">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</div>
+                            </td>
+                        </tr>
+                    </table>
+               </div>
+               <table border="0" cellpadding="0" cellspacing="0">
+                   <tr>
+                       <td height="30" width="150">
+                           <div class="table-text">$brander.getBrandElement("lms.mycourses.courseName")</div>
+                       </td>
+                       <td>
+                            #springBind("addCoursesInSuggestedTraining.courseList[0].courseTitle")
+                           <div class="table-text">$!{status.value}</div>
+                       </td>
+                   </tr>
+                   #springBind("addCoursesInSuggestedTraining.courseList")
+                   #set($listSize = $!{status.value.size()})
+                   #if($listSize > 1)
+                        #set($lastIndex = $listSize - 1)
+                        #foreach($index in [1..$lastIndex])
+                            <tr>
+                               <td height="30" width="150">
+                                   <div class="table-text">&nbsp;</div>
+                               </td>
+                               <td>
+                                   #springBind("addCoursesInSuggestedTraining.courseList[$index].courseTitle")
+                                   <div class="table-text">$!{status.value}</div>
+                               </td>
+                           </tr>
+                        #end 
+                   #end
+					<tr>
+    					<td height="10" colspan="2">&nbsp;</td>
+					</tr>
+               </table>
+         </div>
+
+              <div id="table-frame" class="table-frame"  >
+                   <div id="table-header" class="table-header">
+                        <div class="table-heading"   >$brander.getBrandElement("lms.administrator.searchMember.caption.questionsresponses")</div>
+				   </div>
+
+                   #set($questionCount = ${addCoursesInSuggestedTraining.surveyView.questionList.size()})
+                    #set($questionNumber = 0)
+                    #if($questionCount > 0)
+                        #set($maxQuestionIndex = $questionCount - 1)
+                        #foreach($index in [0..$maxQuestionIndex])
+                            #set($surveyQuestion = ${addCoursesInSuggestedTraining.surveyView.questionList.get($index)})
+                            #set($prefix = "surveyView.questionList[$index]")
+                            #set($questionNumber = $questionNumber + 1)
+
+                            <!-- User-left-right-list -->
+                            <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")" >
+                                <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                                    <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word; position:static;">
+                                        #if(${surveyQuestion.surveyQuestionRef.required} == true) <div class="required_field">*</div> #end $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                                    </div>
+                                </div>
+                                <div style="border:0px solid green;float:left;width:100%; ">
+                                    $surveyQuestion.renderQuestion($prefix)
+                                </div>
+                            </div>
+                            <!-- End-User-left-right-list -->
+                        #end
+                    #end
+
+              </div>
+
+       <!-- button-div -->
+            <input type="hidden" id="currentpage" name="_page" value="1"/>
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />            
+            <div class="managerBtn" style="position:static;">
+                <div class="btn-left2">
+                	    <a class="button" onClick="submitButtonForm(document.searchCoursesForm,'wizardSubmitter','_cancel');">
+                            <span class="button">$brander.getBrandElement("lms.Instructor.button.Cancel")</span>
+                        </a>
+                </div>
+                
+                <div class="btn-right1">
+                 	    <a class="button" onClick="submitButtonForm(document.searchCoursesForm,'wizardSubmitter','_finish');">
+                            <span class="button">$brander.getBrandElement("lms.Instructor.button.Finish")</span>
+                        </a>
+                </div>
+                     
+                <div class="btn-right1">
+                 	    <a class="button" onClick="submitButtonForm(document.searchCoursesForm,'wizardSubmitter','_target0');">
+                            <span class="button">$brander.getBrandElement("lms.Instructor.button.Previous")</span>
+                        </a>
+                </div>
+            </div>
+            <!-- button-div -->
+
+        <div style="height:30px;"></div>
+
+
+		 </div>
+	</div>
+	
+<!-- Body End -->
+
+<!-- Footer Start -->
+    #parse("snippets/adminFooter.vm")
+<!-- Footer End -->	
+</div>
+</form>
+</body>
+</html>

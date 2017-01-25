@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+  
+    <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+    
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("INPUT[type='checkbox'][name='chk']").click(
+               function(){
+                  $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
+               }
+            );
+            $('.numeric').numeric({allow:"."});
+            
+            $("input[type='checkbox'][id != 'chkEnabledPost']").bind('change', function() {
+                checkboxChanged($(this), $('#chkEnabledPost'));
+            });
+            $('#chkEnabledPost').change(function(){
+                if($(this).is(':checked')){
+                    $("INPUT[type='text'][id!='chkEnabledPost']").removeAttr('disabled');
+                    $("select").removeAttr('disabled');
+                    toggleNoResults('$courseConfigForm.postScoringType', 
+                            '$courseConfigForm.postassessmentMaximumnoattempt', 
+                            '$courseConfigForm.postShowQuestionAnswerReview');
+                }else{
+                    $("INPUT[type='text'][id!='chkEnabledPost']").attr('disabled', true);
+                    $("select").attr('disabled', true);                    
+                }
+                toggleControls($(this).attr('checked'));
+                $("input[type='checkbox'][id != 'chkEnabledPost']").trigger('change');
+            });
+            $('#showLearnerScoringType').change(function(){
+               toggleNoResults($(this).val());
+               $("input[type='checkbox'][id != 'chkEnabledPost']").trigger('change');
+            });
+            $('#chkEnabledPost').trigger('change');
+            $('#allowreviewing').change().change(function(){
+               if($(this).is(':checked') && $(this).is(':disabled') == false){
+                   $('#postEnableContentRemediation').attr('disabled', false);
+                   $('#postEnableContentRemediation').attr('checked',true);
+               }else{
+                   $('#postEnableContentRemediation').attr('disabled', true);
+                   $('#postEnableContentRemediation').attr('checked',false);
+               }
+               if($(this).is(':checked') && $(this).is(':disabled') == true){                   
+                   $('#postEnableContentRemediation').attr('checked',true);
+               }               
+            });
+            $('#allowreviewing').trigger('change');
+            $('#drpMode').removeAttr('disabled');
+        });
+		
+		function toggleControls(isChecked)
+		{
+		
+			var str = '';
+        var elem = document.getElementById('addCourseConfigForm').elements;
+        for(var i = 0; i < elem.length; i++)
+        {
+            //alert(elem[i].type + "---" + elem[i].name );
+			if(elem[i].id!='chkEnabledPost' )
+			{
+				/*
+				if(elem[i].name == "chk_postAllowPauseResumeAssessment")
+				{
+				
+				}
+				else 
+				*/if((elem[i].type=='checkbox' || elem[i].type=='text' || elem[i].type=='select-one') && elem[i].id!='drpMode' )
+				{
+					elem[i].disabled=!isChecked;
+					//alert(elem[i].type);
+				}
+			}
+				
+        } 
+                    
+		}
+		
+                function gotoNextStep(){
+                    try{
+                        #springBind("courseConfigForm.postNoResultMessage")
+                        updateTextArea('$status.expression');
+                        submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target6');
+                    }catch(e){
+                        alert(e);
+                    }
+                }
+    </script>
+</head>
+<body >
+<form id="addCourseConfigForm" name="addCourseConfigForm" method="post" action="acc_addCourseConfig.do" >
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+            <div id="l-menu-back">
+            	 <div class="l-menu-back-text-h">Add Course Configuration<br> Wizard showing 6 of 11</div>
+            	 <div class="l-menu-back-text-acted">1.Summary</div>
+            	 <div class="l-menu-back-text-acted">2. Course Policy</div>
+				 <div class="l-menu-back-text-acted">3. Course Completion</div>
+				 <div class="l-menu-back-text-acted">4. Pre-Assessment Policy</div>
+				 <div class="l-menu-back-text-acted">5. Quiz Policy</div>
+				 <div class="l-menu-back-text-act">6. Post Assessment Policy</div>
+				 <div class="l-menu-back-text" title="Special Post Assessment Validation" >7. Special Post Assessment ...</div>
+				 <div class="l-menu-back-text">8. Validation</div>
+				 <div class="l-menu-back-text">9. Disclaimar Options</div>
+				 <div class="l-menu-back-text">10. Max Seat Time Enforcement</div>
+				 <div class="l-menu-back-text">11. Min Seat Time Requirements</div>
+				 <div class="l-menu-back-text">12. Confirmation</div>
+
+            </div>
+     	 </div>
+	</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("courseConfigForm.*")
+            #if($status.error)  
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)         
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+		
+		 	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.AddCoursConfigurationTemplate")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.pagedescription_step6")</div>
+		</td>
+	</tr>
+</table>			  
+			  
+
+			  
+
+        	  <div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Post-Assessment Policy</span></div>
+				 <!-- *********************************************************************************** -->
+                     <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
+                            <tbody><tr>
+                                <td width="20px" height="5"></td>
+                                <td width="48%"></td>
+                                <td width="20px"></td>
+                                <td width="48%"></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postAssessmentEnabled")
+                                <td><input type="checkbox" onClick="toggleControls(this.checked);" id="chkEnabledPost" name="chk" #if ($!{status.value}) checked #end/><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Enable Post Assessment</div></td>
+                              #springBind("courseConfigForm.postEnableAssessmentProctoring")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Enable Proctored Assessment Enforced by Affidavit</div></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postassessmentNoquestion")
+                                <td></td>
+                                <td><div class="row_text">Number of Question <input class="input_text_inline numeric" type="text" name="${status.expression}" value="${status.value}" style="width:30px;"></div></td>
+                                #springBind("courseConfigForm.postassessmentEnforcemaximumtimelimitCB")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+								#springBind("courseConfigForm.postassessmentEnforcemaximumtimelimit")
+                                <td><div class="row_text">Automatically Grade Assessment after <input class="input_text_inline numeric" type="text" name="${status.expression}" value="${status.value}" style="width:30px;"> Minutes</div></td>
+                            
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postassessmentMasteryscore")
+                                <td></td>
+                                <td><div class="row_text">Mastery Score <input class="input_text_inline numeric" type="text" name="${status.expression}" value="${status.value}" style="width:30px;">%</div></td>
+								<td></td>
+                                #springBind("courseConfigForm.postGradingBehavior")
+                                                                <td><div class="row_text">Grade Questions <select id="gradeQuestion" style="width:180px; font-size:10px;" name="${status.expression}" ><option #if(${status.value}=="AfterAssessmentIsSubmitted") selected #end value="AfterAssessmentIsSubmitted">After Assessment is Submitted</option><option  #if(${status.value}=="AfterEachQuestionIsAnswered") selected #end value="AfterEachQuestionIsAnswered">After Each Question is Answered</option></select> </div></td>
+                            
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postRandomizeQuestions")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Randomize Questions</div></td>
+                                #springBind("courseConfigForm.postShowQuestionAnswerReview")
+                                <td><input id="allowreviewing" type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Allow Reviewing Questions and Answers After Grading</div></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postRandomizeAnswers")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Randomize Answers</div></td>
+								 #springBind("courseConfigForm.postShowQuestionLevelResults")
+                                <td><input type="checkbox" name="chk" #if(${status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Show Feedback While Reviewing Questions</div></td>
+                                
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postUseUniqueQuestionsOnRetake")
+                                <td><input type="checkbox"  name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Ask Unique Questions in Retakes</div></td>
+                                #springBind("courseConfigForm.postScoringType")
+                                <td></td>
+                                <td><div class="row_text">Show the Learner <select id="showLearnerScoringType" style="width:150px; font-size:10px;" name="${status.expression}" >
+											<option #if(${status.value}=="Percent Score") selected #end value="Percent Score">Percentage Score</option>
+                                            <option #if(${status.value}=="Pass/Fail") selected #end value="Pass/Fail" value="Pass/Fail">Only Pass and Fail</option>
+											<option #if(${status.value}=="No Results") value="No Results" selected #end>No Results</option></select></div></td>                                
+                               
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postAllowQuestionSkipping")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Allow Skipping Questions</div></td>
+								
+								#springBind("courseConfigForm.postEnableContentRemediation")
+                                <td><input type="checkbox" id="$!{status.expression}" name="chk" #if($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>                                
+                                <td><div class="row_text">Content Remediation</div></td>								
+                                
+                                
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.postAssessmentMaximumnoattemptEnabled")
+                                <td>
+                                    <input type="checkbox" id="afterFailing" name="${status.expression}" #if (! $!{status.value}) #else checked #end />
+                                    <input name="_$!{status.expression}" type="hidden" value="$!{status.value}" />
+                                </td>
+                                #springBind("courseConfigForm.postActionToTakeAfterMaximumAttemptsReached")
+                                <td><div class="row_text"><select style="width: 150px; font-size:10px;" name="${status.expression}" value="${status.value}">
+									
+									<option #if(${status.value}=="Retake Content") selected #end value="Retake Content">Retake Content</option>
+									<option #if(${status.value}=="Lock Course") selected #end value="Lock Course">Lock Course</option>
+									<option #if(${status.value}=="Continue Course") selected #end value="Continue Course">Continue Course</option>
+								
+								</select> After failing 
+                                #springBind("courseConfigForm.postassessmentMaximumnoattempt") 
+                                <input class="input_text_inline numeric" type="text" style="width:30px;" name="${status.expression}" value="${status.value}"> Attempts</div></td>
+								
+								 #springBind("courseConfigForm.postEnableRestrictiveAssessmentMode")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end/><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Restrictive Mode</div></td>
+                                
+                                
+                            </tr>
+                            <tr>
+							
+                                <tr>
+                                #springBind("courseConfigForm.postEnableAdvancedQuestionSelectionType")
+                                <td>
+                                   <input type="checkbox" name="chk" #if ($!{status.value}) checked #end/>
+                                    <input type="hidden" name="$!{status.expression}" value="$!{status.value}"/>
+                                </td>
+								#springBind("courseConfigForm.postAdvancedQuestionSelectionType") 
+                               <td><div class="row_text">
+                               			
+                               			Enable Advanced Question Selection 
+                                       <select style="width:150px; font-size:10px;" name="${status.expression}" >
+                                           <option #if(${status.value}=="Discrete") selected #end value="Discrete">Discrete Question</option>
+                                           <option #if(${status.value}=="MinMax") selected #end value="MinMax">Min/Max Question</option>
+                                           <option #if(${status.value}=="RandomAlternate") selected #end value="RandomAlternate">Random Alternate</option>
+                                       </select>
+                                       
+                                   </div>
+                               </td>
+                               
+								#springBind("courseConfigForm.postEnableWeightedScoring")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end/><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Weighted Scoring</div></td>
+                                
+                            </tr>
+                            
+                                                        
+                             <tr>
+								<td>
+								
+								#*
+								#springBind("courseConfigForm.requireProctorValidation")                                
+                                #if("$!status.value" == "true")                                
+                                	#springBind("courseConfigForm.postAllowPauseResumeAssessment")
+                                    <input type="checkbox" name="chk_postAllowPauseResumeAssessment" disabled="disabled"/>
+                                    <input type="hidden" name="$!{status.expression}" value="false" />
+                                #else
+                                *#
+                                	#springBind("courseConfigForm.postAllowPauseResumeAssessment")
+                                    <input type="checkbox" name="chk" #if ($!{status.value}) checked #end/>
+                                    <input type="hidden" name="$!{status.expression}" value="$!{status.value}" />
+                                
+                                ###end
+                                                                
+                                </td>
+
+                                <td><div class="row_text">$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.allowStudentToStopAndResumePostAss")</div></td>
+                             	#springBind("courseConfigForm.postEnableviewAssessmentResults")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end/><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">View Assessment Results</div></td>
+                            </tr>
+                            
+                            <tr>
+                            	<td>
+                            		#springBind("courseConfigForm.postLockoutAssessmentActiveWindow")
+                            		<input type="checkbox" name="chk" #if($!{status.value}) checked #end />
+                            		<input type="hidden" name="${status.expression}" value="${status.value}" />
+                            	</td>
+                            	<td>
+                            		<div class="row_text">$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.lockoutFunctionalityClickForActiveWindow")</div>
+                            	</td>
+                            	
+                            	
+                            	
+                            </tr>
+                            
+                            
+                            
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td style="padding-left:15px">
+                                    #springBind("courseConfigForm.postScoringType")
+                                    <div id="NoResultsRow" #if(${status.value}=="No Results") style="display:block;margin-right:39px";"; #else style="display:none"; #end>
+                                        <!-- WISIWIG START -->                                    
+                                        #springBind("courseConfigForm.postNoResultMessage")
+                                        <textarea id="${status.expression}" name="${status.expression}" style="display: none;">$!{status.value}</textarea>
+                                        <script language="JavaScript">
+                                           generate_wysiwyg('${status.expression}');
+                                        </script>
+                                        <!-- WISIWIG END  -->
+                                    </div>
+                                </td>
+                            </tr>
+								
+                            <tr>
+                                <td height="5"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                     </tbody></table>
+                     <!-- *********************************************************************************** -->
+			 </div>
+		 
+		 <input type="hidden" id="currentpage" name="_page" value="5" />
+         <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="gotoNextStep();">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Next</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target4');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+       </div>
+	   
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

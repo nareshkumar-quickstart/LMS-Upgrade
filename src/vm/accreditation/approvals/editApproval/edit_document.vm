@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+  
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script language="javascript" type="text/javascript">
+    function download() {
+        document.getElementById('actionmethod').value='downloadDocument';
+        document.manageApprovalForm.submit();
+    }
+
+    function cancelDocuments() {
+        document.getElementById('actionmethod').value='cancelEditDocument';
+        document.manageApprovalForm.submit();
+    }
+
+    function saveDocument() {
+        document.getElementById('actionmethod').value='saveDocument';
+        document.manageApprovalForm.submit();
+    }
+
+    </script>
+</head>
+
+<body>
+<form name="manageApprovalForm" method="post" action="acc_manageApproval.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!--Header Start -->
+            #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header End -->
+			 </td></tr>
+			 
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+
+		<!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.manageUser.searchLearner.caption.subtitle")</div>
+		</td>
+	</tr>
+</table>
+
+		<div style=" float:left; width:98%; margin-left:15px; margin-bottom:15px;">
+				<div class="control-button-position" >
+				<div class="btn_start"></div>
+				<div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="download();" >$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.Download")</div>
+				<div class="btn_end"></div>
+				</div>
+		</div>
+
+		<div class="search_box_result" style="width:96%;">
+				<div class="box_header">
+				<span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.Document")</span>
+		</div>
+
+		<table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+				<tr>
+						#springBind("approvalForm.document.name")
+						<td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.Name")</span></td>
+						<td width="50%"><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+						<td></td>
+						<td></td>
+				</tr>
+				<tr>
+						#springBind("approvalForm.document.description")
+						<td width="20%" valign="top"><span class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.Description")</span></td>
+						<td><input type="textarea" class="input_text_area" name="${status.expression}" value="$!{status.value}" /></td>
+						<td></td>
+						<td></td>
+				</tr>
+		</table>
+		</div>
+
+        <!-- ******************************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onclick="saveDocument();">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+				<a onclick="cancelDocuments();">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->		
+		
+		</div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+		</td></tr>
+		
+</table>
+</form>
+</body>
+</html>

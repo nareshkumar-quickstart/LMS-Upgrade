@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+        <script type="text/javascript" language="javascript">
+	
+            $(document).ready(function(){
+                $('#frame_body').height($(window).height() - ($('#header').height() +  $('#footer').height()));
+                if ($('#right-pannel').height()<$('#frame_body').height()) {
+                    $('#right-pannel').height($('#frame_body').height());
+                }
+                $('#sideBar').height($('#right-pannel').height());
+        
+                $('#frame_body').scroll(function(){			
+                    $('#message_box').animate({top:$('#right-pannel').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+		
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });		
+            });
+	
+
+        </script>
+
+    </head>
+
+    <body>
+        <form name="searchManageForm" id="searchManageForm" method="post" action="ins_addCourseInstructor.do?id=$!{courseInstructorForm.courseId}">
+
+            <!-- main-container -->
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- header -->
+	#parse("snippets/managerWizardHeader.vm")
+                        <!-- header-end -->
+                    </td></tr>
+
+                <!-- content-area -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-sidebar" valign="top" style="width: 195px;">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <!-- left-pannel-content -->
+                            <div>
+                                <div id="l-menu-back">
+                                    <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.step3.title")</div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-acted")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step1")</div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-acted")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step2")</div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step3")</div>
+                                </div>
+                            </div>
+                            <!-- left-pannel-content - end -->
+                        </table></td>
+
+                    <!-- right-pannel -->
+                    <TD id="content" >
+                        <div id="scrollable">
+                            <!-- error-box -->			
+			#springBind("courseInstructorForm.selectedInstructors")
+			#if($status.error)
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				#foreach($errorCode in $status.errorCodes)
+					#set ($error = $brander.getBrandElement($errorCode))
+                                     <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                    </div>
+				#end
+                            </div>			
+			#end
+                            <!-- error-box - end -->			
+
+                            <!-- Logo+Manage-User -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.instructor.addCourseInstructor.caption.title")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.instructor.addCourseInstructor.caption.subtitle")</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Logo+Manage-User-end -->
+
+                            <!-- Search Result Start -->	
+                            <div class="search_box_result">
+                                <div class="table-header" id="table-header"><div class="table-heading">$brander.getBrandElement("lms.instructor.editcourseInstructor.caption.summary")</div></div>
+
+                                <table width="100%"  cellpadding="0" cellspacing="3">
+				#set($isFirstRow = true)
+				#foreach($curInstructor in ${courseInstructorForm.selectedInstructors})						
+					#if (! $isFirstRow)
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>&nbsp;</td>
+                                    </tr>
+					#else 
+						#set($isFirstRow = false)
+					#end
+                                    <tr>
+                                        <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchFirstName")</b></div></td>
+                                        <td ><div class="row_text">${curInstructor.getInstructor().getUser().getFirstName()}</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchLastName")</b></div></td>
+                                        <td ><div class="row_text">${curInstructor.getInstructor().getUser().getLastName()}</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructorType")</b></div></td>
+                                        <td ><div class="row_text">${curInstructor.instructorType}</div></td>
+                                    </tr>				
+					#end
+                                </table>
+                            </div>				
+                            <!-- Search Result End -->
+
+                            <!-- Wizard Footer button-div -->
+                            <div class="managerBtn">
+                                <input type="hidden" id="currentpage" name="_page" value="2" />
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                                <div style="float: left; margin-top:25px; margin-left:25px;">
+                                    <div>
+                                        <a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_cancel');">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnCancel")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div style="float: right; margin-top:25px; margin-right:15px;">
+                                    <div>
+                                        <a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_finish');">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnFinish")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                    </div>
+                                </div> 
+                                <div style="float: right; margin-top:25px; margin-right:15px;">
+                                    <div>
+                                        <a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_target1');">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnPrevious")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                    </div>
+                                </div>        
+                            </div>
+                            <!-- Wizard Footer button-div - end -->
+
+                            <!-- space -->
+                            <div class="manager-bottom-space"></div>
+                            <!-- space -->		           
+
+                            <!-- hidden elements for form binding -->
+			#springBind("courseInstructorForm.courseId")
+                            <input id="id" type="hidden" name="id" value="${status.value}" />
+                        </div>		
+                        <!-- right-pannel end -->
+
+                    </td></tr>
+                <!-- content-area end -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- footer -->
+                        #parse("snippets/managerFooter.vm")
+                        <!-- footer-end -->
+                    </td></tr>
+            </table>
+            <!-- main-container end -->
+
+        </form>
+    </body>
+</html>

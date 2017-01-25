@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function()
+        {
+           
+        });
+    </script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>    
+</head>
+
+
+<body>
+<form name="selectDatesForm" method="post" action="mgr_assignSurveys.do">
+<input type="hidden" id="currentpage" name="_page" value="5" />
+				<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+ 
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+               <!-- header -->
+               ##parse("snippets/managerHeader.vm")
+               #parse("snippets/managerWizardHeader.vm")
+               <!-- header-end -->
+			 </td>
+		</tr>
+
+		<tr id="main"> <!-- SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+		<td id="left-navigation" valign="top" style="width:195px;">s
+			<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 --><!-- content-area -->
+ 		#parse("snippets/assignSurveyLeftMenu.vm")
+		<!-- left-pannel-content-end -->
+		</table>
+		</td>
+		
+		<!-- right-pannel-content -->
+		<TD id="content" >
+			<div id="scrollable">
+		#springBind("enrollmentForm.allSurveyStartDate")
+		#if($status.error)
+		<!-- error-box -->
+		 <div id="message_box">
+			<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+			#foreach($errorCode in $status.errorCodes)
+		#set ($error = $brander.getBrandElement($errorCode))
+		<div class="width40pct">
+			<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			<div class="message_box_align">$error</div>
+			</div>
+			#end
+		</div>
+		<!-- error-box -->
+		#end
+
+            <!-- Logo+Manage-User -->
+		<div class="page_description" id="pageDescription">
+			  	    <!-- Page Icon -->
+                    <div class="icon_surveys" id="pageIcon"></div>
+                    <!-- Page Heading -->
+                    <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.assignSurvey.step1.caption.title")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.enterDatePageDescription")</div>
+		</div>	    
+             
+            <!-- Logo+Manage-User-end -->
+			
+			<!-- open survey box -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+				
+				#springBind("enrollmentForm.surveyDateAssignment")
+				#set($surveyDateAssignment = ${status.value})
+				#set($modifyEntitlementRadioName = ${status.expression})
+					<div id="e13" class="Search-Containerheaderleft"><input type="radio" name="$modifyEntitlementRadioName" id="allCourses" value="open" #if($surveyDateAssignment == "open") checked #end />$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.openSurvey")</div>
+				</div>
+				
+				<!-- 1 -->
+				<div id="e7c" class="Search-inputfield-box">
+					<!-- s -->
+					<div id="e12" class="search-content-row1a"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e13" class="search-content-row">
+						<div class="search-content-row1">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.surveyExpireText")</div>
+						
+				</div>
+	 
+					<!-- 0 -->
+					<div id="e16" class="search-content-row1"><!-- using for bottom space --></div>
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- End-open-survey-box -->	
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+						
+			<!-- User-list -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+				
+ 
+					<div id="e13" class="Search-Containerheaderleft"><input type="radio" name="$modifyEntitlementRadioName" id="allCourses" value="all" #if($surveyDateAssignment == "all") checked #end />$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.allSurvey")</div>
+				</div>
+				
+				<!-- 1 -->
+				<div id="e7c" class="Search-inputfield-box">
+					<!-- s -->
+					<div id="e12" class="search-content-row1a"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in-r-fa">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.openDate")</div>
+						
+						#springBind("enrollmentForm.allSurveyStartDate")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+						<input type="text" style="width:150px" id="${status.expression}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipStartDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></div>
+						<script type="text/javascript">
+							$("#${status.expression}").datepicker({ 
+							showOn: "both", 
+							buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							buttonImageOnly: true 
+							});
+						</script>
+				</div>
+				<!-- 1 -->
+				<div id="e13" class="search-content-row">
+					<div class="block_text_in-r-fa">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.closeDate")</div>
+				
+						#springBind("enrollmentForm.allSurveyEndDate")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+						<input type="text" style="width:150px" id="${status.expression}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></div>
+						<script type="text/javascript">
+							$("#${status.expression}").datepicker({ 
+							showOn: "both", 
+							buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							buttonImageOnly: true 
+							});
+						</script>
+					</div>
+					<!-- 0 -->
+					<div id="e16" class="search-content-row1"><!-- using for bottom space --></div>
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- End-User-list -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+			<!-- Courses -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+				
+					<div class="Search-Containerheaderleft1"><input type="radio" name="$modifyEntitlementRadioName" id="individualCourses" value="individual" #if($surveyDateAssignment == "individual") checked #end  />$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.individualSurveys")</div>
+					<div class="Containerheaderright">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.openDate")</div>
+					<div class="calender"></div>
+					<div class="btn_radio1c">&nbsp;</div>
+					<div class="Containerheaderright">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.closeDate")</div>
+
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="User-checkbox-box">
+
+					<!-- 1 -->
+					#set($evenOdd=0)
+					#springBind("enrollmentForm.surveyItemList")
+					#set($count = ${status.value.size()} - 1)
+					#foreach($index in [0..$count])
+
+
+							#springBind("enrollmentForm.surveyItemList[$index].selected")
+							#if($status.value )
+								
+								 
+								<div id="e16" class="User-checkbox-row"  style="border-style:none none none">
+								 
+								#springBind("enrollmentForm.surveyItemList[$index].survey.name")
+								<div class="Org-grp_4ab" style="text-decoration:none">&nbsp; &nbsp; &nbsp;$status.value</div>
+								#set( $currentCourseName = $status.value )
+								#springBind("enrollmentForm.surveyItemList[$index].surveyStartDate")
+								 
+								<div style="width:130px;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+									<input type="text" style="width:100px;" id="startDateExpression${index}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipStartDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+								</div>
+								<script type="text/javascript">
+									$("#startDateExpression${index}").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+									});
+								</script>
+								<div class="btn_radio1c">&nbsp;</div>
+								#springBind("enrollmentForm.surveyItemList[$index].surveyEndDate")
+								 
+								<div style="width:130px;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+									<input type="text" style="width:100px;" id="endDateExpression${index}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+								</div>
+								<script type="text/javascript">
+									$("#endDateExpression${index}").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+									});
+								</script>
+								</div>
+	
+
+						#end
+						
+					#end
+				<!-- 0 -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- End-Courses -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+ 
+			<div class="managerBtn">
+			
+			 <div style="float:right; margin-top:3px;">
+			  <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target6');" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Next</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:right; margin-top:3px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Previous</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:left; margin-top:3px;">
+				<a onClick="javascript:window.location='mgr_viewAssignSurveyMain.do';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Cancel</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>	              			
+				
+			</div>
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content2-area-end -->
+	</td></tr>
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+          	<!-- footer -->
+          		#parse("snippets/managerFooter.vm")
+          	<!-- footer-end -->
+			</td>
+		</tr>
+</table>
+
+</form>
+</body>
+</html>

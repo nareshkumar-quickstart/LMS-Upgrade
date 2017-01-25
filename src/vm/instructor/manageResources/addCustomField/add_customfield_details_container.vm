@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+          	$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+			if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+			}
+			$('#sideBar').height($('#right-pannel').height());
+            $('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="main-container"><!-- main-container -->
+
+        <!--Header Start -->
+         #parse("snippets/instructor/instructorWizardHeader.vm")
+        <!-- Header End -->
+
+        <!-- Body Start -->
+        <div id="frame_body"><!-- frame_body -->
+
+            <!-- Side Bar Start -->
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.lmenuHeader")<br>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.showing-2-of-3")</div>
+                    <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Select-Custom-Field")</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Summary")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Confirmation")</div>
+                </div>
+            </div>
+            <!-- Side Bar End -->
+
+            <div class="scrollable" id="right-pannel"><!-- scrollable -->
+
+                #springBind("customFieldForm.*")
+                #if($status.error)
+                    <!-- error-box -->
+                    <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                            </div>
+                        #end
+                    </div>
+                    <!-- error-box -->
+                #end
+
+                <!-- Page Description -->
+                <div id="pageDescription" class="page_description">
+                    <!-- Page Icon -->
+                    <div id="pageIcon" class="icon_custom_field"></div>
+                    <!-- Page Heading -->
+                    <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.title")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.step2.caption.subTitle")</div>
+                </div>
+
+                <form name="addCustomField" method="post" action="ins_addCustomField.do" >
+					 <div style="height:5px;">&nbsp;</div>
+                    <div class="search_box_result"><!-- search_box_result -->
+                        <div class="box_header">
+                            <span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Type")</span>
+                        </div>
+                        #springBind("customFieldForm.fieldType")
+                        #if($!{status.value} == "Radio Button" )
+                            #parse("instructor/manageResources/addCustomField/add_customfield_all_detail_radio.vm")
+                        #elseif($!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+                            #parse("instructor/manageResources/addCustomField/add_customfield_all_detail_check.vm")
+                        #else
+                            #parse("instructor/manageResources/addCustomField/add_customfield_all_detail_text.vm")
+                        #end
+                    </div><!-- search_box_result -->
+
+                    <!-- *********************************************** -->
+                    <div class="wizard_button_container">
+                        #set($tabindexNext=$tabindex+2)
+                        <div style="float:right; margin-top:15px; " tabIndex="$tabindexNext">
+                          <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_target2');">
+                              <div class="btn_start"></div>
+                              <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+                              <div class="btn_end"></div>
+                          </a>
+
+                         </div>
+                        #set($tabindexPrev=$tabindex+1)
+                         <div style="float:right; margin-top:15px;margin-right:5px;" tabIndex="$tabindexPrev">
+                          <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_target0');">
+                              <div class="btn_start"></div>
+                              <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Previous")</div>
+                              <div class="btn_end"></div>
+                          </a>
+                         </div>
+                            #set($tabindex=$tabindex)
+                         <div style="float:left; margin-top:15px; margin-left:10px;" tabIndex="$tabindex">
+                          <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_cancel');">
+                              <div class="btn_start"></div>
+                              <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                              <div class="btn_end"></div>
+                          </a>
+                         </div>
+                       
+                    </div>
+
+                    <input type="hidden" id="currentpage" name="_page" value="1"/>
+                    <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                </form>
+            </div><!-- scrollable -->
+
+        </div><!-- frame_body -->
+        <!-- Body End -->
+
+        <!-- Footer Start -->
+        #parse("snippets/instructor/instructorFooter.vm")
+        <!-- Footer End -->
+
+    </div><!-- main-container -->
+ 
+</body>
+</html>

@@ -1,0 +1,330 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	#parse("snippets/compliance/complianceHead.vm")
+	<head>
+
+
+	<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+	<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+	<script type='text/javascript'>
+
+
+	function deleted(){
+			if ($("INPUT[type='checkbox'][name='rowone']:checked").length>0) {
+				confirm("$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.manageLearnerGroup.deleteConfirm")", function () {
+					document.getElementById('action').value='deleteAlert';
+					document.manageMyAlert.submit();
+				});
+			}else {
+				$('#selectLearner').modal({close:false,position: ["40%",]});
+			}
+		}
+
+		 function changeRowColor(checkbox) {
+		var tr=checkbox.parentNode.parentNode;
+		var tdarr=$(tr).find("td");
+			  if (checkbox.checked) {
+				  for(i=0;i<tdarr.size();i++){
+					tdarr[i].style.background="#E9F9FE";
+				  }
+			  } else {
+				  for(i=0;i<tdarr.size();i++){
+					tdarr[i].removeAttribute("style");
+				  }
+			  }
+		}
+		  function confirm(message, callback) {
+			$('#deleteConfirmation').modal({
+				close:false,
+				position: ["40%",],
+				overlayId:'confirmModalOverlay',
+				containerId:'confirmModalContainer',
+				onShow: function (dialog) {
+					dialog.data.find('.message').append(message);
+					// if the user clicks "yes"
+					dialog.data.find('.yes').click(function () {
+						// call the callback
+						if (jQuery.isFunction(callback)) {
+							callback.apply();
+						}
+						// close the dialog
+						jQuery.modal.close();
+					});
+				}
+			});
+		}
+
+		 function sortMyAlert(sortColumnIndex,sortDirection,pageIndex,showAll){
+		 
+			document.getElementById('sortColumnIndex').value=sortColumnIndex;
+			document.getElementById('sortDirection').value=sortDirection;
+			document.getElementById('showAll').value=showAll;
+			document.getElementById('pageIndex').value=pageIndex;
+			document.getElementById('action').value='displayAlert';
+			document.manageMyAlert.submit();
+		}
+
+		 function doSearch()
+				{
+									 document.getElementById('action').value="displayAlert";
+									 document.manageMyAlert.submit();
+
+					 }
+
+		function onNextPage(nextIndex){
+			var itemNo= document.getElementById('pageCurrIndex').value
+			var items=$pager.itemsPerPage;
+			var pn = parseInt(items) +  parseInt(itemNo);
+			return pn;
+		  }
+
+		  function onPreviousPage(previousIndex){
+			var itemNo= document.getElementById('pageCurrIndex').value
+			var items=$pager.itemsPerPage;
+			var pn = parseInt(itemNo) - parseInt(items) ;
+			return pn;
+		   }
+		   
+		$(document).ready(function() {
+					$('#chkAll').click(
+					   function(){
+						  $("INPUT[type='checkbox'][name='rowone']").attr('checked', $('#chkAll').is(':checked'));
+						  $("INPUT[type='checkbox'][name='rowone']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+					   }
+					)					
+				});
+
+	</script>
+	</head>
+		<body>
+		   <form name="manageMyAlert" method="post" action="lrn_myAlert.do">
+	<input type="hidden" id="action" name="method" value=""/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+		<!--Header Start -->
+		 #parse("snippets/learnerNewHeader.vm")
+		<!-- Header End -->
+		</td></tr>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+					#parse("snippets/learnerProfileLeftMenu.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+            			<td id="page-icon" class="courseLogoProfile">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.myAlert.manageAlert.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.myAlert.addAlert.subheading")</div>
+			</td>
+		    </tr>
+		</table>
+						<!-- Search Result Start -->
+				<div id="resultBox" class="search_box_result" style="border-bottom:0px; border-right:0px;">
+				<!-- Result Header Start -->
+					<div id="resultHeader" class="box_header" style="border-right:1px solid; border-color:#dfdfdf;">
+						<!-- Result Heading -->
+						<div style="float:left; height:23px;">
+
+							<!-- Result Heading -->
+							<div style="float:left; margin-top:3px;">
+							  <a onClick="javascript:window.location='lrn_addMyAlert.do';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.myAlert.manageAlert.caption.addAlert")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:3px;" >
+							  <a onClick="deleted();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.myAlert.manageAlert.caption.deleteAlert")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>	
+						</div>
+
+						<div  id="searchBox" style="float:left; height:120px; width:290px; left:47%;" class="visible">
+											$brander.getBrandElement("lms.myAlert.manageAlert.caption.searchAlert")<br/><br/><br/>
+											<div  style="float:left">
+
+							$brander.getBrandElement("lms.myAlert.manageAlert.caption.alertName")</div >
+							#springBind("myalertForm.alertName")
+							<input type="text" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:right; margin-right:15px; width:170px;"name="$!{status.expression}" value="$!{status.value}"/>
+							<br/><br/><br/>
+
+											<div  id="search-survey-search-manage" style="float:right; margin-top:2px; margin-right:15px;">
+												<a class="button" onClick="doSearch();"><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</span></a>
+											</div >
+											<div  id="search-survey-cancel" style="float:right; margin-top:2px;margin-right:5px;">
+												<a class="button" onClick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.manager.ManageCourse.caption.Cancel")</span></a>
+											</div >
+
+										</div >
+
+								<div  class="result_left_side">
+									#springBind("myalertForm.mngAlerts")
+										$pager.setItems($!{status.value})
+										#set($totalCount = $pager.total)
+										#if($pager.hasItems())
+												#set($pageFirstIndex = $pager.firstIndex)
+												#set($pageLastIndex = $pager.lastIndex)
+												#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+												#set($currentPageCount = $pageLastIndex + 1)
+												#set($pageCurrIndex = $pager.index)
+										#else
+												#set($pageFirstIndex = 0)
+												#set($pageLastIndex = 0)
+												#set($currentPageSize = 0)
+												#set($currentPageCount = 0)
+												#set($pageCurrIndex = 0)
+										#end
+
+										<input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+									<input type="hidden" id="paging" name="paging" value="" />
+									<input type="hidden" id="sortDirection" name="sortDirection" value="" />
+									<input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+									<input type="hidden" id="showAll" name="showAll" value="false" />
+									<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+									 #if($!{context.showAll})
+										#set($showAll=$!{context.showAll})
+									#else
+										#set($showAll=false)
+									#end
+
+									<div style="float:left; margin-top:3px;">
+										<a id="search-survey" onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+											<div class="btn_start"></div>
+											<div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+											<div class="btn_end"></div>
+										</a>
+									</div>
+									<!-- All Icon -->
+									#if($!{status.value})
+										#if($totalCount > 10)
+											<div id="showEach" class="icon_all" onClick="javascript:window.location='lrn_myAlert.do?method=displayAlert&showAll=true';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+										#end
+									#end
+									<!-- Next Icon -->
+									#if($pager.nextIndex)
+											<div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='lrn_myAlert.do?method=displayAlert&pageIndex=$pager.nextIndex&paging=paging';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+									#else
+											<div id="goNext" class="icon_disabled"></div>
+									#end
+									<!-- Back Icon -->
+									#if ($pager.prevIndex)
+											<div id="goBack" class="icon_back"  onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='lrn_myAlert.do?method=displayAlert&pageIndex=$pager.prevIndex&paging=paging';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+									#else
+											<div id="goBack" class="icon_disabled"></div>
+									#end
+									<!-- Showing Results -->
+									<div id="resultDescription" class="box_description" style="margin-right:2px;">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing")$!pager.pageDescription </div>
+								</div>
+							</div>
+							<!-- Result Header End -->
+							<div id="searchResult_1"  style="width:100%;">
+								<form name="myformone" style="padding:0; margin:0;" action="">
+					 #if($currentPageSize > 0)
+									<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+										<tr bgcolor="#efefef">
+											<td class="check_box_top" width="17px" style="padding-left:2px;"><input type="checkbox" id="chkAll" name="selectedLearnerGroup" style="margin-left:6px"/></td>
+											<td class="box_subheader"><div  style="margin-left:5px;"  #if($context.sortDirection == 0) onclick="sortMyAlert(0,1,$pageCurrIndex,$showAll);" #else onclick="sortMyAlert(0,0,$pageCurrIndex,$showAll);" #end ><div  id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_down" #elseif($context.sortColumnIndex == 0) class="icon_up" #else class="icon_down" #end ></div >Alert Name </div ></td>
+										</tr>
+						 #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+							#springBind("myalertForm.mngAlerts[$loopIndex]")
+							   #set($alert = $!{status.value})
+								#if($loopIndex%2 == 0)
+								#set($alternate="row_1")
+								#else
+								#set($alternate="row_2")
+								#end
+							 <tr>
+							<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="rowone" value="${alert.alert.id}" onclick="changeRowColor(this);" style="margin-left:3px"/></td>
+							<td class="$alternate"><a href="lrn_myAlert.do?method=showEditAlertPage&alertId=$alert.alert.id""><u>$alert.alert.alertName</u></a></td>
+							</tr> 
+						#end
+
+									</table>
+					#else
+						<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+							<tr bgcolor="#efefef">
+							<td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" onClick="checkAll(document.myformone.rowone, this)" style="margin-left:3px;"/></td>
+							<td class="box_subheader">$brander.getBrandElement("lms.myAlert.manageAlert.caption.alertName")</td>
+							</tr>
+							<tr>
+							   <td colspan="7" style="border-right:1px solid;border-bottom:1px solid;border-color:#dfdfdf !Important;">
+									<div  class="result_blank">$brander.getBrandElement("lms.myAlert.manageAlert.caption.searchMessage")</div >
+								</td>
+							</tr>
+						</table>
+					
+
+					#end
+					</div>
+				</div>
+				<!-- Search Result End -->
+			</div>
+		</td></tr>
+	
+	<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+		<!-- Footer Start -->
+    #parse("snippets/learnerNewFooter.vm")
+	   </td></tr> 
+	   </table>
+		<!-- Footer End -->	
+	</div>
+	</form>
+		 <div id="selectLearner" style="display:none">
+			<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+			<div class="alert_message_box_icon"></div>
+			<div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+			<br style="clear:both" />
+			<div class='no simplemodal-close' style="float:right; margin-top:3px;margin-right:160px;">
+			  <a onClick="" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+		</div>
+		<div id='deleteConfirmation' style='display:none'>
+			<div class='header'><span>$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</span></div>
+			<div class="alert_message_box_icon"></div>
+			<div class="alert_message_box_text">$brander.getBrandElement("lms.myAlert.manageAlert.caption.deleteConfirm")</div>
+			<br style="clear:both" />
+			<div class='no simplemodal-close' style="float:right; margin-top:3px;margin-right:150px;">
+			  <a onClick="" style="text-decoration:none;">
+				<span class="yes button">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div>
+				  <div class="btn_end"></div>
+				</span>
+			  </a>
+			</div>
+			
+			<div class='no simplemodal-close' style="float:right; margin-top:3px;margin-right:5px;">
+			  <a onClick="" style="text-decoration:none;">
+				<span class="no button">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div>
+				  <div class="btn_end"></div>
+				</span>
+			  </a>
+			</div>	
+			
+		</div>
+		</form>
+	</body>
+	</html>

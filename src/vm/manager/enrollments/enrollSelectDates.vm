@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+  <!--  <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>	
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function()
+        {
+           
+        });
+		function previous(){
+		document.getElementById('prev').value="prev";
+		document.getElementById('tagetPage').name ="_target10";
+		document.selectDatesForm.submit();
+		}
+		function next(){
+		document.getElementById('prev').value="next";
+		document.getElementById('tagetPage').name ="_target6";
+		document.selectDatesForm.submit();
+		}
+   
+   </script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>    
+</head>
+
+
+<body>
+<form name="selectDatesForm" method="post" action="mgr_assignEnrollments.do">
+<input type="hidden" id="currentpage" name="_page" value="5" />
+				<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<input type="hidden" id="prev" name="moveTo" />
+
+<!--<div id="main-container"> -->
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+             <!-- header -->
+             ##parse("snippets/managerHeader.vm")
+              #parse("snippets/managerWizardHeader.vm")
+             <!-- header-end -->
+			</td>
+	  </tr>
+
+<!-- <div id="content2a"> -->
+<!-- content-area -->
+
+		<tr id="main"> <! SECOND BLOCK -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		 		<div>
+                <div id="l-menu-back">
+				   #springBind("enrollmentForm.enrollmentMethod")
+				   #if(${status.value} == "SurveyResponse")
+				    <div class="l-menu-back-text-h">Assign Enrollment Wizard<br/>showing 4 of 6</div>
+                        <div class="l-menu-back-text-acted">1. Select Enrollment Method###</div>
+
+                        <div class="l-menu-back-text-acted">2. Select Surveys</div>
+                        <div class="l-menu-back-text-acted">3. Select Training Plans</div>
+                        <div class="l-menu-back-text-act">4. Select Enrollment Dates</div>
+                        <div class="l-menu-back-text">5. Configure Enrollment Settings</div>
+                        <div class="l-menu-back-text">6. View Results</div>
+					#else
+					<div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignEnrollment.caption.wizard") </br>
+
+					#if($enrollmentForm.isSelectedSyncCourse())
+						Showing 4 of 7</div>
+					#else
+						Showing 4 of 6</div>
+
+					#end
+					<div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1a")</div>
+					<div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2a")</div>
+					<div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep3")</div>
+					
+					#if($enrollmentForm.isSelectedSyncCourse())
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep4")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep5")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6b")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7a")</div>
+					#else	
+
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep4")</div>
+
+  					  <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7")</div>
+					#end
+				#end
+				</div>
+				
+		</div>
+		</table>
+		</td>
+		
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+	<!--	<div id="right-pannel"> -->
+		<TD id="content">
+			<div id="scrollable">
+		#springBind("enrollmentForm.allCourseStartDate")
+		#if($status.error)
+		<!-- error-box -->
+		 <div id="message_box">
+			<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+			#foreach($errorCode in $status.errorCodes)
+		#set ($error = $brander.getBrandElement($errorCode))
+		<div class="width40pct">
+			<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			<div class="message_box_align">$error</div>
+			</div>
+			#end
+		</div>
+		<!-- error-box -->
+		#end
+
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.assignEnrollment.step4.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.assignEnrollment.step4.caption.description")</div>
+			</td>
+		    </tr>
+		</table>                         
+            <!-- Logo+Manage-User-end -->
+			
+			<!-- User-list -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+				
+				#springBind("enrollmentForm.modifyAllEntitlements")
+				#set($modifyAllEntitlements = ${status.value})
+				#set($modifyEntitlementRadioName = ${status.expression})
+					<div id="e13" class="Search-Containerheaderleft"><input type="radio" name="$modifyEntitlementRadioName" id="allCourses" value="true" #if($modifyAllEntitlements == "true") checked #end />All Courses</div>
+				</div>
+				
+				<!-- 1 -->
+				<div id="e7c" class="Search-inputfield-box">
+					<!-- s -->
+					<div id="e12" class="search-content-row1a"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in-r-fa">Start Date</div>
+						
+						#springBind("enrollmentForm.allCourseStartDate")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+						<input type="text" style="width:150px" id="${status.expression}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipStartDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></div>
+						<script type="text/javascript">
+							$("#${status.expression}").datepicker({ 
+							showOn: "both", 
+							buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							buttonImageOnly: true 
+							});
+						</script>
+				</div>
+				<!-- 1 -->
+				<div id="e13" class="search-content-row">
+					<div class="block_text_in-r-fa">End Date</div>
+				
+						#springBind("enrollmentForm.allCourseEndDate")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+						<input type="text" style="width:150px" id="${status.expression}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></div>
+						<script type="text/javascript">
+							$("#${status.expression}").datepicker({ 
+							showOn: "both", 
+							buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							buttonImageOnly: true 
+							});
+						</script>
+					</div>
+					<!-- 0 -->
+					<div id="e16" class="search-content-row1"><!-- using for bottom space --></div>
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- End-User-list -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+			<!-- Courses -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+				
+					<div class="Search-Containerheaderleft1"><input type="radio" name="$modifyEntitlementRadioName" id="individualCourses" value="false" #if($modifyAllEntitlements == "false") checked #end  />Individual Courses</div>
+					<div class="Containerheaderright">Start Date</div>
+					<div class="Containerheaderright">End Date</div>
+
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="User-checkbox-box">
+
+					<!-- 1 -->
+					#set($evenOdd=0)
+					#springBind("enrollmentForm.enrollmentCourseViewList")
+					#set($count = ${status.value.size()} - 1)
+					#foreach($index in [0..$count])
+
+					#springBind("enrollmentForm.enrollmentCourseViewList[$index].courseType")
+						#if(!$status.value.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || !$status.value.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))
+						
+						#set($i = -1)
+						
+							#set($i = $i + 1)
+							#springBind("enrollmentForm.enrollmentCourseViewList[$index].selected")
+							#if($status.value )
+								
+								#if($evenOdd==0)
+								<div id="e16" class="User-checkbox-row">
+								#set($evenOdd=1)
+								#else
+									<div id="e16" class="User-checkbox-row-d">
+									#set($evenOdd=0)
+								#end
+								#springBind("enrollmentForm.enrollmentCourseViewList[$index].courseName")
+								<div class="Org-grp_4ab">$status.value</div>
+								#set( $currentCourseName = $status.value )
+								#springBind("enrollmentForm.enrollmentCourseViewList[$index].enrollmentStartDate")
+								 
+								<div style="width:130px;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+									<input type="text" style="width:100px;" id="startDateExpression${index}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipStartDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+								</div>
+								<script type="text/javascript">
+									$("#startDateExpression${index}").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+									});
+								</script>
+								<div class="btn_radio1c">&nbsp;</div>
+								#springBind("enrollmentForm.enrollmentCourseViewList[$index].enrollmentEndDate")
+								 
+								<div style="width:130px;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+									<input type="text" style="width:100px;" id="endDateExpression${index}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+								</div>
+								<script type="text/javascript">
+									$("#endDateExpression${index}").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+									});
+								</script>
+								</div>
+
+							#end
+						
+
+						#end
+						
+					#end
+				<!-- 0 -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- End-Courses -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			
+			#*<div class="managerBtn">
+				<input type="hidden" id="currentpage" name="_page" value="5" />
+				<div class="$brander.getBrandElement("lms.css.btn-left")"><input type="image" id="cancel" name="_cancel" alt="Cancel" src="$brander.getBrandElement("lms.pixel.cancel.gif")"/></div>
+				<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" id="next" name="_target6" alt="Next" src="$brander.getBrandElement("lms.pixel.next.gif")"/></div>
+				<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" id="previous" name="_target4" alt="Previous" src="$brander.getBrandElement("lms.pixel.previous.gif")"/></div>
+			</div>*#
+			<div class="managerBtn">
+				<div style="float:right; margin-top:3px;">
+				  <a onClick="next();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Next</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+					#springBind("enrollmentForm.enrollmentMethod")
+				   #if(${status.value} == "SurveyResponse")
+				<div style="float:right; margin-top:3px;margin-right:5px;">
+				  <a onClick="previous();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Previous</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				#else
+				<div style="float:right; margin-top:3px;margin-right:5px;">
+				  <a onClick="submitButtonForm(document.selectDatesForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Previous</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				#end
+				<div style="float:left; margin-top:3px;">
+					<a onClick="javascript:window.location='mgr_viewAllEntitlements.do;'" style="text-decoration:none;">
+						<div class="btn_start"></div>
+						<div class="btn_normal">Cancel</div>
+						<div class="btn_end"></div>
+					</a>
+				</div>	
+			</div>
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content2-area-end -->
+	</td>
+	</tr>
+		 <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+         	<!-- footer -->
+         		#parse("snippets/managerFooter.vm")
+         	<!-- footer-end -->
+			</td>
+		</tr>
+</table>
+<input type="hidden" id="tagetPage" name="_target"  />
+</form>
+</body>
+</html>

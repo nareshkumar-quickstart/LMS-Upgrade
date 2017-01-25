@@ -1,0 +1,549 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    ##parse("snippets/instructorHead.vm")
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+	/* change on country drop down will required to submit the form*/
+    function stateChangeFormSubmit(dropdown)
+    {	
+    		if (dropdown.name=="country1")
+    		{          
+    			//document.getElementById('city1').value="";
+    		}
+    		if (dropdown.name=="country2")
+    		{          
+    			//document.getElementById('city2').value="";
+    		}
+           // document.getElementById('action').value="displayLearnerProfile";
+            document.getElementById('validateVariable').value='donotValidate';
+            //document.getElementById('countryCombo').value='true';
+           submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target0');
+	}
+
+	function writeUserId(ob){
+        document.cePlannerForm.username.value=ob.value;
+    }
+	  $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+       
+
+       
+    });
+
+	function doSame(){
+	var hiddenCheck=document.getElementById('hiddenCheck').value;
+	if(hiddenCheck==0){
+	document.getElementById('address2').value=document.getElementById('address1').value;
+	document.getElementById('address2a').value=document.getElementById('address1a').value;
+	document.getElementById('city2').value=document.getElementById('city1').value;
+	document.getElementById('state2').value=document.getElementById('state1').value;
+	document.getElementById('country2').value=document.getElementById('country2').value;
+	document.getElementById('zip2').value=document.getElementById('zip1').value;
+	document.getElementById('hiddenCheck').value="1";
+	}
+	else{
+	document.getElementById('address2').value="";
+	document.getElementById('address2a').value="";
+	document.getElementById('city2').value="";
+	document.getElementById('state2').value=document.getElementById('state1').value;
+	document.getElementById('country2').value=document.getElementById('country2').value;
+	document.getElementById('zip2').value="";
+	document.getElementById('hiddenCheck').value="0";
+	}
+
+
+	}
+  
+    </script>
+
+</head>
+
+<body>
+    <form name="cePlannerForm" method="post" action="ce_planner.do">
+		#springBind("cePlannerForm.validateAction")
+		<input type="hidden" value="validate" id = "validateVariable" name="$status.expression" />
+    <div id="main-container">
+
+        <!--Header Start -->
+        #parse("snippets/cePlannerHeader.vm")
+        <!-- Header End -->
+
+        <div id="content2a" >
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.step1.caption")</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText1")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText2")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText3")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText4")</div>
+                </div>
+            </div>
+			
+							<!-- country code -->
+				 #* ============================================================ *#
+                #* -----------adding country \state code for ADDRESS 1 -------- *#
+                #* ============================================================ *#
+                #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                #set( $StateLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+                #set( $ZipLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+                #springBind("cePlannerForm.country1")
+                #set($Country1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                #foreach ($objCountry1 in $Country1)
+                        #if($!{status.value} == $objCountry1.value || $!{status.value} == $objCountry1.label)
+                                #set( $State_var1 = "lms.manageUser.AddLearner.")
+                                #set( $State_var2 = ".State")
+                                #set( $State_var = "$State_var1$objCountry1.value$State_var2")
+                                #set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+                                #set( $State_label_var2 = ".label")
+                                #set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+                                #set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+                                #set( $State_zip_var2 = ".label")
+                                #set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+                                #set( $State = $brander.getBrandMapElements($State_var) )
+                                #set( $StateLabel_1 = $brander.getBrandElement($State_label_var) )
+                                #set( $ZipLabel_1 = $brander.getBrandElement($State_zip_var) )
+                                #set( $ZipType = "lms.manageUser.AddLearner.zip." )
+                                <script type="text/javascript" language="javascript" > 
+                                #set( $ZipType2 = ".type" )
+                                #set( $ZipLength = ".length" )
+                                #set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+                                #set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+                                zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+                                zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+                                </script> 
+                        #end
+                #end
+				<!-- state code -->
+				#* ============================================================ *#
+                #* ============================================================ *#
+                #* adding country \state code for ADDRESS 2  *#
+                #set( $State2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                #set( $StateLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+                #set( $ZipLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+                #springBind("cePlannerForm.country2")
+                #set($Country2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                #foreach ($objCountry1 in $Country2)
+                        #if($!{status.value} == $objCountry1.value || $!{status.value} == $objCountry1.label)
+                                #set( $State_var1 = "lms.manageUser.AddLearner.")
+                                #set( $State_var2 = ".State")
+                                #set( $State_var = "$State_var1$objCountry1.value$State_var2")
+                                #set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+                                #set( $State_label_var2 = ".label")
+                                #set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+                                #set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+                                #set( $State_zip_var2 = ".label")
+                                #set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+                                #set( $State2 = $brander.getBrandMapElements($State_var) )
+                                #set( $StateLabel_2 = $brander.getBrandElement($State_label_var) )
+                                #set( $ZipLabel_2 = $brander.getBrandElement($State_zip_var) )
+                                #set( $ZipType = "lms.manageUser.AddLearner.zip." )
+                                <script type="text/javascript" language="javascript" > 
+                                #set( $ZipType2 = ".type" )
+                                #set( $ZipLength = ".length" )
+                                #set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+                                #set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+                                zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+                                zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+                                </script> 
+                        #end
+                #end
+
+            <div id="right-pannel">
+
+                #springBind("cePlannerForm.*")
+                #if($status.error)
+                    <div id="message_box" style="width:98%;*width:96%; margin-right:5px;">
+                      <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                      #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct" style="margin-righ:5px;_margin-righ:0px;">
+                            <div class="message_box_align" style="margin-left:7px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align" style="margin-right:8px;_margin-right:0px;" nowrap>$error</div>
+                        </div>
+                      #end
+                    </div>
+                #end
+
+                <div id="pageDescription" class="page_description">
+                    <div id="pageIcon" class="courseLogoCustomer"></div>
+                    <div id="pageHeading" class="page_heading" style="margin-top:26px;">$brander.getBrandElement("lms.cePlanner.createProfile.pageHeading.caption")</div>
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.cePlanner.createProfile.pageDescriptionText.caption")</div>
+                </div>
+
+                <div class="search_box_result" style="*margin-right:10px;_width:99%;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.cePlanner.createProfile.boxHeading.profileInformation")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+							
+                            #springBind("cePlannerForm.companyName")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.companyName")</span>
+                            </td>
+							 <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+						
+				    #springBind("cePlannerForm.wesiteURL")
+                            <td width="120" height="25">
+                                <span class="row_text">$brander.getBrandElement("lms.cePlanner.createProfile.caption.website")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+				</tr>
+				#springBind("cePlannerForm.surveyId")
+				<input type="hidden" name="${status.expression}" value="$!{status.value}">
+				<tr>	
+                            #springBind("cePlannerForm.firstName")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.firstName")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+
+                             #springBind("cePlannerForm.emailAdd")
+                            <td width="120" height="25">
+                                <span class="row_text">$brander.getBrandElement("lms.cePlanner.createProfile.caption.emailAddress")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" onBlur="writeUserId(this)"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.middleName")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.middleName")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                           
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.lastName")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.lastName")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td width="120" height="25">
+                                &nbsp;
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.phone")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.phone")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td width="120" height="25">
+                                &nbsp;
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.ext")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.ext")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td width="120" height="25">
+                                &nbsp;<span class="row_text" >
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>
+                                &nbsp;<INPUT TYPE=CHECKBOX onClick ="doSame();"> Same as Main Address</span><input type="hidden" value="0" id="hiddenCheck">
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.address1")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.address1")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="address1"></input>
+                            </td>
+                            #springBind("cePlannerForm.address2")
+                            <td width="120" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.address2")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="address2"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.address1a")
+                            <td width="140" height="25">
+                                <span class="row_text" ></span>
+                            </td>
+                            <td width="10">
+                             <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="address1a"></input>
+                            </td>
+                            #springBind("cePlannerForm.address2a")
+                            <td width="120" height="25">
+                                <span class="row_text" ></span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;" >*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="address2a"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.city1")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.city")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="city1"></input>
+                            </td>
+                            #springBind("cePlannerForm.city2")
+                            <td width="120" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.city")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="city2"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.state1")
+                            <td width="140" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.manageUser.AddLearner.caption.State")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td width="120">
+                                <select style="width:180px;" name="${status.expression}" id="state1">
+                                    #foreach($objState in $State)
+										#if($objState.value.toUpperCase()  == "$!{status.value.toUpperCase()}" || $objState.label.toUpperCase()  == "$!{status.value.toUpperCase()}")
+											<option value="$objState.value" selected >$objState.label</option>
+										#else
+											<option value="$objState.value" >$objState.label</option>
+										#end
+                            		#end
+                                </select>
+                            </td>
+                            #springBind("cePlannerForm.state2")
+                            <td width="120" height="25">
+                                <span class="row_text" >$brander.getBrandElement("lms.manageUser.AddLearner.caption.State")</span>
+                            </td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td>
+                                <select style="width:180px;" name="${status.expression}" id="state2">
+                                   #foreach($objState in $State2)
+										#if($objState.value.toUpperCase()  == "$!{status.value.toUpperCase()}" || $objState.label.toUpperCase()  == "$!{status.value.toUpperCase()}")
+											<option value="$objState.value" selected >$objState.label</option>
+										#else
+											<option value="$objState.value" >$objState.label</option>
+										#end
+                            		#end
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.zip1")
+                            <td width="140" height="25"><span class="row_text" >$!ZipLabel_1</span></td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="zip1"></input>
+                            </td>
+                            #springBind("cePlannerForm.zip2")
+                            <td width="120" height="25"><span class="row_text" >$!ZipLabel_2</span></td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td>
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" id="zip2"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.country1")
+                            <td width="140" height="25"><span class="row_text" >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Country")</span></td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td width="120">
+                                <select style="width:180px;" name="${status.expression}" onChange="stateChangeFormSubmit(this)" id="country1">
+                                     #foreach ($objCountry1 in $Country1)
+										
+										 #if($objCountry1.label == "$!{status.value}" || $objCountry1.value == "$!{status.value}")
+                                            <option value="$objCountry1.value" selected >$objCountry1.label</option>
+                                         #else
+                                            <option value="$objCountry1.value" >$objCountry1.label</option>
+                                         #end
+                                            
+									#end
+                                </select>
+                            </td>
+                            #springBind("cePlannerForm.country2")
+                            <td width="120" height="25"><span class="row_text" >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Country")</span></td>
+                            <td width="10">
+                                <div class="required_field" >*</div>
+                            </td>
+                            <td>
+                                <select style="width:180px;" name="${status.expression}" onChange="stateChangeFormSubmit(this)" id="country2">
+                                     #foreach ($objCountry2 in $Country2)
+										
+										 #if($objCountry2.label == "$!{status.value}" || $objCountry2.value == "$!{status.value}")
+                                            <option value="$objCountry2.value" selected >$objCountry2.label</option>
+                                         #else
+                                            <option value="$objCountry2.value" >$objCountry2.label</option>
+                                         #end
+                
+									#end
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="search_box_result" style="margin-top:20px;*margin-right:10px;_width:99%;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.cePlanner.createProfile.boxHeading.loginInformation")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+                            #springBind("cePlannerForm.username")
+                            <td width="140" height="25"><span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.username")</span></td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.password")
+                            <td width="140" height="25"><span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.password")</span></td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="password" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td>&nbsp;<span class="row_text" ><font color="grey">$brander.getBrandElement("lms.cePlanner.createProfile.caption.password.type")</font> </span></td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            #springBind("cePlannerForm.confirmpassword")
+                            <td width="140" height="25"><span class="row_text" >$brander.getBrandElement("lms.cePlanner.createProfile.caption.confirmPassword")</span></td>
+                            <td width="10">
+                                <div class="required_field">*</div>
+                            </td>
+                            <td width="120">
+                                <input type="password" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td width="10">
+                                <div class="required_field" style="display:none;">*</div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <input type="hidden" id="currentpage" name="_page" value="0" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<input type="hidden" id="wizardControl" name="wizardControl" value="0"/>
+
+                <div style="float:right; margin-top:25px; margin-right:5px;" tabIndex="6" >
+                    <div class="btn_start"></div>
+                     <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target1');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.next")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+
+                <div style="float:left; margin-top:25px; margin-left:15px;" tabIndex="5" >
+                    <div class="btn_start"></div>
+                     <div class="btn_normal" onClick="location.href='login.do';"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.cancel")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+
+            </div>
+        </div>
+          #parse("footer.vm")
+    </div>
+    </form>
+</body>
+</html>

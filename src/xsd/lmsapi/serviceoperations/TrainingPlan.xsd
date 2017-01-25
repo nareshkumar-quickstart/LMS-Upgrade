@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://trainingplan.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://trainingplan.types.lmsapi.message.webservice.lms.vu360.softech.com" 
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<xsd:include schemaLocation="Course.xsd"/>
+	
+    <xsd:complexType name="TrainingPlans">  
+    	<xsd:sequence>  
+        	<xsd:element name="TrainingPlan" type="TrainingPlan" minOccurs="1" maxOccurs="unbounded" nillable="false" />
+    	</xsd:sequence>  
+	</xsd:complexType>
+	 
+    <xsd:complexType name="TrainingPlan">  
+    	<xsd:sequence>  
+        	<xsd:element name="Name" type="xsd:string"  />
+            <xsd:element name="Description" type="xsd:string" />
+            <xsd:element name="Courses" type="Courses" minOccurs="1" maxOccurs="1" nillable="false" />
+    	</xsd:sequence>  
+	</xsd:complexType>
+	
+    <xsd:complexType name="ResponseTrainingPlan">  
+    	<xsd:sequence> 
+    		<xsd:element name="id" type="xsd:nonNegativeInteger" minOccurs="0" />  
+        	<xsd:element name="Name" type="xsd:string"  />
+            <xsd:element name="Description" type="xsd:string" />
+            <xsd:element name="TrainingPlanCourse" type="TrainingPlanResponseCourse" minOccurs="0" maxOccurs="unbounded" nillable="true" />
+    	</xsd:sequence>  
+    	<xsd:attribute name="errorCode" type="xsd:string" use="optional" default="0"/>
+	    <xsd:attribute name="errorMessage" type="xsd:string"/>
+	</xsd:complexType>
+	 
+    <xsd:complexType name="ResponseTrainingPlans">  
+    	<xsd:sequence>  
+        	<xsd:element name="ResponseTrainingPlan" type="ResponseTrainingPlan" minOccurs="0" maxOccurs="unbounded" nillable="true"  />
+    	</xsd:sequence>  
+	</xsd:complexType>
+	
+	<xsd:complexType name="TrainingPlanResponseCourses">  
+    	<xsd:sequence>  
+        	<xsd:element name="TrainingPlanCourse" type="TrainingPlanResponseCourse" minOccurs="1" maxOccurs="unbounded" />
+    	</xsd:sequence> 
+    </xsd:complexType>
+    
+	<xsd:complexType name="TrainingPlanResponseCourse">  
+    	<xsd:sequence>  
+        	<xsd:element name="courseID" type="xsd:string" nillable="false" />
+    	</xsd:sequence> 
+    	<xsd:attribute name="errorCode" type="xsd:string" use="optional" default="0"/>
+	    <xsd:attribute name="errorMessage" type="xsd:string"/> 
+    </xsd:complexType>
+    
+    <xsd:complexType name="TrainingPlanLearner">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserId" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+       </xsd:sequence>  
+    </xsd:complexType>
+    
+    <xsd:complexType name="TrainingPlanToLearner">  
+    	<xsd:sequence>  
+        	<xsd:element name="TrainingPlanId" type="xsd:nonNegativeInteger" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="StartDate" type="xsd:date" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="EndDate" type="xsd:date" minOccurs="1" maxOccurs="1" />
+       </xsd:sequence>  
+    </xsd:complexType>
+    
+    <xsd:complexType name="TrainingPlanAssignResponsed">  
+    	<xsd:sequence>  
+    	    <xsd:element name="TrainingPlanId" type="xsd:nonNegativeInteger" minOccurs="0" maxOccurs="1" />
+    	    <xsd:element name="UserGroupId" type="xsd:nonNegativeInteger" minOccurs="0" maxOccurs="unbounded" />
+        	<xsd:element name="TrainingPlanEnrollment" type="TrainingPlanAssignResp" minOccurs="0" maxOccurs="unbounded" />
+       </xsd:sequence> 
+       <xsd:attribute name="errorCode" type="xsd:string" use="required"/>
+	   <xsd:attribute name="errorMessage" type="xsd:string"/> 
+    </xsd:complexType>
+    
+    <xsd:complexType name="TrainingPlanAssignResp">  
+    	<xsd:sequence>  
+            <xsd:element name="UserId" type="xsd:string" minOccurs="1" maxOccurs="1" />
+            <xsd:element name="TrainingPlanCourses" type="TrainingPlanResponseCourses" minOccurs="0" maxOccurs="1" />
+       </xsd:sequence>  
+       <xsd:attribute name="errorCode" type="xsd:string" use="required"/>
+	   <xsd:attribute name="errorMessage" type="xsd:string"/> 
+    </xsd:complexType>
+    
+</xsd:schema>

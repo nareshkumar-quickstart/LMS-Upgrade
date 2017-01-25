@@ -1,0 +1,846 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+
+
+
+        
+<script language="javascript" type="text/javascript">
+
+
+
+
+		$(document).ready(function(){
+          	
+            $("#orderDate").datepicker({ 
+			   showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            
+            $("#orderDate1").datepicker({ 
+			   showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+           
+        });
+        
+       
+		function trim(stringToTrim) {
+			return stringToTrim.replace(/^\s+|\s+$/g,"");
+		}
+		function ltrim(stringToTrim) {
+			return stringToTrim.replace(/^\s+/,"");
+		}
+		function rtrim(stringToTrim) {
+			return stringToTrim.replace(/\s+$/,"");
+		}
+        
+		function doSearchLearner() {
+		
+		   chkLearner = document.getElementById('constrainedLearnerSearch');
+		   
+			var firstName= trim( ltrim( rtrim( document.searchLearnerForm.searchFirstName.value ) ) );
+			var lastName= trim( ltrim( rtrim( document.searchLearnerForm.searchLastName.value ) ) );
+			var email= trim( ltrim( rtrim( document.searchLearnerForm.searchEmailAddress.value ) ) );
+			
+			
+			if(chkLearner != null && chkLearner.checked){
+        		// do nothing 
+			}else if( firstName.length == 0 &&  lastName.length == 0  &&  email.length == 0 ){
+				$('#selectLearner').modal({close:false,position: ["40%",]});
+				return false;
+			}
+            document.searchLearnerForm.submit();
+        }
+        
+        function doSearchCustomer(submitFormName) {
+        	chkSimple = document.getElementById('constrainedCustomerSearchSimple');
+        	chkAdvance = document.getElementById('constrainedCustomerSearchAdvance');
+        	
+        	var firstName, orderId, email, date;
+        	if(submitFormName == 'searchCustomerForm') {
+        		firstName = trim(ltrim(rtrim(document.searchCustomerForm.searchCustomerName.value)));
+        		orderId = trim(ltrim(rtrim(document.searchCustomerForm.searchOrderId.value)));
+        		email = trim(ltrim(rtrim(document.searchCustomerForm.searchCusEmailAddress.value)));
+        		date = trim(ltrim(rtrim(document.searchCustomerForm.searchOrderDate.value)));
+        	} else if(submitFormName == 'advanceSearchCustomerForm') {
+        		firstName = trim(ltrim(rtrim(document.advanceSearchCustomerForm.searchCustomerName.value)));
+        		orderId = trim(ltrim(rtrim(document.advanceSearchCustomerForm.searchOrderId.value)));
+        		email = trim(ltrim(rtrim(document.advanceSearchCustomerForm.searchCusEmailAddress.value)));
+        		date = trim(ltrim(rtrim(document.advanceSearchCustomerForm.searchOrderDate.value)));
+        	}
+        	
+        	
+        	if(chkSimple != null && chkAdvance != null && (chkSimple.checked || chkAdvance.checked)){
+        		// do nothing 
+        	}else if(firstName.length == 0 && orderId.length == 0 && email.length == 0 && date.length == 0) {
+        		$('#selectLearner').modal({close:false,position: ["40%",]});
+				return false;
+        	}
+        	if(submitFormName == 'searchCustomerForm') {
+        		document.searchCustomerForm.submit();
+        	} else if(submitFormName == 'advanceSearchCustomerForm') {
+        		document.advanceSearchCustomerForm.submit();
+        	}
+        }
+
+	var sortIndex;
+    function onAllPage(){
+        var sortIndex=document.getElementById('sortColumnIndex').value;
+    	document.getElementById('sortIndex').value=sortIndex;
+    	document.getElementById('direction').value=1;
+        document.getElementById('actionmethod').value='refreshQuestions';
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="true";
+        document.nextPreviousForm.submit();
+    }
+
+	
+    function onNextPage(nextIndex){
+        var sortIndex=document.getElementById('sortColumnIndex').value;
+    	document.getElementById('sortIndex').value=sortIndex;
+    	var direction=document.getElementById('sortDirection').value;
+    	document.getElementById('direction').value=direction;
+    	document.getElementById('actionmethod').value='refreshQuestions';
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value;
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        document.nextPreviousForm.submit();
+    }
+
+    function onPreviousPage(previousIndex){
+        var sortIndex=document.getElementById('sortColumnIndex').value;
+    	document.getElementById('sortIndex').value=sortIndex;
+    	var direction=document.getElementById('sortDirection').value;
+    	document.getElementById('direction').value=direction;
+        document.getElementById('actionmethod').value='refreshQuestions';
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+        document.nextPreviousForm.submit();
+    }
+
+    function sortLearner(sortColumnIndex, sortDirection, showAll){
+        document.getElementById('lastActionmethod').value='searchMembers';
+        document.getElementById('lastShowAll').value=showAll;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.searchResultForm.submit();
+    }
+    
+    function initialize(ob){
+        if(ob.value=="Name Or Keyword") ob.value="";
+    }
+    $(document).ready(function(){       
+    });
+    
+</script>
+</head>
+
+#macro( dotPaddingWithOutTitle $pValue $pLength )
+		#set($strlen=$pValue.length())
+	#if($strlen<=$pLength)
+		$pValue
+	#else
+		#set($actLen=$math.sub($strlen,$pLength))
+		$stringUtil.chop($pValue,$actLen)...
+	#end
+#end
+<body>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/adminHeader.vm")
+        <!-- header-end -->
+		</td>
+		</tr>
+		
+      
+<TD id="content" >
+	<div id="scrollable">
+							#springBind("adminSearchForm.*")
+                            #if($status.error)
+                                <!-- error-box -->
+                                <div id="message_box">
+                                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                    #foreach($errorCode in $status.errorCodes)
+                                        #if($errorCode != 'custom.field.required')
+                                        #set ($error = $brander.getBrandElement($errorCode))
+                                        <div class="width40pct">
+                                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                            <div class="message_box_align">$!error</div>
+                                        </div>
+                                        #end
+                                    #end
+                                   
+    							</div>
+    							<!-- error-box -->
+    							#else
+    								
+    						#end
+    						
+    						
+    						
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoSearch">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.searchMember.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.searchMember.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>                
+                <!-- Logo+Manage-User-end -->
+
+                <!-- Error-text -->
+                #if(! $request.getParameter("isRedirect"))
+                #else 
+                <div class="content-error">
+                   #if($request.getParameter("isRedirect")=="c")
+                      $brander.getBrandElement("error.adminSearch.customerNotSelected")
+                   #elseif($request.getParameter("isRedirect") == "d")
+                      $brander.getBrandElement("error.adminSearch.distributorNotSelected")
+                   #elseif($request.getParameter("isRedirect")=="invalidBrandName")
+                      $brander.getBrandElement("error.adminSearch.invalidBrandName")   
+                   #else
+                      $brander.getBrandElement("error.adminSearch.customerDistributorNotSelected")
+                   #end  
+                </div>
+                #end
+                <!-- Error-text -->
+                
+                			
+                
+                
+                
+                <div id="resultBox" class="content-Block-new"><!-- content-Block-new -->
+
+                     <!-- Search Box Distributor -->
+                    <div id="searchBoxDistributor" style="float: left; height: auto; width: 300px;" class="visible">
+                        <form name="searchDistributorForm" action="adm_searchMember.do" method="POST">
+                            <div style="padding: 5px"><b> $brander.getBrandElement("lms.admin.searchReseller")</b></div>
+                            <br/>
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchDistributorName")
+                                <div style="width:85px;float:left" >$brander.getBrandElement("lms.administrator.searchMember.caption.DistributorName")</div>
+                                <div style="float:left" ><input type="text"  onKeyPress="if(event.keyCode==13){document.searchDistributorForm.submit();}" type="text" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px;" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px;margin-left:20px;margin-right:20px;height:20px">
+								<div style="float:right; margin-top:2px; margin-right:15px;">
+                                    <span class="button" onClick="document.searchDistributorForm.submit();">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Search</div>
+										<div class="btn_end"></div>
+									</span>									
+                                </div>
+                                <div style="float:right; margin-top:2px; ">
+                                    <span class="button" onClick="toggleSearchBoxDistributor(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Cancel</div>
+										<div class="btn_end"></div>
+									</span>									
+                                </div>
+                            </div>
+                            <input type="hidden" name="advancedSearch" value="true"/>
+                            <input type="hidden" name="method" value="searchMembers"/>
+                            <input type="hidden" name="searchType" value="distributorSearch"/>
+                        </form>
+                        <br />
+                    </div>
+
+                    <!-- Search Box Customer -->
+                    <div id="searchBoxCustomer" style="float:left;width : 290px; height: auto" class="visible">
+
+                        <form name="searchCustomerForm" action="adm_searchMember.do" method="POST">
+                            <div style="padding: 5px"><b>Search Customer</b></div><br />
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchCustomerName")
+                                <div style="width:92px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.CustomerName")</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('searchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px;width:170px;" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchOrderId")
+                                <div style="width:92px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.OrderId")</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('searchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            
+                            
+                             <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchOrderDate")
+                                <div style="width:92px;float:left">Order Date</div>
+                                
+                                <div style="float:left; ">
+                                	 <input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('searchCustomerForm');}" style="width:150px;" id="orderDate1" date:closeAtTop="false" 
+                                	 	date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" 
+                                	 	name="$status.expression" value="$!{status.value}"
+                                	 	class="input_text_field" />
+                                </div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchCusEmailAddress")
+                                <div style="width:92px;float:left">Email Address</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('searchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px;" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            
+                            
+                            <div style="padding: 5px;margin-left:20px;margin-right:20px;height:20px">
+                                
+								<!-- Checkbox to contrain customer search to selected reseller -->																
+                                <div class="constraint-customer">
+                                	#springBind("adminSearchForm.constrainedLearnerSearch")
+                                	#if($adminSelectedEntityType == 'DISTRIBUTOR')
+                                		<input id="constrainedCustomerSearchSimple" name="constrainedCustomerSearch" type="checkbox" style="float:left;"/>
+                                		<div class="" style="float:left; margin-top: 2px; margin-left:5px; width:200px;">
+                                				$brander.getBrandElement("lms.administrator.search.limit.distributor")
+                                		</div>
+                                	#end
+										<br/><br/>
+								</div>
+							</div>
+							
+							<div style="padding: 5px;margin-left:20px;margin-right:20px;height:20px">	
+								<div style="float:right; margin-top:2px; margin-right:15px;">
+									<span class="button" onClick="doSearchCustomer('searchCustomerForm');">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Search</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+                                <div style="float:right; margin-top:2px; ">
+									<span class="button" onClick="toggleSearchBoxCustomer(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Cancel</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+
+                            </div>
+                            <input type="hidden" name="advancedSearch" value="true"/>
+                            <input type="hidden" name="method" value="searchMembers"/>
+                            <input type="hidden" name="searchType" value="customerSearch"/>
+                        </form>
+                        
+                		<div style="float:right; margin-top: 9px; margin-right:5px;">
+							<a style="color: #006699;" href="#" onclick="showAdminSearchBox(this, 'searchBoxCustomerAdvance');">
+								<u>Advance Search</u>
+							</a>	
+						</div>
+						
+						<br /><br /><br />
+                    </div>
+
+
+
+
+
+					<!--------------------Start------------------------------------->
+				    <!-- Advance Search Box for Customer -->
+				    <!--------------------Start------------------------------------->
+                    <div id="searchBoxCustomerAdvance" style="float:left;width : 340px; height: auto;" class="visible">
+
+                        <form name="advanceSearchCustomerForm" action="adm_searchMember.do" method="POST">
+                            <div style="padding: 5px"><b>Search Customer</b></div><br />
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchCustomerName")
+                                <div style="width:92px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.CustomerName")</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('advanceSearchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px;width:170px;" class="search_field"/></div>
+                                
+                               
+                                
+                                <div style="float:left;font-size:9px;width:45px; margin-left:5px;" >
+	                                <select name="searchOperatorForCustName" class="input_field1c">
+									  <option value="And">And</option>
+									  <option value="Or">Or</option>
+									</select>
+                                </div>
+                                
+                                <br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchOrderId")
+                                <div style="width:92px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.OrderId")</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('advanceSearchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field"/></div>
+                                
+                                 <div style="float:left;font-size:9px;width:45px; margin-left:5px;" >
+	                                <select name="searchOperatorForOrderId" class="input_field1c">
+									  <option value="And">And</option>
+									  <option value="Or">Or</option>
+									</select>
+                                </div>
+                                
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchOrderDate")
+                                <div style="width:92px;float:left">Order Date</div>
+                                
+                                
+                                
+                                <div style="float:left; ">
+                                	 <input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('advanceSearchCustomerForm');}" style="width:150px;" id="orderDate" date:closeAtTop="false" 
+                                	 	date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" 
+                                	 	name="$status.expression" value="$!{status.value}"
+                                	 	class="input_text_field" />
+                                </div>
+                                
+                                
+                                 <div style="float:left;font-size:9px;width:45px; margin-left:5px;" >
+	                                <select name="searchOperatorForOrderDate" class="input_field1c">
+									  <option value="And">And</option>
+									  <option value="Or">Or</option>
+									</select>
+                                </div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchCusEmailAddress")
+                                <div style="width:92px;float:left">Email Address</div>
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){doSearchCustomer('advanceSearchCustomerForm');}" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field"/></div>
+                                 
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <div style="padding: 5px;margin-left:55px;height:20px">
+                                
+								<!-- Checkbox to contrain customer search to selected reseller -->																
+                                <div class="constraint-customer">
+                                	#springBind("adminSearchForm.constrainedLearnerSearch")
+                                	#if($adminSelectedEntityType == 'DISTRIBUTOR')
+                                		<input id="constrainedCustomerSearchAdvance" name="constrainedCustomerSearch" type="checkbox" style="float:left;"/>
+                                		<div class="" style="float:left; margin-top: 2px; margin-left:5px; width:200px;">
+                                				$brander.getBrandElement("lms.administrator.search.limit.distributor")
+                                		</div>
+                                	#end
+									<br/><br/>
+								</div>
+								
+							</div>
+							<div style="padding: 5px;margin-right:50px;height:20px">	
+								<div style="float:right; margin-top:2px; margin-right:15px;">
+									<span class="button" onClick="doSearchCustomer('advanceSearchCustomerForm');">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Search</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+                                <div style="float:right; margin-top:2px; ">
+									<span class="button" onClick="toggleSearchBoxCustomerAdvance(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Cancel</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+                                
+                            </div>
+                            
+                            <input type="hidden" name="method" value="searchMembers"/>
+                            <input type="hidden" name="searchType" value="advanceCustomerSearch"/>
+                        </form>
+                        
+                        <div style="float:right; margin-top: 10px; margin-right:18px;">
+							<a style="color: #006699;" href="#" onclick="showAdminSearchBox(this, 'searchBoxCustomer');">
+								<u>Simple Search</u>
+							</a>	
+						</div>
+                        
+                        <br /><br /><br />
+                		
+                    </div>
+                    <!--------------------END------------------------------------->
+				    <!-- Advance Search Box for Customer -->
+                    <!--------------------END------------------------------------->
+                    
+                    
+                    <!-- Search Box Learner -->
+                   <div id="searchBoxLearner" style="float:left;height: auto;" class="visible">
+
+                        <form name="searchLearnerForm" action="adm_searchMember.do" method="POST">
+                            <div style="padding: 5px"><b>Search Learner </b></div><br />
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchFirstName")
+                                <div style="width:75px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.FirstName")</div>
+                                <div style="float:left"><input onKeyPress="if(event.keyCode==13){doSearchLearner();}" type="text" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchLastName")
+                                <div style="width:75px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.LastName")</div>
+                                <div style="float:left"><input onKeyPress="if(event.keyCode==13){doSearchLearner();}" type="text" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px"  class="search_field"/></div><br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px">
+                                #springBind("adminSearchForm.searchEmailAddress")
+                                <div style="width:75px;float:left">$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div>
+                                <div style="float:left"><input onKeyPress="if(event.keyCode==13){doSearchLearner();}" type="text" name="$status.expression" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" />
+                            </div>
+                            <div style="padding: 5px;margin-left:20px;margin-right:20px;height:20px">
+                                
+								<!-- Checkbox to contrain learner search to selected reseller -->
+								<div class="constraint-learner">
+									#springBind("adminSearchForm.constrainedLearnerSearch")
+									#if(($adminSelectedEntityType == 'CUSTOMER') || ($adminSelectedEntityType == 'DISTRIBUTOR'))
+										<input name="constrainedLearnerSearch" id="constrainedLearnerSearch" type="checkbox" style="float:left;"/>
+										<div class="" style="float:left; margin-top: 2px; margin-left:5px; width:200px;">
+											#if($adminSelectedEntityType =='CUSTOMER')
+												$brander.getBrandElement("lms.administrator.search.limit.customer")
+											#elseif($adminSelectedEntityType == 'DISTRIBUTOR')
+												$brander.getBrandElement("lms.administrator.search.limit.distributor")
+											#end
+									</div><br/><br/>
+									#end
+								</div>
+                                
+								<div style="float:right; margin-top:2px; margin-right:15px;">
+                                    <span class="button" onClick="doSearchLearner();">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Search</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+                                <div style="float:right; margin-top:2px; ">
+									<span class="button" onClick="toggleSearchBoxLearner(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal">Cancel</div>
+										<div class="btn_end"></div>
+									</span>
+                                </div>
+								
+                            </div>
+                            <input type="hidden" name="advancedSearch" value="true"/>
+                            <input type="hidden" name="method" value="searchMembers"/>
+                            <input type="hidden" name="searchType" value="learnerSearch"/>
+                        </form>
+                        <br /><br />
+                    </div>
+
+                    <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                        <!-- Search Buttons -->                       
+						 <div style="float:left; height:23px;">
+							<div style="float:left; margin-top:2px;">
+							  <a onclick="showAdminSearchBox(this, 'searchBoxDistributor');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.admin.searchReseller")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:2px;">
+							  <a onclick="showAdminSearchBox(this, 'searchBoxCustomer');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Search Customer</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:2px;">
+							  <a onclick="showAdminSearchBox(this, 'searchBoxLearner');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Search Learner</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+						</div>
+                        <!-- Search Buttons -->
+
+                       #springBind("adminSearchForm.adminSearchMemberList")
+                       $pager.setItems($status.value)
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                            #set($pageCurrIndex = $pager.index)
+                            #set($sortColumnIndex = $adminSearchForm.sortColumnIndex)
+                            #set($sortDirection = $adminSearchForm.sortDirection)
+                           
+                        #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                            #set($pageCurrIndex = 0)
+                            #set($sortColumnIndex = 0)
+                            #set($sortDirection = 0)
+                          
+                        #end
+                        <form name="nextPreviousForm" name="searchResultForm" action="adm_searchMember.do" method="POST">
+                            <div class="result_left_side">
+                                <!-- All Icon -->
+                                #if($pager.total>0)
+                                <div  class="icon_all" value="Search" name="_target1"  onclick="onAllPage();" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                #end 
+                                <!-- Next Icon -->
+                                #if ( $pager.nextIndex )
+                                <div id="goNext" value="Search" name="_target1" onclick="onNextPage($pager.nextIndex);" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
+                                #else
+                                <div class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                <!-- Back Icon -->
+                                #if( $pager.prevIndex )
+                                <div id="goBack" value="Search" name="_target1" onclick="onPreviousPage($pager.prevIndex);" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+                                #else 
+                                <div class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                <!-- Showing Results -->
+                                #set($firstIndex = $pageFirstIndex+1)
+                                #set($lastIndex = $pageLastIndex+1)
+                                <div id="resultDescription" class="box_description">Showing #if($totalCount != 0) $firstIndex - $lastIndex #else $pageFirstIndex - $pageLastIndex #end of $totalCount</div>
+                                <input type="hidden" id="action" name="action" value="" />
+                                <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                                <input type="hidden" id="showAll" name="showAll" value="false" />
+                                <input type="hidden" id="actionmethod" name="method" value=""/>
+								<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+								<input type="hidden" id="sortIndex" name="sortIndex" value="$sortIndex" />
+                                <input type="hidden" id="direction" name="direction" value="$direction" />
+                            </div>
+                        </form>
+
+                    </div><!-- Result Header End -->
+                    <div id="searchResult"><!-- searchResult -->
+                        <form name="searchResultForm" action="adm_searchMember.do" method="POST" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+
+                                <input type="hidden" id="lastShowAll" name="showAll" value="false" />
+                                <input type="hidden" id="lastActionmethod" name="method" value=""/>
+                                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$sortColumnIndex" />
+                                <input type="hidden" id="sortDirection" name="sortDirection" value="$sortDirection" />
+                                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+
+                            <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+
+							<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
+							#set($currentDistributorCallLogging=$!{request.getSession(true).getAttribute("DISTRIBUTOR-FOR-CALL-LOGGING")})
+
+                            #springBind("adminSearchForm.searchType")
+                            #set($searchType=$status.value)
+                            
+                            #springBind("adminSearchForm.adminSearchMemberList")
+                            #if($status.value)
+                                  #if($status.value.size()>0)
+                                        #if (!$context.sortDirection && !$context.sortColumnIndex)
+                                                <tr bgcolor="#efefef">
+                                                        <td class="box_subheader" width="200px" height="22px"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==0)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==0)class="icon_down"#end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Name")</div></td>
+                                                        <td class="box_subheader" width="100px"><div onClick=#if(!$context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="typeSort" #if(($context.sortColumnIndex==1)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==1)class="icon_down" #end   ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Type")</div></td>
+                                                        <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==2)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==2)class="icon_down" #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div></td>
+                                                        <td class="box_subheader" width="70px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('3','1','$!context.showAll');" #else "sortLearner('3','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==3)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==3)class="icon_down" #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</div></td>
+                                                        
+                                                        #if($searchType == "customerSearch")
+                                                        	<!-- <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('4','1','$!context.showAll');" #else "sortLearner('4','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==3)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==3)class="icon_down" #end ></div>Contract Creation date</div></td> -->
+															<td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('4','1','$!context.showAll');" #else "sortLearner('4','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==3)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==4)class="icon_down" #end ></div>Original Contract Creation date</div></td>
+															<td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('5','1','$!context.showAll');" #else "sortLearner('5','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==4)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==5)class="icon_down" #end ></div>Recent Contract Creation date</div></td>
+                                                        #end                                                    
+                                                        
+                                                        #if($searchType=="learnerSearch")
+                                                          <td class="box_subheader" width="150px" ><div>$brander.getBrandElement("lms.administrator.searchMember.caption.customer")</div></td>
+														  <td class="box_subheader" width="150px" ><div>$brander.getBrandElement("lms.administrator.searchMember.caption.reseller")</div></td>
+														#end
+                                                        <!-- should be if this funcitonality enabled and we are in learner mode -->
+
+														<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
+                                                        #if($!{currentDistributorCallLogging} == 'Yes')
+                                                        
+                                                            <td class="box_subheader"> $brander.getBrandElement("lms.admin.jira.link.lognewcall.caption")</td>
+                                                            <td class="box_subheader">$brander.getBrandElement("lms.admin.jira.link.opencalls.caption")</td> 
+                                                            <td class="box_subheader">$brander.getBrandElement("lms.admin.jira.link.allcalls.caption")</td>	
+                                                        #end												
+
+                                                </tr>
+                                        #else
+                                                <tr bgcolor="#efefef">
+                                                    <td class="box_subheader" width="200px" height="22px"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 0)) class="icon_up" #elseif($context.sortColumnIndex == 0) class="icon_down"  #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Name")</div></td>
+                                                        <td class="box_subheader" width="100px"><div onClick=#if(!$context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="typeSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 1)) class="icon_up" #elseif($context.sortColumnIndex == 1) class="icon_down"  #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Type")</div></td>
+                                                        <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 2)) class="icon_up" #elseif($context.sortColumnIndex == 2) class="icon_down"  #end></div>$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div></td>
+                                                        <td class="box_subheader" width="70px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('3','1','$!context.showAll');" #else "sortLearner('3','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 3)) class="icon_up" #elseif($context.sortColumnIndex == 3)class="icon_down"  #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</div></td>														
+														
+														#if($searchType == "customerSearch")
+															<!--<td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('4','1','$!context.showAll');" #else "sortLearner('4','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==4)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==3)class="icon_down" #end ></div>Contract Creation date</div></td> -->
+															<td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('4','1','$!context.showAll');" #else "sortLearner('4','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==4)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==4)class="icon_down" #end ></div>Original Contract Creation date</div></td>
+															<td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('5','1','$!context.showAll');" #else "sortLearner('5','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortColumnIndex==4)&&($context.sortDirection == 0))class="icon_up" #elseif($context.sortColumnIndex==5)class="icon_down" #end ></div>Recent Contract Creation date</div></td>
+														#end
+														
+														#if($searchType=="learnerSearch")
+														  <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('4','1','$!context.showAll');" #else "sortLearner('4','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 4)) class="icon_up" #elseif($context.sortColumnIndex == 4)class="icon_down"  #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.customer")</div></td>
+														  <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('5','1','$!context.showAll');" #else "sortLearner('5','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 5)) class="icon_up" #elseif($context.sortColumnIndex == 5)class="icon_down"  #end ></div>$brander.getBrandElement("lms.administrator.searchMember.caption.reseller")</div></td>
+														#end
+														<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
+                                                        #if($!{currentDistributorCallLogging} == 'Yes')
+
+                                                            <td class="box_subheader"> $brander.getBrandElement("lms.admin.jira.link.lognewcall.caption")</td>
+                                                            <td class="box_subheader">$brander.getBrandElement("lms.admin.jira.link.opencalls.caption")</td> 
+                                                            <td class="box_subheader">$brander.getBrandElement("lms.admin.jira.link.allcalls.caption")</td>	
+                                                        #end		
+                                                </tr>
+
+                                        #end
+                                        #set($adminSearchMember = $status.value)
+                                        #set($count = 0)
+                                        #set($resultSetLength = ${adminSearchMember.size()} - 1)
+                                        #foreach($loopindex in [0..${resultSetLength}]) 
+                                            #set($searchMember = $!{adminSearchMember.get($loopindex)})												
+											
+                                            #if($count%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+                                            <tr>
+                                                <td class="$alternate" width="200px" >#if($!{searchMember.currentSearchType} == 'CUSTOMER') <a href="#springUrl("/admSelectCustomer.do?customer=$!{searchMember.id}")" > #elseif($!{searchMember.currentSearchType} == 'DISTRIBUTOR') <a href="#springUrl("/admSelectDistributor.do?distributor=$!{searchMember.id}")" >  #else <a href="#springUrl("/admSelectLearner.do?learner=$!{searchMember.id}")" > #end $!{searchMember.name}</a></td>
+                                                <td class="$alternate" width="100px">&nbsp;#if($!{searchMember.currentSearchType} == 'CUSTOMER') Customer #elseif($!{searchMember.currentSearchType} == 'DISTRIBUTOR')  $brander.getBrandElement("lms.admin.reseller")    #else Learner #end</td>
+                                                <td class="$alternate" width="150px">&nbsp;  #if($!{searchMember.eMail})  #dotPaddingWithOutTitle($!{searchMember.eMail} 40) #else &nbsp; &nbsp; #end</td>
+                                                <td class="$alternate" width="70px">&nbsp;#if($!{searchMember.status}) Active #else Inactive #end</td>
+                                                
+                                                #if($searchType == "customerSearch")
+                                                	<!-- <td class="$alternate" width="70px">&nbsp;$!{searchMember.contractCreationDate} </td> -->
+													<td class="$alternate" width="70px">&nbsp;$!{searchMember.originalContractCreationDate} </td>
+													<td class="$alternate" width="70px">&nbsp;$!{searchMember.recentContractCreationDate} </td>
+                                                #end
+                                                
+                                                #if($!{searchMember.currentSearchType} == 'LEARNER')
+                                                  <td class="$alternate" width="150px">&nbsp;$!{searchMember.customer.name}</td>
+                                                  <td class="$alternate" width="150px">&nbsp;$!{searchMember.customer.distributor.name}</td>
+                                                #end
+                                                
+
+<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
+#if($!{currentDistributorCallLogging} == 'Yes')
+
+                                                    <td class="$alternate"><a href="$brander.getBrandElement("lms.admin.jira.link.lognewcall")
+#if($!{searchMember.currentSearchType} == 'DISTRIBUTOR')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.resellerCode}
+#elseif($!{searchMember.currentSearchType} == 'CUSTOMER')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#else
+&$brander.getBrandElement("lms.jira.learner.customfield")=$!{searchMember.id}&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#end
+&$brander.getBrandElement("lms.jira.newplatform.customfield")=$brander.getBrandElement("lms.jira.platform")" target="_newwin">$brander.getBrandElement("lms.admin.jira.link.lognewcall.caption")</a></td>										
+                                                    <td class="$alternate"><a href="$brander.getBrandElement("lms.admin.jira.link.opencalls")
+#if($!{searchMember.currentSearchType} == 'DISTRIBUTOR')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.resellerCode}
+#elseif($!{searchMember.currentSearchType} == 'CUSTOMER')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#else
+&$brander.getBrandElement("lms.jira.learner.customfield")=$!{searchMember.id}&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#end
+&$brander.getBrandElement("lms.jira.newplatform.customfield")=$brander.getBrandElement("lms.jira.platform")" target="_newwin"> $brander.getBrandElement("lms.admin.jira.link.opencalls.caption")</a></td>										
+                                                    <td class="$alternate"><a href="$brander.getBrandElement("lms.admin.jira.link.allcalls")
+#if($!{searchMember.currentSearchType} == 'DISTRIBUTOR')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.resellerCode}
+#elseif($!{searchMember.currentSearchType} == 'CUSTOMER')
+&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#else
+&$brander.getBrandElement("lms.jira.learner.customfield")=$!{searchMember.id}&$brander.getBrandElement("lms.jira.customer.customfield")=$!{searchMember.customerCode}
+#end
+&$brander.getBrandElement("lms.jira.newplatform.customfield")=$brander.getBrandElement("lms.jira.platform")" target="_newwin"> $brander.getBrandElement("lms.admin.jira.link.allcalls.caption")</a></td>
+
+#end		
+                                            </tr>
+                                            #set($count = $count+1)
+                                        #end
+                                   #else
+                                        <tr bgcolor="#efefef">
+                                            <td class="box_subheader" width="200px" height="22px"><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Name")</td>
+                                            <td class="box_subheader" width="100px"><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Type")</div></td>
+                                            <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div></td>
+                                            <td class="box_subheader" width="70px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</div></td>
+                                            #if($!{searchMember.currentSearchType} == 'LEARNER')
+                                    	      <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.customer")</div></td>
+                                    	      <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.reseller")</div></td>										
+									        #end
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                <div class="result_blank">#if($request.getParameter("newPage").equals("true")) To search click on the Search button above #else $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #end</div>
+                                            </td>
+                                        </tr>
+                                   #end
+                             #else
+                                <tr bgcolor="#efefef">
+                                    <td class="box_subheader" width="200px" height="22px"><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Name")</td>
+                                    <td class="box_subheader" width="100px"><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Type")</div></td>
+                                    <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div></td>
+                                    <td class="box_subheader" width="70px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</div></td>
+                                    #if($!{searchMember.currentSearchType} == 'LEARNER')
+                                    	<td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.customer")</div></td>
+                                    	<td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.administrator.searchMember.caption.reseller")</div></td>										
+									#end
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                        <div class="result_blank">#if($request.getParameter("newPage").equals("true")) To search click on the Search button above #else $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #end</div>
+                                    </td>
+                                </tr>
+                             #end
+                            </table>
+                        </form>
+                    </div><!-- searchResult -->
+
+                </div><!-- content-Block-new -->
+        </td></tr>
+		<!-- Content area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+		
+    </table><!-- main-container -->
+<!-- tooltip -->
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.enrollment.searchEnrollment.blankSearch.error")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div>-->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div>
+
+<!-- tooltip -->
+</body>
+</html>

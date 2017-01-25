@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/learnerNewHead.vm")
+        <script>
+            function backToCourses() {
+            history.go(-1) ;
+            }
+            $(document).ready(function(){
+            $('#courseDataContainer div[datarow="true"]:odd').addClass("oddRow");
+            $('#courseDataContainer div[datarow="true"]:even').addClass("evenRow");
+            });
+        </script>
+    </head>
+    #set($rowClass='style=background-color:#f4f4f4')
+    #macro(toogleRowClass $rowClass)
+        #if($rowClass=='style=background-color:#f4f4f4')
+            #set($rowClass='style=background-color:#ffffff')
+            #elseif($rowClass=='style=background-color:#ffffff')
+                #set($rowClass='style=background-color:#f4f4f4')
+        #end
+    #end
+    <body>
+        <form name="CourseForm" id="CourseForm">
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+                <!-- Header Row -->
+                <tr>
+                    <td id="header" colspan="2">
+                        #parse("snippets/learnerNewHeader.vm")
+                    </td>
+                </tr>
+                <!-- Page -->
+                <tr id="main">
+                    <!-- Page Content -->
+                    <td id="content">
+                        <!-- Page Scrollable Area -->
+                        <div id="scrollable">	
+                            <!-- Logo+Manage-User -->
+                            <div class="page_description" id="pageDescription" style="margin-left:0px;">
+                                <!-- Page Icon -->
+                                <div class="courseLogoCourses" id="logoHolder"></div>
+                                <!-- Page Heading -->
+                                <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.courseDesc.label.heading")</div>
+                                <!-- Page Description -->
+                                <div id="learner_pageDescription">$brander.getBrandElement("lms.courseDesc.label.fullDescHeading")</div>
+                            </div>
+                            <!-- Logo+Manage-User-end -->
+                            <!-- scrollable-div -->                
+                            <table id="course-table" border="0" cellpadding="0" cellspacing="0" width="98%">
+                                <!-- Back to Detail button -->
+                                <tr>
+                                    <td>
+                                        <div style="float:right; margin-top:5px;">
+                                            <a onclick="return backToCourses();" style="text-decoration:none;">
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.backtocoursedetails")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Course Summary -->
+                                #if ( 	( ${context.course.courseId} != "" ) 
+                                    || 	( ${context.course.courseType} != "" ) 
+                                    || 	( ${context.course.credithour} != "" )
+                                    ||	( ${context.course.description} != "" ) )
+                                    <tr>
+                                        <td> 
+                                            #set($rowClass='style=background-color:#f4f4f4')
+                                            <table id="courseDetailCss" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                #toogleRowClass($rowClass)
+                                                <tr $rowClass  >
+                                                    <td  colspan=2 class="header">${context.course.courseTitle}</td>
+                                                </tr>
+                                                #if ( ${context.course.courseId} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.courseId")</td>
+                                                        <td class="table-row" >$!{context.course.bussinesskey}</td>
+                                                    </tr>
+                                                #end
+                                                #if ( ${context.course.courseType} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.courseType")</td>
+                                                        <td class="table-row" >$!{context.course.courseType}</td>
+                                                    </tr>
+                                                #end
+                                                
+                                                #*
+                                                #if ( (${context.CourseApprovalCreditHours}) )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.creditHours")</td>
+                                                        <td class="table-row" >$!{context.CourseApprovalCreditHours}&nbsp;</td>
+                                                    </tr>
+                                                #end
+                                                
+                                                
+                                                #if ((!${context.CourseApprovalCreditHours})  && (${context.course.ceus} != "") && (${context.course.ceus} != "0.0"))
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px">$brander.getBrandElement("lms.courseDesc.label.duration")</td>
+                                                        <td class="table-row" >$!{context.course.ceus}&nbsp;</td>
+                                                    </tr>
+                                                #end
+                                                *#
+                                                #if ( ${context.course.description} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.courseDescription")</td>
+                                                        <td class="table-row" style="text-transform:none">$!{context.course.description}</td>
+                                                    </tr>
+                                                #end
+                                            </table>
+                                        </td>
+                                    </tr>
+                                #end
+                                <!-- Course Overview -->
+                                #if ( 	( ${context.course.courseGuide} != "" ) 
+                                    || 	( ${context.course.coursePrereq} != "" ) )
+                                    <tr>
+                                        <td>
+                                            #set($rowClass='style=background-color:#f4f4f4')
+                                            <table id="courseDetailCss" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                #toogleRowClass($rowClass)
+                                                <tr $rowClass  >
+                                                    <td  colspan=2 class="header">$brander.getBrandElement("lms.courseDesc.label.courseOverview")</td>
+                                                </tr>
+                                                #if ( ${context.course.courseGuide} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.courseGuide")</td>
+                                                        <td class="table-row"  style="text-transform:none">$!{context.course.courseGuide}</td>
+                                                    </tr>
+                                                #end
+                                                #if ( ${context.course.coursePrereq} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.prerequisites")</td>
+                                                        <td class="table-row" style="text-transform:none" >$!{context.course.coursePrereq}</td>
+                                                    </tr>
+                                                #end						
+                                            </table>
+                                        </td>
+                                    </tr>
+                                #end
+                                <!-- Exam Overview -->
+                                #if ( 	( ${context.course.learningObjectives} != "" ) 
+                                    || 	( ${context.course.quizInfo} != "" ) 
+                                    || 	( ${context.course.finalExamInfo} != "" )
+                                    || 	( ${context.course.endofCourseInstructions} != "" ) )
+                                    <tr>
+                                        <td>
+                                            #set($rowClass='style=background-color:#f4f4f4')
+                                            <table id="courseDetailCss" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                #toogleRowClass($rowClass)
+                                                <tr $rowClass  >
+                                                    <td  colspan=2 class="header">$brander.getBrandElement("lms.courseDesc.label.examOverview")</td>
+                                                </tr>
+                                                #if ( ${context.course.learningObjectives} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.learningObjectives")</td>
+                                                        <td class="table-row"  style="text-transform:none" >$!{context.course.learningObjectives}</td>
+                                                    </tr>
+                                                #end
+                                                #if ( ${context.course.quizInfo} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.quizInfo")</td>
+                                                        <td class="table-row" style="text-transform:none" >$!{context.course.quizInfo}</td>
+                                                    </tr>
+                                                #end
+                                                #if ( ${context.course.finalExamInfo} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.finalExamInfo")</td>
+                                                        <td class="table-row" style="text-transform:none">$!{context.course.finalExamInfo}</td>
+                                                    </tr>
+                                                #end	
+                                                #if ( ${context.course.endofCourseInstructions} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.endInstructions")</td>
+                                                        <td class="table-row" style="text-transform:none" >$!{context.course.endofCourseInstructions}</td>
+                                                    </tr>
+                                                #end					
+                                            </table>
+                                        </td>
+                                    </tr>
+                                #end
+                                <!-- Additional Details -->
+                                #if ( 	( ${context.course.deliveryMethod} != "" ) 
+                                    || 	( ${context.course.approvedcoursehours} != "" ) 					
+                                    || 	( ${context.course.approvalNumber} != "" ) )
+                                    <tr>
+                                        <td>
+                                            #set($rowClass='style=background-color:#f4f4f4')
+                                            <table id="courseDetailCss" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                #toogleRowClass($rowClass)
+                                                <tr $rowClass  >
+                                                    <td  colspan=2 class="header">$brander.getBrandElement("lms.courseDesc.label.additionalDetails")</td>
+                                                </tr>
+                                                #if ( ${context.course.deliveryMethodId} != "" )
+                                                    #toogleRowClass($rowClass)
+                                                    <tr $rowClass>
+                                                        <td class="table-row" width="150px" >$brander.getBrandElement("lms.courseDesc.label.deliveryMethod")</td>
+                                                        <td class="table-row" style="text-transform:none">
+                                                        
+                                                          		#set( $deliveryMethods = $brander.getBrandMapElements("lms.Instructor.SynchronousCourse.DeliveryMethod") )
+								                                #foreach ($dMethods in $deliveryMethods)
+								                                    #if($dMethods.value == "$!{context.course.deliveryMethodId}")
+								                                       $!{dMethods.label}
+								                                    #end
+								                                #end
+                                                        
+                                                        </td>
+                                                    </tr>
+                                                #end
+                                               
+                                                
+                                               									
+                                            </table>
+                                        </td>
+                                    </tr>
+                                #end				
+                            </table>
+                            <!-- space -->
+                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                            <!-- space -->
+                        </div>
+                        <!-- END: Page Scrollable Area -->				
+                    </td>
+                </tr>
+                <!-- END: Page-->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        #parse("snippets/learnerNewFooter.vm")
+                    </td>
+                </tr>
+            </table>
+            <div id="process" style="display:none;">
+                <div id="prcWndw" class="process_window">
+                    <div class="icon_clock"></div>
+                    <div class="process_heading">$brander.getBrandElement("lms.learner.mycourses.caption.wait.defaulttext")</div>
+                    <div id="process_text" class="processing_text">$brander.getBrandElement("lms.learner.mycourses.caption.wpage.defaulttext")</div>
+                    <div class="bars_container">
+                        <div class="progress_bar"></div>
+                        <div id="status_bar" class="status_bar"></div>
+                    </div>
+                </div>
+                <div class="process_window_shadow"></div>
+            </div>
+        </form>
+    </body>
+</html>

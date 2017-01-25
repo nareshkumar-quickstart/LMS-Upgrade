@@ -1,0 +1,64 @@
+<script>
+function SetOptionsforCourseStatus() {
+
+	var divOption = '';	
+    divOption = '<tr><td class="row_1"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="affidavitreceived"></td>';
+    divOption+= '<td class="row_1"><label for="affidavitDisputed">  $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitReceived") </label> </td>';
+    divOption+='</tr><tr>';
+    divOption+='<td class="row_2"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="affidavitpending"></td>)';
+    divOption+='<td class="row_2"><label for="affidavitDisputed">  $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitPending") </label> </td>';
+    divOption+='</tr>';
+    $("#courseStatusTable").html("");
+	$("#courseStatusTable").html(divOption);
+     
+}
+</script>
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+#set($reversalPermissionGranted = $userPermissionChecker.hasAccessToFeature("LMS-ACC-0019", $userData, $ssn))
+				<input type="hidden" id="reversalPermission" name="reversalPermission" value="$reversalPermissionGranted" />
+				<div id="changeStatusBox" style="float:left; #if($reversalPermissionGranted) height:350px; #else height:350px; #end width:300px; left:37%;" class="visible">
+                    <h2 style="text-align: center"><b>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.caption.courseChangeStatus")</b></h2>
+                    <b>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.caption.courseChangeStatusDescription")</b>
+                   
+                    <table id="courseStatusTable" name="courseStatusTable" style="box-shadow: 5px 5px 5px #888888; border-top: 1px; border-collapse: collapse; margin-left: 75px; margin-bottom: 15px; margin-top: 15px;">
+                    	<tr bgcolor="#efefef">
+                    		<th colspan="2" class="box_subheader"><b>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.caption.courseChangeStatusTable.header")</b></th>
+	                    </tr>
+ 					<div id="changestatusboxContent">
+              
+	                    <tr>
+	                    	<td class="row_1"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="affidavitreceived"></td>
+	                    	<td class="row_1"><label for="affidavitDisputed"> $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitReceived") </label> </td>
+                    	</tr>
+	                    <tr>
+	                    	<td class="row_2"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="affidavitpending"></td>
+	                    	<td class="row_2"><label for="affidavitDisputed"> $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitPending") </label> </td>
+                    	</tr>	                    	
+
+	                    <tr>
+	                    	<td class="row_1"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="affidavitdisputed"></td>
+	                    	<td class="row_1"><label for="affidavitDisputed"> $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitDisputed") </label> </td>
+                    	</tr>
+	                    <tr>
+	                    	<td class="row_2"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="completed"></td>
+	                    	<td class="row_2"><label for="affidavitDisputed"> $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.completed") </label> </td>
+                    	</tr>
+	                    <tr>
+	                    	<td class="row_1"><input type="radio" id="update_courseStatus" name="update_courseStatus" value="reported"></td>
+	                    	<td class="row_1"><label for="affidavitDisputed"> $brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.reported") </label> </td>
+                    	</tr>
+                      </div>
+                    </table>
+                    
+                    <div style="float: right; margin-top: 2px; margin-right: 15px;">
+                        <div class="btn_start"></div>
+                        <div onclick="confirmStatusChange();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.confirm")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float: right; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onmousedown="showChangeStatusBox();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.cancel")</div>
+                        <div class="btn_end"></div>
+                    </div> 
+                </div>

@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script language="javascript" type='text/javascript' src='javascript/predict-common-ui.js'></script>
+<script type='text/javascript' language="javascript" src='javascript/jquery.simplemodal.js' ></script>
+
+<link rel="stylesheet" type="text/css" media="screen" href="brands/default/en/css/jquery-ui.css" />
+<script type="text/javascript" src="javascript/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="javascript/jquery-ui-1.9.2.js"></script>
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+
+    document.title="$brander.getBrandElement("lms.surveyPreview.caption.title")";
+
+    function backForm(){
+        document.getElementById("actionmethod").value='backDisplaySurvey';
+        document.previewSurveyForm.submit();
+    }
+
+    function nextForm(){
+        document.getElementById("actionmethod").value='showSurveyView';
+        document.previewSurveyForm.submit();
+    }
+
+    function sendMail(){
+        document.getElementById("actionmethod").value='sendMail';
+        document.previewSurveyForm.submit();
+    }
+	
+			
+	function addFile(divKey) {
+		var divId = "#"+divKey+".fileUploadDivList";
+		var objDiv = $(divId);
+		var fileElementHTML = " <input type='file' name='file-" + divKey + "'> ";
+		var delButtonHTML = " <a href='#' onclick='javascript:delFile(this);'><img src='brands/default/en/images/12-em-cross.png' /></a> ";
+		var inputHTML = "<div class='fileUploadItem'>" + fileElementHTML + delButtonHTML + "</div>";
+		objDiv.append(inputHTML);
+	}
+	
+	function delFile(delElm) {
+		var delObj = $(delElm);
+		var fileContainer = delObj.parent().parent();
+		delObj.parent().remove();
+	}
+	
+	function reindexFiles() {
+		$('.fileUploadDivList').each(function(idx, elm){
+            var containerDiv = $(elm);
+            containerDiv.children().each(function(idx2, elm2){
+                fileElm = $(elm2).children().get(0);
+                var name = $(fileElm).attr('name');
+                name = name + "[" + idx2 + "]";
+                $(fileElm).attr('name', name);
+            });
+        });
+	}
+	
+	function showRequirements(param) {
+		var frameHtml = '<iframe width="100%" scrolling="auto" height="100%" style="border:0px;" border="0" src="/lms/mgr_SurveyQuestionPreview.do?method=frameworkRequirements&frameworkId=' + param + '"></iframe>';
+		var wrapperDiv = $('#requirementWrapperDiv');
+		if(wrapperDiv.size()>0) {
+		} else {
+		  $("body").append('<div style="display:none;" id="requirementWrapperDiv"></div>');
+		  wrapperDiv = $('#requirementWrapperDiv');
+		}
+		var innerDiv = $('<div style="" id="fh_div_'+param+'" ></div>');
+		innerDiv.html(frameHtml);
+		wrapperDiv.empty();
+		wrapperDiv.append(innerDiv);
+	    var btn =  [{ text: "Close", click: function() { $( this ).dialog( "close" ); } } ];
+		openDialog("fh_div_"+param,"$brander.getBrandElement("lms.survey.preview.framework.requirements")",btn);
+		
+	}
+</script>
+</head>
+#macro(mgrPreviewSections $sections $isChild)
+	#foreach($surveySection in $sections)
+		<!-- 1 -->
+        #if($isChild)
+        	#set($className="fwk_name")
+        #else
+        	#set($className="group-name")
+        #end
+        <div class="${className}"> <!--<a id="search-survey-search" href="mgr_SurveyQuestionPreview.do?method=cloneSection&surveyId=${context.survey.survey.id}&surveySectiondId=${surveySection.id}" class="btn_normal floatRight">$brander.getBrandElement("lms.survey.preview.clone")</a>--> <span class="floatLeft sectionLabel">${surveySection.name}</span></div>
+            
+        #set($questionNumber = 1)
+        #foreach($surveyQuestionBank in ${surveySection.surveyQuestionBanks})
+	       <div class="fwk_name"> <span class="floatLeft sectionLabel">${surveyQuestionBank.name}</span> &nbsp; <a href="#" class="floatRight" onclick="javascript:showRequirements(${surveyQuestionBank.id});">$brander.getBrandElement("lms.survey.preview.framework.requirements")</a></div>		
+            #foreach($surveyQuestion in $surveyQuestionBank.surveyQuestions)
+                <div class="preview_responses">
+                     <p>$questionNumber. ${surveyQuestion.surveyQuestionRef.text}</p>
+                     #if($!{surveyQuestion.surveyQuestionRef.notes})
+                         <p>
+                            $!{surveyQuestion.surveyQuestionRef.notes}
+                         </p>
+                     #end
+                     
+                    <div>
+                        <input type="hidden" name="sectionsArray" value="$!{surveySection.id}" />
+                        <input type="hidden" name="questionBanksArray" value="$!{surveyQuestionBank.id}" />
+                        <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" />
+						#set($fileDivKey = "${surveySection.id}-${surveyQuestionBank.id}-${surveyQuestion.surveyQuestionRef.id}")
+						<input type="hidden" name="fileRequired" value="$!{surveyQuestion.fileRequired}-${fileDivKey}" />
+                        #set($prefix = "survey.questionList[$idx]")
+                        $surveyQuestion.renderQuestion($prefix)
+						
+						#if(${surveyQuestion.canHaveFile})
+							<div class="fileUploadDiv" id="div-${fileDivKey}" >
+								<fieldset>
+									<legend>
+										$brander.getBrandElement("lms.survey.preview.uploadFiles") #if(${surveyQuestion.fileRequired})<span class="required-field">*</span>#end
+									</legend>
+    								<div class="fileUploadDivList" id="${fileDivKey}">
+	                                    <div class="clearfix"></div>
+                                        <a href="#" onclick="javascript:addFile('${fileDivKey}');" class="btn_normal">$brander.getBrandElement("lms.survey.preview.addMoreFiles")</a><div class="clearfix"></div>
+                                    </div>
+									#if(${surveyQuestion.fileRequired})
+										<script type="text/javascript">addFile("${fileDivKey}");</script>
+									#end
+                                    <div class="clearfix"></div><br />
+                                    $brander.getBrandElement("lms.survey.preview.uploadFileSize")
+                                </fieldset>
+							</div>
+						#end
+                    </div>
+                </div>
+                #set($questionNumber = $questionNumber + 1)
+                #set($idx=($idx+1))
+            #end
+        #end
+        <!-- End-User-left-right-list -->
+            
+        <!-- 1-end -->
+		#if(${surveySection.children} && ${surveySection.children.size()}>0)
+			#mgrPreviewSections(${surveySection.children} true)
+		#end
+		
+	#end
+#end
+<body>
+<form name="previewSurveyForm" method="POST" action="mgr_SurveyQuestionPreview.do">
+
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             <!-- header -->
+             #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                 #parse("snippets/adminHeader.vm")
+             #else
+                 #parse("snippets/managerHeader.vm")
+             #end
+             <!-- header-end -->
+			 </td>
+		</tr>
+		
+         <tr id="main"> <!-- SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+				<td id="left-navigation" valign="top">
+					 <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+
+        <!-- left-pannel-content -->
+           
+				#parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table>
+			</td>
+			
+             <td id="content">
+					<div id="scrollable" class="predictLMS">
+
+                <!-- Logo+Manage-User -->
+                
+                            <!-- Page Description -->
+                            <div id="pageDescription" class="page_description" >
+                                <!-- Page Icon -->
+                                <div id="pageIcon" class="icon_surveys"></div>
+                                <!-- Page Heading -->
+                                <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.surveyPreview.caption.title")</div>
+                                <!-- Page Description -->
+                                <div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.searchMember.caption.currentlypreviewing")</div>
+                            </div>
+                        
+                <!-- Logo+Manage-User-end -->
+				<div id="resultBox" class="search_box_result">
+                <h2 class="box_header">$brander.getBrandElement("lms.mycourses.dropdown.survey") : ${context.survey.survey.name}</h2>
+                      
+                  #set($idx=0)
+                  #mgrPreviewSections(${context.survey.surveySectionVO} false)
+				</div>
+                    
+            </div><!-- right-pannel -->
+        </td></tr><!-- content2a -->
+
+		<tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            #parse("snippets/adminFooter.vm")
+        #else
+            #parse("snippets/managerFooter.vm")
+        #end
+        <!-- footer-end -->
+		</td>
+		</tr>
+
+    </table><!-- main-container -->
+</form>
+</body>
+</html>

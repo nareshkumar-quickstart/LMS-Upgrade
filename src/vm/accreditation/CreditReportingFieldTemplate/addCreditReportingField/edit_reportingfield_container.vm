@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+     #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+
+        function cancelCreditReportingField() {
+            document.getElementById('action').value="processCancel";
+            document.editReportingField.submit();
+        }
+
+        function saveCreditReportingField() {
+            document.getElementById('action').value="saveReportingField";
+            document.editReportingField.submit();
+        }
+    </script>
+</head>
+<body>
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+                #springBind("reportingFieldForm.*")
+                #if($status.error)  
+                    <!-- error-box -->
+                    <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                            </div>
+                        #end
+                    </div>
+                    <!-- error-box -->
+                #end
+
+                <!-- Page Description -->
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">Edit Credit Reporting Field</div>
+		<div id="page-help">$brander.getBrandElement("lms.accreditation.editCustomField.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>				
+                
+
+                <form name="editReportingField" method="post" action="acc_ManageReportingField.do">
+                    <input type="hidden" id="action" name="method" />
+                    
+                    #springBind("reportingFieldForm.reportingFieldId") 
+                    #if($!{context} && $!{context.prevCrfId} && ${context.prevCrfId} > 0)
+                    	<input type="hidden" id="crfId" name="crfId" value ="${context.prevCrfId}" />
+                    #else
+                    	<input type="hidden" id="crfId" name="crfId" value ="$!{status.value}" />
+                    #end
+                    
+                    <div class="search_box_result"><!-- search_box_result -->
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Type")</span></div>
+
+                        #springBind("reportingFieldForm.fieldType")
+                        #if($!{status.value} == "Radio Button" )
+                            #parse("accreditation/CreditReportingFieldTemplate/addCreditReportingField/add_reportingfield_detail_radio.vm")
+                        #elseif($!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+                            #parse("accreditation/CreditReportingFieldTemplate/addCreditReportingField/add_reportingfield_detail_check.vm")
+                        #elseif($!{status.value} == "Static Field" )
+                            #parse("accreditation/CreditReportingFieldTemplate/addCreditReportingField/edit_reportingfield_detail_static.vm")    
+                        #else
+                            #parse("accreditation/CreditReportingFieldTemplate/addCreditReportingField/add_reportingfield_detail_text.vm")
+                        #end
+                    </div><!-- search_box_result -->
+                    <!-- ******************************************************** -->
+					<div class="btn-div">
+						<div style="float:right; margin-top:15px;">
+						  <a onClick="saveCreditReportingField();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>	
+						
+						<div style="float:right; margin-top:15px;margin-right:5px;">
+							<a onClick="cancelCreditReportingField();">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div>  
+					</div>	
+					
+					<!-- bottom-space -->
+					<div class="manage-bottom-space"></div>
+					<!-- bottom-space -->		
+					
+				</form>
+
+            </div><!-- scrollable -->
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+</body>
+</html>

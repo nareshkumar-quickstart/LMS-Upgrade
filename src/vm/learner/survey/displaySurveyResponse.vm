@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHeadPopup.vm")
+<script language="javascript" type="text/javascript">
+    function finishSurvey(){
+        document.getElementById('actionmethod').value='finishSurveyResponse';
+        document.displaySurveyForm.submit();
+    }
+    function nextForm(){
+        document.getElementById("actionmethod").value='showSurveyResponseView';
+        document.displaySurveyForm.submit();
+    }
+    function cancelform(){
+        document.getElementById("actionmethod").value='cancelDisplaySurvey';
+        document.displaySurveyForm.submit();
+    }
+
+        function checkAnswer(checkbox, id){
+		//alert(document.getElementById(id).value + "----" + document.getElementById(id).checked+"=="+checkbox.checked);
+            if( document.getElementById(id).value == "false"  ){ 
+			  
+				document.getElementById(id).value = true;}
+			else			
+				document.getElementById(id).value = false;
+        }
+  
+	
+$(document).ready(function() {
+ 
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            $('#message_box_saved').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+ 
+});
+</script>
+</head>
+<body> 
+			#set( $hasErrors = false )	
+            #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+            #set($questionNumber = $!{context.questionNo})
+			#set($surveyQuestionLoopStart = $!{context.questionNo})
+			#set($surveyQuestionLoopEnd = $!{context.totalQuestions})
+			#set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd - 1 )
+			#set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd + $surveyQuestionLoopStart )
+			 
+			 
+            #if($questionCount > 0)
+                #set($maxQuestionIndex = $questionCount - 1)			
+				#foreach( $index in [0..$surveyQuestionLoopEnd])				
+					#springBind("takeSurveyForm.survey.questionList[$index]")
+					#if( $status.error )
+						#set( $hasErrors = true )			
+					#end	
+				#end					 
+			#end
+			
+            #if($hasErrors)
+                <!-- error-box -->
+                <div id="message_box" style="float:left;clear:left;">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$brander.getBrandElement("lms.learner.error.responseRequired")</div>
+                        </div>
+ 
+
+                </div>			
+			#end
+<form name="displaySurveyForm" method="POST" action="lrn_surveyResponse.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>
+	<input type="hidden" id="action" name="questionNo" value="$!{context.questionNo}"/> 
+	<input type="hidden" id="action" name="totalQuestions" value="$!{context.totalQuestions}"/> 
+    <div id="main-container"><!-- main-container -->
+        <div id="content2a"><!-- content2a -->
+            <div id="right-pannel" style="margin-left:20px"><!-- content-area -->
+                <!-- contentLogo-area -->
+                <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.mainLogoContainer")">
+                    <div id="b4" class="courseTitleDiv2">
+                        <div id="b5" class="courseTitle1">${takeSurveyForm.survey.surveyRef.name}</div>
+                        <div id="b6" class="courseDetails">&nbsp;</div>
+                    </div>
+                </div>
+
+
+				
+
+
+				
+                <!-- contentLogo-area-end -->
+			#springBind("takeSurveyForm.survey.questionList")
+            #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+            #set($questionNumber = $!{context.questionNo})
+			#set($surveyQuestionLoopStart = $!{context.questionNo})
+			#set($surveyQuestionLoopEnd = $!{context.totalQuestions})
+			#set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd - 1 )
+			#set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd + $surveyQuestionLoopStart )
+  
+            #if($questionCount > 0)
+                #set($maxQuestionIndex = $questionCount - 1)
+				
+                #foreach($index in [$surveyQuestionLoopStart..$surveyQuestionLoopEnd]) 
+                    #set($surveyQuestion = ${takeSurveyForm.survey.questionList.get($index)} )
+					#springBind("takeSurveyForm.survey.questionList[$index]")
+					  
+                    #set($prefix = "survey.questionList[$index]")
+                    #set($questionNumber = $questionNumber + 1)
+                                    <!-- 1 -->
+                            <div class="content-Block">
+                                <div id="e7a" class="Block-Contain-header"></div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="User-checkbox-box">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 5a -->
+                            <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                                
+                                <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" /> 
+ 
+								#if($status.error)  
+									<div class="com-star-r-t"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"    /></div> 
+								#elseif(${surveyQuestion.surveyQuestionRef.required})
+									<div class="com-star-r-t">*</div> 
+								#else	
+								<div class="User_coll_1b"></div>
+								#end
+                                <div #if($status.error )  style="color:#FF0000;padding-left:15px;" #else  style="padding-left:15px;" #end class="input_field_area-user-f2-b" >$questionNumber. ${surveyQuestion.surveyQuestionRef.text}</div>
+                            </div>
+                                    $surveyQuestion.renderQuestion($prefix)
+                                    <!-- 00 -->
+                                    <div id="e12" class="search-content-row1"><!-- using for space --></div>
+                                    <!-- 00 -->
+                                </div>
+                                <!-- End-User-left-right-list -->
+                            </div>
+                            <!-- 1-end -->
+
+                            <!-- space -->
+                            <div class="manager-bottom-space"></div>
+                            <!-- space -->
+                    #end
+                #end
+                <!-- button-div -->
+                <div class="managerBtn">
+                    <div class="btn-left2">
+                        <a class="button" onclick="cancelform();" name="imagesubmit1">
+                            <span class="button">Cancel</span>
+                        </a>
+                    </div>
+                    <div class="btn-right1">
+                        <a class="button" onclick="document.displaySurveyForm.reset();">
+                            <span class="button">Clear All</span>
+                        </a>
+                        #if($!{context.nextPageIndex} == '0')
+                            <a class="button" onclick="finishSurvey();" name="imagesubmit1">
+                                <span class="button">Finish</span>
+                            </a>
+                        #else 
+                            <a class="button" onClick="nextForm('next');" name="imagesubmit1">
+                                <span class="button">Next</span>
+                            </a>
+                        #end
+                    </div>
+                </div>
+                <!-- button-div -->
+            </div><!-- content-area -->
+        </div><!-- content2a -->
+    </div><!-- main-container -->
+</form>
+</body>
+</html>
+	
+<script>
+	document.documentElement.style.overflow=document.body.style.overflow='auto';
+</script>

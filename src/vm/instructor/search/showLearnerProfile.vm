@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script src="javascript/js_admin.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body>
+<form name="insSearchForm" action="ins_searchLearner.do" method="POST" >
+<input type="hidden" id="actionmethod" name="method" value="showProfile"/>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header ends -->
+
+        #springBind("insSearchForm.user")
+        #set($vuUser = $!{status.value})
+
+        #springBind("insSearchForm.learnerId")
+        #set($learnerId = $!{status.value})
+		</td></tr>
+		
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <!-- Tabs Start -->
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td width="204">
+                            <a href="ins_searchLearner.do?method=showProfile&Id=$learnerId"><div class="tab_selected">$brander.getBrandElement("lms.Instructor.caption.Profile")</div></a>
+                            <a href="ins_searchLearner.do?method=showTranscript&Id=$learnerId"><div class="tab" style="border-right-style:solid;">$brander.getBrandElement("lms.Instructor.caption.Transcripts")</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+            <!-- Tabs End -->
+			</table>
+			
+<TD id="content" >
+	<div id="scrollable">
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_search">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.Instructor.caption.LearnerProfile")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.Instructor.caption.helpText")</div>
+			</td>
+		    </tr>
+		</table>
+
+                <div class="search_box_result" style="margin-right:15px;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.Summary")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="5" heigth="100%">
+                        <tr>
+                            <td width="25%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.FirstName")</span></td>
+                            <td width="25%"><input type="text" class="input_text_field" value="$vuUser.firstName" disabled="true"></input></td>
+                            <td width="25%">&nbsp;</td>
+                            <td width="25%">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.MiddleName")</span></td>
+                            <td><input type="text" class="input_text_field" value="$vuUser.middleName" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.LastName")</span></td>
+                            <td><input type="text" class="input_text_field" value="$vuUser.lastName" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.Address1")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.streetAddress")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.Address2")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.streetAddress")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.streetAddress2")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.streetAddress2")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCity")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.city")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCity")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.city")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactState")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.state")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactState")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.state")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.zipcode")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.zipcode")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCountry")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress.country")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCountry")</span></td>
+                            #springBind("insSearchForm.user.learner.learnerProfile.learnerAddress2.country")
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</span></td>
+                            <td><input type="text" class="input_text_field" value="$vuUser.emailAddress" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+
+                        <tr>
+                            #springBind("insSearchForm.user.learner.learnerProfile.mobilePhone")
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.CellPhone")</span></td>
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            #springBind("insSearchForm.user.learner.learnerProfile.officePhone")
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.OfficePhone")</span></td>
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            #springBind("insSearchForm.user.learner.learnerProfile.officePhoneExtn")
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.OfficeExt")</span></td>
+                            <td><input type="text" class="input_text_field" value="$!{status.value}" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.PreferedTimeZone")</span></td>
+                            <td><input type="text" class="input_text_field" value="" disabled="true"></input></td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="height:25px; width:auto"></div>
+
+                <div class="search_box_result" style="margin-right:15px;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.administrator.editDistributorProfile.caption.header2")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="5" heigth="100%">
+                        <tr>
+                            <td width="25%"><span class="row_text">$brander.getBrandElement("lms.enrollment.searchEnrollment.userName")</span></td>
+                            <td width="25%"><input type="text" class="input_text_field" value="$vuUser.username" disabled="true"></input></td>
+                            <td width="25%">&nbsp;</td>
+                            <td width="25%">&nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.AccountLocked")</span></td>
+                            <td><input type="radio" name="locked" class="input_radio" disabled="true" #if($vuUser.accountNonLocked == false) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                                <input type="radio" name="locked" class="input_radio" disabled="true" #if($vuUser.accountNonLocked == true) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.AccountExpired")</span></td>
+                            <td><input type="radio" name="expired" class="input_radio" disabled="true" #if($vuUser.accountNonExpired == false) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                                <input type="radio" name="expired" class="input_radio" disabled="true" #if($vuUser.accountNonExpired == true) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div></td>
+                            <td><span class="row_text">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.ExpirationDate")</span></td>
+                            <td><span class="row_text"><input type="text" class="input_text_field" value="$!{vuUser.expirationDate}" disabled="true"></input><div class="icon_calen"></div></span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.AccountDisabled")</span></td>
+                            <td><input type="radio" name="disable" class="input_radio" disabled="true" #if($vuUser.enabled == false) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                                <input type="radio" name="disable" class="input_radio" disabled="true" #if($vuUser.enabled == true) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.VisibleonReports")</span></td>
+                            <td><input type="radio" name="report" class="input_radio" disabled="true" #if($vuUser.vissibleOnReport == true) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                                <input type="radio" name="report" class="input_radio" disabled="true" #if($vuUser.vissibleOnReport == false) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="row_text">$brander.getBrandElement("lms.accraditation.instructor.caption.changePass")</span></td>
+                            <td><input type="radio" name="changepassword" class="input_radio" disabled="true" #if($vuUser.passWordChanged == true) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                                <input type="radio" name="changepassword" class="input_radio" disabled="true" #if($vuUser.passWordChanged == false) checked #end></input><div style="float:left; margin-top:2px;">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                            <td><span class="row_text">&nbsp;</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="height:25px; width:auto"></div>
+
+                <div class="search_box_result" style="margin-right:15px;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="5" heigth="100%">
+                        #springBind("insSearchForm.customFields")
+                        #if($status.value.size()>0)
+                            <table border="0" width="100%" cellpadding="0" cellspacing="3" height="100%">
+                                #set($count=0)
+                                #foreach($customField in $status.value)
+                                    #set($id = "customField$count")
+                                    #set($name = "customFields[$count].customFieldValueRef")
+                                    #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                                    #set($customFieldIdentifire = "customFields[$count]")
+                                    
+                                    $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+                                    #set($count=$count+1)
+                                #end
+                            </table>
+                        #else
+                        	<tr><td>&nbsp;</td></tr>    
+                        #end
+                    </table>
+                </div>
+
+                <div style="height:25px; width:auto;"></div>
+                
+                <div class="search_box_result" style="margin-right:15px;">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Reporting-Fields")</span></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="5" heigth="100%">
+                        #springBind("insSearchForm.creditReportingFields")
+                        #if($status.value.size()>0)
+                            <table border="0" width="100%" cellpadding="0" cellspacing="3" height="100%">
+                                <tr><td colspan="5">&nbsp;</td></tr>
+                                #set($count=0)
+                                #foreach($customField in $status.value)
+                                    #set($id = "customField$count")
+                                    #set($name = "creditReportingFields[$count].creditReportingFieldValueRef")
+                                    #set($customFieldValueIdentifire = "creditReportingFields[$count].creditReportingFieldValueRef.id")
+                                    #set($customFieldIdentifire = "creditReportingFields[$count]")
+                                    
+                                    $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+                                    #set($count=$count+1)
+                                #end
+                            </table>
+                        #else
+                        	<tr><td>&nbsp;</td></tr>    
+                        #end
+                        
+                    </table>
+                </div>
+                
+                 <div style="height:50px; width:auto;"></div>
+           
+        </td>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+        #parse("snippets/instructor/instructorFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+    </table>
+</body>
+</html>

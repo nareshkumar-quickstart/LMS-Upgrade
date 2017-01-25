@@ -1,0 +1,124 @@
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#revertPrivacyTemplate').click(function(){
+            $('#actionmethod').val('showDefaultValue');  
+            $('#showDefaultValue').val('showDefaultValue');
+            
+            if( $('#templateType').length > 0 ){
+                $('#templateType').val("privacyTemplate");
+            }else{
+                $('#brandingForm').append("<input id='templateType' name='templateType' type='hidden' value='privacyTemplate' />");
+            }
+            $('#brandingForm').submit();
+        });
+        
+        $('#privacySelectionOption').change(function(){
+            templateOption($(this).attr("selectedIndex"), 'privacy');
+        });
+        $('#iconcaretPrivacyPolicy').click(function(){
+            restoreTable($(this), 'privacyPloicyContent');
+            if($(this).attr('class') == 'icon-caret-down-large'){
+                $('#privacySelectionOption').trigger('change');
+            }
+        });
+        
+    });
+</script>
+<table border="0" cellpadding="0" cellspacing="0" width="99%">
+  <tr>
+    <td>
+			<table id="privacy-us" class="content-Block" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" >
+			    <tr>
+			        <td class="content-table-header" colspan="3">
+			            <div id="iconcaretPrivacyPolicy" class="icon-caret-down-large" style="float:left; margin-right:5px; padding-left:5px; padding-right:5px;"></div>
+			            <div class="content-table-heading">Privacy Policy</div>
+			        </td>
+			    </tr>
+			    <tr name="privacyPloicyContent">
+			        <td width="15%" style="padding:5px;">
+			            Link To
+			        </td>
+			        <td width="2%">
+			            &nbsp;
+			        </td>
+			        <td style="padding:5px;">        	
+			            #springBind("brandingForm.privacySelectionOption")
+			            <select id="${status.expression}" name="${status.expression}" class="select-med">
+			                <option value="1" #if($!{status.value}==1) selected #end>LMS Template</option>
+			                <option value="2" #if($!{status.value}==2) selected #end>External Page</option>
+			                <option value="3" #if($!{status.value}==3) selected #end>Email Address</option>
+			            </select>
+			        </td>
+			    </tr>
+			    <tr id="trExternalUrl-privacy" style="display:none;" name="privacyPloicyContent">
+			        <td style="padding:5px;">
+			            External Page URL
+			        </td>
+			        <td>
+			            &nbsp;
+			        </td>
+			        <td style="padding:5px;">
+			        	#springBind("brandingForm.privacyURL")
+			            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+			        </td>
+			    </tr>
+			    <tr id="trEmailAddress-privacy" style="display:none;" name="privacyPloicyContent">
+			        <td style="padding:5px;">
+			            Email Address
+			        </td>
+			        <td>
+			            &nbsp;
+			        </td>
+			        <td style="padding:5px;">
+			            #springBind("brandingForm.privacyEmail")
+			            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+			        </td>
+			    </tr>
+			    <tr id="trLmsTemplate-privacy" style="display:none;" name="privacyPloicyContent">
+			        <td  valign="top" style="padding:5px;">
+			            Message
+			        </td>
+                                <td id="revertPrivacyTemplate" class="icon-revert" style="background-position:1px 15px;">
+			            &nbsp;
+			        </td>
+			        <td style="padding:5px;" colspan="2">
+			        	#springBind("brandingForm.privacylmsTemplateText")
+			            <textarea id="privacy1" name="${status.expression}" rows="" cols="" class="textarea-lrg" style="height:270px;">$!{status.value}</textarea>
+			            <script language="JavaScript" type="text/javascript">
+			                generate_wysiwyg('privacy1');
+			            </script>
+			        </td>
+			    </tr>
+			</table>
+			
+	
+     </td>
+  </tr>
+  <tr>
+    <td> 
+                              
+		<table cellspacing="0" cellpadding="0" border="0" id="table-bottom-controls">
+		    <tr name="privacyPloicyContent">
+		         <td>	            
+					<div style="float: right; margin-top: 15px;">
+		                 <a onclick="saveBrands();">
+			                 <div class="btn_start"></div>
+			                 <div class="btn_normal">Save</div>
+			                 <div class="btn_end"></div>
+		                 </a>
+		            </div>
+		            <div style="float: right; margin-top: 15px; margin-right: 5px;">
+		                  <a style="text-decoration: none;" onclick="cancel();">
+			                  <div class="btn_start"></div>
+			                  <div class="btn_normal">Cancel</div>
+			                  <div class="btn_end"></div>
+		                  </a>
+	                 </div>
+		        </td>
+		    </tr>
+		</table>	
+	
+	</td>
+  </tr>
+</table>

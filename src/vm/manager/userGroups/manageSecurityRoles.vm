@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+
+function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+function deleteConfirmation(){
+     if ($("INPUT[type='checkbox'][name='rolescheck']:checked").length>0) {
+         confirm("$brander.getBrandElement("lms.manageUser.manageSecurityRole.delete.confirm")", function () {
+             document.getElementById('action').value='delete';
+             document.getElementById('actionmethod').value='runDeletionWizard';
+             document.manageform.submit();
+         });
+     }else {
+         $('#selectLearner').modal({close:false,position: ["40%",]});
+     }
+}
+
+function setButton(countCheckBoxes) {
+        var stat=0;
+        for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                if(objCheckBox.checked){
+                        stat=1;
+                        break;
+                }
+        }
+        if(stat==1){
+                // do nothing
+        }else{
+                var txtObj=document.getElementById('message_box');
+                txtObj.style.display="block";
+                return false;
+        }
+        return true;
+}
+
+function doSearch() {
+        document.getElementById('actionmethod').value="showSecurityRoles";
+        document.manageform.submit();
+}
+
+function onAllPage(){
+        document.getElementById('actionmethod').value='showSecurityRoles';
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('showAll').value="true";
+        document.manageform.submit();
+        return true;
+}
+
+function onNextPage(nextIndex){
+        document.getElementById('actionmethod').value='showSecurityRoles';
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        document.manageform.submit();
+        return true;
+}
+
+function onPreviousPage(previousIndex){
+        document.getElementById('actionmethod').value='showSecurityRoles';
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+        document.manageform.submit();
+        return true;
+}
+
+function sortLearner(sortColumnIndex, sortDirection,showAll){
+        document.getElementById('actionmethod').value='showSecurityRoles';
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.manageform.submit();
+}
+
+function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+}
+
+$(document).ready(function(){
+       
+
+        $("INPUT[type='checkbox'][name='rolescheck']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='rolescheck']:not([disabled])").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='rolescheck']:not([disabled])").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+	
+</script>
+</head>
+
+<body>
+<form name="manageform" method="post" action="mgr_manageSecurityRoles.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<!-- <div id="main-container"> -->
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+        	<!-- header -->
+ 	      	#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+          	#parse("snippets/adminHeader.vm")
+          	#else
+          	#parse("snippets/managerHeader.vm")
+          	#end			
+        	<!-- header-end -->
+			</td>
+		</tr>
+		
+    <!-- <div id="content2a"> -->
+	
+<!-- content-area -->
+	 <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                    <!-- left-menu-content -->
+                    #if($userData.isLMSAdministrator() && $adminCurrentMode == $brander.getBrandElement("lms.addSecurityRole.lmsRoleAdmin"))
+                        #parse("snippets/adminSecurityLeftMenu.vm")
+                    #else
+                        #parse("snippets/managerLeftMenu.vm")
+                    #end
+                    <!-- left-menu-content-end -->
+				</table>
+			</td>
+			
+<!-- right-pannel-content -->
+<!-- <div id="right-pannel"> -->
+
+	<TD id="content" >
+	<div id="scrollable">
+        <div id="message_box" style="display:none;">
+                <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                ##set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$brander.getBrandElement("lms.manageUser.manageRole.caption.deleteRoleErrorText")</div>
+                </div>
+        </div>
+
+        <!-- Logo+Manage-User -->
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-users">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.manageSecurityRoles.caption.title")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.manageSecurityRoles.caption.subtitle")</div>
+						        </td>
+						    </tr>
+						</table>			
+        <!-- Logo+Manage-User-end -->
+
+<!-- button-div -->
+
+        #set($totalRoles = $!{context.roles.size()})
+        <div id="searchResult" class="content-Block-new">
+
+                <div id="searchBox" class="visible" style="width: 310px; height: 135px">
+                        <div style="padding: 5px"><b>Security Role Search</b></div>
+                        <br/>
+                        <div style="padding: 5px">
+                        	<div style="width:115px; float:left">
+                        		$brander.getBrandElement("lms.manager.securityRole.caption.search")
+                        	</div> 
+                        	
+                        	<div style="float:left">
+                        		<input class="search_field" type="text" id="name" onKeyPress="if(event.keyCode==13){doSearch();}" name="name" value="$!{context.name}" style="font-size:9px; width:170px" class="search_field" />
+                        	</div>
+                        	<br style="clear:both" /></div>
+                        <br/>
+                        <div style="padding: 5px;margin-left:80px;height:20px">
+                                <a class="button" onClick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Cancel")</span></a>
+                                <a class="button" onClick="return doSearch();"><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a>
+                        </div>
+                </div>
+
+                    <div class="box_header">
+                        <div style="float:left; height:23px;">
+								<div style="float:left; margin-top:3px;">
+								  <a onClick="window.location.href='mgr_addSecurityRole.do'" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.manageSecurityRoles.caption.btn.addSecurityRole")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+								<div style="float:left; margin-top:3px;">
+								  <a onClick="deleteConfirmation()" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.manageSecurityRoles.caption.btn.deleteSecurityRole")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								  <input type="hidden" id="action" name="action" />
+								</div>                            
+                        </div>
+
+                        <div class="result_left_side">
+                               <div style="float:left; margin-top:3px;margin-left:5px;">
+								  <a onClick="showSearchBox(this);" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.administrator.commonHeader.caption.Search")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+                                $pager.setItems(${context.members})
+                                #set($totalCount = $pager.total)
+                                #if($pager.hasItems())
+                                        #set($pageFirstIndex = $pager.firstIndex)
+                                        #set($pageLastIndex = $pager.lastIndex)
+                                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                        #set($currentPageCount = $pageLastIndex + 1)
+                                        #set($pageCurrIndex = $pager.index)
+                                #else
+                                        #set($pageFirstIndex = 0)
+                                        #set($pageLastIndex = 0)
+                                        #set($currentPageSize = 0)
+                                        #set($currentPageCount = 0)
+                                        #set($pageCurrIndex = 0)
+                                #end
+
+                                <!-- All Icon -->
+                                #if($context.members.size()>0)
+                                        <div id="all" class="icon_all" onClick="return onAllPage();" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="return onNextPage($pager.nextIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="return onPreviousPage($pager.prevIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription</div>
+                        </div>
+
+                    </div>
+                    <div id="searchResult"><!-- searchResult -->
+
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                            <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                            <input type="hidden" id="showAll" name="showAll" value="false" />
+                            <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+
+                            #if($currentPageSize > 0)
+                        <table width="100%"  cellpadding="0" cellspacing="0"  style="border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17px"><input type="checkbox" id="chkAll" name="selectedRole"/></td>
+                                <td class="box_subheader"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_up" #elseif($context.sortColumnIndex == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.manageSecurityRoles.caption.Role")</div></td>
+                                <td class="box_subheader"><div onClick=#if($context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 1)) class="icon_up" #elseif($context.sortColumnIndex == 1) class="icon_down" #end ></div>$brander.getBrandElement("lms.manageSecurityRoles.caption.Members")</div></td>
+                                <td class="box_subheader"><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 2)) class="icon_up" #elseif($context.sortColumnIndex == 2) class="icon_down" #end ></div>$brander.getBrandElement("lms.manageSecurityRoles.caption.Type")</div></td>
+                                <td class="check_box_top" width="18px" style="border-right:none;">&nbsp;</td>
+                            </tr>
+
+                            #set($count = 0)
+                            #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                            #set($securityrole = $context.members.get($loopIndex))
+                            #set($userrole = $securityrole.userRole)
+                                #if($count%2 == 0)
+                                    #set($alternate="row_1")
+                                #else
+                                    #set($alternate="row_2")
+                                #end
+                            <tr>
+                                <td class="$alternate" width="17px">
+                                	#if(!$userrole.isSystemCreated() && $userrole.roleType!='ROLE_PROCTOR')
+                                        <input type="checkbox" id="chk$count" name="rolescheck" value="$userrole.getId()" />
+                                    #else
+                                         <input type="checkbox" id="chk$count" disabled name="rolescheck" value="${userrole.Id}" />
+                                    #end
+                                  </td>
+                                  <td class="$alternate">
+                                    #if($userrole.roleType!='ROLE_PROCTOR')
+                                        <a href="mgr_editSecurityRole.do?roleID=$userrole.getId()&roleType=$userrole.getRoleType()"  title= "$userrole.getRoleName()">#dotPaddingWithOutTitle($userrole.getRoleName(),60) </a>
+                                    #else
+                                      <a href="#">$userrole.getRoleName()</a>
+                                    #end
+                                </td>
+                               <td class="$alternate">$securityrole.Count</td>
+                                <td class="$alternate">$brander.getBrandElement($brander.getBrandElement("$userrole.getRoleType()"))</td>
+                                <td class="$alternate" width="90px" style="border-right:none;" nowrap="true" >
+                                        <!--<div><a href="mgr_changeMemberRole.do?roleId=$userrole.getId()"><img src="$brander.getBrandElement("lms.pixel.edit_defGif")" width="11" height="12" title="$brander.getBrandElement("lms.manageSecurityRoles.caption.changeMemberRole")"  alt="$brander.getBrandElement("lms.manageSecurityRoles.caption.changeMemberRole")" /></a></div>-->
+                                        <a href="mgr_changeMemberRole.do?roleId=$userrole.getId()&roleType=$userrole.getRoleType()">$brander.getBrandElement("lms.manageSecurityRoles.caption.changeMemberRole")</a>
+                                </td>
+                            </tr>
+                                #set($count = $count+1)
+                            #end
+                        </table><!-- searchResult -->
+                            #else
+                        <table width="100%"  cellpadding="0" cellspacing="0"  style="border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="3%">&nbsp;</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.manageSecurityRoles.caption.Role")</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.manageSecurityRoles.caption.Members")</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.manageSecurityRoles.caption.Type")</td>
+                                <td class="check_box_top" width="3%" style="border-right:none;">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                </td>
+                            </tr>
+                        </table>
+                            #end
+
+                    </div>
+                </div>
+            <!-- </div> --><!-- right-pannel-content-end -->
+			</td>
+        </div>
+	   </tr>
+        
+
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+        		#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            	   #parse("snippets/adminFooter.vm")
+        		#else
+             	   #parse("snippets/managerFooter.vm")
+        		#end
+			</td>
+		</TR>
+		
+	</table>		
+    <!-- </div> --><!-- main-container -->
+
+</form>
+<div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+    <div class='header'><span>$brander.getBrandElement("lms.addSecurityRole.messageBox.caption")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.manageSecurityRole.delete.confirm")</div>
+    <br style="clear:both" />
+
+<div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.manageSecurityRole.delete.selectRoles")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

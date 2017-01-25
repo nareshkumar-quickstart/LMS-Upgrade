@@ -1,0 +1,138 @@
+<style>
+.menu{
+height:20px;float:left;margin:0px 20px 0px 20px;border-left:1px solid silver;border-right:1px solid silver;padding:0px 20px 0px 20px;
+
+}
+</style>
+
+
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+<div class="tab_bar">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="194"><div class="tab_blank" style="width:194px;"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="305">
+
+                            <a href="#"><div class="tab_selected" style="border-right-style:solid;">Summary</div></a>
+                            <a href="mgr_manageRecipient.do?alertId=$request.getParameter("alertId")"><div class="tab">Recipients</div></a>
+                            <a href="mgr_manageTrigger.do"><div class="tab">Triggers</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+
+            </div>
+
+
+<div class="side_bar" id="sideBar"style="clear:left" >
+
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+    #if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+        #if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0008", $userData, $ssn))
+            <div id="manageSurveys" onclick="submitForm('Tools','LMS-ADM-0008','adm_manageSyrvey.do')" #if ($!{menu}=="LMS-ADM-0008") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+            <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+            <div class="band_text">Manage Surveys</div>
+            </div>
+        #end
+    #end
+#else
+    #if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+        #if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0020", $userData, $ssn))
+            <div id="manageSurveys" onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" #if ($!{menu}=="LMS-MGR-0020") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+            <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+            <div class="band_text">Manage Surveys</div>
+            </div>
+        #end
+    #end
+#end
+
+#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0019", $userData, $ssn))
+    <div id="assignSurveys" onclick="submitForm('Tools','LMS-MGR-0019','mgr_assignSurveys.do')" #if ($!{menu}=="LMS-MGR-0019") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+    <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+    <div class="band_text">Assign Surveys</div>
+    </div>
+#end
+#end
+
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+    ##if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0009", $userData, $ssn))
+        <div id="surveyApprovals" onclick="submitForm('Tools','LMS-ADM-0009','adm_surveyApprovals.do')" #if ($!{menu}=="LMS-ADM-0009") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+        <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+        <div class="band_text">Survey Approvals</div>
+        </div>
+    ##end
+    #end
+#else
+    #if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+    ##if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0021", $userData, $ssn))
+        <div id="surveyApprovals" onclick="submitForm('Tools','LMS-MGR-0021','mgr_surveyApprovals.do')" #if ($!{menu}=="LMS-MGR-0021") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+        <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+        <div class="band_text">Survey Approvals</div>
+        </div>
+    ##end
+    #end
+#end
+
+#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0017", $userData, $ssn))
+    <div id="assignSurveys" onclick="submitForm('Tools','LMS-MGR-0017','mgr_alertCourse.do')" #if ($!{menu}=="LMS-MGR-0017") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+    <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+    <div class="band_text">Manage Alerts</div>
+    </div>
+#end
+#end
+
+#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0018", $userData, $ssn))
+    <div id="surveyAnnouncements" onclick="submitForm('Tools','LMS-MGR-0018','mgr_manageSurveys.do')" #if ($!{menu}=="LMS-MGR-0018") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+    <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+    <div class="band_text">Announcements</div>
+    </div>
+#end
+#end
+
+</div>
+
+<!--
+<div id="sideBar" class="side_bar">
+#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0020", $userData, $ssn))
+<div id="manageUsers" onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" #if ($!{menu}=="LMS-MGR-0020") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+<img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+<div class="band_text">Manage Surveys</div>
+</div>
+#end
+#else
+<div id="manageUsers" onclick="location.href='#';" class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+        <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+        <div class="band_text">Manage Surveys</div>
+    </div>
+    #end
+    #if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+#if($userPermissionChecker.hasAccessToFeature("LearnerSurveyResponse", $userData, $ssn))
+<div id="manageUsers" onclick="submitForm('Tools','LearnerSurveyResponse','mgr_manageSurveys.do?method=learnerSurveyResponseView')" #if ($!{menu}=="LearnerSurveyResponse") class="side_band_over" #else class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" #end onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+<img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+<div class="band_text">View Learner's Survey Response</div>
+</div>
+#end
+#else
+<div id="manageUsers" onclick="location.href='#';" class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+        <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+        <div class="band_text">View Learner's Survey Response</div>
+    </div>
+    #end
+## *****************************************************
+
+    #if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0019", $userData, $ssn))
+    <div id="manageUsers" onclick="location.href='mgr_assignSurveys.do';" class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+            <img src="brands/default/en/images/icon_users_mini.gif" class="band_image"/>
+            <div class="band_text">Assign Learner's Survey </div>
+    </div>
+        #end
+## *****************************************************
+</div>
+-->

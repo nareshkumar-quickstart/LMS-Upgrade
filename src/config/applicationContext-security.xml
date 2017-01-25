@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Application context containing authentication, channel
+  - security and web URI beans.
+  -
+  - Only used by "filter" artifact.
+  -
+  - $Id: applicationContext-acegi-security.xml 1425 2006-04-28 06:43:50Z benalex $
+  -->
+
+<b:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:b="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+
+	<!-- https://dzone.com/articles/upgrading-appfuse-spring -->
+	<http pattern="/restful/**" security="none"/>
+	<http pattern="/rest/**" security="none"/>
+	<http pattern="/brands/**" security="none"/>
+	<http pattern="/javascript/**" security="none"/>
+    <http pattern="/css/**" security="none"/>
+    <http pattern="/avatars/**" security="none"/>
+    <http pattern="/bandwidth/**" security="none"/>
+    <http pattern="/flash/**" security="none"/>
+    <http pattern="/ssrsImages/**" security="none"/>
+    
+    <!-- 
+		<intercept-url pattern="/brands/**" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/javascript/**" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+            	360-TechnologyStack-Migration:
+    	Remove property 'access-denied-page' and 'session-fixation-protection'
+    	Add property 'disable-url-rewriting' and 'use-expressions'
+    	<http auto-config="false" access-denied-page="/login.do" session-fixation-protection="none"  realm="VU360 LMS Realm" entry-point-ref="authenticationProcessingFilterEntryPoint">
+    	
+    	Remove the following and define separtely
+    	<intercept-url pattern="/restful/**" filters="none"/>
+		<intercept-url pattern="/rest/**" filters="none"/>
+    -->
+    
+    
+    <http auto-config="false" disable-url-rewriting="false" use-expressions="false" realm="VU360 LMS Realm" entry-point-ref="authenticationProcessingFilterEntryPoint">
+		<!-- access denied page -->
+		<access-denied-handler error-page="/login.do" />
+        
+        <intercept-url pattern="/" access="ROLE_ANONYMOUS"/>
+		<intercept-url pattern="/login.do" access="ROLE_ANONYMOUS"/>
+        
+        <intercept-url pattern="/ins_addActivity.do" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/*.launch" access="ROLE_ANONYMOUS, ROLE_LEARNER" />
+        
+        <intercept-url pattern="/mgr_uploadScormPackge.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/footerLinks.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/admSelectCustomer.do" access="ROLE_LMSADMINISTRATOR"/>
+        <intercept-url pattern="/admDeselectCustomer.do" access="ROLE_LMSADMINISTRATOR"/>
+        <intercept-url pattern="/switchuser.do" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_LEARNER"/>
+        <intercept-url pattern="/switchexituser.do" access="ROLE_TRAININGADMINISTRATOR, ROLE_PREVIOUS_ADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_LEARNER"/>
+        <intercept-url pattern="/easysignup.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/ce_planner.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/index.html" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/selfRegistration.do" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/forgetPassword.do" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/aicc.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/adm_ManageReports.do" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+   	    <intercept-url pattern="/admSwitchLearnerMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/admSwitchManagerMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/lrnSwitchBackAccreditationMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/learnerRegistration.do" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/scorm.do" access="ROLE_LEARNER"/>
+        <intercept-url pattern="/completionCertificate.pdf" access="ROLE_LEARNER"/>
+        <intercept-url pattern="/printProctorCompletionCertificate.pdf" access="ROLE_PROCTOR"/>        
+		<intercept-url pattern="/printCertificate.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/aiccCourse.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/hello*.do" access="ROLE_ANONYMOUS"/>
+        <intercept-url pattern="/lrn*.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/mgr*.do" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR"/>
+        <intercept-url pattern="/mgr*.jason" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR"/>
+        <intercept-url pattern="/adm*.do" access="ROLE_LMSADMINISTRATOR"/>
+        <intercept-url pattern="/acc*.do" access="ROLE_REGULATORYANALYST"/>
+        <intercept-url pattern="/service/**" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/ins*.do" access="ROLE_INSTRUCTOR"/>
+		<intercept-url pattern="/*SwitchLearnerMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/**" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+		<intercept-url pattern="/legacy/generateCertificate.do" access="ROLE_LEARNER"/>
+        <headers>
+			<cache-control />
+			
+			<!-- Use for frame uploading affidavit in accreditation mode(Dialog box was not popping up) -->
+			<frame-options policy="SAMEORIGIN" />
+			
+			<!-- Instructs the browser what to do when a XSS attack is detected -->
+			<xss-protection block="false"/>
+			
+		</headers>
+
+        
+        <!--
+        <form-login login-page="/login.do" 
+                    default-target-url="/interceptor.do" 
+                    authentication-failure-url="/login.do"
+                   
+        /> 
+        -->
+        <!-- -->
+        <logout logout-url="/j_spring_security_logout"  invalidate-session="true" logout-success-url="/login.do"/>
+        
+        
+        <custom-filter before="LOGOUT_FILTER" ref="logoutFilter" /> <!-- we may replace 'position' with 'before' (To Do) -->
+		<custom-filter position="PRE_AUTH_FILTER" ref="siteminderFilter"/> <!-- Ref. Example: http://stackoverflow.com/questions/12478589/springsecurity-custom-automatic-authentication -->
+		<custom-filter position="FORM_LOGIN_FILTER" ref="customFormLoginFilter" /> <!-- Replaced 'AUTHENTICATION_PROCESSING_FILTER' in Spring 3 Secureity  -->
+		<custom-filter after="FILTER_SECURITY_INTERCEPTOR" ref="switchUserModeProcessingFilter"/>
+		<custom-filter before="SWITCH_USER_FILTER" ref="adminProxyEntitySetupFilter"/>
+        
+		<anonymous />
+		<http-basic />
+		<remember-me />
+		
+		<csrf disabled="true"/>
+    </http>
+
+	
+	
+	
+	
+    
+	<!--
+		Entry Point of the http
+		*********************** 
+		http://stackoverflow.com/questions/10532140/spring-security-usernamepasswordauthenticationfilter-with-remember-me 
+		
+		360-TechnologyStack-Migration:
+		Change the below tag line
+		<b:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint">
+		
+		Ref: http://stackoverflow.com/questions/30271932/failed-to-instantiate-loginurlauthenticationentrypoint-no-default-constructor-f
+	-->
+	<b:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<!-- 
+			360-TechnologyStack-Migration:
+			comment the below tags
+			<b:property name="loginFormUrl" value="/login.do"/>
+			<b:property name="forceHttps" value="false" /> 
+		-->
+		<b:constructor-arg value="/login.do" />
+	</b:bean>
+
+
+    <!-- Custom Filter #1: (LOGOUT_FILTER) -->
+    <!-- ********************************* -->
+    
+    <!-- 
+    	Sample Code
+    	***********
+		<bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+			<constructor-arg ref="logoutSuccessHandler"/>
+			<constructor-arg ref="logoutHandler"/>
+		</bean>
+		
+		<bean id="logoutHandler" class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"></bean>
+		<bean id="logoutSuccessHandler" class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler"></bean>
+		***********    
+     -->
+    <b:bean id="logoutFilter" class="com.softech.vu360.lms.web.filter.VU360LogoutFilter">
+		<!-- 
+		360-TechnologyStack-Migration:
+		Remove below tag
+		<custom-filter position="LOGOUT_FILTER"/> 
+		-->
+		<b:constructor-arg value="/login.do" />
+		<b:constructor-arg >
+			<b:list>
+				<b:bean class="com.softech.vu360.lms.web.filter.VU360LogoutHandler"/>
+			</b:list>
+		</b:constructor-arg>
+	</b:bean>
+    
+    
+
+    <!-- Custom Filter #2 (PRE_AUTH_FILTER) -->
+    <!-- ********************************** -->
+
+
+
+    <!-- Custom Filter #3 (FORM_LOGIN_FILTER) PREVIOUSLY KNOWN AS 'AUTHENTICATION_PROCESSING_FILTER' -->
+    <!-- ******************************************************************************************* -->
+    <b:bean id="customFormLoginFilter" class="com.softech.vu360.lms.web.filter.CustomFormLoginFilter">
+		<b:property name="authenticationManager" ref="authenticationManagerAlias"/>	<!--Here it is the custom authenticationManager, login magic goes here -->
+		<b:property name="filterProcessesUrl" value="/j_spring_security_check" />
+		<b:property name="postOnly" value="false" />
+		<b:property name="authenticationDetailsSource" ref="customWebAuthenticationDetails" />
+		<b:property name="authenticationFailureHandler" ref="simpleUrlAuthenticationFailureHandler"/>
+		<b:property name="authenticationSuccessHandler" ref="simpleUrlAuthenticationSuccessHandler"/>
+		<b:property name="userDetailsService" ref="userDetailsService"/>
+    </b:bean>
+    
+    <!-- redirect url for failure of authentication -->
+	<b:bean id="simpleUrlAuthenticationFailureHandler" class="com.softech.vu360.lms.web.filter.VU360AuthenticationFailureHandler">
+		<b:constructor-arg value="/login.do"></b:constructor-arg>
+	</b:bean>
+
+
+	<b:bean id="simpleUrlAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+		<b:constructor-arg value="/interceptor.do"></b:constructor-arg>
+		<b:property name="targetUrlParameter" value="spring-security-redirect"/>
+	</b:bean>
+   
+    <!-- Custom Filter #4: (FILTER_SECURITY_INTERCEPTOR -->
+    <!-- ********************************************** -->
+ 
+
+
+
+
+
+ 	<!-- 
+    	In Spring Security 3, all AuthenticationProvider elements must be the children of <authentication-manager> element
+    	Reference: https://www.packtpub.com/books/content/migration-spring-security-3
+    	
+				<bean id="signedRequestAuthenticationProvider"
+				  class="com.packtpub.springsecurity.security
+				  .SignedUsernamePasswordAuthenticationProvider">
+				  <security:custom-authentication-provider/>
+				  <property name="userDetailsService" ref="userDetailsService"/>
+				</bean>    		
+
+
+				<authentication-provider ref="signedRequestAuthenticationProvider"/>    	
+    -->
+    <authentication-manager alias='authenticationManagerAlias'>
+    	<!-- 
+    	<authentication-provider>
+    		<jdbc-user-service data-source-ref="dataSource"/>
+  		</authentication-provider>
+  		
+  		<ldap-authentication-provider server-ref="ldap://localhost:10389/"/>
+  		 -->
+  		<authentication-provider ref="preauthAuthProvider" /> <!-- For pre-auth-filter implementation --> 
+  		<authentication-provider ref="ldapAuthenticationProvider"/>
+  		
+  		<!-- <authentication-provider user-service-ref="userDetailsService"/> -->
+  		
+  		
+    </authentication-manager>
+ 
+
+
+    <!-- 
+	    <b:bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+	    	<b:property name="providers">
+	    		<b:list>
+	    			<b:ref bean="ldapAuthenticationProvider"/>change local to bean: Refernece: http://stackoverflow.com/questions/11581058/how-to-set-up-and-configure-a-providermanager-using-spring-security-namespace
+	    		</b:list>
+	    	</b:property>
+	    </b:bean> 
+
+		360-TechnologyStack-Migration:
+		Remove below tag
+		<custom-authentication-provider/> 
+	-->  
+	<b:bean id='ldapAuthenticationProvider' class="com.softech.vu360.lms.web.filter.CustomAuthenticationProvider">
+		<b:property name="userDetailsService" ref="userDetailsService"/>
+		<b:property name="activeDirectoryService" ref="activeDirectoryService" />
+		<b:property name="passwordEncoder" ref="passwordEncoder"/>
+		<b:property name="saltSource" ref="saltSource"/>
+		<b:property name="learnerService" ref="learnerService" />
+	</b:bean> 
+	
+   <!-- Automatically receives AuthenticationEvent messages -->
+   <!-- 
+	   360-TechnologyStack-Migration:
+	   Change Class
+	   <b:bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener"/> 
+   -->
+   <!--
+   Uncomment this block if logging required to debug security related messages 
+   <b:bean id="loggerListener" class="org.springframework.security.authentication.event.LoggerListener"/> 
+   -->
+   
+
+   <!-- Filter used to switch the user context. Note: the switch and exit url must be secured
+        based on the role granted the ability to 'switch' to another user -->
+   <!-- In this example 'rod' has ROLE_SUPERVISOR that can switch to regular ROLE_USER(s) -->
+<!--   <b:bean id="switchUserProcessingFilter" class="org.springframework.security.ui.switchuser.SwitchUserProcessingFilter" autowire="byType">-->
+<!--       <custom-filter position="SWITCH_USER_FILTER"/>-->
+<!--       <b:property name="userDetailsService" ref="userDetailsService" />-->
+<!--       <b:property name="switchUserUrl" value="/switchuser.do"/>-->
+<!--       <b:property name="exitUserUrl" value="/switchexituser.do"/>-->
+<!--        <b:property name="targetUrl" value="/loadApp.do"/> -->
+<!--       <b:property name="targetUrl" value="/interceptor.do"/>-->
+<!--   </b:bean>-->
+
+   <b:bean id="switchUserModeProcessingFilter" class="com.softech.vu360.lms.web.filter.VU360UserModeSetupFilter" autowire="byType">
+		<!-- 
+			360-TechnologyStack-Migration:
+			Remove below tag
+			<custom-filter after="FILTER_SECURITY_INTERCEPTOR"/> 
+		-->
+		<!--<b:property name="authenticationDetailsSource" ref="vu360UserAuthenticationDetailsSource" />-->
+		<!--<b:property name="userEntryURL" value="/interceptor.do"/>-->
+		<b:property name="adminSwitchManagerModeURL" value="/admSwitchManagerMode.do"/>
+		<b:property name="adminSwitchManagerModeTargetURL" value="/mgr_manageLearners.do"/>
+		<b:property name="adminSwitchManagerModeFailureURL" value="/adm_searchMember.do"/>
+		<b:property name="adminSwitchLearnerModeURL" value="/admSwitchLearnerMode.do"/>
+		<!-- 
+		<b:property name="adminSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
+		-->
+		<b:property name="adminSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="adminSwitchLearnerModeFailureURL" value="/adm_searchMember.do"/>
+		<b:property name="adminSwitchBackFromManagerURL" value="/adm_editlearner.do"/>
+		
+		<!--  added by Noman for instructor mode switching  -->
+		<b:property name="switchInstructorModeURL" value="/switchInstructorMode.do"/>
+		<b:property name="switchInstructorModeTargetURL" value="/ins_synchronousClasses.do"/>
+		<b:property name="switchInstructorModeFailureURL" value="/adm_searchMember.do"/>
+		
+		<!-- Proctor mode switching  -->
+		<b:property name="switchProctorModeURL" value="/switchProctorMode.do"/>
+		<b:property name="switchProctorModeTargetURL" value="/proctorCompletionCertificate.do?method=displayProctorLearners"/>
+		<b:property name="switchProctorModeFailureURL" value="/adm_searchMember.do"/>
+		
+		<b:property name="adminSwitchBackURL" value="/admSwitchAdminMode.do"/>
+		<b:property name="adminSwitchBackTargetURL" value="/adm_searchMember.do"/>
+
+		<b:property name="managerSwitchLearnerModeURL" value="/mgrSwitchLearnerMode.do"/>
+		<!-- 
+		<b:property name="managerSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
+		-->
+		<b:property name="managerSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="managerSwitchBackFromLearnerModeURL" value="/lrnSwitchBackManagerMode.do"/>
+		<b:property name="managerSwitchBackFromLearnerModeTargetURL" value="/mgr_manageLearners.do"/>
+
+		<b:property name="managerSwitchURL" value="/switchuser.do"/>
+		<!-- 
+		<b:property name="managerSwitchTargetURL" value="/lrn_myCourses.do"/>
+		-->
+		<b:property name="managerSwitchTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="managerSwitchBackURL" value="/switchexituser.do"/>
+		<b:property name="managerSwitchBackTargetURL" value="/mgr_editlearner.do"/>
+		
+		<!-- This will used for accreditation mode -->
+		<b:property name="accreditationSwitchLearnerModeURL" value="/accSwitchLearnerMode.do"/>
+		<!-- 
+		<b:property name="accreditationSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
+		-->
+		<b:property name="accreditationSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="accreditationSwitchBackFromLearnerModeURL" value="/lrnSwitchBackAccreditationMode.do"/>
+		<b:property name="accreditationSwitchBackFromLearnerModeTargetURL" value="/acc_search.do"/>
+		
+		<b:property name="accreditationSwitchURL" value="/switchuser.do"/>
+		<!-- 
+		<b:property name="accreditationSwitchTargetURL" value="/lrn_myCourses.do"/>
+		-->
+		<b:property name="accreditationSwitchTargetURL" value="/lrn_widgetDashboard.do"/>
+		
+		<b:property name="securityService" ref="securityAndRolesService" />
+		<!--   This will used for accreditation mode  -->
+		<b:property name="userDetailsService" ref="userDetailsService" />
+		<b:property name="learnerService" ref="learnerService" />
+		<b:property  name="vu360UserService" ref="userDetailsService"/>
+       <b:property name="customerService" ref="customerService"/>		
+   </b:bean>
+   
+
+	<!-- 
+		360-TechnologyStack-Migration:
+		Remove below tag
+		<custom-filter before="SWITCH_USER_FILTER"/> 
+	-->
+   <b:bean id="adminProxyEntitySetupFilter" class="com.softech.vu360.lms.web.filter.VU360AdminProxySetupFilter" autowire="byType">
+		<!--<b:property name="authenticationDetailsSource" ref="adminAuthenticationDetailsSource" />-->
+        <b:property name="customerService" ref="customerService" />
+        <b:property name="distributorService" ref="distributorService" />
+        <b:property name="learnerService" ref="learnerService" />
+		<b:property name="adminSearchEntryUrl" value="/adm_searchMember.do"/>
+		
+		<b:property name="customerProxyEntryUrl" value="/admSelectCustomer.do"/>
+		<b:property name="customerProxyExitUrl" value="/admDeselectCustomer.do"/>
+		<b:property name="customerProxyTargetUrl" value="/adm_searchMember.do?method=selectMember"/>
+		<b:property name="customerProxyFailureUrl" value="/adm_searchMember.do"/>
+		
+		<b:property name="distributorProxyEntryUrl" value="/admSelectDistributor.do"/>
+		<b:property name="distributorProxyExitUrl" value="/admDeselectDistributor.do"/>
+		<b:property name="distributorProxyTargetUrl" value="/adm_searchMember.do?method=selectMember"/>
+		<b:property name="distributorProxyFailureUrl" value="/adm_searchMember.do"/>
+		
+		<b:property name="learnerProxyEntryUrl" value="/admSelectLearner.do"/>
+		<b:property name="learnerProxyExitUrl" value="/admDeselectLearner.do"/>
+		<b:property name="learnerProxyTargetUrl" value="/adm_searchMember.do?method=selectMember"/>
+		<b:property name="learnerProxyFailureUrl" value="/adm_searchMember.do"/>
+   </b:bean>
+
+	
+	<!-- 
+		360-TechnologyStack-Migration:
+		Replace class 'org.springframework.security.ui.WebAuthenticationDetailsSource'
+		with
+		'org.springframework.security.web.authentication.WebAuthenticationDetailsSource'
+		
+		for spring security 4
+		*********************
+		AuthenticationDetailsSourceImpl source = new AuthenticationDetailsSourceImpl();
+		source.setClazz(CustomWebAuthenticationDetails.class);
+		
+		You should implement AuthenticationDetailsSource directly to return CustomSource:
+		
+		public class CustomWebAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> {
+		
+			public WebAuthenticationDetails buildDetails(HttpServletRequest context) {
+				return new CustomWebAuthenticationDetails(context);
+			}
+		}
+		*********************
+		
+		Removing <b:property name="clazz" value="com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails"/>
+		and change the class to 'com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails', we wil change the implementation of this class 
+	 
+	<b:bean id="vu360UserAuthenticationDetailsSource" class="org.springframework.security.web.authentication.WebAuthenticationDetailsSource">
+		
+	</b:bean>
+	-->
+	
+	<b:bean id="customWebAuthenticationDetails" class="com.softech.vu360.lms.web.filter.CustomWebAuthenticationDetailsSource">
+		
+	</b:bean>
+	
+	<!-- 
+		360-TechnologyStack-Migration:
+		Remove below tag
+		<custom-filter position="PRE_AUTH_FILTER" /> 
+	-->
+	<b:bean id="siteminderFilter" class="com.softech.vu360.lms.web.filter.VU360RequestPreAuthFilter">
+		<b:property name="principalRequestHeader" value="360_AUTH_USER_TOKEN" />
+		<b:property name="authenticationManager" ref="authenticationManagerAlias" />
+		<!-- <b:property name="authenticationDetailsSource" ref="userDetailsService"></b:property> -->
+		
+		<b:property name="preAuthEntryUrl" value="/interceptor.do"></b:property>
+		<b:property name="listenFrom" value="*"></b:property>
+		<!--
+		<b:property name="listenFrom" value="10.0.100.64"></b:property>
+		-->
+	</b:bean>
+
+	<!-- 
+		360-TechnologyStack-Migration:
+		Remove below tag
+		<custom-authentication-provider />
+		
+		Replace 'org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider
+		with
+		'org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider'
+		
+		committing the below bean tag and will be change later to use pre auth filter 
+	-->
+	<b:bean id="preauthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+		<b:property name="preAuthenticatedUserDetailsService">
+			<!-- 
+				Commit the code
+				Ref: http://stackoverflow.com/questions/12478589/springsecurity-custom-automatic-authentication
+			-->
+			<b:bean id="userDetailsServiceWrapper" class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+				<b:property name="userDetailsService" ref="userDetailsService" />
+			</b:bean> 
+		</b:property>
+	</b:bean>
+	
+</b:beans>

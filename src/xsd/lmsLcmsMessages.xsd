@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.360training.com/vu360/schemas/lms/lcmsMessages"
+        xmlns:vu360-lms-lcms="http://www.360training.com/vu360/schemas/lms/lcmsMessages"
+        elementFormDefault="qualified">
+
+
+	<element name="LearnerStatsTransferRequest">
+        <complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" />
+            <attribute name="learningSessionId" type="string" use="required"/>
+            <attribute name="courseCompleted" type="boolean" />
+            <attribute name="certificateURL" type="string" />
+            <attribute name="assessmentType" type="string" />
+            <attribute name="assessmentScore" type="double" />
+        </complexType>
+    </element>
+
+    <element name="LearnerStatsTransferResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime"/>
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required"/>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+	</element>
+	
+	<element name="LearnerCourseProgressRequest">
+        <complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" />
+            <attribute name="learningSessionId" type="string" use="required"/>
+            <attribute name="courseCompleted" type="boolean" />
+            <attribute name="certificateURL" type="string" />
+            <attribute name="courseProgress" type="int" />
+            <attribute name="timeInLearningSession" type="int" />
+        </complexType>
+    </element>
+
+    <element name="LearnerCourseProgressResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime"/>
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required"/>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+	</element>
+	
+	
+	
+    <element name="LearningSessionCompleteRequest">
+        <complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" />
+            <attribute name="learningSessionId" type="string" use="required"/>
+            <attribute name="courseCompleted" type="boolean" />
+            <attribute name="certificateURL" type="string" />
+        </complexType>
+    </element>
+
+    <element name="LearningSessionCompleteResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime"/>
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required"/>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+	</element>
+	
+	<simpleType name="TransactionResultType">
+		<restriction base="string">
+			<enumeration value="Success"/>
+			<enumeration value="Failure"/>
+		</restriction>
+	</simpleType>
+	
+	 <element name="UpdateProfileRequest">
+        <complexType>
+            <sequence>
+				<element name="user" type="vu360-lms-lcms:VU360User" nillable="false"/>
+            </sequence>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+
+		</complexType>
+    </element>
+    <element name="UpdateProfileResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required"/>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+    </element>
+
+   <element name="PublishCourseRequest">
+        
+        <complexType>
+			<sequence>
+            	<element maxOccurs="unbounded" minOccurs="1" name="contentOwnerList" type="vu360-lms-lcms:ContentOwnerVO" nillable="false" />
+			</sequence>
+	        <attribute name="transactionGUID" type="string" use="required" />
+	        <attribute name="eventDate" type="dateTime" use="required" />
+        </complexType>
+    </element>
+
+    <element name="PublishCourseResponse">
+        <complexType>
+	        <attribute name="transactionGUID" type="string" use="required" />
+	        <attribute name="eventDate" type="dateTime" use="required" />
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required" />
+	        <attribute name="transactionResultMessage" type="string" />
+	        <attribute name="noOfCoursesPublishedSuccessfully" type="integer" />
+    	</complexType>
+    </element>
+
+    <element name="LearnerSetupRequest">
+        <complexType>
+			<sequence>
+            	<element maxOccurs="unbounded" minOccurs="1" name="userList" type="vu360-lms-lcms:VU360User" nillable="false" />
+			</sequence>
+	        <attribute name="transactionGUID" type="string" use="required" />
+	        <attribute name="eventDate" type="dateTime" use="required" />
+            <attribute name="contentOwnerGUID" type="string" use="required" />
+        </complexType>
+    </element>
+
+    <element name="LearnerSetupResponse">
+        <complexType>
+	        <attribute name="transactionGUID" type="string" use="required" />
+	        <attribute name="eventDate" type="dateTime" use="required" />
+	        <attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required" />
+	        <attribute name="transactionResultMessage" type="string" />
+	        <attribute name="noOfLearnerSetupSuccessfully" type="integer" />
+    	</complexType>
+    </element>
+
+
+	<complexType name="VU360User">
+		<sequence>
+			<element name="learnerProfile" type="vu360-lms-lcms:LearnerProfile" nillable="true"/>
+		</sequence>
+		<attribute name="userGUID" type="string" />
+		<attribute name="firstName" type="string" />
+		<attribute name="lastName" type="string" />
+		<attribute name="middleName" type="string" />
+		<attribute name="emailAddress" type="string" />
+		<attribute name="userName" type="string" />
+	</complexType>
+
+	<complexType name="LearnerProfile">
+		<sequence>
+			<element name="billingAddress" type="vu360-lms-lcms:Address" />
+			<element name="shippingAddress" type="vu360-lms-lcms:Address" />
+		</sequence>
+		<attribute name="mobilePhone" type="string" />
+		<attribute name="officePhone" type="string" />
+		<attribute name="officePhoneExt" type="string" />
+
+	</complexType>
+
+	<complexType name="Address">
+		<sequence>
+			<element name="addressLine1" type="string" />
+			<element name="addressLine2" type="string"/>
+			<element name="addressLine3" type="string"/>
+			<element name="city" type="string" nillable="false"/>
+			<element name="state" type="string" nillable="false"/>
+			<element name="zipCode" type="string" nillable="false"/>
+			<element name="country" type="string" nillable="false"/>
+		</sequence>
+	</complexType>
+
+	<complexType name="ContentOwnerVO">
+		<sequence>
+           	<element maxOccurs="unbounded" minOccurs="1" name="courseList" type="vu360-lms-lcms:CourseVO" nillable="false" />
+		</sequence>
+        <attribute name="contentOwnerGUID" type="string" use="required" />
+	</complexType>
+	<complexType name="CourseVO">
+		<sequence>
+			<element name="guid" type="string" nillable="false"/>
+		</sequence>
+	</complexType>
+	
+    <element name="GenerateCertificateRequest">
+    	<complexType>
+	        <attribute name="learnerEnrollmentId" type="long" use="required"/>
+     	    <attribute name="offset" type="int" use="required"/>
+     	    <attribute name="chunkSize" type="int" use="required"/>
+    	</complexType>
+	</element>
+
+    <element name="GenerateCertificateResponse">
+    	<complexType>
+    		<sequence>    			<element name="bytes" type="vu360-lms-lcms:ArrayOfUnsignedByte"/>
+    		</sequence>
+			<attribute name="transactionResult" type="vu360-lms-lcms:TransactionResultType" use="required"/>
+    		<attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+    </element>
+
+	<complexType name="ArrayOfUnsignedByte">
+		<sequence>
+			<element maxOccurs="unbounded" minOccurs="0"
+				name="unsignedByte" type="unsignedByte" nillable="false" />
+		</sequence>
+	</complexType>
+
+</schema>

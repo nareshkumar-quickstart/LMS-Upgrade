@@ -1,0 +1,467 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+   <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+    
+    <script type="text/javascript" language="javascript">
+        
+        function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.manageform.submit();
+        }
+        
+        // LMS-4180
+        function toggleMeetingCodes(checked)
+    	{
+    		//alert(checked);
+    		document.getElementById("imgMeetingIdReq").style.display=(checked ? 'block' : 'none');
+    		document.getElementById("imgMeetingCodeReq").style.display=(checked ? 'block' : 'none');
+    		document.getElementById("imgMeetingType").style.display=(checked ? 'block' : 'none');
+    		document.getElementById("imgClassSize").style.display=(checked ? 'none' : 'block');
+    		
+    		document.getElementById("meetingId").disabled=!checked;
+    		document.getElementById("meetingPasscode").disabled=!checked;
+    		document.getElementById("meetingType").disabled=!checked;
+    		document.getElementById("classSize").disabled=checked;
+			
+    		var selMeetingType = document.getElementById("meetingType").value;
+    		document.getElementById("e23").style.display=(checked && selMeetingType=="Webinar" ? 'block' : 'none');
+    		document.getElementById("e24").style.display=(checked && selMeetingType=="Webinar" ? 'block' : 'none');
+    		document.getElementById("e25").style.display=(checked && selMeetingType=="Webinar" ? 'block' : 'none');
+    	}
+    
+    
+    /* remove it    
+    function writeUserId(ob){
+            document.manageform.userName.value=ob.value;
+        }
+    */    
+        $(document).ready(function(){
+            
+            
+            $('#frame_body').scroll(function(){
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            });
+            $("#expirationDate").datepicker({ 
+                showOn: "both", 
+                buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+                buttonImageOnly: true 
+            });
+        });
+    </script>
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+</head>
+<body>	
+	 <form name="manageform" action="mgr_addSynchronousClass.do?id=$request.getParameter('id')" method="post">
+        
+		<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+        
+		<!-- Header Row -->
+		<tr id="singleColumn-header">
+            <td id="header" colspan="2">
+				#parse("snippets/instructor/instructorWizardHeader.vm")
+			</td>
+		</tr>
+		
+		
+		<!-- Page -->
+        <tr id="main">
+    		<td id="left-navigation" valign="top" style="width:195px;">
+        		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                    <div>
+                        <div id="l-menu-back">
+                            <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.wizard") <br> $brander.getBrandElement("lms.instructor.addSynchronousClass.caption.showing-1-of-3")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.wizardStep1")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.wizardStep2")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.wizardStep3")</div>
+                        </div>
+                    </div>
+        		</table>
+        	</td>
+    		
+
+			<!-- Page Content -->
+			<td id="content">
+				
+				<!-- Page Scrollable Area -->
+				<div id="scrollable">	
+    
+                    #springBind("classForm.*")
+                        #if($status.error)  
+                            #set($errorCodes = [])  
+                            #set($temp = true)
+    
+                            #springBind("classForm.className")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end
+                            #springBind("classForm.courseName")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end						
+    												
+    						<!-- LMS-4180 -->
+    						#springBind("classForm.meetingId")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end
+    						
+    						<!-- LMS-4180 -->
+    						#springBind("classForm.meetingPasscode")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end
+                            
+                            #springBind("classForm.classSize")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end						
+
+                            #springBind("classForm.enrollmentCloseDate")
+                            #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set($temp = $errorCodes.add($errorCode))
+                                #end
+                            #end
+							
+                            #if($errorCodes.size() > 0)
+                                <!-- error-box -->
+                                <div id="message_box">
+                                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                    #foreach($errorCode in $errorCodes)         
+                                    #set ($error = $brander.getBrandElement($errorCode))
+                                    ##set ($error = $errorCode)
+                                    <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                    </div>
+                                   #end
+                                </div>
+                                <!-- error-box -->
+                            #end
+                        #end
+    
+                  
+                 <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addSynchronousClass.step1.heading")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.courseSubTitle")</div>
+			</td>
+		    </tr>
+		</table>
+		
+				#set ($courseType = $classForm.courseType)				 
+                <!-- Logo+Manage-User-end -->                    
+    
+                    #set ($quoteStr = '"')
+                    #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                    #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                    #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                    #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                    #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                    #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+    
+                        <div class="content-Block"><!-- content-Block 1 -->
+                            <div id="e7a" class="Block-Contain-header">
+                                <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.summary")</div>
+                            </div>
+                            <!-- User Profile starts -->
+                            <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                                <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                <!-- 1 -->
+                                <div id="e2" class="search-content-row">
+                                #springBind("classForm.courseName")
+                                    <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.courseName")</div>
+                                    <div class="com-star-r-t">&nbsp;</div>
+                               
+                                    <div class="input_field_area-user-f">
+                               ${status.value}
+    						   <input type="hidden" value="${status.value}" name="${status.expression}" />
+    						   </div>
+                                    <div class="com-star-r-t"></div>
+                                </div>
+                                <!-- 2 -->
+                                <div id="e1" class="search-content-row">
+                                #springBind("classForm.className")
+                                    <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.className")</div>
+                                    <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+                               #set ($inputTextCSS1=$inputTextCSS+" tabindex='1' maxlength='250'")
+                                    <div class="input_field_area-user-f">
+                               #springFormInput("classForm.className" $inputTextCSS1)</div>
+                                    <div class="com-star-r-t"></div>
+                                </div>
+
+                                <!-- 3 -->
+                                <div id="e3" class="search-content-row">
+    	                            #springBind("classForm.classSize")
+    	                            <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.classSize")</div>
+    	                            <div class="com-star-r-t"><img id="imgClassSize" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end   #if(! $classForm.onlineMeetingTF) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end  /></div>
+                               		#set ($inputTextCSS3=$inputTextCSS+" tabindex='2' maxlength='8' ")
+                                    <div class="input_field_area-user-f">
+                               		#springFormInput("classForm.classSize" $inputTextCSS3)</div>
+                                    <div class="com-star-r-t"></div>
+                                </div>                           
+                                
+                                <!-- 4 -->
+                                <div id="e4" class="search-content-row">
+    								<div class="block_text_in-r-f">
+    									$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.classStatus")
+    								</div>
+    								<div class="com-star-r-t"></div>
+    								<div class="input_field_area-user-f">
+                                        <select class="input_field1c" name="status" tabindex="5">
+                                        #springBind( "classForm.status" )
+                                        <option value="Active" selected>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Active")</option>
+                                        <option value="InActive">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Inactive")</option>
+                                        </select>
+                                    </div>
+    								<div class="com-star-r-t"></div>
+    							</div>
+        						
+        						##($courseType)
+                                <!-- 5 --><!-- LMS-4180 -->	
+                                <div id="e5" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) style="display:none;" #end>
+        							#springBind( "classForm.onlineMeetingTF" )
+        						    <div class="block_text_in-r-f"><input type="checkbox" value="1" tabindex="4" name="onlineMeetingTF" #if($status.value) checked #end onclick="toggleMeetingCodes(this.checked);" style="display:none; float:left; margin-left:0px; margin-right:0px;"></input>
+        									$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.meetingType")
+        							</div>
+        						    <div class="com-star-r-t"><img id="imgMeetingType" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end   #if($classForm.onlineMeetingTF) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+        						    
+									
+									
+							<div class="input_field_area-user-f">
+								<script type="text/javascript">
+									function meetingType_onchange(e) {
+										var meetingId = document.getElementById("e6");
+										var meetingType = document.getElementById("e7");
+										var meetingURL = document.getElementById("e18");
+										
+										var presenterFirstName = document.getElementById("e23");
+										var presenterLastName = document.getElementById("e24");
+										var presenterEmailAddress = document.getElementById("e25");
+										
+										if(e.options[e.options.selectedIndex].value == "Others") {
+											meetingId.style.display = "none";
+											meetingType.style.display = "none";
+											meetingURL.style.display = "block";
+											
+											presenterFirstName.style.display = "none";
+											presenterLastName.style.display = "none";
+											presenterEmailAddress.style.display = "none";
+										} 
+										else if(e.options[e.options.selectedIndex].value == "Webinar") {
+											meetingId.style.display = "none";
+											meetingType.style.display = "none";
+											meetingURL.style.display = "none";
+											
+											presenterFirstName.style.display = "block";
+											presenterLastName.style.display = "block";
+											presenterEmailAddress.style.display = "block";
+										} 
+										else {
+											meetingId.style.display = "block";
+											meetingType.style.display = "block";
+											meetingURL.style.display = "none";
+											
+											presenterFirstName.style.display = "none";
+											presenterLastName.style.display = "none";
+											presenterEmailAddress.style.display = "none";
+										}
+									}
+								</script>
+								<select class="input_field1c" name="meetingType" id="meetingType" tabindex='5' #if(!$classForm.onlineMeetingTF) disabled #end onchange="meetingType_onchange(this)">
+								#springBind( "classForm.meetingType" )
+								#set ($selectedMeetingType = $classForm.meetingType)
+								<!--<option value="LS 360" #if($!{classForm.meetingType} != 'Others') selected #end>$brander.getBrandElement("lms.instructor.caption.dimdim.defaulttext")</option>-->
+								<!--<option value="WebEx" #if($!{classForm.meetingType} == 'WebEx') selected #end>$brander.getBrandElement("lms.instructor.caption.WebEx.defaulttext")</option>-->
+								<option value="Webinar" #if($!{classForm.meetingType} == 'Webinar') selected #end>$brander.getBrandElement("lms.instructor.caption.webinar.defaulttext")</option>
+								#if($showOtherProviderOption=='true')
+								<option value="Others" #if($!{classForm.meetingType} == 'Others') selected #end>$brander.getBrandElement("lms.instructor.caption.Others.defaulttext")</option>
+								#end
+								<!--<option value="GlobalScholar">GlobalScholar</option>-->
+								</select>
+                            </div>
+                            <div class="com-star-r-t"></div>
+    						</div> 						
+                                
+    							<!-- 6 --><!-- LMS-4180 -->	
+    							<div id="e6" class="search-content-row" style="display:none;" >
+    								#springBind("classForm.meetingId")
+    								<div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.meetingId")</div>
+    								<div class="com-star-r-t"><img id="imgMeetingIdReq" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end   #if($classForm.onlineMeetingTF) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+    								#set ($inputTextCSS6=$inputTextCSS+" tabindex='6' maxlength='50' #if(!$classForm.onlineMeetingTF) disabled #end ")
+    								<div class="input_field_area-user-f">
+    								#springFormInput("classForm.meetingId" $inputTextCSS6)</div>
+    								<div class="com-star-r-t"></div>
+    							</div>
+    							
+    							<!-- 7 --><!-- LMS-4180 -->	
+    							<div id="e7" class="search-content-row" style="display:none;" >
+    								#springBind("classForm.meetingPasscode")
+    								<div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.meetingPasscode")</div>
+    								<div class="com-star-r-t"><img id="imgMeetingCodeReq"  #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end #if($classForm.onlineMeetingTF) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end/></div>
+    								#set ($inputTextCSS6=$inputTextCSS+" tabindex='7' maxlength='20' #if(!$classForm.onlineMeetingTF) disabled #end ")
+    								<div class="input_field_area-user-f">
+    								#springFormInput("classForm.meetingPasscode" $inputTextCSS6)</div>
+    								<div class="com-star-r-t"></div>
+    							</div>
+								
+								<div id="e18" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| $selectedMeetingType == 'Webinar') style="display:none;" #end >
+								#springBind("classForm.meetingURL")
+                                <div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.meetingURL")</div>
+                                <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validateMeetingURL} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end/></div>
+								#set ($inputTextCSS6=$inputTextCSS+" tabindex='8' ")
+                                <div class="input_field_area-user-f">
+								#springFormInput("classForm.meetingURL" $inputTextCSS6)
+								</div>
+                                <div class="com-star-r-t"></div>
+							</div>
+							
+							<div id="e23" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| $selectedMeetingType == 'Others') style="display:none;" #end>
+								#springBind("classForm.presenterFirstName")
+                                <div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterFirstName")</div>
+                                <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+								#set ($inputTextCSS6=$inputTextCSS+" tabindex='8' ")
+                                <div class="input_field_area-user-f">
+								#springFormInput("classForm.presenterFirstName" $inputTextCSS6)
+								</div>
+                                <div class="com-star-r-t"></div>
+							</div>
+							
+							<div id="e24" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| $selectedMeetingType == 'Others') style="display:none;" #end>
+								#springBind("classForm.presenterLastName")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterLastName")</div>
+                                <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+								#set ($inputTextCSS6=$inputTextCSS+" tabindex='8' ")
+                                <div class="input_field_area-user-f">
+								#springFormInput("classForm.presenterLastName" $inputTextCSS6)
+								</div>
+                                <div class="com-star-r-t"></div>
+							</div>
+							
+							<div id="e25" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| $selectedMeetingType == 'Others') style="display:none;" #end>
+								#springBind("classForm.presenterEmailAddress")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterEmailAddress")</div>
+                                <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+								#set ($inputTextCSS6=$inputTextCSS+" tabindex='8' ")
+                                <div class="input_field_area-user-f">
+								#springFormInput("classForm.presenterEmailAddress" $inputTextCSS6)
+								</div>
+                                <div class="com-star-r-t"></div>
+							</div>
+							
+                               
+                               	<!-- 8 -->
+    							<div id="e8" class="search-content-row">
+    								<div class="block_text_in-r-f">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.timezone")</div>
+    								<div class="com-star-r-t"></div>
+    								<div class="input_field_area-user-f">
+    									#springBind("timeZoneList")
+    									<select name="timeZoneId" class="input_field1c" tabindex='8'>
+    									#foreach ($timeZone in $timeZoneList)
+    										<option value="$timeZone.id" #if($timeZone.id == $!{classForm.timeZoneId}) selected #end  >$timeZone.getFormattedTimeZone()</option>									
+    									#end
+    									</select>
+    								</div>
+    							</div>
+                               	<!-- 9 -->
+    							<div id="e8" class="search-content-row">
+									#springBind("classForm.enrollmentCloseDate")
+    								<div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.enrollmentCloseDate")</div>
+									<div class="com-star-r-t"><img id="imgMeetingCodeReq" #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #elseif(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+    								<div class="input_field_area-user-f">
+    								#springBind("classForm.enrollmentCloseDateString")
+    								<input type="text" style="width:165px" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="$status.expression" value="$!{status.value}" tabindex="9" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+    									 
+    								</div>
+    							</div>							
+    							 
+    							<!-- USED FOR SPACE -->
+    							<div class="com-star-r-t"></div>
+    							
+    							
+                                <!-- 12 -->
+                                <div id="e13" class="search-content-row">
+                                    <div class="block_text_in-r-f"></div>
+                                    <div class="input_field_area-user-f"></div>
+                                    <div class="com-star-r-t"></div>
+                                </div>
+                            </div>
+                            <!-- User Profile ends -->
+                        </div><!-- content-Block 1 -->
+    					<!-- space -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                        <!-- button-div -->
+                       <input type="hidden" id="currentpage" name="_page" value="0"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+    							<div style="float: right; margin-top: 3px; margin-right: 20px;">
+    							  <div>
+    								  <a onClick="submitButtonForm(document.manageform,'wizardSubmitter','_target1');">
+    									  <div class="btn_start"></div>
+    									  <div class="btn_normal">Next</div>
+    									  <div class="btn_end"></div>
+    								  </a>
+    							  </div>
+    					   </div>  
+    						<div style="float: left; margin-top: 3px; margin-right: 1px;">
+    							  <div>
+    								  <a  onClick="location.href='mgr_manageSynchronousClass.do?id=$request.getParameter("id")';">
+    									  <div class="btn_start"></div>
+    									  <div class="btn_normal">Cancel</div>
+    									  <div class="btn_end"></div>
+    								  </a>
+    							  </div>
+    						   </div>					   
+    					
+    					 <!-- button-div -->
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+    
+                    </form>
+
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+
+                </div>
+            	<!-- END: Page Scrollable Area -->				
+            </td>
+        </tr>
+		<!-- END: Page-->
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+	</table>
+		
+    </form>
+	<script type="text/javascript">
+		//meetingType_onchange(document.getElementById("meetingType"));
+	</script>
+</body>
+</html>

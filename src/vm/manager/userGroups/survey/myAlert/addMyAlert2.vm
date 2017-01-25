@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+<head>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type='text/javascript' src='javascript/js_survey.js' ></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+     
+     <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+     <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+    
+    <script type="text/javascript" language="javascript" src="javascript/wisiwig/richtext.js" ></script>
+    <script type="text/javascript" language="javascript" src="javascript/wisiwig/config.js" ></script>
+    <script type="text/javascript" language="javascript" ></script> 
+    
+    <script type='text/javascript'>
+        
+        $(document).ready(function() {    
+          
+    	});
+         
+	</script>
+    <script type='text/javascript'>
+            
+        $(document).ready(function() {
+    		var v=$("#test").val();		
+    		$('#showhtml').html(v);
+        });
+    
+    </script>
+
+</head>
+<body>
+    <form name="addMyAlertForm" method="post" action="lrn_addMyAlert.do">
+    <input type="hidden" id="action" name="method" value=""/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!--Header Start -->
+    			#parse("snippets/learnerNewHeader.vm")
+    			<!-- Header End -->
+			</td>
+		</tr>
+			
+    <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			<tr>
+				<td>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.myAlert.addAlert.caption.showingWizardStep2")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.myAlert.addAlert.caption.summary")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.myAlert.addAlert.caption.confirmation")</div>
+                    </div>
+				</td>
+			</tr>
+		</table>
+	</td>
+		
+	<td id="content" >
+		<div id="scrollable">
+            <div id="error-message-box" style="display:none;">
+                <div class="error_box">
+                    <div id="errors"></div>
+                    <div id="close-errors" class="close_icon"></div>
+                </div>
+            </div>
+
+			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+    		    <tr>
+    			<td id="page-icon" class="courseLogoProfile">
+    			    &nbsp;
+    			</td>
+    			<td id="page-description">
+    			    <div id="page-heading">$brander.getBrandElement("lms.myAlert.manageAlert.caption.addAlert")</div>
+    			    <div id="page-help">$brander.getBrandElement("lms.myCourses.myAlert.addAlert2.textDescription")</div>
+    			</td>
+    		    </tr>
+    		</table>
+            <!-- Search Result Start -->
+            <div class="search_box_result">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.myAlert.editAlert.caption.summary")</span></div>
+                <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                    <tr>
+                        <td width="200" height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.myAlert.manageAlert.caption.alertName")</span></td>
+                        <td>
+							#springBind("addMyAlertForm.alert.alertName")
+                           $!{status.value}
+                        </td>
+                    </tr>
+                    <tr>
+						<td height="20">
+							<div class="row_text" style="font-weight:bold;">
+								$brander.getBrandElement("lms.myAlert.editAlert.caption.message")
+							</div>
+						</td>
+                       <td>
+							#springBind("addMyAlertForm.alertMessageBody")
+							<!--  <span class="row_text">$!{status.value}</span> -->
+
+							<!-- <div id="showhtml">$!{status.value}</div>-->
+							<div id="showhtml"></div>
+							<input type="hidden" id="test" value="$!{status.value}">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+                    
+		    <input type="hidden" id="currentpage" name="_page" value="1"/>
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+
+            <div class="search_box_result" style="margin-top:20px;">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.myAlert.addAlert.caption.eventSummary")</span></div>
+                <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                    <tr>
+					
+    					#springBind("addMyAlertForm.event_date")
+    					#if($!{status.value} == "event")							
+							<td width="200" height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.myAlert.addAlert.caption.eventNames")</span></td>
+							#springBind("addMyAlertForm.selectedAvailableAlertEvents")
+							$pager.setItems($!{status.value})
+							#set($totalCount = $pager.total)
+						#if($pager.hasItems())
+							#set($pageFirstIndex = $pager.firstIndex)
+							#set($pageLastIndex = $pager.lastIndex)
+							#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+							#set($currentPageCount = $pageLastIndex + 1)
+							#set($pageCurrIndex = $pager.index)
+						#else
+							#set($pageFirstIndex = 0)
+							#set($pageLastIndex = 0)
+							#set($currentPageSize = 0)
+							#set($currentPageCount = 0)
+							#set($pageCurrIndex = 0)
+						#end
+												
+						#springBind("addMyAlertForm.event_date")
+						#elseif($!{status.value} == "date")
+						<td width="200" height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.myAlert.addAlert.caption.date")</span></td>
+							#springBind("addMyAlertForm.date")
+						<td>	$!{status.value}	</td>
+						#end
+					
+						<input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+						<input type="hidden" id="paging" name="paging" value="" />
+						<input type="hidden" id="sortDirection" name="sortDirection" value="" />
+						<input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+						<input type="hidden" id="showAll" name="showAll" value="false" />
+						<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						#springBind("addMyAlertForm.event_date")
+						#if($!{status.value}=="event")
+    						<td>
+    							<span class="row_text">
+                                    #springBind("addMyAlertForm.days")
+                                    $!{status.value} $brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.days")
+                                    #springBind("addMyAlertForm.before")
+            						#if($!{status.value}=='true') $brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.before") #end 
+                                    #springBind("addMyAlertForm.after")
+                                    #if($!{status.value}=='true') $brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.after") #end
+        						</span>
+    						</td>
+							#if($!{context.showAll})
+								#set($showAll=$!{context.showAll})
+							#else
+								#set($showAll=false)
+							#end
+							
+							#foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+								#springBind("addMyAlertForm.selectedAvailableAlertEvents[$loopIndex]")
+								#set($learner = $!{status.value})
+								#if($loopIndex%2 == 0)
+									#set($alternate="row_1")
+								#else
+									#set($alternate="row_2")
+								#end
+                                <td>
+                                    <span class="row_text">$learner.dbDisplayName </span>
+                                </td>
+							#end
+							#end
+                            </tr>
+                        </table>
+                    </div>
+
+                    
+            		<div style="float:right; margin-top:15px;">
+            		  <a onClick="submitButtonForm(document.addMyAlertForm,'wizardSubmitter','_finish');" style="text-decoration:none;">
+            			  <div class="btn_start"></div>
+            			  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+            			  <div class="btn_end"></div>
+            		  </a>
+            		</div>
+            		<div style="float:right; margin-top:15px;margin-right:5px;">
+            		  <a onClick="submitButtonForm(document.addMyAlertForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+            			  <div class="btn_start"></div>
+            			  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+            			  <div class="btn_end"></div>
+            		  </a>
+            		</div>
+            		<div style="float:left; margin-top:15px;margin-left:10px;">
+            			<a onClick="javascript:window.location='lrn_addMyAlert.do';" style="text-decoration:none;">
+            				  <div class="btn_start"></div>
+            				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+            				  <div class="btn_end"></div>
+            			</a>
+            		</div>
+        		</div>
+        	</td>
+        </tr>
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+        </table>
+    </form>
+</body>
+</html>

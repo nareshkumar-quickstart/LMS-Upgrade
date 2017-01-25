@@ -1,0 +1,20 @@
+package com.softech.vu360.lms.webservice;
+
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetAllTraingPlansByIdsRequest;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetAllTraingPlansByIdsResponse;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetEmployeeCoursesStatusRequest;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetEmployeeCoursesStatusResponse;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanAssignmentsByDateRequest;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanAssignmentsByDateResponse;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanCoursesByDueDateRequest;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanCoursesByDueDateResponse;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanPredictRequest;
+import com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanPredictResponse;
+
+public interface TrainingPlanWS extends AbstractWS {
+	TrainingPlanPredictResponse getAllTrainingPlansByCustomerId(TrainingPlanPredictRequest trainingPlanRequest);
+	GetAllTraingPlansByIdsResponse getAllTrainingPlansByIds(GetAllTraingPlansByIdsRequest trainingPlanRequest);
+	GetTrainingPlanCoursesByDueDateResponse getTrainingPlansCoursesByDueDate(GetTrainingPlanCoursesByDueDateRequest trainingPlanRequest);
+	GetEmployeeCoursesStatusResponse getEmployeeCoursesStatus(GetEmployeeCoursesStatusRequest trainingPlanRequest);
+	GetTrainingPlanAssignmentsByDateResponse getTrainingPlanAssignmentsByDate(GetTrainingPlanAssignmentsByDateRequest trainingPlanRequest);
+}

@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+<script type="text/javascript">
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.alert_message_box_text').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function doSearch(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.editDistributorViewAdminstratorForm.submit();
+    }
+
+    function deleteAdmin() {
+        if ($("INPUT[type='checkbox'][name='admins']:checked").length>0) {
+            confirm("Are you sure you wish to delete this administrator?", function () {
+                document.getElementById('action').value = "delete";
+                document.editDistributorViewAdminstratorForm.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='admins']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='admins']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='admins']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+</script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/adminHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+        <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- left-pannel-content -->
+            #parse("snippets/adminDistributorLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table></td>
+			
+            <TD id="content" >
+	<div id="scrollable">
+
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoDistributor">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.caption.DistributorGroupAdministrators")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.caption.desc")</div>
+			</td>
+		    </tr>
+		</table>
+		                
+               <!-- Logo+Manage-User-end -->
+
+                <!--Group-Name-div -->
+                <div class="group-name">
+                    <div>Reseller Group : $!{context.distributorGroup.name}</div>
+                </div>
+                <!-- Group-Name-div -->
+
+                <!-- button-div -->
+                <div style="margin-bottom: 12px" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.managerBtn1")">
+                        <a style="float: left; margin-top: 3px" class="button" onclick="javascript:window.location='adm_manageDistributorGroup.do?action=Search&distributorGroupName=';"><span class="button">Back to Reseller Groups</span></a>
+                </div>
+                <!-- button-div -->
+
+                <form name="editDistributorViewAdminstratorForm" method="post" action="">
+                    <input type="hidden" id="action" name="action" value="" />
+                    <div class="content-Block-new"><!-- content-Block -->
+                        <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                            <div style="float:left; height:23px; margin-left: 5px;">
+                                <a class="button" onClick="doSearch('addAdministrator');"><span class="button">$brander.getBrandElement("lms.admin.distributor.caption.addAdministrator")</span></a>
+                            </div>
+                            <div style="float:left; margin-left:4px;height:23px;">
+                                <a class="button" onClick="deleteAdmin();"><span class="button">$brander.getBrandElement("lms.admin.distributor.caption.deleteAdministrator")</span></a>
+                            </div>
+                        </div><!-- Result Header End -->
+                        <div id="searchResult"><!-- searchResult -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="check_box_top" width="17"><input type="checkbox" id="chkAll" name="alladmin" style="margin-left:3px"/></td>
+                                    <td class="box_subheader">$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.caption.FirstName")</td>
+                                    <td class="box_subheader">$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.caption.LastName")</td>
+                                    <td class="box_subheader" style="border-right:none;">$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.caption.EmailAddress")</td>
+                                    <td class="box_subheader" style="border-right:none;">&nbsp;</td>
+                                </tr>
+                            #set($count = 0)
+                            #set($ssn=$!{request.getSession(true)})
+                            #foreach($lmsAdministrator in ${context.listOfLMSAdministrator})
+                                #if($count%2 == 0)
+                                    #set($alternate="row_1")
+                                #else
+                                    #set($alternate="row_2")
+                                #end
+                                <tr>
+                                    <td class="$alternate"><input type="checkbox" name="admins" value="${lmsAdministrator.id}" id="chk$count" /></td>
+                                    <td class="$alternate">$!{lmsAdministrator.Vu360User.FirstName}</td>
+                                    <td class="$alternate">$!{lmsAdministrator.Vu360User.LastName}</td>
+                                    <td class="$alternate">$!{lmsAdministrator.Vu360User.EmailAddress}</td>
+                                    <td align="center" class="$alternate" style="border-right:none; width: 90px">
+                                    	<a href="adm_ManagerResellerByDistributorGroup.do?groupId=$ssn.getAttribute("distributorGroupId")&administratorId=$!{lmsAdministrator.id}&administratorName=$!{lmsAdministrator.Vu360User.FirstName} $!{lmsAdministrator.Vu360User.LastName}">
+                                    		View Reseller
+                                    	</a>
+                                    </td>
+                                </tr>
+                            #end
+                            </table>
+                        </div><!-- searchResult -->
+                    </div><!-- content-Block -->
+                </form>
+
+            </div><!-- right-pannel -->
+
+        </td></tr><!-- content-area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+</td></tr>
+
+    </table><!-- main-container -->
+    <div id='deleteConfirmation' style='display:none'>
+        <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text"></div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+    </div>
+
+    <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div><!-- Alert Message Box Ends -->
+
+</body>
+</html>

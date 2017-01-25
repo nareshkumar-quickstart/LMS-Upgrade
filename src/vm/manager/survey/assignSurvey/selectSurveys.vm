@@ -1,0 +1,399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+        #parse("snippets/learnerNewHead.vm")
+
+
+		<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+		<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+        <script type="text/javascript" language="javascript">
+            function changeRowColor(checkbox, id) {
+                var tr=checkbox.parentNode.parentNode;
+                var tdarr=$(tr).find("td");
+                  if (checkbox.checked) {
+                      for(i=0;i<tdarr.size();i++){
+                        tdarr[i].style.background="#E9F9FE";
+                      }
+                  } else {
+                      for(i=0;i<tdarr.size();i++){
+                        tdarr[i].removeAttribute("style");
+                      }
+                  }
+                  document.getElementById(id).value = checkbox.checked;
+            }
+
+            function selectAllCheckBoxes(objCheckAll ) {
+                
+				#springBind("enrollmentForm.courseSearchStart")
+				#set( $resultStart = $status.value)
+				#springBind("enrollmentForm.courseSearchEnd")
+				#set( $resultEnd = $status.value)
+				
+				var start = $resultStart ;
+				var end = $resultEnd ;
+
+				#springBind("enrollmentForm.surveyItemList")
+				#set($totCount = $status.value.size())
+
+				#set($count = ${status.value.size()} - 1)
+				#if($count > 0 )
+					if (objCheckAll.checked) {
+						for(var i = start; i <= end; i++){
+							var chkid = "surveyItemList[" + i + "]";
+							var objCheckBox=document.getElementById("chk"+i);
+							objCheckBox.checked = true;
+ 
+							var hiddenid = "surveyItemList[" + i + "].selected";
+							changeRowColor(objCheckBox, hiddenid);
+						}
+					}else{
+						for(var i = start ; i <= end; i++){
+							var chkid = "surveyItemList[" + i + "]";
+							var objCheckBox=document.getElementById("chk" + i );
+							objCheckBox.checked = false;
+ 
+							var hiddenid = "surveyItemList[" + i + "].selected";
+							changeRowColor(objCheckBox, hiddenid);
+						}
+						
+                }
+            #end
+			}
+
+            $(document).ready(function()
+            {
+               			
+            });
+			
+            function doSearch(buttonclick) {
+            //      alert(buttonclick);
+
+				document.getElementById('surveySearchType').value=buttonclick;
+				document.getElementById('searchSurveyName').value=document.getElementById('formSearchSurveyName').value;
+				document.getElementById('searchSurveyStatus').value=document.getElementById('formSearchSurveyStatus').value;
+				document.getElementById('searchSurveyRetired').value=document.getElementById('formSearchSurveyRetired').value; 
+				document.getElementById('wizardSubmitter').name ="_target4";
+				document.getElementById('courseSearchStay').value ="stay";
+				document.searchCoursesForm.submit();
+            } 
+
+			function onAllSearch(){
+				document.getElementById('surveySearchType').value="showAll";
+				
+				document.getElementById('wizardSubmitter').name ="_target4";
+				document.getElementById('courseSearchStay').value ="stay";
+				document.searchCoursesForm.submit();
+			}
+			
+			function movePage(direction){
+				document.getElementById('surveySearchType').value="move";
+				document.getElementById('courseSearchDirection').value = direction;
+				
+				document.getElementById('wizardSubmitter').name ="_target4";
+				document.getElementById('courseSearchStay').value ="stay";
+				document.searchCoursesForm.submit();
+				 
+			}
+
+			var entArray = new Array();
+			var entCourseArray = new Array();
+
+        </script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>        
+</head>
+
+<body>
+<form name="searchCoursesForm" method="post" action="mgr_assignSurveys.do">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+         #parse("snippets/managerWizardHeader.vm")
+		 </td>
+		 </tr>
+		 
+	 <tr id="main"> <!-- SECOND BLOCK -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+			<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+				#parse("snippets/assignSurveyLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+			
+                <!-- right-pannel-content -->
+      <TD id="content" >
+			<div id="scrollable">
+			    #springBind("enrollmentForm.surveyItemList")
+                #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                        <!-- Logo+Manage-User -->
+		<div class="page_description" id="pageDescription">
+			  	    <!-- Page Icon -->
+                    <div class="icon_surveys" id="pageIcon"></div>
+                    <!-- Page Heading -->
+                    <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.assignSurvey.step1.caption.title")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.assignSurvey.selectSurveys.caption.description")</div>
+				</div>
+      	                  <!-- Logo+Manage-User-end -->
+						  <div id="resultBox" class="content-Block-new">
+				<div id="searchBox" style="z-index:9;height:130px" class="visible">
+	 
+				<div style="padding: 2px">$brander.getBrandElement("lms.assignSurvey.searchSurvey")</div>
+		
+				<div style="padding: 5px"><div style="width:105px; float:left">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.SurveyName") </div> <div style="float:left"><input id="formSearchSurveyName" type="text" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}"   value="" style="font-size:9px; width:155px" class="search_field" /></div><br style="clear:both" /></div>
+				
+				 
+				<input value="Published" type="hidden"  id="formSearchSurveyStatus"   >
+				<input id="formSearchSurveyRetired"   value="no"     type="hidden" >
+				<br style="clear:both" />
+				<br style="clear:both" />
+						<!-- 1 -->
+
+		<div style="padding: 5px;margin-left:40px;margin-right:40px;height:20px">
+		<a class="button" onclick="showSearchBox(this);" ><span class="button">Cancel</span></a>
+		<a  class="button"  name="qsearch" onclick="doSearch('advanceSearch');"  /><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a>
+		</div>
+		 
+		 
+	 
+</div>						
+    <div id="resultHeader" class="box_header">
+        
+	#springBind("enrollmentForm.courseSearchResultsPageSize")	  
+	#set( $pageResultMaxSize = $status.value )
+	
+	#springBind("enrollmentForm.surveyItemList")
+	$pager.setItems($status.value)
+	#set($totalCount = $status.value.size() )
+	#if($pager.hasItems())
+	
+		#springBind("enrollmentForm.courseSearchStart")
+		#set($pageFirstIndex = $status.value)
+		
+		#springBind("enrollmentForm.courseSearchEnd")
+		#set($pageLastIndex = $status.value )
+		#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+		#set($currentPageCount = $pageLastIndex + 1)
+	
+	#else
+		#set($pageFirstIndex = 0)
+		#set($pageLastIndex = 0)
+		#set($currentPageSize = 0)
+		#set($currentPageCount = 0)
+	#end
+ 
+
+	<div class="result_left_side">
+			<!-- Result Description -->
+			<div style="float:left; margin-top:3px;">
+				  <a id="srch" onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Search</div>
+					  <div class="btn_end"></div>
+				  </a>
+			</div>
+			
+			<!-- All Icon -->
+			
+			#springBind("enrollmentForm.surveyItemList")
+			#set( $pageResultMaxSize = $status.value.size() )
+			
+			#set( $pageResultMaxSizeLessOne = $pageResultMaxSize - 1 )
+			  
+			#if( $totalCount > 10 )
+			 
+			<div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"><img onclick="return onAllSearch();" src="$brander.getBrandElement("lms.pixel.checkboxGif")" /></div>
+			#end
+			<!-- Next Icon -->
+			#springBind("enrollmentForm.courseSearchShowAll")
+			
+			#if( $status.value != "showAll")
+			
+			
+				#springBind("enrollmentForm.courseSearchEnd")
+				 
+				#set( $totalIndex = $totalCount - 1 )
+				 
+				#if( $totalIndex  > $status.value )
+					<div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"><img  onclick="return movePage('next');" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+				#else
+					<div id="goNext" class="icon_disabled">&nbsp;</div>
+				#end
+
+				<!-- Back Icon --> 
+				#springBind("enrollmentForm.surveyItemList")
+				#set( $pageResultMaxSize = $status.value.size() )
+				#set( $backMaxSize = $pageResultMaxSize - 1 )	
+				
+				#springBind("enrollmentForm.courseSearchStart")
+
+				#if( $status.value > 0 )
+					<div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"><img  value="Search" name="img2" onclick="return movePage('prev');" src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+				#else
+					<div id="goBack" class="icon_disabled">&nbsp;</div>
+				#end
+			
+			#end
+			<!-- Showing Results -->
+			#set($totalCountminus1 = $totalCount - 1)
+		 
+			#if($pageFirstIndex == 0 && $pageLastIndex <= $pageResultMaxSize && $pageLastIndex!=0)
+					#set($x = $pageFirstIndex+1)
+			#elseif($pageFirstIndex > 0)
+					#set($x = $pageFirstIndex+1)
+			#elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+					#set($x = $pageFirstIndex+1)
+			#else
+					#set($x = 0)
+			#end
+			#if($pageLastIndex != 0)
+					#set($y = $pageLastIndex+1)
+			#elseif($totalCount == 1)
+					#set($y = 1)
+			#else
+					#set($y = 0)
+			#end
+			<div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $x - $y $brander.getBrandElement("lms.manager.manageTrainingPlans.caption.of") $totalCount </div>
+	</div>  
+ 
+</div>
+                                <!-- Result Header End -->
+##---------------------------------------------------------------------------
+<div id="searchResult_2" class="">
+<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:1px;">
+<tr bgcolor="#efefef">
+	<td class="check_box_top" width="17px;"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes(this);" name="selectedLearner" /></td>
+	<td class="box_subheader" width="97%;">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.SurveyName")</td>
+ 
+
+  </tr>
+#springBind("enrollmentForm.surveyItemList")  
+#if( $status.value.size() > 0 )
+	
+	#springBind("enrollmentForm.courseSearchStart")
+	#set( $resultStart = $status.value)
+	#springBind("enrollmentForm.courseSearchEnd")
+	#set( $resultEnd = $status.value)
+  
+	#foreach($index in [$resultStart..$resultEnd])	
+		<tr class="$alternate">
+	 
+		#if($index%2==0)
+			#set($alternate="row_1")
+		#else
+			#set($alternate="row_2")
+		#end
+		
+		#springBind("enrollmentForm.surveyItemList[$index].selected")
+		
+	<td class="$alternate" width="17px">
+			<input type="checkbox" id="chk$index" #if(${status.value}) checked #end onclick="changeRowColor(this,'${status.expression}');"/>
+			<input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+	</td>
+		#springBind("enrollmentForm.surveyItemList[$index].survey.name")
+	<td class="$alternate">#dotPadding( $!{status.value} 30 )</td>		
+		 
+	#end
+#else
+
+	<tr>
+		<td colspan="2" style="border-right:1px solid;border-left:1px solid;border-bottom:1px solid;border-color:#dfdfdf !Important;">
+			<div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+		</td>
+	</tr>
+ 	
+#end
+</table>
+<!-- End-User-list -->
+</div> 
+</div> 
+#* ************************************************************************************************** *#
+        <!-- space -->
+        <div class="manager-bottom-space"></div>
+        <!-- space -->
+
+        <!-- button-div -->
+        #set ($previousPageIndex=$pageIndex)
+        #set ($target="_target$previousPageIndex")
+
+        <div class="managerBtn">
+        <input type="hidden" id="currentpage" name="_page" value="4" />
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+		
+		 <div style="float:right; margin-top:3px;">
+		  <a onClick="submitButtonForm(document.searchCoursesForm,'wizardSubmitter','_target5');" style="text-decoration:none;">
+			  <div class="btn_start"></div>
+			  <div class="btn_normal">Next</div>
+			  <div class="btn_end"></div>
+		  </a>
+		</div>
+		<div style="float:right; margin-top:3px;margin-right:5px;">
+		  <a onClick="submitButtonForm(document.searchCoursesForm,'wizardSubmitter','$target');" style="text-decoration:none;">
+			  <div class="btn_start"></div>
+			  <div class="btn_normal">Previous</div>
+			  <div class="btn_end"></div>
+		  </a>
+		</div>
+		<div style="float:left; margin-top:3px;">
+			<a onClick="javascript:window.location='mgr_viewAssignSurveyMain.do';" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Cancel</div>
+				  <div class="btn_end"></div>
+			</a>
+		</div>	                    
+
+        </div>
+
+        <!-- space -->
+        <div class="manager-bottom-space"></div>
+        <!-- space -->
+
+    <!-- right-pannel-content-end -->
+
+    </div>
+	
+        <!-- content2-area-end -->
+</td></tr>
+		  <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+              <!-- footer -->
+              #parse("snippets/managerFooter.vm")
+              <!-- footer-end -->
+			 </td>
+			</tr>
+</table>
+	<input id="action" type="hidden" name=" " value=" " />
+	#springBind("enrollmentForm.searchSurveyName")
+	<input id="searchSurveyName" type="hidden"  name="$status.expression"  />
+	#springBind("enrollmentForm.searchSurveyStatus")
+	<input id="searchSurveyStatus"  type="hidden" name="$status.expression"  />
+	#springBind("enrollmentForm.searchSurveyRetired")
+	<input id="searchSurveyRetired"  type="hidden" name="$status.expression"  />
+ 
+	#springBind("enrollmentForm.surveySearchType")
+	<input id="surveySearchType" type="hidden" name="$status.expression" value="" />
+	#springBind("enrollmentForm.courseSearchDirection")
+	<input id="courseSearchDirection" type="hidden" name="$status.expression" value="" />
+	#springBind("enrollmentForm.courseSearchStay")
+	<input id="courseSearchStay" type="hidden" name="$status.expression" value="_" />
+</form>
+ 
+</body>
+</html>

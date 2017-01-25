@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/learnerNewHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" language="javascript">
+                        
+            function finish(){            	
+	            document.getElementById('actionmethod').value='deleteSecurityRoles';
+	            document.manageSecurityRoleForm.submit();
+            }
+        </script>
+    </head>
+    <body>
+        <form name="manageSecurityRoleForm" action="mgr_manageSecurityRoles.do" method="POST" >
+        	<input type="hidden" id="actionmethod" name="method" value=""/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!-- header -->
+                #parse("snippets/managerWizardHeader.vm")
+                <!-- header-end -->
+			</td></tr>
+			
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                  <!-- left-pannel-content -->
+                        <div>
+                            <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manager.editSecurityRole.caption.deleteSecurityRoleWizard") </br>$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") 1 $brander.getBrandElement("lms.manager.manageTrainingPlans.caption.of") 1</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manager.editSecurityRole.caption.deleteSecurityRoleWizard.confirmation")</div>                                
+                            </div>
+                        </div>
+		</table></td>
+                    <!-- left-pannel-content-end -->
+                    <!-- right-pannel-content -->
+                    #set($roles=${context.learnerRolesToBeDeleted})                                                
+	                        #foreach($userrole in $roles)
+	                        	<input type="hidden" id="learnerRolesToDelete" name="learnerRolesToDelete" value="${userrole.getId()}" >                        	 	                           	                            
+	                        #end
+	                #set($roles=${context.managerRolesToBeDeleted})                                                
+	                        #foreach($userrole in $roles)
+	                        	<input type="hidden" id="managerRolesToDelete" name="managerRolesToDelete" value="${userrole.getId()}" >                        	 	                           	                            
+	                        #end         
+	                #set($roles=${context.instructorRolesToBeDeleted})                                                
+	                        #foreach($userrole in $roles)
+	                        	<input type="hidden" id="instructorRolesToDelete" name="instructorRolesToDelete" value="${userrole.getId()}" >                        	 	                           	                            
+	                        #end
+	                #set($roles=${context.adminRolesToBeDeleted})                                                
+	                        #foreach($userrole in $roles)
+	                        	<input type="hidden" id="adminRolesToDelete" name="adminRolesToDelete" value="${userrole.getId()}" >                        	 	                           	                            
+	                        #end
+	                #set($roles=${context.regulatoryRolesToBeDeleted})                                                
+	                        #foreach($userrole in $roles)
+	                        	<input type="hidden" id="regulatoryRolesToDelete" name="regulatoryRolesToDelete" value="${userrole.getId()}" >                        	 	                           	                            
+	                        #end                        
+<TD id="content" >
+	<div id="scrollable">
+                        <!-- Logo+Manage-User -->
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manager.editSecurityRole.caption.deleteTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manager.editSecurityRole.caption.deleteSubtitle")</div>
+			</td>
+		    </tr>
+		</table>
+                        <!-- Logo+Manage-User-end -->
+                        #if(${context.learnerRolesWithUsers.size()} > 0)
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manager.deleteSecurityRole.learner")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="5">
+                            <tr>
+                                <td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.manager.deleteSecurityRole.multipleMembers")</div></td>
+
+                            </tr>
+	                        #set($roles=${context.learnerRolesWithUsers})                                                
+	                        #foreach($userrole in $roles)
+	                        	<tr>
+	                             <td width="25">&nbsp;</td>
+	                              <td width="220" colspan="2"> 
+	                               <div class="row-text" >$userrole.getRoleName()</div>
+	                              </td>                            
+	                            </tr>
+	                        #end
+	                                                      							
+                            <tr>
+                                <td height="5" colspan="3"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="radio" name="radioDropLearner" checked="true" value="1"/></td>
+                                <td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.dropAllMembers")</div></td>
+                            </tr>
+                            <tr>
+                                <td height="25"><input type="radio" name="radioDropLearner" value="0" /></td>
+                                <td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.moveAllMembers")</div>
+                                   <div class="input_field_area-user-f"> 
+	                                    <select class="input_field1c" name="learnerAlternativeRole" tabindex="2">
+	                                       #set($roles=${context.alternateLearnerRoles})                                                
+	                        			   #foreach($userrole in $roles)
+	                        				 <option value="$userrole.getId()">$userrole.getRoleName()</option>	
+					                       #end 	                                        	                                        
+	                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td height="5" colspan="3"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    #end
+					#if(${context.managerRolesWithUsers.size()} > 0)
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manager.deleteSecurityRole.manager")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="5">
+                            <tr>
+                                <td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.manager.deleteSecurityRole.multipleMembers")</div></td>
+
+                            </tr>
+	                        #set($roles=${context.managerRolesWithUsers})                                                
+	                        #foreach($userrole in $roles)
+	                        	<tr>
+	                             <td width="25">&nbsp;</td>
+	                              <td width="220" colspan="2"> 
+	                               <div class="row-text" >$userrole.getRoleName()</div>
+	                              </td>                            
+	                            </tr>
+	                        #end
+	                                                     							
+                            <tr>
+                                <td height="5" colspan="3"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="radio" name="radioDropManager" checked="true" value="1"/></td>
+                                <td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.dropAllMembers")</div></td>
+                            </tr>
+                            <tr>
+                                <td height="25"><input type="radio" name="radioDropManager" value="0" /></td>
+                                <td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.moveAllMembers")</div>
+                                   <div class="input_field_area-user-f"> 
+	                                    <select class="input_field1c" name="managerAlternativeRole" tabindex="2">
+	                                       #set($roles=${context.alternateManagerRoles})                                                
+	                        			   #foreach($userrole in $roles)
+	                        				 <option value="$userrole.getId()">$userrole.getRoleName()</option>	
+					                       #end 	                                        	                                        
+	                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td height="5" colspan="3"></td>
+                            </tr>
+                        </table>
+                    </div>	
+                    #end
+                    #if(${context.instructorRolesWithUsers.size()} > 0)
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manager.deleteSecurityRole.instructor")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="5">
+                            <tr>
+                                <td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.manager.deleteSecurityRole.multipleMembers")</div></td>
+
+                            </tr>
+	                        #set($roles=${context.instructorRolesWithUsers})                                                
+	                        #foreach($userrole in $roles)
+	                        	<tr>
+	                             <td width="25">&nbsp;</td>
+	                              <td width="220" colspan="2"> 
+	                               <div class="row-text" >$userrole.getRoleName()</div>
+	                              </td>                            
+	                            </tr>
+	                        #end
+	                                                     							
+                            <tr>
+                                <td height="5" colspan="3"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="radio" name="radioDropInstructor" checked="true" value="1"/></td>
+                                <td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.dropAllMembers")</div></td>
+                            </tr>
+                            <tr>
+                                <td height="25"><input type="radio" name="radioDropInstructor" value="0" /></td>
+                                <td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.moveAllMembers")</div>
+                                   <div class="input_field_area-user-f"> 
+	                                    <select class="input_field1c" name="instructorAlternativeRole" tabindex="2">
+	                                       #set($roles=${context.alternateInstructorRoles})                                                
+	                        			   #foreach($userrole in $roles)
+	                        				 <option value="$userrole.getId()">$userrole.getRoleName()</option>	
+					                       #end 	                                        	                                        
+	                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td height="5" colspan="3"></td>
+                            </tr>
+                        </table>
+                    </div>	
+                    #end
+                    #if(${context.adminRolesWithUsers.size()} > 0)
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manager.deleteSecurityRole.administrator")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="5">
+                            <tr>
+                                <td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.manager.deleteSecurityRole.multipleMembers")</div></td>
+
+                            </tr>
+	                        #set($roles=${context.adminRolesWithUsers})                                                
+	                        #foreach($userrole in $roles)
+	                        	<tr>
+	                             <td width="25">&nbsp;</td>
+	                              <td width="220" colspan="2"> 
+	                               <div class="row-text" >$userrole.getRoleName()</div>
+	                              </td>                            
+	                            </tr>
+	                        #end
+	                                                     							
+                            <tr>
+                                <td height="5" colspan="3"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="radio" name="radioDropAdmin" checked="true" value="1"/></td>
+                                <td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.dropAllMembers")</div></td>
+                            </tr>
+                            <tr>
+                                <td height="25"><input type="radio" name="radioDropAdmin" value="0" /></td>
+                                <td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.moveAllMembers")</div>
+                                   <div class="input_field_area-user-f"> 
+	                                    <select class="input_field1c" name="adminAlternativeRole" tabindex="2">
+	                                       #set($roles=${context.alternateAdminRoles})                                                
+	                        			   #foreach($userrole in $roles)
+	                        				 <option value="$userrole.getId()">$userrole.getRoleName()</option>	
+					                       #end 	                                        	                                        
+	                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td height="5" colspan="3"></td>
+                            </tr>
+                        </table>
+                    </div>	
+                    #end
+                       #if(${context.regulatoryRolesWithUsers.size()} > 0)
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manager.deleteSecurityRole.regulatory")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="5">
+                            <tr>
+                                <td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.manager.deleteSecurityRole.multipleMembers")</div></td>
+
+                            </tr>
+	                        #set($roles=${context.regulatoryRolesWithUsers})                                                
+	                        #foreach($userrole in $roles)
+	                        	<tr>
+	                             <td width="25">&nbsp;</td>
+	                              <td width="220" colspan="2"> 
+	                               <div class="row-text" >$userrole.getRoleName()</div>
+	                              </td>                            
+	                            </tr>
+	                        #end
+	                                                     							
+                            <tr>
+                                <td height="5" colspan="3"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="radio" name="radioDropRegulatory" checked="true" value="1"/></td>
+                                <td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.dropAllMembers")</div></td>
+                            </tr>
+                            <tr>
+                                <td height="25"><input type="radio" name="radioDropRegulatory" value="0" /></td>
+                                <td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.manager.deleteSecurityRole.moveAllMembers")</div>
+                                   <div class="input_field_area-user-f"> 
+	                                    <select class="input_field1c" name="regulatoryAlternativeRole" tabindex="2">
+	                                       #set($roles=${context.alternateRegulatoryRoles})                                                
+	                        			   #foreach($userrole in $roles)
+	                        				 <option value="$userrole.getId()">$userrole.getRoleName()</option>	
+					                       #end 	                                        	                                        
+	                                    </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td height="5" colspan="3"></td>
+                            </tr>
+                        </table>
+                    </div>	
+                    #end			                       
+                        <!-- button-div -->
+                        <div class="buttonContainer">
+                            <input type="hidden" id="currentpage" name="_page" value="0"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                            <div class="left">
+                                 <a class="button" onClick="javascript:window.location='mgr_manageSecurityRoles.do';"><span class="button">$brander.getBrandElement("lms.manager.editSecurityRole.buttonCancel")</span></a>
+                            </div>
+                            <div class="right">
+                                 <a class="button" ><span class="button" onclick="finish();">$brander.getBrandElement("lms.manager.editSecurityRole.buttonFinish")</span></a>
+                            </div>
+                        </div>
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                        
+                    <!-- right-pannel-content-end -->
+                    </div>
+                <!-- content2-area-end -->
+                </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+                <!-- footer -->
+                    #parse("snippets/managerFooter.vm")
+                <!-- footer-end -->
+	</td></tr>
+                </table>
+            </form>
+    </body>
+</html>

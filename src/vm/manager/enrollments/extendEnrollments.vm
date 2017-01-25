@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+
+    <script type="text/javascript" language="javascript">
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+
+              } else {  
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+        function selectAllCheckBoxes(countCheckBoxes, chkBox, count)
+        {
+            var objCheckAll=document.getElementById("chkAll"+count);
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "]";
+                    var objCheckBox=document.getElementById("chk"+count+i);
+                    objCheckBox.checked=true;
+                    var hiddenid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "].selected";
+                    changeRowColor(objCheckBox,hiddenid);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "]";
+                    var objCheckBox=document.getElementById("chk"+count+i);
+                    objCheckBox.checked=false;
+                    var hiddenid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "].selected";
+                    changeRowColor(objCheckBox,hiddenid);
+                }
+            }
+        }
+
+        function saveExtendEnrollment(){
+            document.getElementById('actionmethod').value='saveExtendEnrollment';
+            document.viewLearnerEnrollmentForm.submit();
+        }
+        function EditCancel(buttonclick) {
+            document.getElementById('actionmethod').value='cancelEnrollment';
+            document.viewLearnerEnrollmentForm.submit();
+        }
+        function setSwapCourse(checkbox, id){
+            document.getElementById(id).value = checkbox.checked;
+        }
+
+        $(document).ready(function()
+        {
+            
+        });
+    </script>
+</head>
+
+<body>
+<form name="viewLearnerEnrollmentForm" method="post" action="mgr_learnerEnrollment.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/managerHeader.vm")
+        <!-- header-end -->
+		</td>
+		</tr>
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- content-area 2a -->
+        <!-- left-pannel-content-start -->
+        #parse("snippets/planEnrollLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+                <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+                        #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems")
+                        #if($status.error)
+                        #set($errorCodes = [])
+                        #set($temp = true)
+                        #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems")
+                        #if($status.error)
+                                #foreach($errorCode in $status.errorCodes)
+                                        #set($temp = $errorCodes.add($errorCode))
+                                #end
+                        #end
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.enrollment.extendEnrollments.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.enrollment.extendEnrollments.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+                <!-- Logo+Manage-User-end -->
+
+
+                    #set($i = 1)
+                    #set($count = -1)
+
+                    #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems")
+                    #set($entitlementList = ${status.value})
+
+                    #foreach($ent in $entitlementList)
+                            
+                            #set($count = $count + 1)
+                            #set($totalCount = $ent.viewLearnerEnrollmentItems.size())
+                            #set($viewLearnerEnrollmentItemList = $ent.viewLearnerEnrollmentItems)
+                            #set($show = 0)
+
+                            #foreach($enr in $viewLearnerEnrollmentItemList)
+                                    #if($enr.selected == "true")
+                                            #set($show = 1)
+                                    #end
+                            #end
+                            #if($show == 1)
+                                    <!-- Entitlement A -->
+                                    <div class="content-Block-new">
+                                            <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                                                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$ent.entitlement.name</div>
+                                            </div>
+                                            <!-- 1 -->
+                                            <div id="searchResult">
+                                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                                <tr bgcolor="#efefef" style="padding-left:5px;">
+                                                    <td class="check_box_top" width="17"><input type="checkbox" name="chkHeader" id="chkAll$count" onClick="selectAllCheckBoxes($totalCount,this,$count);" /></td>
+                                                    <td class="box_subheader_noLink" width="60%">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.Courses")</td>
+                                                    <td class="box_subheader_noLink">New End Date</td>
+                                                    <td class="box_subheader_noLink">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.endDate")</td>
+                                                </tr>
+                                                #set($enrCount = -1)
+                                                #foreach($enr in $viewLearnerEnrollmentItemList)
+                                                #set($enrCount = $enrCount + 1)
+                                                #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems[$count].viewLearnerEnrollmentItems[$enrCount].selected")
+                                                #if($velocityCount%2==0)
+                                                #set($alternate="row_2")
+                                                #else
+                                                #set($alternate="row_1")
+                                                #end
+
+                                                #if(${status.value} == "true")
+                                                <tr>
+                                                    #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems[$count].viewLearnerEnrollmentItems[$enrCount].ready")
+                                                    <td class="$alternate" width="17"><input type="checkbox" name="${status.expression}" id="chk$count$enrCount" #if(${status.value}=="true") checked #end onclick="changeRowColor(this);" /></td>
+                                                    <td class="$alternate">$!enr.learnerEnrollment.course.courseTitle</td>
+                                                    #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems[$count].viewLearnerEnrollmentItems[$enrCount].newEnrollmentEndDate")
+                                                    #set($newDateId = "viewLearnerEntitlementItems_${count}_viewLearnerEnrollmentItems_${enrCount}_newEnrollmentEndDate")
+                                                    <td class="$alternate">
+                                                        <input type="text" style="width:70px;position:relative;bottom:-3px;" id="$newDateId" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.extendEnrollments.calender.tooltip")" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                                        <script type="text/javascript">
+                                                        $("#$newDateId").datepicker({ 
+                                                        showOn: "both", 
+                                                        buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+                                                        buttonImageOnly: true 
+                                                        });
+                                                        </script>
+                                                    </td>
+                                                    <td class="$alternate">#if ($!enr.learnerEnrollment.enrollmentEndDate) $date.format("MM/dd/yyyy",$!enr.learnerEnrollment.enrollmentEndDate) #else &nbsp; #end</td>
+                                                </tr>
+                                                #end
+                                                #end 
+                                            </table>
+                                        </div>
+                                    <!-- 1 -->
+                                    </div>
+                                    #set($show = 0)
+                                #end
+                        #end
+
+                        <!-- button-div -->
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.managerBtn")">
+                        <div class="btn-right1">
+                            <a class="button" onClick="saveExtendEnrollment();"><span class="button">Save</span></a>
+                        </div>
+                        <div class="btn-right1">
+                            <a class="button" onClick="EditCancel('Cancel');"><span class="button">Cancel</span></a>
+                        </div>
+
+                        </div>
+                        <!-- button-div end -->
+
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+
+                </div>
+                <!-- right-pannel-content end-->
+
+        </td></tr>
+        <!-- content-area 2a End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

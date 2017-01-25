@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+        <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+        <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+        <script language="javascript" type="text/javascript">
+
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+
+            function saveResource() {
+               document.getElementById('actionmethod').value='saveResource';
+               document.editResourceForm.submit();
+            }
+            function cancelEdit() {
+               document.getElementById('actionmethod').value='searchResources';
+               document.editResourceForm.submit();
+            }
+        </script>
+    </head>
+    <body>
+        <form name="editResourceForm" method="post" action="ins_manageResources.do">
+            <input type="hidden" id="actionmethod" name="method" value="saveResource"/>
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td id="header" colspan="2">
+                        #parse("snippets/instructorHeader.vm")
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                    <div id="tabBar" class="tab_bar">
+                         <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td width="215"><div class="tab_blank"></div></td>
+                                    <td>&nbsp;</td>
+                                    <td width="223">
+                                        <a href="#"><div class="tab_selected">$brander.getBrandElement("lms.Instructor.caption.Summary.EditResources")</div></a>
+                                        <a onClick="javascript:window.location='ins_manageResources.do?method=showResourceCustomField';"><div class="tab" style="border-right-style:solid;" >$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.CustomFields")</div></a>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                        </table>
+                    </div>
+                    </td>
+                </tr>
+                <tr id="main">
+                    <td id="left-navigation">
+                        <table id="table-bands" cellpadding="0" cellspacing="0">
+                            #parse("snippets/instructorResourcesLeftMenu.vm")
+                        </table>
+                    </td>
+                    <td id="content">
+                        <!-- <LMS SEARCH> -->
+                        <div id="scrollable">
+                            #springBind("addResourceForm.*")
+                            #if($status.error)
+                                <div id="message_box">
+                                    <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                        #foreach($errorCode in $status.errorCodes)
+                                            #if($errorCode != 'custom.field.required')
+                                                #set ($error = $brander.getBrandElement($errorCode))
+                                                <div class="width40pct">
+                                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                                        <div class="message_box_align">$error</div>
+                                                </div>
+                                            #end
+                                        #end
+
+                                        #foreach($errorMessage in $status.errorMessages)
+                                            #if(!$!errorMessage.equals(""))
+                                            <div class="width40pct">
+                                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                                <div class="message_box_align">$!errorMessage</div>
+                                            </div>
+                                            #end
+                                        #end
+                                </div>
+                            #end
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr>
+                                    <td id="page-icon" class="page-icon-tools">
+                                        &nbsp;
+                                    </td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.editResource.edit")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.Instructor.PageInlineText.caption.EditResources")</div>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table id="table-content" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td>
+                                        <div class="search_box_result">
+                                            <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.Summary.EditResources")</span></div>
+                                            <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                                <tr>
+                                                    #springBind("addResourceForm.resource.name")
+                                                    <td width="25%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.ResourceName.ManageResources")</span></td>
+                                                    <td>
+                                                    #if($status.error)
+                                                        <div style="float:left; font-size:14px; margin-top:2px; margin-right:3px;" ><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" style="background-color: #66FF00"/></div>
+                                                    #else
+                                                        <div style="color:#FF0000; float:left; font-size:14px; font-weight:bold; margin-top:2px; margin-right:5px;" ><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" style="background-color: #66FF00"/></div>
+                                                    #end
+                                                        <input type="text" id="field_resource_name" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength=255 tabIndex="1" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                 #springBind("addResourceForm.resourceTypes")
+                                                    #set($resouceTypes = $status.value)
+
+                                                    #springBind("addResourceForm.resourceTypeId")
+                                                    #set($selectedResouceType = "$!{status.value}")
+                                                    <td><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.ResourceType.ManageResources")</span></td>
+                                                    <td style="height:24px;">
+                                                        #if($status.value == 0)
+                                                            <div style="float:left; font-size:14px; margin-top:2px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" style="background-color: #66FF00"/></div>
+                                                        #else
+                                                            <div style="color:#FF0000; font-size:14px; font-weight:bold; width:10px; float:left; margin-right:4px;" ><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" style="background-color: #66FF00"/></div>
+                                                        #end
+                                                        <div style="width:200px; margin-left:4px; float:left;">
+                                                          <select id="field_resource_type" style="width:182px; height:20px; font-size:11px;" name="${status.expression}" value="$!{status.value}" tabIndex="2" >
+                                                            <option value="0" selected>$brander.getBrandElement("lms.Instructor.caption.SelectResourceType.EditResources")</option>
+                                                            #foreach ($resouceType in $resouceTypes)
+                                                                #if($resouceType.id == "$!{selectedResouceType}")
+                                                                    <option value="$resouceType.id" selected>$resouceType.name</option>
+                                                                #else
+                                                                    <option value="$resouceType.id" >$resouceType.name</option>
+                                                                #end
+                                                             #end
+                                                          </select>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    #springBind("addResourceForm.resource.assetTagNumber")
+                                                    <td width="25%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.AssetTagnumber.ManageResources")</span></td>
+                                                    <td>
+                                                    #if($status.error)
+                                                        <div style="float:left; font-size:14px; margin-top:2px; margin-right:3px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" style="background-color: #66FF00"/></div>
+                                                    #else
+                                                        <div style="color:#FF0000; float:left; font-size:14px; font-weight:bold; margin-top:2px; margin-right:5px;" ><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" style="background-color: #66FF00"/></div>
+                                                    #end
+                                                        <input type="text" id="field_resource_tag" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength=50 tabIndex="3" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    #springBind("addResourceForm.resource.description")
+                                                    <td valign="top"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.Description.EditResources")</span></td>
+                                                    <td>
+                                                        <div style="color:#FF0000; float:left; font-size:14px; font-weight:bold; margin-top:2px;" >&nbsp;</div>
+                                                        <textarea class="input_text_area" style="margin-left:14px;" name="${status.expression}" tabIndex="4" >$!{status.value}</textarea>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="search_box_result" style="margin-top:20px;">
+                                            <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</span></div>
+                                            #springBind("addResourceForm.customFields")
+                                            #set($tabindex=5)
+                                            #if($status.value.size()>0)
+                                                <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                                                    #set($count = 0)
+                                                    #foreach($customField in $!{status.value})
+                                                        #set($id = "customField$count")
+                                                        #set($name = "customFields[$count].customFieldValueRef")
+                                                        #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                                                        #set($customFieldIdentifire = "customFields[$count]")
+                                                        $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+
+                                                        <script language="javascript" type="text/javascript">
+                                                            $(document).ready(function(){
+                                                                document.getElementById('$id').tabIndex  = $tabindex;
+                                                            });
+                                                        </script>
+
+                                                        #set($tabindex=$tabindex+1)
+                                                        #set($count=$count+1)
+                                                    #end
+                                                </table>
+                                            #end
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            #set($tabindexSave=$tabindex+2)
+                            <div style="float:right; margin-top:15px; " tabIndex="$tabindexSave">
+                                <a onClick="saveResource();">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal" >$brander.getBrandElement("lms.Instructor.button.Save")</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+
+                            #set($tabindex=$tabindex+1)
+                            <div style="float:right; margin-top:15px;margin-right:5px;" tabIndex="$tabindex">
+                                <a  onclick="cancelEdit();">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="footer" colspan="2">
+                        #parse("snippets/instructor/instructorFooter.vm")
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head> 
+   #parse("snippets/learnerNewHead.vm")
+    <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+	        function checkAnswer(checkbox, id){
+            if( document.getElementById(id).value == "false"  ){
+                document.getElementById(id).value = true;
+            } else {
+                document.getElementById(id).value = false;
+            }
+        }
+		 $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+		 $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+       
+	});
+    </script>
+</head>
+
+<body>
+    <form name="cePlannerForm" method="post" action="ce_planner.do">
+    <div id="main-container">
+
+        <!--Header Start -->
+        #parse("snippets/cePlannerHeader.vm")
+        <!-- Header End -->
+
+        <div id="content2a">
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.cePlanner.cePlannerSurvey.leftPanel.header.step2.caption")</div>
+                    <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText1")<</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText2")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText3")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText4")</div>
+                </div>
+            </div>
+            <div id="right-pannel">
+				
+				#springBind("cePlannerForm.*")
+                #if($status.error)
+                    <div id="message_box" style="width:98%;*width:96%; margin-right:5px;">
+                      <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                      #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct" style="margin-righ:5px;_margin-righ:0px;">
+                            <div class="message_box_align" style="margin-left:7px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align" style="margin-right:8px;_margin-right:0px;" nowrap>$error</div>
+                        </div>
+                      #end
+                    </div>
+				#end
+				
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="padding-right:10px;">
+                            <div id="pageDescription" class="page_description">
+                                <div id="pageIcon" class="icon_surveys"></div>
+                                <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.cePlanner.cePlannerSurvey.pageHeading.caption")</div>
+                                <div id="pageDescriptionText">$brander.getBrandElement("lms.cePlanner.cePlannerSurvey.pageDescriptionText.caption")</div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")" style="_width:96%;margin-left:10px;_margin-left:5px;*margin-right:10px;">
+
+                   
+				   #springBind("cePlannerForm.survey.questionList")
+                    #set($questionCount = ${cePlannerForm.survey.questionList.size()})
+					
+                    #set($questionNumber = $questionNo)
+                    #set($surveyQuestionLoopStart = $questionNo)
+                    #set($surveyQuestionLoopEnd = $questionCount)
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd - 1 )
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd + $surveyQuestionLoopStart )
+         
+                    #if($questionCount > 0)
+                        #set($maxQuestionIndex = $questionCount - 1)
+                       
+                        #foreach($index in [$surveyQuestionLoopStart..$surveyQuestionLoopEnd])
+                            #set($surveyQuestion = ${cePlannerForm.survey.questionList.get($index)} )
+                            #springBind("cePlannerForm.survey.questionList[$index]")
+                             
+                            #set($prefix = "survey.questionList[$index]")
+                            #set($questionNumber = $questionNumber + 1)
+                            <!-- 1 -->
+                            <div class="content-Block" style="margin:10px;">
+                                <div id="e7a" class="Block-Contain-header"></div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="User-checkbox-box">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 5a -->
+                                    <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                                       
+                                        <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" />
+         
+                                        #if($status.error) 
+                                            <div class="com-star-r-t"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"    /></div>
+                                        #elseif(${surveyQuestion.surveyQuestionRef.required})
+                                            <div class="com-star-r-t">*</div>
+                                        #else   
+                                        <div class="User_coll_1b"></div>
+                                        #end
+                                        <div #if($status.error )  style="color:#FF0000;padding-left:15px;" #else  style="padding-left:15px;" #end class="input_field_area-user-f2-b" >$questionNumber. ${surveyQuestion.surveyQuestionRef.text}</div>
+                                    </div>
+                                    <div style="border:0px solid green;float:left;width:100%;">$surveyQuestion.renderQuestion($prefix)</div>
+                                    <!-- 00 -->
+                                    <div id="e12" class="search-content-row1"><!-- using for space --></div>
+                                    <!-- 00 -->
+                                </div>
+                               
+                                <!-- End-User-left-right-list -->
+                            </div>
+        
+                            <!-- 1-end -->
+				            <!-- space -->
+                            <div class="manager-bottom-space"></div>
+                            <!-- space -->
+                        #end
+                    #end
+				   
+				   
+				   
+                <input type="hidden" id="currentpage" name="_page" value="1" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                <div style="float:left; margin-top:25px; margin-left:15px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="location.href='login.do';"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.cancel")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+				#springBind("cePlannerForm.wizardControl")
+				#set($wControl = ${status.value})
+				#if($wControl == "0")
+
+                <div style="float:right; margin-top:25px; margin-right:5px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target2');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.next")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+				#else
+				<div style="float:right; margin-top:25px; margin-right:5px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target3');"><span class="button_wizard">Next</span></div>
+                    <div class="btn_end"></div>
+                </div>
+				#end
+                <div style="float:right; margin-top:25px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target0');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.previous")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+
+            </div>
+        </div>
+
+        #parse("footer.vm")
+
+    </div>
+    </form>
+</body>
+</html>

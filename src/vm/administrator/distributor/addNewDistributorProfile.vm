@@ -1,0 +1,781 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script language="javascript" type="text/javascript">
+var zipType_1 = "" ;
+var zipCodeLength_1 = "" ;
+var zipType_2 = "" ;
+var zipCodeLength_2 = "" ;
+
+/* change on country drop down will required to submit the form*/
+function stateChangeFormSubmit()
+{
+document.getElementById('validateVariable').value='donotValidate';
+submitButtonForm(document.addDistributor,'wizardSubmitter','_target0');
+}
+</script>
+
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        $("#expirationDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+        document.addDistributor.distributorName.focus();
+    });
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body>
+<form name="addDistributor" method="post" action="adm_addDistributor.do" >
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/adminWizardHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+		<tr id="main"> <!-- SECOND BLOCK -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+					<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        	           <!-- left-pannel-content -->
+                <div>
+                        <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.AddNewDistributor")<br />$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.step-1-4")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.caption.DistributorProfile")</div>
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.DistributorPreferences")</div>
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.DistributorGroups")</div>
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Summary")</div>
+                        </div>
+                </div>
+                <!-- left-pannel-content-end -->
+				</table></td>
+				
+                <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+                        #springBind("addDistributorForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                         <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+                                </div>
+                                #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+
+                        <!-- Logo+Manage-User -->
+			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	    		    <tr>
+	    			<td id="page-icon" class="courseLogoDistributor">
+	    			    &nbsp;
+	    			</td>
+	    			<td id="page-description">
+	    			    <div id="page-heading">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.title")</div>
+	    			    <div id="page-help">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.subtitle1") <font size="1" color="#FF0000">*</font> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.subtitle2")</div>
+	    			</td>
+	    		    </tr>
+	    		</table>
+                
+                        <!-- Logo+Manage-User-end -->
+
+                        #set ($quoteStr = '"')
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                        #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                        #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                        #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                        #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+                        
+                        <!-- User-profile -->
+                        
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.content-Block")">
+                                <div id="e7a" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.Block-Contain-header")">
+                                        <div id="e8" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.DistributorProfile")
+                                        </div>
+                                </div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.Search-inputfield-box")">
+                                        <!-- s -->
+                                        <div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row1a")"><!-- using for space --></div>
+                                        <!-- 1 -->
+                                        <div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.distributorName")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.DistributorName")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")"><input id="distributorName" maxlength="50" type="text" name="${status.expression}" tabindex="9" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")"> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.WebsiteURL")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #set ($inputTextCSS20=$inputTextCSS+" tabindex='20'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.wesiteURL" $inputTextCSS20)</div>
+                                        </div>
+                                        
+                                        <!-- 2 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.firstName")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.searchMember.caption.FirstName")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                                #set ($inputTextCSS10=$inputTextCSS+" tabindex='10' maxlength='254'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.firstName" $inputTextCSS10)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #springBind("addDistributorForm.emailAdd")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS21=$inputTextCSS+" tabindex='21' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.emailAdd" $inputTextCSS21)</div>
+                                        </div>
+                        
+                                        <!-- 3 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.lastName")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.searchMember.caption.LastName")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                                #set ($inputTextCSS11=$inputTextCSS+" tabindex='11' maxlength='254'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.lastName" $inputTextCSS11)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewCustomerProfile.caption.accountStatus")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+                                                        #springBind( "addDistributorForm.accountStatus" )
+                                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="22" value="true" #if(${status.value}=="true") checked #end/> Active </div>
+                                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="23" value="false" #if(${status.value}=="false") checked #end/> Inactive </div>
+                                                </div>
+                                        </div>
+                        
+                                        <!-- 4 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.phone")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Phone")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS12=$inputTextCSS+" tabindex='12' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.phone" $inputTextCSS12)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.selfReporting")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+                                                        #springBind( "addDistributorForm.selfReporting" )
+                                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="22" value="true" #if(${status.value}=="true") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.true")</div>
+                                                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="23" value="false" #if(${status.value}=="false") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.false")</div>
+                                                </div>
+                                        </div>
+
+                                        <!-- 5 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.ext")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Ext")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS13=$inputTextCSS+" tabindex='13' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.ext" $inputTextCSS13)</div>
+                                                <div class="com-star-r-t"></div>
+
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.distributorprofile.markedPrivate.caption")</div>
+                                                <div class="com-star-r-t"></div>
+                                             <div class="input_field_area-user-f">#springBind("addDistributorForm.markedPrivate" )
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="22" value="true" #if(${status.value}=="true") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.true")</div>
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="23" value="false" #if(${status.value}=="false") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.false")</div>
+                                                </div>
+
+</div>
+<!-- 6 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addEditReseller.caption.type")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS18=$inputTextCSS+" tabindex='19' maxlength='50'")        
+												<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+													#set($typeList = $brander.getBrandElements("lms.administrator.addEditReseller.types"))
+													<select class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="type" tabindex="22" >
+														#springBind( "addDistributorForm.type" )
+														#foreach ($type in $typeList)
+															#if($type=="$!{status.value}")
+																<option value="$type" selected>$type</option>
+															#else
+																<option value="$type" >$type</option>
+															#end
+														#end
+													</select>
+												</div>
+                                                <div class="com-star-r-t"></div>
+
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewCustomerProfile.selfAuthor.caption")</div>
+                                                <div class="com-star-r-t"></div>
+                                             <div class="input_field_area-user-f">#springBind("addDistributorForm.selfAuthor" )
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="22" value="true" #if(${status.value}=="true") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes")</div>
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="23" value="false" #if(${status.value}=="false") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")</div>
+                                                </div>
+
+</div>
+
+
+<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
+
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" >&nbsp;</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+												<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+													&nbsp;
+												</div>
+                                                <div class="com-star-r-t"></div>
+
+                                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.administrator.addNewCustomerProfile.callLogging.caption")</div>
+                                                <div class="com-star-r-t"></div>
+                                             <div class="input_field_area-user-f">#springBind("addDistributorForm.callLoggingEnabled" )
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="22" value="true" #if(${status.value}=="true") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes")</div>
+                                                        <div class="btn_radio3">
+<input type="radio" name="${status.expression}" tabindex="23" value="false" #if(${status.value}=="false") checked #end/>$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")</div>
+                                                </div>
+
+</div>
+				<!-- Corporate Author Var flag. Learner Mode will be assigned to all learners in case if multiple quantity of courses are enrolled  -->
+				<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+					<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" >&nbsp;</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+					<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+						&nbsp;
+					</div>
+                    <div class="com-star-r-t"></div>
+					<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")"  style="vertical-align:top"  >
+						$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.corporateAuthorVar")
+						<span title="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.title.corporateAuthorVar")">
+							<image src="$brander.getBrandElement("lms.distributor.corporateauthorvar.icon")"/>
+						</span>
+					</div>
+					<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+					<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">		
+						#springBind("addDistributorForm.isCorporateAuthorVar")
+						<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")">
+							<input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end />
+							$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes")
+						</div>
+				        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")">
+				        	<input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> 
+				        	$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")
+				        </div>
+					</div>
+				</div>
+
+
+                                        <!-- 7 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.address1Line1")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Address1")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS14=$inputTextCSS+" tabindex='14' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.address1Line1" $inputTextCSS14)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #springBind("addDistributorForm.address2Line1")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.administrator.editDistributorProfile.caption.Address2")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS24=$inputTextCSS+" tabindex='24' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.address2Line1" $inputTextCSS24)</div>
+                                        </div>
+                                        <!-- 8 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.address1Line2")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end ></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS15=$inputTextCSS+" tabindex='15' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.address1Line2" $inputTextCSS15)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #springBind("addDistributorForm.address2Line2")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="block_text_in-r-f" #end >&nbsp;</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS25=$inputTextCSS+" tabindex='25' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.address2Line2" $inputTextCSS25)</div>
+                                        </div>
+
+
+#* ============================================================ *#
+#* -----------adding country \state code for ADDRESS 1 -------- *#
+#* ============================================================ *#
+
+#set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+#set( $StateLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+#set( $ZipLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+
+#springBind( "addDistributorForm.country1" ) 
+#set($Country1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+ #set( $CurrentCountry1 = "US")
+#foreach ($objCountry1 in $Country1)
+ 
+#if($!{status.value} == $objCountry1.value)
+
+#set( $State_var1 = "lms.manageUser.AddLearner.")
+#set( $State_var2 = ".State")
+#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+#set( $CurrentCountry1 = "$objCountry1.value")
+#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+#set( $State_label_var2 = ".label")
+#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+
+#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+#set( $State_zip_var2 = ".label")
+#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+
+#set( $State = $brander.getBrandMapElements($State_var) )
+#set( $StateLabel_1 = $brander.getBrandElement($State_label_var) )
+#set( $ZipLabel_1 = $brander.getBrandElement($State_zip_var) )
+
+
+#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+
+<script type="text/javascript" language="javascript" > 
+#set( $ZipType2 = ".type" )
+#set( $ZipLength = ".length" )
+#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+
+zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+</script> 
+
+#end
+#end
+
+                                        <!-- 12 -->
+
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Country")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+           
+<select  onChange = "stateChangeFormSubmit()"  name="country1" class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" tabindex="16" >
+
+#foreach ($country in $Country1)
+#if($country.value=="$!{status.value}")
+<option value="$country.value" selected>$country.label</option>
+#else
+<option value="$country.value" >$country.label</option>
+#end
+#end
+</select>
+                                                </div>
+#* ============================================================ *#
+#* ============================================================ *#
+#* adding country \state code for ADDRESS 2  *#
+
+#set( $State2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+#set( $StateLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+#set( $ZipLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+
+#springBind( "addDistributorForm.country2" )
+#set($Country2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+ #set( $CurrentCountry2 = "US")
+#foreach ($objCountry1 in $Country2)
+ 
+#if($!{status.value} == $objCountry1.value)
+
+#set( $State_var1 = "lms.manageUser.AddLearner.")
+#set( $State_var2 = ".State")
+#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+#set( $CurrentCountry2 = "$objCountry1.value")
+#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+#set( $State_label_var2 = ".label")
+#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+
+#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+#set( $State_zip_var2 = ".label")
+#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+
+#set( $State2 = $brander.getBrandMapElements($State_var) )
+#set( $StateLabel_2 = $brander.getBrandElement($State_label_var) )
+#set( $ZipLabel_2 = $brander.getBrandElement($State_zip_var) )
+
+
+#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+
+<script type="text/javascript" language="javascript" > 
+#set( $ZipType2 = ".type" )
+#set( $ZipLength = ".length" )
+#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+
+zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+</script> 
+
+#end
+#end 
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">&nbsp;</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">Country</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+                                                        
+<select  onChange = "stateChangeFormSubmit()"  name="country2" class="input_field1c" tabindex="26" >
+#springBind( "addDistributorForm.country2" )
+#foreach ($country in $Country2)
+#if($country.value=="$!{status.value}")
+<option value="$country.value" selected>$country.label</option>
+#else
+<option value="$country.value" >$country.label</option>
+#end
+#end
+</select>
+                                                </div>
+                                        </div>
+
+
+                                        <!-- 10 -->
+#*                                      <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.State")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #set ($inputTextCSS17=$inputTextCSS+" tabindex='17' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.state1" $inputTextCSS17)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.State")</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #set ($inputTextCSS27=$inputTextCSS+" tabindex='27' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.state2" $inputTextCSS27)</div>
+                                        </div>
+*#
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                        #if($CurrentCountry1 == "US" || $CurrentCountry1 == "United States" || $CurrentCountry1 == "AU" || $CurrentCountry1 == "Australia" || $CurrentCountry1 == "AE" || $CurrentCountry1 == "United Arab Emirates" || $CurrentCountry1 == "CA" || $CurrentCountry1 == "Canada" || $CurrentCountry1 == "GB" || $CurrentCountry1 == "United Kingdom")
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$StateLabel_1</div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+                                            #set($stateList = $brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+											<select class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="state1" tabindex="17" maxlength='50'>
+											#springBind( "addDistributorForm.state1" )																						
+											#foreach ($state in $State)
+											#if($state.value == "$!{status.value}")
+											<option value="$state.value" selected>$state.label</option>
+											#else
+											<option value="$state.value" >$state.label</option>
+											#end
+											#end
+											</select>                                                
+                                            </div>
+                                        #else
+											<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+											<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">&nbsp;</div>
+											<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+											#set ($state1=$inputTextCSS+" tabindex='17' maxlength='50' name='state1'")
+											#springBind( "addDistributorForm.state1" )
+											#springFormInput("addDistributorForm.state1" $state1)
+											</div>
+                                        #end
+                                        #springBind( "addDistributorForm.state2" )
+										#if($CurrentCountry2 == "US" || $CurrentCountry2 == "United States" || $CurrentCountry2 == "AU" || $CurrentCountry2 == "Australia" || $CurrentCountry2 == "AE" || $CurrentCountry2 == "United Arab Emirates" || $CurrentCountry2 == "CA" || $CurrentCountry2 == "Canada" || $CurrentCountry2 == "GB" || $CurrentCountry2 == "United Kingdom")
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$StateLabel_2</div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+                                            #set($stateList = $brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+											<select class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="state2" tabindex="27" maxlength='50'>											
+											
+											#foreach ($state in $State2)
+											
+											#if($state.value == "$!{status.value}")
+											<option value="$state.value" selected>$state.label</option>
+											#else
+											<option value="$state.value" >$state.label</option>
+											#end
+											#end
+											</select>
+                                            </div>
+                                        #else
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+											#set ($state2=$inputTextCSS+" tabindex='27' maxlength='50' name='state2'")
+											#springFormInput("addDistributorForm.state2" $state2)
+                                            </div>
+                                        #end
+                                        </div>
+
+                                        <!-- 9 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                                                #springBind("addDistributorForm.city1")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.City")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS16=$inputTextCSS+" tabindex='18' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.city1" $inputTextCSS16)</div>
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+                                                #springBind("addDistributorForm.city2")
+                                                <div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="block_text_in-r-f" #end >City</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+                                                #set ($inputTextCSS26=$inputTextCSS+" tabindex='28' maxlength='50'")
+                                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.city2" $inputTextCSS26)</div>
+
+                                        </div>
+#springBind("addDistributorForm.eventSource")
+<input type="hidden" value="validate" id = "validateVariable" name="$status.expression" />     
+                                        <!-- 11 -->
+#if($ZipLabel_1 != "_" || $ZipLabel_2 != "_")
+
+<div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+#springBind("addDistributorForm.zip1")
+#if($ZipLabel_1 != "_" )
+
+<div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$ZipLabel_1</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+#set ($inputTextCSS18=$inputTextCSS+" tabindex='19' maxlength='50'")
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.zip1" $inputTextCSS18)</div>
+#else
+<div  class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")"  >&nbsp;</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")"><input name="addDistributorForm.zip1" value="" type="hidden" />&nbsp;</div>
+#end
+
+
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+#springBind("addDistributorForm.zip2")
+#if($ZipLabel_2 != "_" )
+
+<div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" #end >$ZipLabel_2</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">#if($status.error)<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />#end</div>
+#set ($inputTextCSS28=$inputTextCSS+" tabindex='29' maxlength='50'")
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.zip2" $inputTextCSS28)</div>
+#else
+<div  class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")"  >&nbsp;</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">&nbsp;</div>
+
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")"><input type="hidden" name="addDistributorForm.zip2" value="" />&nbsp;</div>
+#end
+</div>
+#else
+    #springBind("addDistributorForm.zip1")
+    <input  id="zip1" type="hidden"  name="${status.expression}" value="" />
+    #springBind("addDistributorForm.zip2")
+     <input  id="zip2"  type="hidden"  name="${status.expression}" value="" />  
+#end
+
+<!-- 13 -->
+<div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" >
+		$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.BrandName")
+	</div>
+	<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">
+		
+	#springBind("addDistributorForm.brandsList")
+	#set ($brandsList=${status.value})
+	#springBind("addDistributorForm.brandId")
+	<select tabindex="19" class="input_field1c" name="${status.expression}" tabindex="11" >
+    							<option value="0" >unselected</option>
+                                #foreach($objState in $brandsList)
+                                #if(${status.value})
+	                                #if(${status.value}== $objState.id)
+	                                    <option value="$objState.id" selected >$objState.brandKey</option>
+	                                #else
+	                                    <option value="$objState.id" >$objState.brandKey</option>
+	                                #end
+                                #else
+                                <option value="$objState.id" >$objState.brandKey</option>                                                                    
+                                #end
+                                #end
+                                </select>
+	</div>
+	<!-- Distributor Code Start -->
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")"></div>
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f")" >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.DistributorCode")</div>
+	<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+	#set ($inputTextCSS20=$inputTextCSS+" tabindex='20'")
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.distributorCode" $inputTextCSS20)</div>
+	<!-- Distributor Code End -->
+	
+</div>
+                        <!-- User-profile-end -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- Login-Information -->
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorConfirmation.cssClass.content-Block")">
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.Block-Contain-header")">
+<div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.representativecustomer.caption.header2")</div>
+</div>
+<!-- User-left-right-list -->
+<div id="e7b" class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.Search-inputfield-box")">
+<!-- s -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row1a")"><!-- using for space --></div>
+<!-- 1 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+#springBind("addDistributorForm.loginEmailID")
+<div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewCustomerProfile.caption.LoginEmailAddress")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+#set ($inputTextCSS30=$inputTextCSS+" tabindex='30' maxlength='50'")
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">#springFormInput("addDistributorForm.loginEmailID" $inputTextCSS30)</div>
+##<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">*</div>
+</div>
+<!-- 2 -->
+#springBind("addDistributorForm.password")
+<div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+
+
+<div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewCustomerProfile.caption.LMSLoginPassword")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+#set ($inputTextCSS31=$inputTextCSS+" tabindex='31' ")
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">#springFormPasswordInput("addDistributorForm.password" $inputTextCSS31)</div>
+##<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">*</div>
+<div class="block_text_in-r2">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Passwordmust")</div>
+</div>  
+<!-- 2a -->
+
+<div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+#springBind("addDistributorForm.confirmPassword")
+<div #if($status.error)class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.block_text_in-r-f-red")" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")" #end >$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.ConfirmPassword")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+#set ($inputTextCSS32=$inputTextCSS+" tabindex='32' ")
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">#springFormPasswordInput("addDistributorForm.confirmPassword" $inputTextCSS32)</div>
+##<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">*</div>
+</div> 
+<!-- 3 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.AccountLocked")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+#springBind( "addDistributorForm.locked" )
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="33" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes") </div>
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="34" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")  </div>
+</div>
+</div>
+<!-- 4 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.AccountExpired")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+#springBind( "addDistributorForm.expired" )
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="35" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes") </div>
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="36" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")  </div>
+</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewCustomerProfile.caption.AccountExpirationDate")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+#springBind( "addDistributorForm.expirationDate")
+#set ($expirationDate=$!{status.value})
+#if ($!{status.value})
+    <input type="text" style="width:150px" name="expirationDate" tabindex="37" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.addNewLearner.calender.tooltipExpirationDate")" value="$expirationDate" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.input_field")"/>
+#else
+    <input type="text" style="width:150px" id="expirationDate" tabindex="37" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.addNewLearner.calender.tooltipExpirationDate")" name="expirationDate" value="" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+#end 
+</div>
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+</div>
+<!-- 5 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.AccountDisabled")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+#springBind( "addDistributorForm.disabled" )
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="38" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes") </div>
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="39" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")  </div>
+</div>
+</div>
+<!-- 6 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.VisiableReports")</div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+#springBind( "addDistributorForm.report" )
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="40" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes") </div>
+<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="41" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")  </div>
+</div>
+</div>
+<!-- 7 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+	<div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.block_text_in-r-f")">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Changepassword")<br /> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.nextlogin")</div>
+	<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+	<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+		 #springBind( "addDistributorForm.changePassword" )
+		<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="42" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Yes") </div>
+		<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn_radio3")"><input type="radio" name="${status.expression}" tabindex="43" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.No")  </div>
+	</div>
+</div>
+<!-- 8 -->
+<div id="e12" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row1a")"><!-- using for space --></div>
+
+<div id="e13" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.manager-bottom-space3")"></div>
+<!-- 00 -->
+
+
+</div>
+<!-- End-User-left-right-list -->
+</div>                    
+                        <!-- End-Login-Information -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- button-div -->
+                       #* <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.managerBtn")">
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-left")"><input type="image" id="cancel" name="_cancel" title="Cancel" tabindex="30" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-cancel_n.gif")" width="71" height="19" align="top" /></div>
+                                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-right")"><input type="image" id="next" name="_target1" title="Next" tabindex="31" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-next_n.gif")" width="71" height="19" align="top"/></div>
+                                <input type="hidden" id="currentpage" name="_page" value="0"/>
+                        </div> *#
+						 <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.managerBtn")">
+                         <input type="hidden" id="currentpage" name="_page" value="0"/>
+                         <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						<div style="float:right; margin-top:3px;">
+						  <a onClick="submitButtonForm(document.addDistributor,'wizardSubmitter','_target1');" style="text-decoration:none;" title="$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+							<a onClick="submitButtonForm(document.addDistributor,'wizardSubmitter','_cancel');" style="text-decoration:none;" title="Cancel">
+								<div class="btn_start"></div>
+								<div class="btn_normal">Cancel</div>
+								<div class="btn_end"></div>
+							</a>
+						</div>	
+						 </div>
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                        
+                        <!-- right-pannel-content-end -->
+                </div>
+                <!-- content-area-end -->
+        </td></tr>
+		<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+                #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+#**
+----------------------------------------------------------------------------  
+@Author: Praveen Gaurav (nov.17.2008)
+@Modified: Praveen Gaurav (dec.12.2008)
+----------------------------------------------------------------------------
+*#
+<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+	<div id="e7c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+		<div class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+			<div id="c8" class="$brander.getBrandElement("lms.mycourses.cssClass.b-courseheaderDivleft")">$brander.getBrandElement("lms.mycourses.courseName")</div>
+			<div id="c9" class="$brander.getBrandElement("lms.mycourses.cssClass.b-courseheaderDivRight")"><div class="$brander.getBrandElement("lms.mycourses.cssClass.b-courseheaderDivRightAlign")">$brander.getBrandElement("lms.mycourses.courseProgress")</div></div>
+		</div>
+	
+			#set( $evenOdd = 0 )
+			#set( $remainingPct=0 )
+			#foreach ($course in ${context.myCourseItems})
+	
+				#if( $evenOdd==0 )
+					#set( $evenOdd = 1 )
+					#set( $alternateStyle = $brander.getBrandElement("lms.mycourses.cssClass.b-ContainerCourseName-L") )
+				#else
+					#set( $evenOdd = 0 )
+					#set( $alternateStyle = $brander.getBrandElement("lms.mycourses.cssClass.b-ContainerCourseName-D") )
+				#end
+	
+				#if(! $course.completionPercent)
+					#set($remainingPct=100)
+				#else
+					#set($remainingPct=100-$!{course.completionPercent})
+				#end
+	
+			##	TODO: Move to property file  
+				#if($course.courseType.equals("Online") )
+					#set( $iconImage = "lms.pixel.iconOnlineGif")
+				#elseif($course.courseType.equals("PDF") )
+					#set( $iconImage = "lms.pixel.iconPdfGif")
+				#elseif($course.courseType.equals("Course Group") )
+					#set( $iconImage = "lms.pixel.iconCourseGroupGif")
+				#else
+					#set( $iconImage = "lms.pixel.iconCdDvdGif")
+				#end
+	
+	
+		<div class="$alternateStyle">
+			<!-- icon -->
+			<div id="c10" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseLogo")"><img src="$brander.getBrandElement("lms.pixel.iconOnlineGif")" width="31" height="31"  alt="" /></div>
+			<!-- details -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDivCenter")">
+				<div id="c11" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href="javascript:launchCourse('$!{course.courseID}','$!{course.learnerEnrollmentID}')">#dotPaddingWithOutTitle($!{course.courseTitle}, 100)</a></div>
+				<div id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">
+					$brander.getBrandElement("lms.mycourses.lastAccessed"): $!{course.lastAccessDate} <br />
+					#if( $course.courseStatus.equals("notstarted"))
+						-
+					#else
+						<a class="$brander.getBrandElement("lms.mycourses.cssClass.view-details")" href="lrn_courseDetails.do?learnerEnrollmentId=$!{course.learnerEnrollmentID}">$brander.getBrandElement("lms.mycourses.viewDetails")</a>
+					#end
+				</div>
+			</div>
+			#if( $course.courseStatus.equals("notstarted"))
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDivRight")" align="center">
+				<div class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-blue")">$brander.getBrandElement("lms.mycourses.notStarted")</div>
+			</div>
+			#elseif( $course.courseCompleted || $course.courseStatus == 'affidavitpending' || $course.courseStatus == 'reportingpending' 	
+		|| $course.courseStatus == "affidavitdisputed"
+		|| $course.courseStatus == "affidavitreceived"
+		|| $course.courseStatus == "reported" || $course.courseStatus == "userdeclinedaffidavit")
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDivRight")" align="center">
+				<div id="c23" class="$brander.getBrandElement("lms.mycourse.recentcourse.cssClass.text-green")">$course.courseStatusDisplayText  xxxxxxxxxxxxxxxxxxxxx</div>
+			</div>
+			#else
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDivRight")" align="center">
+				<img src="$brander.getBrandElement("lms.pixel.statusBarStartJpg")"><img src="$brander.getBrandElement("lms.pixel.progressBarJpg")" width="$!{course.completionPercent}" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarsJpg")" width="$remainingPct" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarEndJpg")">
+			</div>
+			#end
+		</div>
+		#end
+	</div>
+</div>

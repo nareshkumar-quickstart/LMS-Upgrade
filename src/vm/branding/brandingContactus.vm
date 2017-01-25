@@ -1,0 +1,123 @@
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#revertContactUs').click(function(){
+            $('#actionmethod').val('showDefaultValue');  
+            $('#showDefaultValue').val('showDefaultValue');
+            
+            if( $('#templateType').length > 0 ){
+                $('#templateType').val("contactUSTemplate");
+            }else{
+                $('#brandingForm').append("<input id='templateType' name='templateType' type='hidden' value='contactUSTemplate' />");
+            }
+            $('#brandingForm').submit();
+        });
+        
+        $('#contactUsSelectionOption').change(function(){
+            templateOption($(this).attr("selectedIndex"),'contact');
+        });
+        $('#iconcaretContactus').click(function(){
+            restoreTable($(this), 'contactUsContent');
+            if($(this).attr('class') == 'icon-caret-down-large'){
+                $('#contactUsSelectionOption').trigger('change');
+            }
+        });
+    });
+</script>
+<table border="0" cellpadding="0" cellspacing="0" width="99%">
+  <tr>
+    <td>
+		<table id="contact-us" class="content-Block" border="0" cellpadding="0" cellspacing="0" style="width: 100%" >
+		    <tr>
+                        <td class="content-table-header" colspan="3">
+		            <div id="iconcaretContactus" class="icon-caret-down-large" style="margin-right:5px; padding-left:5px; padding-right:5px;">
+                            </div>
+		            <div class="content-table-heading">Contact Us</div>
+		        </td>
+		    </tr>
+		    <tr name="contactUsContent">
+		        <td width="15%" style="padding:5px;">
+		            Link To
+		        </td>
+		        <td width="2%">
+		            &nbsp;
+		        </td>
+		        <td style="padding:5px;">
+		            #springBind("brandingForm.contactUsSelectionOption")
+		            <select id="${status.expression}" name="${status.expression}" class="select-med" onchange="templateOption(this.selectedIndex,'contact')">
+		                <option value="1" #if($!{status.value}==1) selected #end>LMS Template</option>
+		                <option value="2" #if($!{status.value}==2) selected #end>External Page</option>
+		                <option value="3" #if($!{status.value}==3) selected #end>Email Address</option>
+		            </select>
+		        </td>
+		    </tr>
+		    <tr id="trExternalUrl-contact" style="display:none;" name="contactUsContent">
+		        <td style="padding:5px;">
+		            External Page URL
+		        </td>
+		        <td>
+		            &nbsp;
+		        </td>
+		        <td style="padding:5px;">
+		        	#springBind("brandingForm.contactUsURL")
+		            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+		        </td>
+		    </tr>
+		    <tr id="trEmailAddress-contact" style="display:none;" name="contactUsContent">
+		        <td style="padding:5px;">
+		            Email Address
+		        </td>
+		        <td>
+		            &nbsp;
+		        </td>
+		        <td style="padding:5px;">
+		            #springBind("brandingForm.contactUsEmail")
+		            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+		        </td>
+		    </tr>
+		    <tr id="trLmsTemplate-contact" style="display:none;" name="contactUsContent">
+		        <td  valign="top" style="padding:5px;">
+		            Message
+		        </td>
+		        <td id="revertContactUs" class="icon-revert" style="background-position:1px 15px;">
+		            &nbsp;
+		        </td>
+		        <td style="padding:5px;">
+		        	#springBind("brandingForm.contactUslmsTemplateText")
+		            <textarea id="contact1" name="${status.expression}" rows="" cols="" class="textarea-lrg" style="height:270px;">$!{status.value}</textarea>
+		            <script language="JavaScript" type="text/javascript">
+		                generate_wysiwyg('contact1');
+		            </script>
+		        </td>
+		    </tr>
+		</table>
+ 	</td>
+  </tr>
+  <tr>
+    <td> 		
+                         
+		<table cellspacing="0" cellpadding="0" border="0" id="table-bottom-controls">
+		    <tr name="contactUsContent">
+		         <td>	            
+					<div style="float: right; margin-top: 15px;">
+		                 <a onclick="saveBrands();">
+		                 <div class="btn_start"></div>
+		                 <div class="btn_normal">Save</div>
+		                 <div class="btn_end"></div>
+		                 </a>
+		            </div>
+		            <div style="float: right; margin-top: 15px; margin-right: 5px;">
+	                  <a style="text-decoration: none;" onclick="cancel();">
+	                  <div class="btn_start"></div>
+	                  <div class="btn_normal">Cancel</div>
+	                  <div class="btn_end"></div>
+	                  </a>
+	                  </div>
+		        </td>
+		    </tr>
+		</table>	
+		
+ 	</td>
+  </tr>
+</table>
+ 

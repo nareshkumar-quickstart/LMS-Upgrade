@@ -1,0 +1,662 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+
+<script type="text/javascript" language="javascript">
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+					if(jQuery.modal)
+	                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    
+function recurrencePattern(recPat){
+	 
+    var daily = document.getElementById("daily");
+    var weekly = document.getElementById("weekly");
+    var monthly = document.getElementById("monthly");
+    var yearly = document.getElementById("yearly");
+    var once = document.getElementById("once");
+    var range = document.getElementById("range");
+
+    //alert("pattern : " + recPat);
+
+    daily.style.display = "none";
+    weekly.style.display = "none";
+    monthly.style.display = "none";
+    yearly.style.display = "none";
+    
+    
+	
+    switch (recPat){
+        case "daily":
+             daily.style.display = "block";
+             range.style.display = "block";
+             weekly.style.display = "none";
+             monthly.style.display = "none";
+             yearly.style.display = "none";
+             once.style.display = "none";
+             break;
+
+        case "weekly":
+             weekly.style.display = "block";
+             range.style.display = "block";
+             daily.style.display = "none";
+             monthly.style.display = "none";
+             yearly.style.display = "none";
+             once.style.display = "none";
+             break;
+
+        case "monthly":
+             monthly.style.display = "block";
+             range.style.display = "block";
+             daily.style.display = "none";
+             weekly.style.display = "none";
+             yearly.style.display = "none";
+             break;
+
+        case "yearly":
+             yearly.style.display = "block";
+             range.style.display = "block";
+             once.style.display = "none";
+             daily.style.display = "none";
+             weekly.style.display = "none";
+             monthly.style.display = "none";
+             break;
+
+        case "once":
+              once.style.display = "block";
+              range.style.display = "none";
+              daily.style.display = "none";
+              weekly.style.display = "none";
+              monthly.style.display = "none";
+              yearly.style.display = "none"
+              break;
+    }
+
+}
+
+
+function FormSubmit(buttonclick) {
+        document.manageform.submit();
+}
+
+function deleteSchedules(){
+        if ($("INPUT[type='checkbox'][name='selectedSessions']:checked").length>0) {
+            confirm("Are you sure you want to delete the selected session(s)?", function () {
+                document.deleteManageForm.action.value='deleteSessions';
+                document.deleteManageForm.submit();
+            });
+        }else {
+            $('#selectSession').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+        }
+}
+
+
+    $(document).ready(function(){
+	 $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#tabBar').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='selectedSessions']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedSessions']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedSessions']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+</head>
+<body>
+<script src="javascript/jquery.js" type="text/javascript"></script>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+       <!-- header -->
+	#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+	
+		 <!-- Tabs Start -->
+		        <td  id="row-tabs" class="tab_bar" colspan="2">
+			 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<tr>
+						<td width="195"><div class="tab_blank"></div></td>
+						<td>&nbsp;</td>
+						<td width="600">
+							<a href="mgr_editSynchronousClass.do?id=${context.synchClass.getId()}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a>
+							<a href="mgr_editSynchronousClassSchedule.do?id=${context.synchClass.getId()}"><div class="tab_selected">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+							<a  href="mgr_editSynchronousClassResources.do?id=${context.synchClass.getId()}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a> 
+							<a href="mgr_editSynchronousClassInstructor.do?id=${context.synchClass.getId()}"><div style="border-right-style: solid;"class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.instructors")</div></a>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+			</table>
+
+		</td>
+		<!-- Tabs End -->
+		
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+         	<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</table></td>
+
+<TD id="content" >
+	<div id="scrollable">
+                <!-- form name="manageform" action="mgr_updateSynchronousClassSchedule.do" method="post" -->
+                #set($totCount=$context.synchSessions.size())
+                 <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.courseTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.courseSubTitle")</div>
+			</td>
+		    </tr>
+		</table>				 
+                <!-- Logo+Manage-User-end -->
+
+                ##set ($quoteStr = '"')
+                ##set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                ##set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                ##set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                ##set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                ##set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                ##set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+			<!--
+                <div class="content-Block" style="visibility:hidden;height:0">
+                <div id="pattern" class="Block-Contain-header">
+                    <div id="pattern1" class="Search-Containerheaderleft">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.summary")</div>
+                </div>
+                
+                <div id="pattern2" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+				
+				<div id="e12" class="search-content-row" style="height:105px;">
+				    <div class="com-star-r-t"></div>
+				    <div class="input_field_area-user-f">
+				    <div class="row_text"><input type="radio" name="pattern" tabindex="29" value="once" 	checked onclick="recurrencePattern('once');"/> Manual </div>
+				    <div class="row_text"><input type="radio" name="pattern" tabindex="30" value="daily" 	 DISABLED onclick="recurrencePattern('daily');"/> Daily </div>
+				    <div class="row_text"><input type="radio" name="pattern" tabindex="31" value="weekly" 	 DISABLED   	 onclick="recurrencePattern('weekly');"/> Weekly  </div>
+				    <div class="row_text"><input type="radio" name="pattern" tabindex="32" value="monthly" 	 DISABLED onclick="recurrencePattern('monthly');"/> Monthly  </div>
+				    <div class="row_text"><input type="radio" name="pattern" tabindex="33" value="yearly"  	 DISABLED onclick="recurrencePattern('yearly');"/> Yearly </div>
+				    <div class="row_text">&nbsp;</div>
+				    </div>
+				</div>
+            </div> -->
+<!-- content-Block 1 -->
+		    <div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+		    
+		     <!-- Search Result Start -->
+	 <!-- error-box -->
+			 #if($context.inProgressError)
+                    <div id="message_box" style="margin-top:-25px;">
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                       
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$brander.getBrandElement("$context.inProgressError")</div>
+                            </div>
+                        
+                    </div>
+					#end
+                    <!-- error-box -->
+			 <div id="once" class="content-Block-new" ><!-- content-Block 0 -->
+			     <div id="onceA1" class="Block-Contain-header">
+		                    <!-- Result Heading -->
+		                  <div style="float:left; height:23px;">
+					
+					<div style="float: left; margin-top: 2px;">
+						  <div>
+							  <a  href="mgr_addSynchronousSessionRecurrence.do?id=${context.synchClass.getId()}">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.editSynchronousClass.button.addSession")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+						  <div style="float: left; margin-top: 2px; margin-right: 5px;">
+						    <div>
+							  <a  onClick="deleteSchedules();">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.instructor.editSynchronousClass.button.deleteSession")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+						  </div>
+					</div>
+		                    
+				<!--Paging Control Start-->
+				<div class="result_left_side">							
+					<!-- All Icon -->
+					#if ($!{context.totalRecords} > 0)
+					<div id="showAll" class="icon_all" onClick="location.href='?id=$!{context.id}&pageDirection=allSearch';" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+					#end
+					
+					<!-- Next/Prev Icon -->
+					#if($!{context.totalRecords} == -1)
+						<div id="goNext" class="icon_disabled">&nbsp;</div>
+						<div id="goBack" class="icon_disabled">&nbsp;</div>
+					#else
+						#if( ($!{context.targetPageNo} * $!{context.pageSize} + $!{context.currentPageRecordCount}) == $!{context.totalRecords})
+						<div id="goNext" class="icon_disabled">&nbsp;</div>
+						#else
+						<div id="goNext" onClick="location.href='?id=$!{context.id}&pageIndex=$!{context.targetPageNo}&pageDirection=next';"class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>						
+						#end
+												
+						#if ($!{context.targetPageNo} == 0)
+						<div id="goBack" class="icon_disabled">&nbsp;</div>
+						#else
+						<div id="goBack" onClick="location.href='?id=$!{context.id}&pageIndex=$!{context.targetPageNo}&pageDirection=prev';" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+						#end
+					#end
+					
+					<!-- Showing Results -->
+					#set($lPpageNum = $!{context.targetPageNo} * $!{context.pageSize} + 1)
+					#set($rPpageNum = $!{context.targetPageNo} * $!{context.pageSize} + $!{context.currentPageRecordCount})
+					<div id="resultDescription" class="box_description">$brander.getBrandElement("lms.instructor.editSynchronousClass.caption.Showing") #if($!{context.totalRecords} <= 0) 0 - 0 of 0 #else $lPpageNum - $rPpageNum of $!{context.totalRecords} #end</div>
+					
+					
+				</div>
+				<!--Paging Control End-->
+		                </div>
+						
+		    
+				<form name="deleteManageForm" id="deleteManageForm" method="post" action="mgr_editSynchronousClassSchedule.do?id=${context.synchClass.getId()}" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+				<input id="action" type="hidden" name="action" value="advanceSearch" />
+
+		             	<div id="searchResult">
+		                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+		                      <tr bgcolor="#efefef">
+		                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectedLearner"  style="margin-left:3px"/></td>
+		    
+		                        <td class="box_subheader"><div class="icon_up" ></div>Start Date</td>
+		                        <td class="box_subheader"><div style="margin-left:15px;">Start Time</div></td>
+		                        <td class="box_subheader"><div style="margin-left:15px;">End Date</div></td>
+		                        <td class="box_subheader" style="border-right:none;"><div style="margin-left:15px;" >End Time</div></td>
+		                      </tr>
+		                      #foreach($synchSession 	in ${context.synchSessions})
+					#if($velocityCount%2==0)
+					#set($alternate="row_2")
+					#else
+					#set($alternate="row_1")
+					#end
+		                      <tr>
+		                        <td class=$alternate width="17px"><input type="checkbox" name="selectedSessions" value="$!{synchSession.getId()}" style="margin-left:3px"/></td>
+		                        <td class=$alternate><a href="mgr_editSynchronousClassSchedule.do?id=${context.synchClass.getId()}&sessionId=$!{synchSession.getId()}&action=editSession">${synchSession.getStartDate()}</a></td>
+		                        <td class=$alternate><a href="">${synchSession.getStartTime()}</a></td>
+		                        <td class=$alternate><a href="">${synchSession.getEndDate()}</a></td>
+		                        <td class=$alternate style="border-right:none;"><a href="">${synchSession.getEndTime()}</a></td>
+		                      </tr>
+		                      #end
+		                    </table>
+		                </div>					
+		    
+		                </form>
+		                <!-- Search Result End -->
+		            </div>
+		            <!-- Search Result End -->
+					
+
+		    <div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+
+                    <div id="daily" class="content-Block" style="display:none;"><!-- content-Block 2 -->
+                        <div id="dailyA1" class="Block-Contain-header">
+                            <div id="dailyA2" class="Search-Containerheaderleft">Daily Recurrence</div>
+		    	</div>
+        
+			<div id="dailyB1"><!-- Recurrence starts -->		 
+				<table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 	<tr>
+					<td><input type="radio" name="radioDaily" style="float:left;" checked value="EveryDay"></input>
+	                            	<div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:12px;">Every</div>
+	                            	<input type="text" id="field_after" class="input_text_field" style="width:15px;" value="1"></input>
+				    	<div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">day(s) &nbsp;</div></td>
+			 	</tr>
+			 	<tr>
+	 				<td width="25%"><input type="radio" name="radioDaily" style="float:left;" value="EveryWeekDay" ><div class="row_text" style="margin-top:3px; margin-left:8px;">Every Weekday</div></td>
+			 	</tr>
+			 	</table>
+			
+			</div><!-- Recurrence ends -->
+		    	</div><!-- content-Block 2 -->
+
+		<div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+
+		<div id="weekly" class="content-Block" style="display:none;"><!-- content-Block 5 -->
+		     <div id="dailyA1" class="Block-Contain-header">
+			 <div id="dailyA2" class="Search-Containerheaderleft">Weekly Recurrence</div><!-- Weekly starts -->
+	    	     </div>
+         	<div id="weekly1">
+			 <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			<tr>
+			<td><div class="row_text" style="float:left; margin-top:2px;  margin-right:10px;">Recure Every</div><input type="text" id="field_after" class="input_text_field" style="width:15px;" value="1"></input><div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">week(s) on:</div></td>
+			</tr>
+			<tr>
+			<td>
+                            <input type="checkbox" name="chkdSunday"  	value="1" style="float:left; margin-left:10px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Sunday</div>
+                            
+                            <input type="checkbox" name="chkdMonday"  	 value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Monday</div>
+                            
+                            <input type="checkbox" name="chkdTuesday" 	 value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Tuesday</div>
+                            
+                            <input type="checkbox" name="chkdWednesday"  value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Wednesday</div>
+                            
+                            <input type="checkbox" name="chkdThursday" 	 value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Thursday</div>
+                            
+                            <input type="checkbox" name="chkdFriday" 	 value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Friday</div>
+                            
+                            <input type="checkbox" name="chkdSaturday" 	 value="1" style="float:left; margin-left:15px;"><div class="row_text" style="float: left; margin-top:4px; margin-left:2px;">Saturday</div>
+                        </td>
+			</tr>
+			 </table>
+	     </div><!-- Weekly ends -->
+	     </div><!-- content-Block 5 -->
+	     
+	     
+	     <div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+
+		<div id="monthly" class="content-Block" style="display:none;"><!-- content-Block 6 -->
+		     <div id="dailyA1" class="Block-Contain-header">
+			 <div id="dailyA2" class="Search-Containerheaderleft">Monthly Recurrence</div>
+		</div>
+		<div id="monthly1"><!-- monthly starts -->
+			 <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 		<tr>
+    					<td>
+                            <input type="radio" checked name="rec" style="float:left;"></input>
+                            <div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:10px;">Day</div>
+                            <input type="text" id="field_after" class="input_text_field" style="width:15px;" value="18"></input>
+                            <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of every</div>
+                            <input type="text" id="field_after" class="input_text_field" style="width:15px;" value="18"></input>
+                            <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">month(s)</div>
+                        </td>
+					</tr>
+			 		<tr>
+                        <td>
+                            <input type="radio" checked name="rec" style="float:left;"></input>
+                            <div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:10px;">The</div>
+                            <select type="text" id="field_after"  name="theColMonthly" style="float:left; width:80px; font-size:11px;">
+                            	<option selected value="1" >first</option>
+                            	<option  value="2" >second</option>
+                            	<option  value="3" >third</option>
+                            	<option  value="4" >fourth</option>
+                            	<option  value="0" >last</option>
+                            </select>
+                            <select type="text" id="field_after"  name="dayColMonthly" style="float:left; margin-left:8px; width:80px; font-size:11px;">
+                            	<option selected value="day" >day</option>
+                            	<option 	value="weekday" >weekday</option>
+                            	<option 	value="weekend" >weekend</option>
+                            	<option		value="Sun" >Sunday</option>
+                            	<option		value="Mon" >Monday</option>
+                            	<option		value="Tue" >Tuesday</option>
+                            	<option		value="Wed" >Wednesday</option>
+                            	<option		value="Thu" >Thursday</option>
+                            	<option		value="Fri" >Friday</option>
+                            	<option		value="Sat" >Saturday</option>
+                            </select>
+                            <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of every</div>
+                            <input type="text" id="field_after" class="input_text_field" style="width:15px;" value="18"></input>
+
+                            <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">month(s)</div>
+                       </td>
+					</tr>
+			 </table>
+	     	     </div><!-- monthly ends -->
+	     	     </div><!-- content-Block 6 -->
+
+		<div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+
+		<div id="yearly" class="content-Block" style="display:none;"><!-- content-Block 7 -->
+		     <div id="dailyA1" class="Block-Contain-header">
+			 <div id="dailyA2" class="Search-Containerheaderleft">Yearly Recurrence</div>
+		</div>
+		<div id="yearly1"><!-- yearly starts -->
+			 <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 		<tr>
+    					<td>
+                            <input type="radio" checked name="rec" style="float:left;"></input>
+                            <div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:10px;">Every</div>
+                            <select type="text" id="field_after"  style="float:left; width:80px; font-size:11px;"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>Novemeber</option><option>December</option></select>
+
+                            <input type="text" id="field_after" class="input_text_field" style="width:15px; margin-left:8px;" value="18"></input>
+                       </td>
+					</tr>
+			 		<tr>
+                        <td>
+                            <input type="radio" checked name="rec" style="float:left;"></input>
+                            <div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:10px;">The</div>
+                            <select type="text" id="field_after"  name="theColYearly" style="float:left; width:80px; font-size:11px; margin-left:10px;">
+                            	<option selected value="1" >first</option>
+                            	<option  value="2" >second</option>
+                            	<option  value="3" >third</option>
+                            	<option  value="4" >fourth</option>
+                            	<option  value="0" >last</option>
+                            </select>
+                            <select type="text" id="field_after"  name="dayColYearly" style="float:left; margin-left:8px; width:80px; font-size:11px;">
+                            	<option selected value="day" >day</option>
+                            	<option  value="weekday" >weekday</option>
+                            	<option  value="weekend" >weekend</option>
+                            	<option value="Sun" >Sunday</option>
+                            	<option value="Mon" >Monday</option>
+                            	<option value="Tue" >Tuesday</option>
+                            	<option value="Wed" >Wednesday</option>
+                            	<option value="Thu" >Thursday</option>
+                            	<option value="Fri" >Friday</option>
+                            	<option value="Sat" >Saturday</option>
+                            </select>
+                            <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of</div>
+                            <select type="text" id="field_after"  name="ofMonth" style="float:left; width:80px; font-size:11px;">
+                            	<option selected value="0" >January</option>
+                            	<option value="1" >February</option>
+                            	<option value="2" >March</option>
+                            	<option value="3" >April</option>
+                            	<option value="4" >May</option>
+                            	<option value="5" >June</option>
+                            	<option value="6" >July</option>
+                            	<option value="7" >August</option>
+                            	<option value="8" >September</option>
+                            	<option value="9" >October</option>
+                            	<option  value="10" >Novemeber</option>
+                            	<option  value="11" >December</option>
+                            </select>
+                       </td>
+		       </tr>
+		       </table>
+	     </div><!-- yearly ends -->
+	     </div><!-- content-Block 7 -->
+
+		    <div class="com-star-r-t"></div> <!-- for using space b/w the blocks -->
+
+		<div id="range" class="content-Block" style="display:none;"><!-- content-Block 3 -->
+			<div id="e7a" class="Block-Contain-header">
+			<div id="e8" class="Search-Containerheaderleft">Range of Recurrence</div>
+			</div>
+
+		<div>
+		<table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			<tr>
+				<td width="20%"><span class="row_text">Start Date</span></td>
+				<td width="30%">
+                        	<div style="float:left">
+                        	<input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="startDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="startDate" value="$!{status.value}" style="width:62%;height:15px;position:absolue;text-align: left;float: left;left: 100px;margin: 0px 0px 0px 0px;" />
+				<script type="text/javascript">
+					jQuery.noConflict();
+				</script>
+                        	</div>
+				</td>
+	                        <td width="59%"><input type="radio" name="endRange" value="NoEndDate" style="float:left;"><div class="row_text" style="margin-top:3px; margin-left:8px;">No End Date</div></td>
+	                        <td width="1%">&nbsp;</td>
+			</tr>
+			 <tr>
+    				<td>&nbsp;</td>	
+	    			<td>&nbsp;</td>
+	                        <td><input type="radio" name="endRange"  value="EndAfter" style="float:left;">
+	                        <div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:23px;">End After &nbsp; &nbsp; &nbsp; 
+	                        <input type="text" id="field_after" name="totalOccurences" class="input_text_field" style="width:15px;" value="$!{status.value}"></input></div>
+	                        <div class="row_text" style="float:left; margin-left:-10px; margin-top:4px;">occurences</div></td>
+	                        <td>&nbsp;</td>
+			</tr>
+	 		<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>
+				<input type="radio" name="endRange"  checked value="EndDate" checked style="float:left;"><div class="row_text" style="float:left; margin-top:3px;  margin-left:2px; margin-right:25px;">End Date</div>
+				<!-- input type="text" id="field_by" name="endDate" class="input_text_field" style="width:52px;" value="$!{status.value}"></input><div class="icon_calen"></div -->
+                        	<input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="endDate" value="$!{status.value}" style="width:25%;height:15px;position:absolue;text-align: left;float: left;left: 100px;margin: 0px 0px 0px 0px;" />
+				
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+	 		<tr>
+				<td><span class="row_text">Start Time</span></td>
+				<td>
+				<input type="text" id="field_start_time" name="startTime" class="input_text_field" style="margin-left:0px;" value="$!{status.value}"></input></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><span class="row_text">End Time</span></td>
+				<td>
+				<input type="text" id="field_end_time" name="endTime" class="input_text_field" style="margin-left:0px;" value="$!{status.value}"></input></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td><span class="row_text">Duration</span></td>
+	                        <td><select id="field_duration" style="margin-left:0px; width:183px; font-size:11px;"><option>15 minutes</option><option>30 minutes</option><option>1 hour</option><option>2 hours</option><option>3 hours</option><option>4 hours</option></select></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+		</div><!-- Recurrence ends -->
+		</div><!-- content-Block 3 -->
+
+                    <!-- button-div -->
+					<div style="float: right; margin-top: 15px; margin-right: 20px;">
+						<div>
+                       <a onClick="location.href='mgr_manageSynchronousClass.do?id=${context.synchCourseId}';">
+						 <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+						  <div class="btn_end"></div>
+						</a>
+						</div>
+                        
+                    </div>
+					<!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                <!-- /form -->
+
+            </div><!-- right-pannel -->
+        </td></tr><!-- content-area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+   	    #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+    </table><!-- main-container -->
+</body>
+</html>
+
+<div id='deleteConfirmation' style="display:none;width:405px;" class="message_box">
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.addSynchronousCourse.deleteMessageSession")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div style="width:300px" class='simplemodal-close'>
+                <div style="float: left; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a  onClick="">
+							  <span class="no button">
+								<div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</div>
+								  <div class="btn_end"></div>
+							  </span></a>
+						  </div>
+						  </div>	
+						 
+						 <div style="float: left; margin-top: 2px; margin-right: 5px;">
+						  <div>
+							  <a onClick="">
+							  <span class="yes button">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+								  <div class="btn_end"></div>
+								  
+							  </span> </a>
+						  </div>
+						  </div>	
+			
+            </div>
+</div>
+</div><!-- Delete Confirmation Message Box Ends -->
+
+<div id="selectSession" style="display:none" class="message_box">
+    <div class="header">$brander.getBrandElement("lms.instructor.addSynchronousCourse.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.addSynchronousCourse.messageBox.select")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+	<div class='no simplemodal-close' style="float: center">
+	
+	<div style="float: center; margin-top: 4px; margin-right: 5px;">
+	  <div>
+		  <a onClick="">
+			  <div class="btn_start"></div>
+			  <div class="btn_normal">$brander.getBrandElement("lms.instructor.searchSynchronousClass.messageBox.OK")</div>
+			  <div class="btn_end"></div>
+		  </a>
+	  </div>
+			  </div>	
+	 
+        </div>
+ </div>
+</div><!-- Alert Message Box Ends -->

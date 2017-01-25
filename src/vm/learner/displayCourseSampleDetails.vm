@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<style type="text/css" media="print">
+#content2a {height:auto !important;}
+</style> 
+<script language="javascript" type="text/javascript">
+    /*this script converts from seconds to <Hours:Minute> format*/
+    var launchWindow;
+    function launchCourse(courseId, enrollmentId) {
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=no,menubar=no,status=yes,width=900,height=700,left=0,top=0');
+        launchWindow.focus();
+    }
+
+    function showDescription(){
+        document.location="#springUrl("/lrn_courseSampleDescription.do?courseId=$!{context.course.id}")";
+    }
+
+    function backToCourses() {
+        document.location="#springUrl("/lrn_myCourses.do?show=$context.viewType")";
+    }
+
+    function courseCompletionReport() {
+        document.location="#springUrl("/lrn_courseSampleCompletionReport.do?courseId=$!{context.course.id}&show=$context.viewType")";
+    }
+    $(document).ready(function(){
+        
+    });
+</script>
+</head>
+<body>
+<div id="main-container">
+<!-- Header -->
+#parse("snippets/learnerNewHeader.vm")
+<!-- header-end -->
+<div id="content2a">
+ 
+ <div id="right-pannel" style="margin-left:20px">
+
+
+	 <!-- Logo+Manage-User -->
+                    <div class="page_description" id="pageDescription" style="margin-left:0px;">
+                        <!-- Page Icon -->
+                        <div class="courseLogoCourses" id="logoHolder"></div>
+                        <!-- Page Heading -->
+                        <div class="page_heading" id="pageHeading">Statistics for $context.userName</div>
+                        <!-- Page Description -->
+                        <div id="learner_pageDescription">$brander.getBrandElement("lms.coursedetails.header.description")</div>
+                    </div>
+                    <!-- Logo+Manage-User-end -->
+    <!-- Logo+Manage-User-end -->
+
+    <table width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="2">
+                <div class="managerBtn1" >
+           		
+					<div style="float:right; margin-top:5px;">
+					  <a onclick="return window.print();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.printpage")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>	
+					 #if($context.courseType == "Self Paced Course")
+						<div style="float:right; margin-top:5px;">
+						  <a onclick="return courseCompletionReport();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.completionreport")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+					#end
+					<div style="float:right; margin-top:5px;">
+					  <a onclick="return showDescription();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.coursedescription")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:5px;margin-left:15px;">
+						<a onclick="location.href='lrn_myCourses.do?show=${context.viewType}';" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.backtocourses")</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>			
+					
+				</div>
+            </td>
+        </tr>
+    </table>
+	
+    <table id="courseDetails" width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td valign="middle" style="width:40px"><img src="$brander.getBrandElement("$context.courseIconToShow")" width="31" height="31" alt="" /></td>
+            <td valign="middle" nowrap>
+                <a class="courseName" href="javascript:void(0)">$context.course.courseTitle</a>
+            </td>
+        </tr>
+    </table>
+    
+    <table id="courseDetailCss" width="98%" cellpadding="0" cellspacing="0" >
+        <tr ><td class="header">Summary Statistics</td><td>&nbsp;</td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Status</td><td class="table-row" >Not Started</td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Course Progress</td><td class="table-row" >0%</td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Pre Assessment Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Average Quiz Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Highest Post Test Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Completion Date</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Total Time Spent In Course (hours:minutes)</td><td class="table-row" >00:00</td></tr>
+    </table>
+    
+    <table id="courseDetailCss" width="98%" cellpadding="0" cellspacing="0" >
+        <tr ><td class="header">Detailed Statistics</td><td>&nbsp;</td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Course Progress</td><td class="table-row" >0%</td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Status</td><td class="table-row" > Not Started </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">First Access Date</td><td class="table-row"  nowrap> -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Last Access Date</td><td class="table-row"  nowrap> -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Total Number of Accesses</td><td class="table-row" > 0 </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Pre Assessment Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Average Quiz Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Lowest Quiz Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Highest Quiz Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Total Number of Quizzes Attempted</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Average Post Test Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Lowest Post Test Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Highest Post Test Score</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Total Number of Post Tests Attempted</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#ffffff"><td class="table-row"  width="80%">Completion Date</td><td class="table-row" > -- </td></tr>
+        <tr style="background-color:#f4f4f4"><td class="table-row"  width="80%">Total Time Spent In Course (hours:minutes)</td><td class="table-row" > 00:00 </td></tr>
+    </table>
+    <br/>
+  </div>
+</div>
+
+<!-- Footer -->
+#parse("snippets/learnerNewFooter.vm")
+</div>
+</body>
+</html>

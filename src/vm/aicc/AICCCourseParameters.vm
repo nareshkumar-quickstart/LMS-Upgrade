@@ -1,0 +1,36 @@
+#if(${context.isSuccessfullyCall})
+	ERROR = 0
+	ERROR_TEXT = Successfull
+	VERSION = ${context.version}
+#end
+#if($!{context.paramValue} == 'getParam')
+	AICC_DATA = [CORE]
+	
+	Student_ID = $context.user.getId()
+	Student_Name = $context.user.getLastName(), $context.user.getFirstName()
+	Lesson_Location = $context.Lesson_Location
+	Credit = $context.credit
+	Lesson_Status = $context.Lesson_Status
+	Score = $context.score
+	Time = $context.Time
+	
+	[Core_Lesson]
+	[Core_Vendor]
+	[Objective_Status]
+#elseif($!{context.paramValue} == 'putParam')
+	
+	AICC_DATA = [CORE]
+	
+	Lesson_Location = $context.Lesson_Location
+	Lesson_Status = $context.Lesson_Status
+	Score = $context.Score
+	Time = $context.Time
+	
+	[Core_Lesson]
+#elseif($!{context.paramValue} == 'wrongParam')
+	Kindly check getparam or putparam or ExitAU  URL not correct...
+#elseif($!{context.paramValue} == 'LearningSessionNull')
+	Learning Session not found...
+#elseif($!{context.error} == 'error')
+	$context.error
+#end

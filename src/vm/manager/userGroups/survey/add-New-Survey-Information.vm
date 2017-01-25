@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function()
+        {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body onLoad="document.manageSurvey.surveyName.focus();">
+<form name="manageSurvey" method="post" action="mgr_add-New-Survey-Information.do" >
+<div id="main-container">
+
+<!-- header -->
+#parse("snippets/managerWizardHeader.vm")
+<!-- header-end -->
+
+        <div id="content2a">
+        <!-- content-area -->
+
+                <!-- sub-header+arrow -->
+                <div  id="content3a"></div>
+                <!-- sub-header+arrow-end -->
+                
+                <!-- left-pannel-content -->
+                <div id="sideBar" class="side_bar">
+                        <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.survey.caption.wizard") <br/>Showing 1 of 3</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.survey.caption.wizardStep1")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.survey.caption.wizardStep2")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.survey.caption.wizardStep3")</div>
+                        </div>
+                </div>
+                <!-- left-menu-content-end -->
+
+                <!-- left-pannel-content-end -->
+                #macro( customShowErrors $separator $classOrStyle )
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        #if($classOrStyle == "")
+                            <b>${error}</b>
+                        #else
+                            #if($classOrStyle.indexOf(":") == -1)
+                                #set($attr="class")
+                            #else
+                                #set($attr="style")
+                            #end
+                            <span ${attr}="${classOrStyle}">${error}</span>
+                        #end
+                        ${separator}
+                    #end
+                #end            
+                #set ($quoteStr = '"')
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+                #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+                #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+                <!-- right-pannel-content -->
+                <div id="right-pannel">
+                        
+                        #springBind("manageSurveyForm.*")
+                        #if($status.error)
+                                #set($errorCodes = [])
+                                #set($temp = true)
+
+                                #springBind("manageSurveyForm.surveyName")
+                                #if($status.error)
+                                        #foreach($errorCode in $status.errorCodes)
+                                                #set($temp = $errorCodes.add($errorCode))
+                                        #end
+                                #end
+                                #springBind("manageSurveyForm.surveyEvent")
+                                #if($status.error)
+                                        #foreach($errorCode in $status.errorCodes)
+                                                #set($temp = $errorCodes.add($errorCode))
+                                        #end
+                                #end
+                                #springBind("manageSurveyForm.allQuestionPerPage")
+                                #if($status.error)
+                                        #foreach($errorCode in $status.errorCodes)
+                                                #set($temp = $errorCodes.add($errorCode))
+                                        #end
+                                #end
+                                #springBind("manageSurveyForm.questionsPerPage")
+                                #if($status.error)
+                                        #foreach($errorCode in $status.errorCodes)
+                                                #set($temp = $errorCodes.add($errorCode))
+                                        #end
+                                #end
+                        #end
+                        #if($errorCodes.size() > 0)
+                        <!-- error-box -->
+                         <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                                #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+                        
+                        <!-- Logo+Manage-User -->
+                        <div class="logoContainer" id="logomainContainer">
+                            <div class="logoContainerInner1">
+                                <div class="logoContainerInner2">
+                                    <div id="logoHolder" class="courseLogoSurveys">&nbsp;</div>
+                                    <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.addSurvey.info.caption.title")</div>
+                                    <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.addSurvey.info.caption.description")</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Logo+Manage-User-end -->
+
+                        <!-- Entitlements-Details -->
+                        <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+                                <div id="e12" class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.Block-Contain-header")">
+                                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.survey.caption.survey-Information")</div>
+                                </div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                                        <!-- s -->
+                                       
+                                        <!-- 1 -->
+                                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                                <div #if($status.error) class="block_text_in2-red" #else class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" #end>$brander.getBrandElement("lms.survey.caption.surveyName")</div>
+                                                #springBind("manageSurveyForm.surveyName")
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")"><input type="text"  id="surveyName"  maxlength="50" name="${status.expression}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")" value="$!{status.value}"></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                                        </div>
+                                        <!-- 3 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                                <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.surveyInformation.caption.Status")</div>
+                                                #springBind("manageSurveyForm.published")
+                                                <div class="$brander.getBrandElement("lms.assignEnrollmentSummary.cssClass.btn_radio1a")"><input type="radio" id="" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/> $brander.getBrandElement("lms.surveyInformation.caption.Published") </div>
+                                                <div class="$brander.getBrandElement("lms.assignEnrollmentSummary.cssClass.btn_radio1a")"><input type="radio" id="" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/> $brander.getBrandElement("lms.surveyInformation.caption.Unpublished") </div>
+                                        </div>
+                                        <!-- 4 -->
+                                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                                <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.surveyInformation.caption.Event")</div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                                #springBind("manageSurveyForm.surveyEvent")
+                                                        <select name="${status.expression}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1")">
+                                                        #foreach($surveyEvt in $surveyEvents)
+                                                        <option value="$surveyEvt" #if($surveyEvt == $!{status.value}) selected #end>$brander.getBrandElement("$surveyEvt")</option>
+                                                        #end
+                                                        </select>       
+                                                </div>
+                                               
+                                        </div>
+                                        <!-- 2 -->
+                                               
+                                        <div id="e14" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                                 #springBind("manageSurveyForm.questionsPerPage")
+												<div #if($status.error) class="block_text_in2-red" #else class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" #end>$brander.getBrandElement("lms.surveyInformation.caption.questionsPerPage")</div>
+                                                #springBind("manageSurveyForm.allQuestionPerPage")
+                                                <div class="$brander.getBrandElement("lms.assignEnrollmentSummary.cssClass.btn_radio1a")"><input type="radio" id="" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/>All</div>
+                                                <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.btn_radio1c")"><input type="radio" id="" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/></div>
+                                                #springBind("manageSurveyForm.questionsPerPage")
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                                <div class="$brander.getBrandElement("lms.surveyInformation.cssClass.input_field_area-user-fss")">#springFormInput("manageSurveyForm.questionsPerPage" $inputTextCSS)</div>
+                                        </div>
+										 
+                                        
+										
+											#springBind("manageSurveyForm.rememberPriorResponse")
+										<div id="e15" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+											
+												<input type="checkbox" id="response-required-checkbox2" #if(${status.value}) checked #end name="$!{status.expression}" style="margin-left: 0px; float: left;" />
+												
+												<div style="margin-top: 4px; margin-left: 20px;" >$brander.getBrandElement("lms.survey.caption.rememberPriorResponse") </div>
+										</div>
+										
+										#springBind("manageSurveyForm.allowAnonymousResponse")
+										<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+												
+												<input type="checkbox" id="response-required-checkbox1" #if(${status.value}) checked #end name="$!{status.expression}" style="margin-left: 0px; float: left;" />
+												
+												<div style="margin-top: 4px; margin-left: 20px;" >$brander.getBrandElement("lms.survey.caption.allowAnonymousResponse") </div>
+										</div>
+										
+										
+										<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+												#springBind("manageSurveyForm.electronicSignature")
+												<input type="checkbox" id="response-required-checkbox2" #if(${status.value}) checked #end name="$!{status.expression}" style="margin-left: 0px; float: left;" />
+												<div style="margin-top: 4px; margin-left: 20px;" >$brander.getBrandElement("lms.survey.caption.electronicSignature") </div>
+												
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+												#springBind("manageSurveyForm.electronicSignatureValue")
+												<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+												<textarea name="$!{status.expression}" style="border: 1px solid rgb(204, 204, 204); width: 500px; height: 100px; overflow: auto;">$!{status.value}</textarea>&nbsp;
+												</div>
+										</div>
+										<br><br><br><br><br><br><br><br>
+                                      <div id="e14" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+												#springBind("manageSurveyForm.links")
+												<input type="checkbox" id="response-required-checkbox2" #if(${status.value}) checked #end name="$!{status.expression}" style="margin-left: 0px; float: left;" />
+												<div style="margin-top: 4px; margin-left: 20px;" >$brander.getBrandElement("lms.survey.caption.links") </div>
+												
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space -->
+												</div>
+												#springBind("manageSurveyForm.linksValue")
+												<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+												<textarea name="$!{status.expression}" style="border: 1px solid rgb(204, 204, 204); width: 500px; height: 100px; overflow: auto;">$!{status.value}</textarea>&nbsp;
+												</div>
+										</div>
+										
+                                        <!-- 00 -->
+                                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+                                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.input_field_area-user")"></div>
+                                        </div>
+                                        <!--  -->
+                                
+                                <!-- End-User-left-right-list -->
+                        </div>
+                        <!-- End-Survey Details -->
+
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                                <div class="btn-left2">
+                                	    <a class="button" onClick="submitButtonForm(document.manageSurvey,'wizardSubmitter','_cancel');"><span class="button">$brander.getBrandElement("lms.enrollment.swapEnrollments.button.caption.cancel")</span></a>
+                                </div>
+                                <div class="btn-right1">
+                                     <a class="button" onClick="submitButtonForm(document.manageSurvey,'wizardSubmitter','_target1');"><span class="button">$brander.getBrandElement("lms.learner.avatar.button.Finish")</span></a>
+                                </div>
+                                <input type="hidden" id="currentpage" name="_page" value="0"/>
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                        </div>
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </div>
+		</div>
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+  #parse("snippets/managerFooter.vm")
+#end
+<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

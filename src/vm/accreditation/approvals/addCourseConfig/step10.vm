@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("INPUT[type='checkbox'][name='chk']").click(
+               function(){
+                  $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
+               }
+            );
+            $('.numeric').numeric({allow:"."});
+            $('#postMinimumSeatTimeBeforeAssessmentStart').change(function(){
+                if($(this).val().length > 0 && $(this).val() > 0){
+                    $('#minSeatTimeBfAssesmentUnlck').attr('checked', true);
+                }else{
+                    $('#minSeatTimeBfAssesmentUnlck').removeAttr('checked');
+                }
+            });
+            $('#postMinimumSeatTimeBeforeAssessmentStart').trigger('change');
+        });
+    </script>
+</head>
+
+<style type="text/css">
+div#l-menu-back {
+    position:relative; /* USE FOR DOUBLE COLUM PAGE */
+    float: left;
+    top: 10px;
+    left: 10px;
+    margin:0 auto;
+    width: 195px; 
+    min-width: 50px;
+    font-family: 'Tahoma';
+    font-weight: normal;
+    font-size: 11px;
+    padding: 8px 0px 10px 0px;
+
+}
+
+#table-bands{
+    width:205px;
+}
+</style>
+
+<body>
+<form name="addCourseConfigForm" method="post" action="acc_addCourseConfig.do" >
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        
+            <div id="l-menu-back">
+            	 	 <div class="l-menu-back-text-h">Add Course Configuration<br> Wizard showing 10 of 11</div>
+            	 <div class="l-menu-back-text-acted">1.Summary</div>
+            	 <div class="l-menu-back-text-acted">2. Course Policy</div>
+				 <div class="l-menu-back-text-acted">3. Course Completion</div>
+				 <div class="l-menu-back-text-acted">4. Pre-Assessment Policy</div>
+				 <div class="l-menu-back-text-acted">5. Quiz Policy</div>
+				 <div class="l-menu-back-text-acted">6. Post Assessment Policy</div>
+				 <div class="l-menu-back-text-acted" title="Special Post Assessment Validation" >7. Special Post Assessment ...</div>
+				 <div class="l-menu-back-text-acted">8. Validation</div>
+				 <div class="l-menu-back-text-acted">9. Disclaimar Options</div>
+				 <div class="l-menu-back-text-acted">10. Max Seat Time Enforcement</div>
+				 <div class="l-menu-back-text-act">11. Min Seat Time Requirements</div>
+				 <div class="l-menu-back-text">12. Confirmation</div>
+
+            </div>
+     	
+	
+	</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("courseConfigForm.*")
+            #if($status.error)  
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)         
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+		
+		 	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.AddCoursConfigurationTemplate")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.pagedescription_step10")</div>
+		</td>
+	</tr>
+</table>			  
+
+        	  <div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Minimum Seat Time Requirements</span></div>
+
+             <!-- ****************************************************************************** -->
+             <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
+			 		<tbody><tr>
+    					<td width="20px" height="5"></td>
+    					<td width="48%"></td>
+						<td width="20px"></td>
+						<td width="48%"></td>
+					</tr>
+					<tr>
+                        
+    					<td>
+                                            #springBind("courseConfigForm.displaySeatTimeTextMessage")
+                                            <input type="checkbox" name="chk" #if ($!{status.value}) checked #end #if(${courseConfigForm.postAssessmentEnabled}) #else disabled #end/>
+                                            <input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                        <td>
+                                            <div class="row_text">Seat Time Text Message</div></td>
+    					<td></td>
+                        <td></td>
+					</tr>
+					<tr>
+                        #springBind("courseConfigForm.lockPostAssessmentBeforeSeatTime")
+    					<td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end #if(${courseConfigForm.postAssessmentEnabled}) #else disabled #end />
+                                            <input type="hidden" name="$!{status.expression}" value="$!{status.value}"/>
+                                        </td>
+						<td><div class="row_text">Lock Post Assessment</div></td>
+    					<td></td>
+                        <td></td>
+					</tr>
+					
+					<tr>
+                       <td>
+                       	#springBind("courseConfigForm.postMinimumSeatTimeBeforeAssessmentStart")
+                                #set($intString = "$!{status.value}")
+					   			#set($Integer = 0)	
+                           <input type="checkbox" id="minSeatTimeBfAssesmentUnlck" name="chk" #if(${courseConfigForm.postAssessmentEnabled}) #else disabled #end/>
+                        </td>                                
+                                <td colspan=3><div class="row_text">Minimum seat time before assessment unlocks 
+                                        <input id="postMinimumSeatTimeBeforeAssessmentStart" type=text class="input_text_inline numeric" name="$!{status.expression}" value="$!{status.value}" style="width:30px;" 
+                                           #if(${courseConfigForm.postAssessmentEnabled}) #else disabled #end/>
+                                
+                                #springBind("courseConfigForm.postMinimumSeatTimeBeforeAssessmentStartUnits")
+                                <select  style="width:80px; font-size:10px;" name="${status.expression}" #if(${courseConfigForm.postAssessmentEnabled}) #else disabled #end ><option  #if(${status.value}=="Minutes") selected #end value="Minutes">Minutes</option><option #if(${status.value}=="Hours") selected #end value="Hours">Hours</option></select> 
+								
+								</div></td>
+								
+								
+					
+								
+								
+								
+					</tr>
+					
+					
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+			 </tbody></table>	
+             <!-- ****************************************************************************** -->
+        	  </div>
+		
+		
+
+		
+		 <input type="hidden" id="currentpage" name="_page" value="10" />
+         <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px; margin-right:10px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target11');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Next</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target9');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		      
+       </div>
+	   
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

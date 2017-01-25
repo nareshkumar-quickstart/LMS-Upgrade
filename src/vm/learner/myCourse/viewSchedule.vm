@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script language="javascript" type="text/javascript">
+    /*this script converts from seconds to <Hours:Minute> format*/
+    var launchWindow;
+    function launchCourse(courseId, enrollmentId) {
+    //	stopBothTimers();
+        
+        	
+        IS_LS360_SCORM = false;
+        IS_LS360_SCORM = ('${context.course.courseType}' == "Scorm Course")? true:false;
+
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=no,menubar=no,status=yes,width=900,height=700,left=0,top=0');
+        launchWindow.focus();
+    }
+
+    function launchCourse(courseId, enrollmentId, courseType) {
+    //	stopBothTimers();
+        
+        	
+        IS_LS360_SCORM = false;        	
+        	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+        	
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=no,menubar=no,status=yes,width=900,height=700,left=0,top=0');
+        launchWindow.focus();
+    }
+
+    function showDescription(){
+        document.location="#springUrl("/lrn_courseDescription.do?courseId=$!{context.course.id}")";
+    }
+
+    function backToCourses() {
+        document.location="#springUrl("/lrn_myCourses.do?search=$!{context.search}&show=$!{context.show}")";
+    }
+
+    function courseCompletionReport() {
+        document.location="#springUrl("/lrn_courseCompletionReport.do?courseId=$!{context.course.courseGUID}&learnerEnrollmentId=$!{context.learnerEnrollment.id}")";
+    }
+    $(document).ready(function(){
+       
+    });
+</script>
+</head>
+<body>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+          	<!-- header -->
+          		#parse("snippets/learnerNewHeader.vm")	
+          	<!-- header-end -->
+	</td>
+	</tr>
+	
+	
+<tr id="main">
+<TD id="content" >
+<div id="scrollable">
+			 <!-- Logo+Manage-User -->
+               <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+         		    <tr>
+             		    <td>&nbsp;&nbsp;&nbsp;</td>
+             			<td id="page-icon" class="courseLogoCourses">           			    &nbsp;             			</td>
+             			<td id="page-description">
+             			    <div id="page-heading">Schedule for $context.course.courseTitle</div>
+             			    <div id="page-help">$brander.getBrandElement("lms.courseSchedule.header.description")</div>
+             			</td>
+         		    </tr>
+               </table>	
+              
+
+   
+
+    <table width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="2">
+                <div class="managerBtn1">
+					<div style="float:right; margin-top:5px;">
+						<a onclick="return window.print();" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">Print Page</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+					<div style="float:right; margin-top:5px;">
+						<a onclick="return showDescription();" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">Course Description</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+					<div style="float:right; margin-top:5px;">
+						<a onclick="return backToCourses();" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">Back To Courses</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+				</div>
+            </td>
+        </tr>
+    </table>
+    <table id="courseSchedule" width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td valign="middle" style="width:40px"><img src=#if(!$context.syncClass.meetingType)"$brander.getBrandElement("lms.pixel.iconOffineSync")"#else"$brander.getBrandElement("lms.pixel.iconOnlineSync")"#end width="31" height="31" alt="" /></td>
+            <td valign="middle" nowrap> 
+				<a class="courseName" href=#if(!$context.syncClass || $context.syncClass.currentlyInSession== false)"#" #else javascript:launchCourse('$!{context.course.courseGUID}','$!{context.learnerEnrollment.id}','$!{context.course.courseType}') #end>$context.course.courseTitle</a>
+            </td>
+        </tr>
+    </table>
+
+
+    <br/>
+
+
+	#parse("snippets/viewScheduleSnippet.vm")
+</div>	
+</td>
+	</tr>
+	<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+        	    <!-- footer -->
+        		#parse("snippets/learnerNewFooter.vm")
+            <!-- footer-end -->
+			</td>
+	</tr>
+</table>
+
+</body>
+</html>

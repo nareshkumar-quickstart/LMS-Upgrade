@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+
+    <script type="text/javascript" language="javascript">
+        function doSearch() {
+            document.getElementById('action').value='searchStoreFrontProduct';
+            document.searchCategoryForm.submit();
+        }
+
+
+        function setAction() {
+            //document.getElementById('action').value='saveCommissionProduct';
+            document.addProductForm.submit();
+        }
+
+        $(document).ready(function(){ });
+
+
+        /*function selectChildren(eventSourceCheckbox, contractType, setChecked) {
+
+                var parentCourseGroupId = eventSourceCheckbox.value.split(":")[1];
+
+                var childCourseGroupCheckboxes =  document.getElementsByTagName("input");
+
+                for (var i=0; i<childCourseGroupCheckboxes.length; i++) {
+                    if(childCourseGroupCheckboxes[i].type=="checkbox" && childCourseGroupCheckboxes[i].name=="chkProduct")
+                    {
+                        var childCourseGroupId = childCourseGroupCheckboxes[i].value.split(":")[0];
+                        if(parentCourseGroupId==childCourseGroupId)
+                        {
+                            childCourseGroupCheckboxes[i].checked = setChecked;
+                            //parentCourseGroupId = childCourseGroupCheckboxes[i].value.split(":")[1];
+                            selectChildren(childCourseGroupCheckboxes[i], contractType, setChecked);
+                        }
+
+                    }
+                }
+
+        }*/
+    </script>
+
+##======================================================================================================================
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+    <script type="text/javascript" language="javascript" src="javascript/tree_collapseExpand.js"></script>
+    <script type="text/javascript" type="text/javascript">
+        function selectChildren(eventSourceCheckbox, contractType, setChecked) {
+            var eventSourceCheckboxValue = eventSourceCheckbox.value.split(":")[1];
+            if (contractType == "Course") {
+                var coursesCheckboxes = document.getElementsByName("chkProduct");
+
+                for (var i=0; i<coursesCheckboxes.length; i++) {
+                    var cbId = coursesCheckboxes[i].id;
+                    var courseGroupId = coursesCheckboxes[i].id.split("_")[1];
+                    if (courseGroupId == eventSourceCheckboxValue) {
+                        document.getElementById(cbId).checked = setChecked;
+
+                    }
+                }
+                //for cgs
+                var childCourseGroupCheckboxes = document.getElementsByName("chkCategory");
+                for (var i=0; i<childCourseGroupCheckboxes.length; i++) {
+                    var cbId = childCourseGroupCheckboxes[i].id;
+                    var parentCourseGroupId = childCourseGroupCheckboxes[i].id.split("_")[1];
+                    if (parentCourseGroupId == eventSourceCheckboxValue) {
+                        document.getElementById(cbId).checked = setChecked;
+                        selectChildren(childCourseGroupCheckboxes[i], contractType, setChecked);
+                    }
+                }
+
+            }
+            else if (contractType == "CourseGroup") {
+                var childCourseGroupCheckboxes = document.getElementsByName("chkCategory");
+                for (var i=0; i<childCourseGroupCheckboxes.length; i++) {
+                    var cbId = childCourseGroupCheckboxes[i].id;
+                    var parentCourseGroupId = childCourseGroupCheckboxes[i].id.split("_")[1];
+                    if (parentCourseGroupId == eventSourceCheckboxValue) {
+                        document.getElementById(cbId).checked = setChecked;
+                        selectChildren(childCourseGroupCheckboxes[i], contractType, setChecked);
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+    #macro( addProductTemplate_treeDisplayofResellerCourseGroup $treeNodes $contractType $selectedCourses $callMacroForChildren $nullTool $brander)
+        #set($currentRowIndex = 1)
+        #set($lastDepth = 0)
+        #set($arrParent = [])
+
+        #if (!$nullTool.isNull($treeNodes) && $treeNodes.size() > 0)
+        <div class="User-checkbox-row-d2">
+            <div class="User-checkbox-row-d2a">$context.contractType</div>
+            <div class="head_1b-e">Course Id</div>
+        </div>
+        #end
+        #foreach($node in $treeNodes)
+            #if(!$nullTool.isNull(${node.depth}))
+                #set($depthDiff = ${node.depth} - ${lastDepth})
+            #else
+                #set($depthDiff = ${lastDepth})
+            #end
+            #set ($var=$currentRowIndex%2)
+            #if ($!{var}==0)
+                #set ($rowColor="org_row2")
+            #else
+                #set ($rowColor="org_row1")
+            #end
+            #set ($val=0)
+            $arrParent.add($node.depth,$node.value.id)
+            #if (!$nullTool.isNull(${node.depth}) && ${node.depth}>0)
+                #set ($val=$node.depth - 1)
+                #set($parentId=$arrParent.get($val))
+                #set($currentRowName='childOf:')
+                #set ($currentRowDivName = "$currentRowName$parentId")
+            #else
+                #set($parentId='')
+                #set($currentRowDivName=$node.value.id)
+            #end
+        <div id="row$currentRowIndex" name="row$currentRowIndex" class="$rowColor" indx="$currentRowIndex" parentRef="$!{parentId}">
+            <input type="hidden" name="$currentRowDivName" value="" />
+            <div class="icon_blank">&nbsp;</div>
+            #if(!$nullTool.isNull(${node.depth}))
+                #foreach($i in [1..${node.depth}])
+                    #if (${node.depth}>0)
+                        <div class="icon_blank2"></div>
+                    #end
+                #end
+            #end
+            #if(${node.isLeaf()} && $contractType == "Course" && $callMacroForChildren == "false")
+                <div id="divIcon$currentRowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else
+                <div id="divIcon$currentRowIndex" class="icon_collapse" onclick="collapseExpandTreeNode(this);" nodeid="${node.value.id}"></div>
+            #end
+            #if(${node.isLeaf()} && $contractType == "Course")
+                #set ($setChecked = true)
+                <div class="org_checkbox">
+                    <input type="checkbox" id="courseGroup_$!{parentId}_${node.value.id}" name="chkCategory" value="$!{parentId}:${node.value.id}:${node.value.name}"  onclick="selectChildren(this, '$contractType', this.checked)" value="$parentId:${node.value.id}:${node.value.name}" #if ($setChecked) checked #end/>
+                </div>
+            #else
+                <div class="org_checkbox">
+                    #if($context.resellerCourseGroupIds.contains(${node.value.id}))
+                        <input type="checkbox" id="courseGroup_$!{parentId}_${node.value.id}" name="chkCategory" onclick="selectChildren(this, '$contractType', this.checked)" value="$parentId:${node.value.id}:${node.value.name}" checked #if(!${node.enabled}) disabled #end />
+                    #end
+                </div>
+            #end
+            <div class="row_title">
+                #if(${node.isLeaf()} && $callMacroForChildren == "false")
+                    <img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />&nbsp;$!{node.value.courseTitle}
+                #else
+                    <img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.courseGroup.iconCourseGroup.png")" />&nbsp;$!{node.value.name}
+                #end
+            </div>
+            <div class="head_1b-e-1">
+                #if(${node.isLeaf()} && !$nullTool.isNull($node.value.bussinesskey))
+	            	$!{node.value.bussinesskey}
+	            #end
+            </div>
+        </div>
+            #set ($currentRowIndex = $currentRowIndex + 1)
+            #if($callMacroForChildren == "true")
+                #if(${node.value.courses.size()} > 0)
+                    #if(!$nullTool.isNull(${node.depth}))
+                        #set ($nodeDepth = ${node.depth} + 1)
+                    #else
+                        #set ($nodeDepth = 1)
+                    #end
+                    #addProductTemplate_treeDisplayofResellerCourses($node.value.courses $contractType $rowColor ${node.value.id} $currentRowIndex $nodeDepth $selectedCourses $nullTool $brander)
+                ##set ($currentRowIndex = $currentRowIndex + ${node.value.courses.size()})
+                #end
+            #end
+        #end
+    #end
+
+    #macro( addProductTemplate_treeDisplayofResellerCourses $courses $contractType $rowColor $parentId $rowIndex $nodeDepth $selectedCourses $nullTool $brander)
+        #set($childRowNamePrefix='childOf:')
+        #set ($currentRowDivName = "$childRowNamePrefix$parentId")
+        #foreach($course in $courses)
+            #if($course.courseStatus == "Published" || $course.courseStatus == "published")
+                #if(${rowColor} == "org_row2")
+                    #set ($rowColor = "org_row1")
+                #else
+                    #set ($rowColor = "org_row2")
+                #end
+            <div id="row${rowIndex}" name="row${rowIndex}" class="${rowColor}" indx="${rowIndex}" parentRef="$!{parentId}">
+                <input type="hidden" name="$currentRowDivName" value="" />
+                <div class="icon_blank">&nbsp;</div>
+                #foreach($i in [1..${nodeDepth}])
+                    #if ($!{nodeDepth}>0)
+                        <div class="icon_blank2"></div>
+                    #end
+                #end
+                <div id="divIcon$rowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+
+                #if(${contractType} == "Course")
+                    <div class="org_checkbox">
+                        #set ($setChecked = true)
+                        #foreach($selectedCourse in $selectedCourses)
+                            #set ($courseId = "$parentId:$course.id.toString()")
+                            #if($selectedCourse.equals($courseId))
+                                #set ($setChecked = true)
+
+
+                            #end
+                        #end
+
+                        <input type="checkbox" id="course_${parentId}_${course.id}" name="chkProduct" value="$!{parentId}:${course.courseGUID}:${course.courseTitle}" #if ($setChecked) checked #end/>
+                    </div>
+                #end
+                <div class="row_title">
+                    <img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />&nbsp;$!{course.courseTitle}
+                </div>
+                <div class="head_1b-e-1">
+                    #if(!$nullTool.isNull($course.bussinesskey))
+						$!{course.bussinesskey}
+					#end
+                </div>
+            </div>
+                #set ($rowIndex = $rowIndex + 1)
+            #end
+        #end
+    #end
+##======================================================================================================================
+
+</head>
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+<tr> <!-- First Block -->
+    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">        <!-- header -->
+        #parse("snippets/managerWizardHeader.vm")
+
+        <!-- header-end -->
+    </td>
+</tr>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+    <!-- <LEFT NAGIVATION> -->
+    <td id="left-navigation" valign="top" style="width:195px;">
+        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+
+            <DIV id=l-menu-back>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.administrator.resellerCommission.addCommissionParticipationForm.AddProductWizard")<br />$brander.getBrandElement("lms.administrator.resellerCommission.addCommissionParticipationForm.AddParticipationWizard.showing1of2")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.administrator.resellerCommission.addCommission.summary")</div>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.resellerCommission.addCommission.confirmation")</div>
+            </DIV>
+
+            <!-- left-pannel-content-end -->
+        </table>
+    </td>
+
+    <TD id="content" >
+        <div id="scrollable">
+            #if($context.status)
+                #set($status = $context.status)
+            #end
+            #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+
+            <!-- Logo+Manage-User -->
+            <div class="page_description" id="pageDescription">
+                <!-- Page Icon -->
+                <div class="courseLogoDistributor" id="pageIcon"></div>
+                <!-- Page Heading -->
+                <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.administrator.resellerCommission.Product.Add.Title")</div>
+                <!-- Page Description -->
+                <div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerCommissions.addProduct.subtitle1")</div>
+            </div>
+
+            <div id="resultBox" class="content-Block-new">
+
+
+                <div id="resultHeader" class="box_header">
+                    <div class="result_left_side">
+                        <!-- Result Description -->
+                        <div style="float:left; margin-top:3px;">
+                            <a id="srch" onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">Search</div>
+                                <div class="btn_end"></div>
+                            </a>
+                        </div>
+                    </div>
+
+
+
+                    <div id="searchBox" class="visible" style="float: left; height: 120px; width: 280px; left: 47%;">
+                        <form name="searchCategoryForm" method="post" action="adm_ManageCommissionAddProduct.do?entity=reseller">
+                            <input type="hidden" id="action" name="method" value=""/>
+                            <div style="padding: 5px">$brander.getBrandElement("lms.administrator.resellerCommission.SearchProduct")</div>
+                            <br style="clear:both" />
+
+
+                            <div style="padding: 5px">
+                                <div style="width:85px; float:left">
+                                    $brander.getBrandElement("lms.administrator.resellerCommission.ProductName") &nbsp;&nbsp;
+                                </div>
+                                <div style="float:left">
+                                    <input type="text" onKeyPress="if(event.keyCode==13){doSearch();}" name="txtCommissionProduct" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" />
+                                </div><br style="clear:both" />
+                            </div>
+
+                            <br style="clear:both" />
+
+
+                            <div style="padding: 5px;margin-left:60px;margin-right:40px;height:20px">
+                                <a class="button" onClick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</span></a>
+                                <a class="button" onClick="doSearch();"><span class="button">Search</span></a>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                <!-- Result Header End -->
+
+
+                <form name="addProductForm" method="post" action="adm_ManageCommissionAddProduct.do?method=ManageProduct&entity=reseller" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+                    <input type="hidden" id="fromSummaryPage" name="fromSummaryPage" value=""/>
+
+
+
+                    <!-- main table  Start -->
+                    <div id="searchResult_2" class="">
+                        <table width="100%"  cellpadding="0">
+                            <tr>
+                                <td>
+
+
+                                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                        <tr bgcolor="#efefef">
+
+                                            <td  class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:100%;" >Product Hierarchy</td>
+                                        </tr>
+
+                                        #if($context.coursesTreeAsList.size()>0)
+                                            <tr>
+                                                <td colspan="2" width="100%" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                ##parse("administrator/commission/TreeView.vm")
+                                    #addProductTemplate_treeDisplayofResellerCourseGroup (${context.coursesTreeAsList} ${context.contractType} ${context.contractCourseGroups} ${context.callMacroForChildren} $nullTool $brander)
+                                                </td>
+                                            </tr>
+                                        #else
+                                            <tr>
+                                                <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                    <div class="result_blank">$brander.getBrandElement("lms.administrator.viewdistributorentitlement.caption.noRecordFound")</div>
+                                                </td>
+                                            </tr>
+                                        #end
+
+
+
+                                    </table>
+
+
+
+
+                                </td>
+
+                            </tr>
+
+
+
+
+
+                        </table>
+                    </div>
+                    <!--- main table  End --------------------- -->
+
+                    <!-- Search Result End -->
+                    <input id="lastAction" type="hidden" name="action" value="delete" />
+            </div>
+            <!-- Search Result End -->
+
+            <!-- ************************************************************** -->
+
+            <!-- button-div -->
+            <div class="managerBtn">
+                <input type="hidden" id="currentpage" name="_page" value="1" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                <div style="float:right; margin-top:3px;">
+                    <a onClick="return setAction();" style="text-decoration:none;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onClick="submitButtonForm(document.deleteManageForm,'wizardSubmitter','_target4');">Next</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>
+
+                <div style="float:left; margin-top:3px;">
+                    <a href="adm_manageCommissionProduct.do?method=searchCommissionProduct&entity=reseller" style="text-decoration:none;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">Cancel</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+            </form>
+
+            <!-- right-pannel-content-end -->
+        </div>
+
+
+
+        <!-- content-area-end -->
+    </td></tr>
+
+<tr> <!-- Footer BLOCK -->
+    <td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+    </td>
+</tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<head>
+	<link type="text/css" href="brands/default/en/css/css_body.css" rel="stylesheet"/>
+	<link type="text/css" href="brands/default/en/css/css_search_net.css" rel="stylesheet"/>
+	<link type="text/css" href="brands/default/en/css/css_sidebar.css" rel="stylesheet"/>
+	<link type="text/css" href="brands/default/en/css/css_button.css" rel="stylesheet"/>
+	<link type="text/css" href="brands/default/en/css/tree.css" rel="stylesheet"/>
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+</head>
+<div id="header">
+	<!-- top-nav-right-menu -->
+	#set($ssn=$!{request.getSession(true)})
+	#set($menu = $ssn.getAttribute("featureGroup"))
+<div id="header">
+	<!-- logo -->
+	<div class="$brander.getBrandElement("lms.mycourses.cssClass.wel-logo")">
+		<div id="a1" class="$brander.getBrandElement("lms.mycourses.cssClass.welcomeMessage")"></div>
+		<div id="a2" class="$brander.getBrandElement("lms.mycourses.cssClass.logo")"><img src="$brander.getBrandElement("lms.header.logo.src")"></div>
+	</div>
+	<!-- logo-end -->
+	<!-- top-nav-right-menu -->
+	<div class="headerMenuContainer2">
+       	#if($userPermissionChecker.hasAccessToFeatureGroup("My Profile", $userData, $ssn) || $userData.isLMSAdministrator() || $userData.isTrainingAdministrator())
+        	<div onclick="submitForm('My Profile','LMS-LRN-0003','lrn_learnerProfile.do' )" class="$brander.getBrandElement("lms.mycourses.cssClass.profile")" onmouseover="document.getElementById('profile_icon').src='brands/default/en/images/headericons/hover/profile.png'" onmouseout="document.getElementById('profile_icon').src='brands/default/en/images/headericons/profile.png'" align="center"><a tabindex="4" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "My Profile")style="font-weight:bold" #end><img id="profile_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconProfileGif")" alt="" /><br />$brander.getBrandElement("lms.mycourses.header.Profile")</a></div>
+        #end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("My Transcripts", $userData, $ssn) || $userData.isLMSAdministrator() || $userData.isTrainingAdministrator())
+        	<div onclick="submitForm('My Transcripts','LMS-LRN-0002','lrn_ViewReports.do?method=browseReports')" class="$brander.getBrandElement("lms.mycourses.cssClass.reports")" onmouseover="document.getElementById('reports_icon').src='brands/default/en/images/headericons/hover/reports.png'" onmouseout="document.getElementById('reports_icon').src='brands/default/en/images/headericons/reports.png'"><a tabindex="3" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "My Transcripts")style="font-weight:bold" #end><img id="reports_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconReportsGif")" alt=""  /><br />$brander.getBrandElement("lms.mycourses.header.Reports")</a></div>
+        #end
+        <div onclick="submitForm('My Courses','LMS-LRN-0001','lrn_myCourses.do')" class="$brander.getBrandElement("lms.mycourses.cssClass.myCourse")" onmouseover="document.getElementById('mycourses_icon').src='brands/default/en/images/headericons/hover/trainingplans.png'" onmouseout="document.getElementById('mycourses_icon').src='brands/default/en/images/headericons/trainingplans.png'"><a tabindex="1" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "My Courses")style="font-weight:bold" #end><img id="mycourses_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconMyCoursesGif")" alt="" /><br />$brander.getBrandElement("lms.mycourses.header.MyCourses")</a></div>
+		
+		<!-- LMS-15500 -->
+		#if($!adminCurrentMode == 'ROLE_LEARNER')	
+	        #if($userPermissionChecker.hasAccessToFeatureGroup("My Predict", $userData, $ssn))
+				<div class="header_icon">
+					<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+						<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+						<br/>$brander.getBrandElement("lms.header.caption.Predict")
+					</a>
+				</div>
+			#end
+		#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+		 	 #if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+				<div class="header_icon">
+					<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+						<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+						<br/>$brander.getBrandElement("lms.header.caption.Predict")
+					</a>
+				</div>
+			#end
+		#end	
+		#set($ssn=$request.getSession(true))
+		#set($isCASAuthenticated=$ssn.getAttribute("isCASAuthenticated"))
+		#if($isCASAuthenticated)
+			<div onclick="javascript:goToLS360Dashboard()" class="header_icon" onmouseover="document.getElementById('mydashboard_icon').src='brands/default/en/images/headericons/dashboard.png'" onmouseout="document.getElementById('mydashboard_icon').src='brands/default/en/images/headericons/dashboard.png'"><a tabindex="1" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "My Dashboard")style="font-weight:bold" #end><img id="mydashboard_icon" height="60" src="brands/default/en/images/headericons/dashboard.png" alt="" /><br />$brander.getBrandElement("lms.header.caption.dashboard")</a></div>
+		#end
+		<!--	
+		<div class="header_icon">
+			<a onclick="" href="#springUrl('/lrn_widgetDashboard.do')" #if($menu == "Dashboard") class="header_icon_selected" #end>
+				<img id="administrator-dashboard" onmouseover="document.getElementById('administrator-dashboard').src='brands/default/en/images/headericons/dashboard.png'" onmouseout="document.getElementById('administrator-dashboard').src='brands/default/en/images/headericons/dashboard.png'"  src="brands/default/en/images/headericons/dashboard.png" class="icon_style" />
+				<br/>$brander.getBrandElement("lms.header.caption.dashboard")
+			</a>
+		</div>
+		-->
+     </div>
+	 <!-- top-nav-right-menu-end -->
+</div>
+	 <!-- top-nav-right-menu-end -->
+</div>

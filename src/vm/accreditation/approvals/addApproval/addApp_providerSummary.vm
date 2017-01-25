@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+            #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("#expirationDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#expirationDate2").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#expirationDate3").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#expirationDate4").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#expirationDate5").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+        });
+        function checkAnswer(objCheckBox){
+            if(objCheckBox.checked){
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+            }else {
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+            }
+        }
+    </script>
+</head>
+
+<body>
+<form name="approvalForm" method="post" action="acc_addApproval.do">
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+                <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.addApproval.caption.addApp_addApp_providerSummary_leftpannelheading")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step1")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.addApproval.caption.step2")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.addApproval.caption.step3")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addApproval5.caption.step4")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.addApproval5.caption.step5")</div>
+                </div>
+        </div>
+
+    		</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+
+
+        #springBind("approvalForm.*")
+        #if($status.error)
+
+                #set($errorCodes = [])
+                #set($temp = true)
+                #springBind("approvalForm.providerApproval.*")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("approvalForm.effectiveStartDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("approvalForm.effectiveEndDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("approvalForm.rescentSubmittedDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("approvalForm.submissionReminderDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("approvalForm.originalApprovadDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+
+                #set($size = 0)
+                #foreach($errorMessage in $status.errorMessages)
+                        #set($size = $size + 1)
+                #end
+
+            #if($errorCodes.size() > 0 || $size > 0 )
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                    #if($errorCode != 'custom.field.required')
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$!error</div>
+                    </div>
+                    #end
+                #end
+                #springBind("approvalForm.*")
+                #foreach($errorMessage in $status.errorMessages)
+                    #if(!$!errorMessage.equals(""))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$!errorMessage</div>
+                    </div>
+                    #end
+                #end
+            </div>
+            <!-- error-box -->
+            #end
+          #end
+
+                <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Add-Approvals")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accreditation.credential.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>
+
+
+                <div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredential.caption.Summary")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                <tr>
+                                        <td width="23%"><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approved-Provider-Name")</div></td>
+                                        #springBind("approvalForm.providerApproval.approvedProviderName")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="1" /></td>
+                                        <td width="23%"><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-Provider-Starts")</div></td>
+                                        #springBind("approvalForm.effectiveStartDate")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td width="25%"><input type="text" style="width:150px" id="expirationDate" tabIndex="2" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="effectiveStartDate" value="$!{status.value}" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></td>
+                                </tr>
+                                <tr>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider-Approval-Number")</div></td>
+                                        #springBind("approvalForm.providerApproval.providerApprovalNumber")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="3" /></td>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.addApproval.caption.effEnd")</div></td>
+                                        #springBind("approvalForm.effectiveEndDate")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" style="width:150px" id="expirationDate2" date:closeAtTop="false" tabIndex="4" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="effectiveEndDate" value="$!{status.value}" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></td>
+                                </tr>
+                                <tr>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider-Approval-Status")</div></td>
+                                        #springBind("approvalForm.providerApproval.providerApprovalStatus")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="5" /></td>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-Provider-Submitted")</div></td>
+                                        #springBind("approvalForm.rescentSubmittedDate")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" style="width:150px" id="expirationDate3" date:closeAtTop="false" tabIndex="6" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="rescentSubmittedDate" value="$!{status.value}" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></td>
+                                </tr>
+                                <tr>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider-Approval-Period")</div></td>
+                                        #springBind("approvalForm.providerApproval.providerApprovalPeriod")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="7" /></td>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-Provider-Approved")</div></td>
+                                        #springBind("approvalForm.originalApprovadDate")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" style="width:150px" id="expirationDate4" date:closeAtTop="false" tabIndex="8" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="originalApprovadDate" value="$!{status.value}" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></td>
+                                </tr>
+                                <tr>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider-Director")</div></td>
+                                        #springBind("approvalForm.providerApproval.providerDirector")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="9" /></td>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider-Submission-Reminder-Date")</div></td>
+                                        #springBind("approvalForm.submissionReminderDate")
+                                        <td width="4%"">#if(! $status.value)<div class="required_field">*</div>#elseif($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /></div>#else <div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" /></div>#end </td>
+                                        <td><input type="text" style="width:150px" id="expirationDate5" date:closeAtTop="false" tabIndex="10" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="submissionReminderDate" value="$!{status.value}" tabindex="39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/></td>
+                                </tr>
+                                <tr>
+                                        <td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Other-Provider-Representative")</div></td>
+                                        #springBind("approvalForm.providerApproval.otherProviderRepresentative")
+                                        <td style="width:15px;"></td>
+                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="11" /></td>
+                                        <td></td>
+                                        <td style="width:15px;"></td>
+                                        <td></td>
+                                </tr>
+                        </table>
+                </div>
+
+                <div style="height:20px;"></div>
+
+                 <div class="search_box_result">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.editCredential.caption.Custom-Fields")</span></div>
+                    #set($tabindex=12)
+                    #springBind("approvalForm.customFields")
+                    #if($status.value.size()>0)
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                        #set($count=0)
+                        #foreach($customField in $status.value)
+
+                            #set($id = "customField$count")
+                            #set($name = "customFields[$count].customFieldValueRef")
+                            #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                            #set($customFieldIdentifire = "customFields[$count]")
+                            $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+    
+                            <script language="javascript" type="text/javascript">
+                                $(document).ready(function(){
+                                    document.getElementById('$id').tabIndex  = $tabindex;
+                                });
+                            </script>
+
+                            #set($tabindex=$tabindex+1)
+                            #set($count=$count+1)
+                        #end
+                    </table>
+                    #end
+                 </div>
+
+            <input type="hidden" id="currentpage" name="_page" value="5" />
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			   #set($tabindexNext=$tabindex+2)
+			  <a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_target8');" tabIndex="$tabindexNext">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_target2');" tabIndex="$tabindex">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+			  #set($tabindex=$tabindex+1)
+				<a onClick="submitButtonForm(document.approvalForm,'wizardSubmitter','_cancel');" tabIndex="$tabindex">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+       </div>
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

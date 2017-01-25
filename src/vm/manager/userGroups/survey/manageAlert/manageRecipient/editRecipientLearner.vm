@@ -1,0 +1,968 @@
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+		<html xmlns="http://www.w3.org/1999/xhtml">
+			<head>
+		#parse("snippets/compliance/complianceHead.vm")
+
+		<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+		<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+		<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+		<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+	<script type="text/javascript" language="javascript" >
+		
+			document.title="LMS-Edit Flags";
+			$(document).ready(function() {
+				
+				$('#chkAll').click(
+				   function(){
+					  $("INPUT[type='checkbox'][name='rowone']").attr('checked', $('#chkAll').is(':checked'));
+					  $("INPUT[type='checkbox'][name='rowone']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+				   }
+				)
+				$('#sideBar').height($('.scrollable').height());
+			});
+
+		   function sortRecipient(sortColumnIndex,sortDirection,pageIndex,showAll){
+				document.getElementById('sortColumnIndex').value=sortColumnIndex;
+				document.getElementById('sortDirection').value=sortDirection;
+				document.getElementById('showAll').value=showAll;
+				document.getElementById('pageIndex').value=pageIndex;
+				document.getElementById('action').value='search';
+				document.manageRecipient.submit();
+			}
+
+			function changeRowColor(checkbox) {
+				var tr=checkbox.parentNode.parentNode;
+				var tdarr=$(tr).find("td");
+				  if (checkbox.checked) {
+					  for(i=0;i<tdarr.size();i++){
+						tdarr[i].style.background="#E9F9FE";
+					  }
+				  } else {
+					  for(i=0;i<tdarr.size();i++){
+						tdarr[i].removeAttribute("style");
+					  }
+				  }
+			}
+
+			function addNewFlag()
+			{
+				document.getElementById('actionmethod').value='addNewFlag';
+				document.manageFlagsForm.submit();
+			}
+			 function onNextPage(nextIndex){
+				var itemNo= document.getElementById('pageCurrIndex').value
+				var items=$pager.itemsPerPage;
+				var pn = parseInt(items) +  parseInt(itemNo);
+				return pn;
+			}
+
+			function onPreviousPage(previousIndex){
+				var itemNo= document.getElementById('pageCurrIndex').value
+				var items=$pager.itemsPerPage;
+				var pn = parseInt(itemNo) - parseInt(items) ;
+				return pn;
+			}
+			 function doSearch(methodName)
+			{
+								 document.getElementById('action').value=methodName;
+								 document.manageRecipient.submit();
+								 
+
+				 }
+			function confirm(message, callback) {
+				$('#deleteConfirmation').modal({
+					close:false,
+					position: ["40%",],
+					overlayId:'confirmModalOverlay',
+					containerId:'confirmModalContainer',
+					onShow: function (dialog) {
+						dialog.data.find('.alert_message_box_text').append(message);
+
+						// if the user clicks "yes"
+						dialog.data.find('.yes').click(function () {
+							// call the callback
+							if (jQuery.isFunction(callback)) {
+								callback.apply();
+							}
+							// close the dialog
+							jQuery.modal.close();
+						});
+					}
+				});
+			}
+
+			function deleted(methodName){
+				if ($("INPUT[type='checkbox'][name='rowone']:checked").length>0) {
+					confirm("", function () {
+						document.getElementById('action').value=methodName;
+						document.manageRecipient.submit();
+					});
+				}else {
+					$('#selectLearner').modal({close:false,position: ["40%",]});
+				}
+			}
+
+		</script>
+			</head>
+			<body>
+			<form name="manageRecipient" method="post" action="mgr_manageRecipient.do">
+			 <input type="hidden" id="action" name="method" value=""/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+			 <!--Header Start -->
+			  #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/managerHeader.vm")
+			#end
+			<!-- Header End -->
+		</td></tr>
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td width="194"><div class="tab_blank"></div></td>
+								<td>&nbsp;</td>
+								<td width="250">
+
+									<a href='mgr_manageRecipient.do?recipientId=$request.getParameter("recipientId")&method=showEditRecipientPage'><div class="tab">Summary</div></a>
+									#springBind("recipientForm.recipientType")
+									    #if($!{status.value} == "users")			    
+										<a href='mgr_manageRecipient.do?recipientId=$request.getParameter("recipientId")&method=SearchEditRecipientLearners'><div class="tab" style="border-right-style:solid;"><b>$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.caption.learner")</b></div></a>
+
+									    #elseif($!{status.value} == "usergroups")
+										<a href='mgr_manageRecipient.do?recipientId=$request.getParameter("recipientId")&method=SearchEditRecipientPageLearnerGroups'><div class="tab" style="border-right-style:solid;"><b>$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.caption.learnerGroup")</b></div></a>
+
+									   #elseif($!{status.value} == "organizationgroups")
+										<a href='mgr_manageRecipient.do?recipientId=$request.getParameter("recipientId")&method=SearchEditRecipientPageOrganisationGroups'><div class="tab" style="border-right-style:solid;  width:130px;"><b>$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.caption.orgGroup")</b></div></a>
+
+									   #elseif($!{status.value} == "emailaddress")
+										<a href='mgr_manageRecipient.do?recipientId=$request.getParameter("recipientId")&method=SearchEditRecipientPageEmailAddress'><div class="tab" style="border-right-style:solid;"><b>$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.caption.email")</b></div></a>
+									   #end
+								</td>
+								<td>&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			#parse("snippets/compliance/complianceLeftMenu.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+							<div id="error-message-box" style="display:none;">
+								<div class="error_box">
+									<div id="errors"></div>
+									<div id="close-errors" class="close_icon"></div>
+								</div>
+							</div>
+							 <!-- Page Icon -->
+							<!-- Page Description -->
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="icon_surveys">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.editRecipientsGroup")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.manageAlert.caption.textDescription")</div>
+						        </td>
+						    </tr>
+						</table>
+							 <!-- Search Result Start -->
+            <div id="resultBox" class="search_box_result" style="border-bottom:1px solid;border-color:#dfdfdf !Important;" >
+            <!-- Result Header Start -->
+                <div id="resultHeader" class="box_header" >
+                    <!-- Result Heading -->
+                    <div style="float:left; height:23px;">
+
+            <!-- ADD LEARNER BUTTON -->
+		    #springBind("recipientForm.recipientType")
+			    #if($!{status.value} == "users")		
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="javascript:window.location='mgr_addRecipientLearner.do?recipientId=$request.getParameter('recipientId')';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.addLearners")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>		
+
+			    #elseif($!{status.value} == "usergroups")
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="javascript:window.location='mgr_addRecipientLearnerGroup.do?recipientId=$request.getParameter('recipientId')';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.addLearnerGroup")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+
+			   #elseif($!{status.value} == "organizationgroups")
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="javascript:window.location='mgr_addRecipientOrgGroup.do?recipientId=$request.getParameter('recipientId')';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Add Organization Group</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+					
+
+			   #elseif($!{status.value} == "emailaddress")
+			   <div style="float:left; margin-top:3px;">
+				  <a onClick="javascript:window.location='mgr_addRecipientEmail.do?recipientId=$request.getParameter('recipientId')';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.addEmail")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+				
+			   #end
+			   
+<!-- DELETE BUTTON -->
+		    #springBind("recipientForm.recipientType")
+			    #if($!{status.value} == "users")		
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="deleted('deleteLearner');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.deleteLearner")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+			    #elseif($!{status.value} == "usergroups")
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="deleted('deleteRecipientLearnerGroups');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.deleteLearnerGroups")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+				#elseif($!{status.value} == "organizationgroups")
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="deleted('deleteRecipientOrganisationGroups');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.deleteOrgGroup")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+
+			   #elseif($!{status.value} == "emailaddress")
+			   <div style="float:left; margin-top:3px;">
+				  <a onClick="deleted('deleteRecipientEmailAddress');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.deleteEmail")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+				#end
+
+                    </div>
+                   <div id="searchBox" style="float:left; height:180px; width:280px; left:47%;" class="visible">
+                               $brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.searchUsers")<br/><br/><br/>
+
+                                <div style="float:left">
+
+				
+
+
+
+				
+<!-- SEARCH BUTTON -->
+
+
+			#springBind("recipientForm.recipientType")
+			    #if($!{status.value} == "users")	
+			    
+						$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.firstName")</div>
+						#springBind("recipientForm.firstName")
+						<input type="text" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageLearners');}" style="font-size:9px; float:right; margin-right:15px; width:170px;"id="searchRecipientGroupName" name="firstName"value="$!{status.value}"/>
+						<br/><br/>
+						<div style="float:left">
+
+						$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.lastName")</div>
+					   #springBind("recipientForm.lastName")
+						<input type="text" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageLearners');}" style="font-size:9px; float:right; margin-right:15px; width:170px;"id="searchRecipientGroupName" name="lastName"value="$!{status.value}"/>
+						<br/><br/>
+						<div style="float:left">
+
+						$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.emailAddress")</div>
+					   #springBind("recipientForm.emailAddress")
+						<input type="text" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageLearners');}" style="font-size:9px; float:right; margin-right:15px; width:170px;"id="searchRecipientGroupName" name="emailAddress"value="$!{status.value}"/>
+						<br/><br/>
+						
+						<div style="padding-bottom: 5px; padding-left: 5px; padding-right: 5px; height: 20px; margin-left: 20px; margin-right: 20px; padding-top: 5px;">
+							<div style="float:right; margin-top:2px; margin-right:15px;">
+                                <span class="button" onClick="doSearch('SearchEditRecipientPageLearners');">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+									<div class="btn_end"></div>
+								</span>
+                            </div>
+							
+							<div style="float:right; margin-top:2px; ">
+								<span class="button" onClick="showSearchBox(this);">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.manager.ManageCourse.caption.Cancel")</div>
+									<div class="btn_end"></div>
+								</span>
+                            </div>
+						</div>
+			#springBind("recipientForm.recipientType")
+			    #elseif($!{status.value} == "usergroups")
+					
+					$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.learnerGroupName")</div>
+					#springBind("recipientForm.firstName")
+					<input type="text" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageLearnerGroups');}" style="font-size:9px; float:right; margin-right:15px; width:170px;"id="searchRecipientGroupName" name="learnergroupName"value="$!{status.value}"/>
+					<br/><br/><br/>
+					
+					<div id="search-survey-search-manage" style="float:right; margin-top:2px; margin-right:15px;" onClick="doSearch('SearchEditRecipientPageLearnerGroups');">
+					    <a class="button" ><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</span></a>
+					</div>
+					<div id="search-survey-cancel" style="float:right; margin-top:2px; " onClick="showSearchBox(this);">
+					    <a class="button" ><span class="button">$brander.getBrandElement("lms.manager.ManageCourse.caption.Cancel")</span></a>
+					</div>
+			#springBind("recipientForm.recipientType")
+			   #elseif($!{status.value} == "organizationgroups")
+
+					
+					$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.firstName")</div>
+					#springBind("recipientForm.firstName")
+					<input type="text" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageOrganisationGroups');}" style="font-size:9px; float:right; margin-right:15px; width:170px;" id="searchRecipientGroupName" name="organizationlgroupName" value="$!{status.value}"/>
+					<br/><br/><br/>
+					
+					<div id="search-survey-search-manage" style="float:right; margin-top:2px; margin-right:15px;" onClick="doSearch('SearchEditRecipientPageOrganisationGroups');">
+					    
+						
+						<a class="button" ><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</span></a>
+					</div>
+					<div id="search-survey-cancel" style="float:right; margin-top:2px; " onClick="showSearchBox(this);">
+					    <a class="button" ><span class="button">$brander.getBrandElement("lms.manager.ManageCourse.caption.Cancel")</span></a>
+					</div>
+			#springBind("recipientForm.recipientType")
+			   #elseif($!{status.value} == "emailaddress")
+
+					$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.emailAddress")</div>
+				   #springBind("recipientForm.emailAddress")
+					<input type="text" onKeyPress="if(event.keyCode==13){doSearch('SearchEditRecipientPageEmailAddress');}" style="font-size:9px; float:right; margin-right:15px; width:170px;"id="searchRecipientGroupName" name="emailaddress" value="$!{status.value}"/>
+					<br/><br/><br/>
+					<div id="search-survey-search-manage" style="float:right; margin-top:2px; margin-right:15px;" onClick="doSearch('SearchEditRecipientPageEmailAddress');">
+					   <a class="button" ><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</span></a>
+					</div>
+					<div id="search-survey-cancel" style="float:right; margin-top:2px; " onClick="showSearchBox(this);">
+					    <a class="button" ><span class="button">$brander.getBrandElement("lms.manager.ManageCourse.caption.Cancel")</span></a>
+					</div>
+			   #end
+
+
+                </div>
+
+
+<!-- ************************************* LEARNER SEARCH CODE START ************************************** -->
+#springBind("recipientForm.recipientType")
+#if($!{status.value} == "users")	
+		<div class="result_left_side">
+                       #springBind("recipientForm.learnerListFromDB")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						  #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+						<div id="search-survey" style="float:left; margin-top:3px;">
+						  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                      
+                                <!-- All Icon -->
+                                #if($!{status.value})
+                                   #if($totalCount > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientLearners&showAll=true&recipientId=$request.getParameter('recipientId')&searchRecipientGroupName=$!{context.searchRecipientGroupName}';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientLearners&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.nextIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientLearners&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.prevIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                                </div>
+
+                        </div>
+                        <div id="searchResult_1" >
+                            <form name="myformone" style="padding:0; margin:0;" action="">
+							<input type="hidden" name="recipientId" value='$request.getParameter("recipientId")'/>
+			     #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="selectedLearnerGroup"/></td>
+                                        <td class="table-column-heading">
+
+												<div id="list-order" class="icon-asc"></div>$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.firstName")
+											</td>
+											<td class="table-column-heading">
+												$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.lastName")
+											</td>
+
+										<td class="table-column-heading">
+												$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.userName")
+											</td>
+											<td class="table-last-column-heading">
+												$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.accountLocked")
+											</td>
+                                    </tr>
+				     #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					   #springBind("recipientForm.learnerListFromDB[$loopIndex]")
+					       #set($learner = $!{status.value})
+						    #if($loopIndex%2 == 0)
+							#set($alternate="row_1")
+						    #else
+							#set($alternate="row_2")
+						    #end
+							<tr>
+						<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="rowone" value="$learner.id"  onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+						<td class="$alternate">$learner.vu360User.firstName </td>
+						<td class="$alternate">$learner.vu360User.lastName </td>
+										<td class="$alternate">$learner.vu360User.username </td>
+										<td class="$alternate" style="border-right:none;">
+											#if(${learner.vu360User.accountNonLocked})No #else Yes #end
+										</td>
+					    </tr>
+					#end
+
+                                </table>
+				#else
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+					    
+						<tr bgcolor="#efefef">
+						<td class="check_box_top" width="17px"><input type="checkbox" name="selectAll"  style="margin-left:3px;"/></td>
+						
+
+                        <td class="box_subheader"  width="95%" >$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupName")</td>
+                        
+					    </tr>
+					    <tr>
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+
+						    <tr>
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+						    <div class="result_blank">#if($request.getAttribute("search")=="doSearch" && $currentPageSize == 0) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.clickOnSearch") #end</div>
+
+						   
+
+						</td>
+					    </tr>
+						</td>
+					    </tr>
+                    </table>
+            
+                  
+               #end
+
+            </div>
+
+
+
+
+<!-- ************************************* LEARNER SEARCH CODE END ************************************** -->
+
+<!-- ************************************* LEARNER GROUP SEARCH CODE START ************************************** -->
+#springBind("recipientForm.recipientType")
+#elseif($!{status.value} == "usergroups")
+
+	<div class="result_left_side">
+                       #springBind("recipientForm.learnerGroupListFromDB")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						  #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+							<div id="search-survey" style="float:left; margin-top:3px;">
+						  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                       <!-- All Icon -->
+                                #if($!{status.value})
+                                   #if($totalCount > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageLearnerGroups&showAll=true&recipientId=$request.getParameter('recipientId')&searchRecipientGroupName=$!{context.searchRecipientGroupName}';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageLearnerGroups&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.nextIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageLearnerGroups&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.prevIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                                </div>
+
+                        </div>
+                        <div id="searchResult_1" >
+                            <form name="myformone" style="padding:0; margin:0;" action="">
+							<input type="hidden" name="recipientId" value='$request.getParameter("recipientId")'/>
+			     #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="selectedLearnerGroup"/></td>
+                                        <td class="table-column-heading">
+
+												<div id="list-order" class="icon-asc"></div>$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.learnerGroupName")
+											</td>
+											<!-- <td class="table-column-heading">
+												Last Name
+											</td>
+
+										<td class="table-column-heading">
+												Username
+											</td>
+											<td class="table-last-column-heading">
+												Account Locked
+											</td> -->
+                                    </tr>
+				     #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					   #springBind("recipientForm.learnerGroupListFromDB[$loopIndex]")
+					       #set($learner = $!{status.value})
+						    #if($loopIndex%2 == 0)
+							#set($alternate="row_1")
+						    #else
+							#set($alternate="row_2")
+						    #end
+							<tr>
+						<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="rowone" value="$learner.id"  onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+						<td class="$alternate"> $learner.name </td>
+						</tr>
+					#end
+
+                                </table>
+				#else
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+					    
+						<tr bgcolor="#efefef">
+						<td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" style="margin-left:3px;"/></td>
+						
+
+                       <td class="box_subheader"  width="95%" >$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupName")</td>
+                        
+					    </tr>
+					    <tr>
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+						    <div class="result_blank">#if($request.getAttribute("search")=="doSearch" && $currentPageSize == 0) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.clickOnSearch") #end</div>
+						</td>
+					    </tr>
+
+
+					</table>
+            
+                  <!-- <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div> -->
+                #end
+
+            </div>
+
+
+
+<!-- ************************************* LEARNER GROUP SEARCH CODE END ************************************** -->
+
+
+
+
+
+
+<!-- ************************************* ORG GROUP SEARCH CODE START ************************************** -->
+#springBind("recipientForm.recipientType")
+#elseif($!{status.value} == "organizationgroups")
+
+
+<div class="result_left_side" style="width:52%;">
+                       #springBind("recipientForm.organizationalGroupListFromDB")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						  #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+						<div id="search-survey" style="float:left; margin-top:3px;">
+						  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                      
+                                <!-- All Icon -->
+                                #if($!{status.value})
+                                   #if($totalCount > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageOrganisationGroups&showAll=true&recipientId=$request.getParameter('recipientId')&searchRecipientGroupName=$!{context.searchRecipientGroupName}';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageOrganisationGroups&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.nextIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageOrganisationGroups&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.prevIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                                </div>
+
+                        </div>
+                        <div id="searchResult_1" style="border-bottom:0px solid;border-color:#dfdfdf;">
+                            <form name="myformone" style="padding:0; margin:0;" action="">
+							<input type="hidden" name="recipientId" value='$request.getParameter("recipientId")'/>
+			     #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="selectedLearnerGroup"/></td>
+                                        <td class="table-column-heading">
+
+												<div id="list-order" class="icon-asc"></div>$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.learnerGroupName")
+											</td>
+											<!-- <td class="table-column-heading">
+												Last Name
+											</td>
+
+										<td class="table-column-heading">
+												Username
+											</td>
+											<td class="table-last-column-heading">
+												Account Locked
+											</td> -->
+                                    </tr>
+				     #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					   #springBind("recipientForm.organizationalGroupListFromDB[$loopIndex]")
+					       #set($learner = $!{status.value})
+						    #if($loopIndex%2 == 0)
+							#set($alternate="row_1")
+						    #else
+							#set($alternate="row_2")
+						    #end
+							<tr>
+						<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="rowone" value="$learner.id"  onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+						<td class="$alternate">$learner.name</td>
+</tr>
+					#end
+
+                                </table>
+				#else
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+					    
+						<tr bgcolor="#efefef">
+						<td class="check_box_top" width="4px"><input type="checkbox" name="selectAll"  style="margin-left:3px;"/></td>
+						
+
+                       <td class="box_subheader"  width="95%" >$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupName")</td>
+                        
+					    </tr>
+					    <tr>
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+						    <div class="result_blank">#if($request.getAttribute("search")=="doSearch" && $currentPageSize == 0) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.clickOnSearch") #end</div>
+						</td>
+					    </tr>
+
+
+					</table>
+            
+                 <!--  <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div> -->
+                #end
+
+            </div>
+
+
+<!-- ************************************* ORG GROUP SEARCH CODE END ************************************** -->
+
+
+
+
+
+<!-- ************************************* EMAIL SEARCH CODE START ************************************** -->
+#springBind("recipientForm.recipientType")
+
+#elseif($!{status.value} == "emailaddress")
+
+
+
+<div class="result_left_side">
+                       #springBind("recipientForm.emailAddressFromDB")
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                        <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+						  #if($!{context.showAll})
+                            #set($showAll=$!{context.showAll})
+                        #else
+                            #set($showAll=false)
+                        #end
+							<div id="search-survey" style="float:left; margin-top:3px;">
+						  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                       
+                                <!-- All Icon -->
+                                #if($!{status.value})
+                                   #if($totalCount > 10)
+                                        <div id="showEach" class="icon_all" onClick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageEmailAddress&showAll=true&recipientId=$request.getParameter('recipientId')&searchRecipientGroupName=$!{context.searchRecipientGroupName}';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                    #end
+                                #end
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageEmailAddress&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.nextIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onNextPage($pager.nextIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='mgr_manageRecipient.do?method=SearchEditRecipientPageEmailAddress&recipientId=$request.getParameter('recipientId')&pageIndex=$pager.prevIndex&paging=paging&searchRecipientGroupName=$!{context.searchRecipientGroupName}&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+
+                                </div>
+
+                        </div>
+                        <div id="searchResult_1">
+                            <form name="myformone" style="padding:0; margin:0;" action="">
+							<input type="hidden" name="recipientId" value='$request.getParameter("recipientId")'/>
+			     #if($currentPageSize > 0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="selectedLearnerGroup"/></td>
+                                        <td class="table-column-heading">
+
+												<div id="list-order" class="icon-asc"></div>$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.emailAddress")
+											</td>
+											<!-- <td class="table-column-heading">
+												Last Name
+											</td>
+
+										<td class="table-column-heading">
+												Username
+											</td>
+											<td class="table-last-column-heading">
+												Account Locked
+											</td> -->
+                                    </tr>
+				     #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					   #springBind("recipientForm.emailAddressFromDB[$loopIndex]")
+					       #set($learner = $!{status.value})
+						    #if($loopIndex%2 == 0)
+							#set($alternate="row_1")
+						    #else
+							#set($alternate="row_2")
+						    #end
+							<tr>
+						<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="rowone" value="$learner.id"  onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+						<td class="$alternate">$learner.email</td>
+						</tr>
+					#end
+
+                                </table>
+				#else
+					<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+					    
+						<tr bgcolor="#efefef">
+						<td class="check_box_top" width="17px"><input type="checkbox" name="selectAll"  style="margin-left:3px;"/></td>
+						
+
+                        <td class="box_subheader"  width="95%" >$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupName")</td>
+                      
+					    </tr>
+					    <tr>
+					       <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+						    <div class="result_blank">#if($request.getAttribute("search")=="doSearch" && $currentPageSize == 0) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.manageAlert.editTrigger.editFilter.caption.clickOnSearch") #end</div>
+						</td>
+					    </tr>
+
+
+					</table>
+            
+                 <!--  <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div> -->
+                #end
+
+            </div>
+
+
+
+#end
+<!-- ************************************* EMAIL SEARCH CODE END ************************************** -->
+
+
+
+
+
+
+        </div>
+    </div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- Footer Start -->
+      #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+      #parse("snippets/managerFooter.vm")
+    #end   
+    <!-- Footer End -->
+	</td></tr>	
+    
+    <!-- Footer End -->
+</table>
+</form>
+     <!-- <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div> -->
+
+        <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                    <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div>
+	<div id='deleteConfirmation' style='display:none'>
+		<div class='header'><span>$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</span></div>
+		<div class="alert_message_box_icon"></div>
+		#springBind("recipientForm.recipientType")
+		#if($!{status.value} == "users")	
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.learnerDelete")</div>
+		#elseif($!{status.value} == "learnergroups")
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.learnerGroupDelete")</div>
+		#elseif($!{status.value} == "organizationgroups")
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.orgGroupDelete")</div>
+		#elseif($!{status.value} == "emailaddress")
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.manageAlert.editAlert.editRecipient.caption.emailDelete")</div>
+		#end
+		<br style="clear:both" />
+		<div class='buttons'>
+			<div class='simplemodal-close'>
+				<a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.accreditation.caption.Cancel")</span></a>
+				<a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.accreditation.caption.OK")</span></a>
+			</div>
+		</div>
+	</div>
+
+	</form>
+</body>
+</html>

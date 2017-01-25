@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+        function checkAnswer(objCheckBox){
+            if(objCheckBox.checked){
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+            }else {
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+            }
+        }
+    </script>
+</head>
+
+<body>
+<form name="addProvider2" method="post" action="acc_addProvider.do" >
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">Add Provider Wizard<br>showing 2 of 2</div>
+            <div class="l-menu-back-text-acted">1. Summary</div>
+            <div class="l-menu-back-text-act">2. Confirmation</div>
+          </div>
+        </div>
+
+       </table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+
+              <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.editDocument.caption.Add-Providers")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.addApproval5.caption.PgDesc")</div>
+		</td>
+	</tr>
+</table>			  
+
+        <div class="search_box_result">
+             <div class="box_header"><span class="box_heading">Summary</span></div>
+             <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                    <tr>
+                        <td width="30%"><div class="row_text"><b>Provider Name</b></div></td>
+                        #springBind("providerForm.provider.name")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        <td width="30%"><div class="row_text"><b>Address</b></div></td>
+                        #springBind("providerForm.provider.address.streetAddress")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="row_text"><b>Contact Person</b></div></td>
+                        #springBind("providerForm.provider.contactName")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        <td><div class="row_text"><b></b></div></td>
+                        #springBind("providerForm.provider.address.streetAddress2")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="row_text"><b>Phone</b></div></td>
+                        #springBind("providerForm.provider.phone")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        <td><div class="row_text"><b>City</b></div></td>
+                        #springBind("providerForm.provider.address.city")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="row_text"><b>Fax</b></div></td>
+                        #springBind("providerForm.provider.fax")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        <td><div class="row_text"><b>State/Province</b></div></td>
+						#springBind("providerForm.provider.address.country")
+						#set($countryCode= ${status.value})
+                        #springBind("providerForm.provider.address.state")
+                        <td><div class="row_text">#getStateByStateCode($countryCode,$!{status.value})</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="row_text"><b>Website</b></div></td>
+                        #springBind("providerForm.provider.website")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        #springBind("providerForm.provider.address.country")
+                        #if( ${status.value} != "AE" && ${status.value} != "United Arab Emirates" )
+                                <td><div class="row_text"><b>Zip/Postal</b></div></td>
+                                #springBind("providerForm.provider.address.zipcode")
+                                <td><div class="row_text">$!{status.value}</div></td>
+                        #else
+                                <td></td>
+                                <td></td>
+                        #end
+                    </tr>
+                    <tr>
+                        <td><div class="row_text"><b>Email Address</b></div></td>
+                        #springBind("providerForm.provider.emailAddress")
+                        <td><div class="row_text">$!{status.value}</div></td>
+                        <td><div class="row_text"><b>Country</b></div></td>
+                        #springBind("providerForm.provider.address.country")
+                        <td><div class="row_text">#getCountryByCountryCode($!{status.value})</div></td>
+                    </tr>
+             </table>
+         </div>
+
+      
+                #springBind("providerForm.customFields")
+                #if($status.value.size()>0)
+                <div class="search_box_result">
+                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.editCredential.caption.Custom-Fields")</span></div>
+                    
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                        #foreach($customField in $status.value)
+                        <tr valign="top">
+                            <td width="30%"><div class="row_text"><b>$!{customField.customFieldRef.fieldLabel}</b></div></td>
+                            <td width="8%">
+                                <div class="row_text">
+                                    #if($!{customField.customFieldRef.fieldType}=="MULTISELECTCUSTOMFIELD")
+                                       #foreach($options in ${customField.customFieldValueChoices})
+                                            #if($options.selected)
+                                            $options.customFieldValueChoiceRef.label <br />
+                                            #end
+                                       #end
+                                       #foreach($selectoption in ${customField.selectedChoices})
+                                            #foreach($options in ${customField.customFieldValueChoices})
+                                                #if($!{selectoption} == $!{options.customFieldValueChoiceRef.id}) 
+                                                $options.customFieldValueChoiceRef.label <br /> #end
+                                            #end
+                                       #end
+                                    #elseif($!{customField.customFieldRef.fieldType}=="SINGLESELECTCUSTOMFIELD")
+                                        #foreach($options in ${customField.customFieldValueChoices})
+                                            #if($!{customField.customFieldValueRef.value} == $!{options.customFieldValueChoiceRef.value}) $options.customFieldValueChoiceRef.label #end
+                                        #end
+                                    #else
+                                        #if($!{customField.customFieldRef.fieldEncrypted})
+                                            $!{customField.getEncriptedValue()}
+                                        #else
+                                            $!{customField.customFieldValueRef.value}
+                                        #end
+                                    #end
+                                </div>
+                            </td>
+                            <td width="40%"></td>
+                            <td width="8%"></td>
+                        </tr>
+                        #end
+                    </table>
+                </div>
+                #end
+
+         <input type="hidden" id="currentpage" name="_page" value="2" />
+         <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.addProvider2,'wizardSubmitter','_finish');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Finish</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addProvider2,'wizardSubmitter','_target0');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addProvider2,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+       </div>
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

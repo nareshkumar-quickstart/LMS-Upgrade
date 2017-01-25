@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+#parse("snippets/learnerHead.vm")
+
+<head>
+
+
+	<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+    <script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+</head>
+
+<body>
+   <script type="text/javascript">
+       function FormSubmit(buttonclick) {
+          document.getElementById('action').value=buttonclick;
+          document.manageform.submit();
+       }
+    </script>
+    <script type="text/javascript" language="javascript">
+    $(document).ready(function()
+    {
+      
+    });
+     </script>
+<form name="manageform" method="post" action=""> 
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#parse("snippets/managerHeader.vm")
+<!-- header-end -->
+	 </td></tr>
+	 
+#macro( treeviewEntitlementChangeGroup $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroup${node.value.id}" name="orgGroups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end /></div>
+            #set ($padLimit=60-$node.depth*5)
+            <div class="row_title"><a href="mgr_saveOrgGroupName.do?orgGroupId=${node.value.id}" class="row_title">#dotPadding(${node.value.organisationalGroupName},$padLimit)</a></div>
+            <div class="head_1b-e-1" style="padding-right:25px;"  ><input class="search_field"  type="text" id="_maxenroll${node.value.organisationalGroupId}" value="$!{node.value.maxEnrollments}" name="organisationalGroupEntitlementItems[$index].maxEnrollments"/></div>
+        </div>
+    #end
+#end
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+<!-- left-menu-content -->
+	#parse("snippets/planEnrollLeftMenu.vm")
+<!-- left-menu-content-end -->
+	 </table></td>
+<!-- left-pannel-content-end -->
+
+<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+#if(${errorMsg} == "true")
+<!-- error-box -->
+	<div id="message_box">
+	<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />	
+		<div class="width40pct">
+			<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			<div class="message_box_align">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.errMsg")</div>
+		</div>
+	</div>
+<!-- error-box -->
+#end
+     <!-- Logo+Manage-User -->
+    <div id="e1" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseLogoContainer")">
+    <div id="e3" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseLogo2")"><img src="brands/default/en/images/pageicons/trainingplans.png" alt="" /></div>
+    <div id="e4" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseTitleDiv")">
+    <div id="e5" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseTitle1")">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.caption.title")</div>
+    <div id="e6" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseDetails")">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.caption.subtitle")</div>
+    </div>
+    </div>
+    <!-- Logo+Manage-User-end -->
+
+
+        <!-- space -->
+        <div class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.manager-bottom-space")"> </div>
+        <!-- space -->
+
+        <!--Group-Name-div -->
+        <div class="group-name">
+            <div>
+                $!{customerEntitlement.Name}
+                $!{context.customerEntitlement.Name}
+            </div>
+        </div>
+        <!-- Group-Name-div -->
+
+
+        <div class="content-Block">
+            <div class="User-checkbox-row-d2">
+                <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.col.header")</div>
+                <div class="head_1a-a"></div>
+                <div class="head_1b-e">Max Enrollments</div>
+            </div>
+            #treeviewEntitlementChangeGroup($!{orgGroupTreeAsList})
+        </div>
+
+<!-- space -->
+<div class="manager-bottom-space"></div>
+<!-- space -->
+
+
+##<div><input type="submit" value="Add" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.editLearner.cssClass.btn-66w")"/></div>
+<div class="btn-right1"><input type="submit" value="Add" class="btn-submit_n71"/></div>
+
+<!-- space -->
+<div class="manager-bottom-space"></div>
+<!-- space -->
+
+</div>
+<!-- right-pannel-content-end -->
+
+</div>
+<!-- content2-area-end -->
+
+</td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+#parse("snippets/managerFooter.vm")
+<!-- footer-end -->
+</td></tr>
+</table>
+
+</form>
+</body>
+</html>

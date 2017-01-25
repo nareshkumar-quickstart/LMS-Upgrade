@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/compliance/complianceHead.vm")
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		 <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+		<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+		<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+		<script type='text/javascript' src='javascript/js_survey.js' ></script>
+		<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		 
+		 <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+			<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+
+		<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+		<script type='text/javascript'>
+				
+			$(document).ready(function() {
+				$('#sideBar').height($('.scrollable').height());
+			});
+		</script>
+    </head>
+    <body>
+	<form name="addEmailForm" method="post" action="mgr_addRecipientEmail.do?recipientId=$request.getParameter('recipientId')">
+        <div id="main-container">
+            #parse("snippets/managerWizardHeader.vm")
+            <div id="frame_body">
+                <div id="sideBar" class="side_bar">
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">Add Email Address Wizard Showing 2 of 2</div>
+                        <div class="l-menu-back-text-acted">1. Select Email Addresses</div>
+                        <div class="l-menu-back-text-act">2. Confirmation</div>
+
+                    </div>
+                </div>
+                <div class="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" style="margin-top: 19px;font-size: 24px; letter-spacing: -1px;word-spacing: -2px;">Add Email Address</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manageAlert.addRecipient.Email.caption.description")</div>
+                    </div>
+
+                    <div id="resultBox" class="search_box_result">
+                        <div id="resultHeader" class="box_header">
+
+                            <div class="box_heading">Summary</div>
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+						#springBind("recipientEmailForm.emailAddresses")
+							#set($emailNum = ${status.value.size()})
+							#if($emailNum == 1 )
+								<tr>
+									<td width="200" height="20"><span class="row_text" style="font-weight:bold;">Email Address</span></td>
+									#springBind("recipientEmailForm.emailAddresses[0]")
+									<td><span class="row_text">${status.value}</span></td>
+								</tr>
+							#else
+								<tr>
+									<td width="200" height="20"><span class="row_text" style="font-weight:bold;">Email Address</span></td>
+									#springBind("recipientEmailForm.emailAddresses[0]")
+									<td><span class="row_text">${status.value}</span></td>
+								</tr>
+								#springBind("recipientEmailForm.emailAddresses")
+								#set($emailListSize = ${status.value.size()} - 1)
+								#foreach($index in [1..$emailListSize])
+									<tr>
+										<td width="200" height="20">&nbsp;</td>
+										#springBind("recipientEmailForm.emailAddresses[$index]")
+										<td><span class="row_text">${status.value}</span></td>
+									</tr>
+								#end
+							#end
+                        </table>
+                    </div>
+					<input type="hidden" id="currentpage" name="_page" value="1" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					<div style="float:right; margin-top:15px;">
+					  <a  onClick="submitButtonForm(document.addEmailForm,'wizardSubmitter','_finish');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addEmailForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a  onClick="submitButtonForm(document.addEmailForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>	
+                </div>
+            </div>
+           #parse("snippets/managerFooter.vm")
+        </div>
+		</form>
+    </body>
+
+</html>

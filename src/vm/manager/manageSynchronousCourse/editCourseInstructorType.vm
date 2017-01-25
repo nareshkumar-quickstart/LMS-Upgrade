@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructor/instructorHead.vm")
+<head>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+<script type="text/javascript" language="javascript">
+	
+	$(document).ready(function(){
+            
+		});
+		
+	
+</script>
+
+</head>
+
+<body>
+<form name="editInstructorTypeForm" id="editInstructorTypeForm" method="post" action="mgr_saveCourseInstuctorType.do">
+
+	<!-- main-container -->
+	<div id="main-container">
+            <!-- header -->
+            #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                    #parse("snippets/adminHeader.vm")
+            #else
+                    #parse("snippets/managerHeader.vm")
+            #end
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->		
+	
+            <!-- content-area -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-navigation" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <!-- left-menu-content -->
+                            #parse("snippets/planEnrollLeftMenu.vm")
+                            <!-- left-menu-content-end -->
+			</table>
+                    </td>			
+		
+		<!-- right-pannel -->
+                <TD id="content" >
+                <div id="scrollable">
+                <!-- Logo+Manage-User -->
+                <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.courseInstructor.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.editcourseInstructor.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+                <!-- Logo+Manage-User-end -->
+			
+                <!-- Search Box -->
+                <div class="search_box_result">
+                    <div class="table-header" id="table-header"><div class="table-heading">$brander.getBrandElement("lms.instructor.editcourseInstructor.caption.summary")</div></div>
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>							
+                                    <td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchFirstName")</span></td>
+                                    <td width="25%"><input type="text" disabled id="field_course_name" class="input_text_field" value="${context.courseInstructor.getInstructor().getUser().getFirstName()}"></input></td>
+                                    <td width="25%"></td>
+                                    <td width="25%"></td>
+                            </tr>
+                            <tr>
+                                    <td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchLastName")</span></td>
+                                    <td width="25%"><input type="text" disabled id="field_course_name" class="input_text_field" value="${context.courseInstructor.getInstructor().getUser().getLastName()}"></input></td>
+                                    <td width="25%"></td>
+                                    <td width="25%"></td>		
+                            </tr>
+                            <tr>			
+                                    <td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructorType")</span></td>
+                                    <td width="25%">
+										<select name="instructorType" id="instructorType" style="width:182px; font-size:11px;">
+											<option #if (${context.courseInstructor.instructorType} == "Lead") selected #end  >Lead</option>
+											<option #if (${context.courseInstructor.instructorType} == "Moderator") selected #end  >Moderator</option>
+											<option #if (${context.courseInstructor.instructorType} == "Teaching Assistant") selected #end  >Teaching Assistant</option>
+										</select>
+                                    </td>
+                                    <td width="25%"></td>
+                                    <td width="25%"></td>
+                            </tr>
+                            <tr><td colspan="4"></td></tr>
+                    </table>				
+                </div>
+	    	<!-- Search Box - end-->
+                <!-- button-div -->
+                <div style="float:right; margin-top:25px; margin-right:15px;">
+                    <a onClick="document.editInstructorTypeForm.submit()">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnSave")</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>
+
+                <div style="float:right; margin-top:25px; margin-left:25px;">
+                    <a href="mgr_cancelCourseInstuctorType.do?id=${context.courseId}">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnCancel")</div>
+                        <div class="btn_end"></div>
+                    </a>
+                </div>
+                    <!-- button-div - end -->
+                    <!-- hidden elements for form binding -->			
+                    <input id="id" type="hidden" name="id" value="${context.courseId}" />
+                    <input id="associationId" type="hidden" name="associationId" value="${context.associationId}" />
+		</div>		
+		<!-- right-pannel end -->
+        </td></tr>
+    <!-- content-area end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</div>	
+<!-- main-container end -->
+
+</form>
+</body>
+</html>

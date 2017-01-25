@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+#springBind("approvalForm.courseApproval.active")
+#set($IsActiveCourseApproval = $status.value)
+   
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+           	$('#frame_body').height($(window).height() - ($('#frame_header').height()+$('#footer').height()+$('#tabBar').height()));
+            if ($('#right-pannel').height()<$('#frame_body').height()) {
+                $('#right-pannel').height($('#frame_body').height());
+            }            
+            $('#sideBar').height($('#right-pannel').height());
+			
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='customField']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='customField']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+        });
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteCustomField(){
+            if ($("INPUT[type='checkbox'][name='customField']:checked").length>0) {
+                confirm("Are you sure you want to delete custom field(s)?", function () {
+                    document.getElementById('actionmethod').value='deleteCouseCustomField';
+                    document.manageApprovalForm.submit();
+                });
+            }else {
+                $('#selectCustomField').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+        function changeRowColor(checkbox) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+
+            } else {  
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+            }
+        }
+
+        function sortCustomField(sortColumnIndex,sortDirection,pageIndex,showAll){
+             document.getElementById('sortColumnIndex').value=sortColumnIndex;
+             document.getElementById('sortDirection').value=sortDirection;
+             document.getElementById('showAll').value=showAll;
+              document.getElementById('pageIndex').value=pageIndex;
+             document.getElementById('actionmethod').value='showCourseApprovalCustomField';
+             document.manageApprovalForm.submit();
+        }
+
+    </script>
+</head>
+<body>
+<form name="manageApprovalForm" method="post" action="acc_manageApproval.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!--Header Start -->
+    #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+    <!-- Header End -->
+		 </td></tr>	
+  <!-- Tabs Start -->
+ <td id="row-tabs" class="tab_bar" colspan="2">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+				<tr>
+					<td width="192"><div class="tab_blank"></div></td>
+					<td width="15px">&nbsp;</td>
+					<td width="750">
+						<a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalSummary';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Summary")</div></a>						
+						<!-- <a onClick="javascript:window.location='acc_manageApproval.do?method=showApprovalRegulatorCategories';"><div class="tab" style="width:150px;">$brander.getBrandElement("lms.accraditation.editApproval.caption.RegulatorCategories")</div></a> -->
+						<a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalRequirement';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Requirements")</div></a>
+						<a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalDocuments';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Documents")</div></a>
+						<a href="#"><div class="tab_selected" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</div></a>
+						<a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalPurchasedCertificate';"><div class="tab"  style="width:190px;border-right-style:solid;">$brander.getBrandElement("lms.accraditation.editApproval.caption.PurchasedCertificate")</div></a>
+					</td>
+					<td width="15px">&nbsp;</td>
+				</tr>
+		</tbody>
+            </table>
+        </td>	 
+	<!-- Tabs End -->
+
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		#parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+
+<TD id="content" >
+	<div id="scrollable">
+		 	  <!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_approvals">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.summary.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.accraditation.editCourseApproval.caption.document.subTitle")</div>
+			</td>
+		    </tr>
+		</table>
+			  
+		<!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                #if($IsActiveCourseApproval == true)
+                <div style="float:left; height:23px;">
+                    <div class="control-button-position">
+                        #springBind("approvalForm.appId")
+						<a onClick="javascript:window.location='acc_addCustomField.do?appID=$!{status.value}&entity=CourseApproval';" >
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.AddCustomField")</div>
+                            <div class="btn_end"></div>
+						</a>
+                     </div>
+                    <div class="control-button-position">
+						<a  onClick="deleteCustomField();">
+							<div class="btn_start"></div>
+							<div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >$brander.getBrandElement("lms.accraditation.editApproval.caption.DeleteCustomField")</div>
+							<div class="btn_end"></div>
+						</a>
+                     </div>
+                </div>
+                #end
+               #springBind("approvalForm.manageCustomField")
+                $pager.setItems($!{status.value})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                        #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="gridShowAll" name="showAll" value="false" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                #else
+                    #set($showAll=false)
+                #end
+                <div class="result_left_side">
+                    <!-- Result Description -->
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalCustomField&showAll=true';" value="Search" ></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                            <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" onclick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalCustomField&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    #else
+                            <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                            <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" onclick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalCustomField&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    #else
+                            <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>  
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            <div id="searchResult_1">
+                
+                    #if($currentPageSize > 0)
+                        <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                            <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortCustomField(0,1,$pageCurrIndex,$showAll);" #else onclick="sortCustomField(0,0,$pageCurrIndex,$showAll);" #end ><div id="nameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accreditation.credential.caption.Custom-Field-Name")</div></td>
+                            <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="sortCustomField(1,1,$pageCurrIndex,$showAll);" #else onclick="sortCustomField(1,0,$pageCurrIndex,$showAll);" #end ><div id="jurisdictionSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accreditation.credential.caption.Custom-Field-Type")</div></td>
+                        </tr>
+                        #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                            #if($loopIndex%2 == 0)
+                                #set($alternate="row_req")
+                            #else
+                                #set($alternate="row_req2")
+                            #end
+                            <tr>
+                                <td class="$alternate" width="17px">
+                                    #springBind("approvalForm.manageCustomField[$loopIndex].id")
+                                    <input type="checkbox" id="chk$loopIndex" name="customField" value="${status.value}"  onclick="changeRowColor(this);" style="margin-left:3px"/>
+                                </td>
+                                <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end>
+                                    #if($IsActiveCourseApproval == true)
+                                    <a class="list-item-underline-a" href="acc_editCustomField.do?method=displayCustomFieldForEdit&customFieldId=$!{status.value}&entity=CourseApproval"> 
+                                    #springBind("approvalForm.manageCustomField[$loopIndex].fieldName")                                       
+                                        $!{status.value}
+                                    </a>
+                                    #else
+                                    $!{status.value}
+                                    #end
+                                </td>
+                                #springBind("approvalForm.manageCustomField[$loopIndex].fieldType")
+                                <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none; border-right:none;" #else style="border-right:none;" #end>$!{status.value}&nbsp</td>
+        <!--					<td class="row_1" style="border-right:none;"><a href="associate_credentials.jsp"><div class="icon_change" onmouseover="showTooltip('Change Association', event);" onmouseout="hideTooltip();"></div></a></td> -->
+                            </tr>
+                        #end
+                        </table>
+                     #else
+                         <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                            <td class="box_subheader"><a onmousedown="switchSort('firstNameSort')"><div id="firstNameSort" class="icon_up" ></div>$brander.getBrandElement("lms.accreditation.credential.caption.Custom-Field-Name")</a></td>
+                            <td class="box_subheader" style="border-right:none;"><a onmousedown="switchSort('accountSort')"><div id="accountSort" class="icon_up" ></div>$brander.getBrandElement("lms.accreditation.credential.caption.Custom-Field-Type")</a></td>
+                        </tr>
+                        </table>
+                        <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                    #end
+                
+            </div>
+            <!-- Result Subheader End -->
+        </div>
+       </div>
+        </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+        </table>
+    
+    #set($select="CustomField")
+    #parse("snippets/selectAtleastOnRecord.vm")
+    #parse("snippets/deleteConfirmation.vm")
+
+</form>
+</body>
+</html>

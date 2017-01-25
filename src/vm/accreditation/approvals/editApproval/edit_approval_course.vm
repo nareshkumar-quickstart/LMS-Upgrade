@@ -1,0 +1,892 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#springBind("approvalForm.courseApproval.useCertificateNumberGenerator")
+#set($useCertificateNumberGenerator = $status.value)
+#set($certNumberDigitChar = $brander.getBrandElement("lms.accraditation.editApproval.caption.certificateNumberGeneratorDigitCharacter"))
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+   
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+           	$('#frame_body').height($(window).height() - ($('#frame_header').height()+$('#footer').height()+$('#tabBar').height()));
+            if ($('#right-pannel').height()<$('#frame_body').height()) {
+                $('#right-pannel').height($('#frame_body').height());
+            }            
+            $('#sideBar').height($('#right-pannel').height());
+            $('#frame_body').scroll(function(){
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            
+             $('#frame_body').scroll(function(){
+                $('#message_box_private').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message_private').click(function(){
+                $("#message_box_private").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box_private").hide();} );
+            });
+            
+        });
+
+            function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+            }
+                
+        $("#approvalEffectivelyStartDate").datepicker({
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true
+        });
+        $("#approvalEffectivelyEndDate").datepicker({
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true
+        });
+        $("#mostRecentlySubmittedForApprovalDate").datepicker({
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true
+        });
+        $("#submissionReminderDate").datepicker({
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true
+        });
+        
+        function saveCourseSummary() {
+            document.getElementById('actionmethod').value='saveCourseApprovalSummary';
+            document.manageApprovalForm.submit();
+        }
+        
+        function unAssignCourseConfiguration() { 
+           confirm("Are you sure you want to remove this course configuration templete?", function () {
+               document.getElementById('actionmethod').value='unAssignCourseConfiguration';
+               document.manageApprovalForm.submit();
+           });            
+        }
+        
+        function handleCertificateNumberGenerator(combo){
+        	var form = combo.form;
+        	var flag = combo.value == "true";  
+        	form.elements["courseApproval.certificateNumberGeneratorPrefix"].disabled = !flag;
+        	form.elements["courseApproval.certificateNumberGeneratorNumberFormat"].disabled = !flag;
+        	form.certificateNumberGeneratorNextNumberString.disabled = !flag;
+        	$('#certificateNextNumberAsteric').css('display', (flag ? '' : 'none'));
+        }
+        
+        function showSampleCertificateNumFormat(){
+        	/*
+        	var c = '$!{certNumberDigitChar}';
+        	
+        	var form = document.manageApprovalForm;
+        
+        	var prefix = form.elements["courseApproval.certificateNumberGeneratorPrefix"].value;
+        	var format = form.elements["courseApproval.certificateNumberGeneratorNumberFormat"].value;
+        	var number = form.certificateNumberGeneratorNextNumberString.value;
+        	*/
+        	
+        }
+
+        function publishCourseApproval() { 
+           confirm("Are you sure you want to publish this course approval? This may disturb live user(s).", function () {
+				var form = document.manageApprovalForm;
+				form.action = "acc_manageApproval.do?method=saveAndPublish";
+				form.submit();
+           });            
+        }
+        
+        #springBind("approvalForm.appId")
+        function archiveCourseApproval() { 
+           confirm("Are you sure you want to archive this course approval? Archiving an approval for a course currently being sold and used by learners may result in some disruption to users.", function () {
+				var form = document.manageApprovalForm;
+				form.action = "acc_manageApproval.do?method=archiveCourseApproval&entity=Course&appID=$!{status.value}";
+				form.submit();
+           });            
+        }
+        
+       
+        
+        function publishCourseApprovalToSF() { 
+           confirm("Are you sure you want to publish this course approval? This may disturb live user(s).", function () {
+				var form = document.manageApprovalForm;
+				form.action = "acc_manageApproval.do?method=saveAndPublishCourseApprovalToSF";
+				form.submit();
+           });            
+        }
+        
+    </script>
+<style>
+    
+		.message_box_text {
+		    float: left;
+		    font-family: Tahoma;
+		    font-size: 12px;
+		    height: 40px;
+		    margin-right: 5px;
+		    margin-top: 15px;
+		    width: 360px!important;
+		    margin-left: 10px!important;
+		}	    
+		
+		html, body{
+			overflow-x:auto!important;
+		}
+		#scrollable{
+			overflow:auto!important;
+		}
+				
+				
+		#message_box_private {
+			border: 1px solid #009900;
+		    background: none repeat scroll 0 0 #FFFFFF;
+		    color: #009900;
+		    font-family: Arial,Helvetica,sans-serif;
+		    padding: 5px;
+		    position: absolute;
+		    text-align: left;
+		    width: 77%;
+		    z-index: 100;
+		}
+				
+		#confirmModalContainer .buttons {
+		    margin-left: auto;
+		    margin-right: auto;
+		    padding: 16px 18px 0;
+		    width: 180px;
+		}
+
+</style>
+</head>
+<body>
+<form name="manageApprovalForm" method="post" action="acc_manageApproval.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!--Header Start -->
+    #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+    <!-- Header End -->
+		 </td></tr>
+		 	
+	 <!-- Tabs Start -->
+ <td id="row-tabs" class="tab_bar" colspan="2">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td width="194"><div class="tab_blank"></div></td>
+                        <td width="15px">&nbsp;</td>
+                        <td width="750">
+                         <a href="#"><div class="tab_selected" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Summary")</div></a>
+                         
+                         <!--<a onClick="javascript:window.location='acc_manageApproval.do?method=showApprovalRegulatorCategories';"><div class="tab" style="width:150px;">$brander.getBrandElement("lms.accraditation.editApproval.caption.RegulatorCategories")</div></a>-->                         
+                         <a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalRequirement';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Requirements")</div></a>
+                         <a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalDocuments';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Documents")</div></a>
+                         <a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalCustomField';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</div></a>
+                         <a onClick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalPurchasedCertificate';"><div class="tab"  style="width:190px;border-right-style:solid;">$brander.getBrandElement("lms.accraditation.editApproval.caption.PurchasedCertificate")</div></a>
+                        </td>
+                        <td width="15px">&nbsp;</td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>	 
+	 
+        <!-- Tabs End -->
+
+    <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		#parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+		    #springBind("approvalForm.*")
+            #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                            #if($errorCode != 'custom.field.required')
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                            #end
+                        #end
+
+                        #foreach($errorMessage in $status.errorMessages)
+                            #if(!$!errorMessage.equals(""))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$!errorMessage</div>
+                            </div>
+                            #end
+                        #end
+                </div>
+                <!-- error-box -->
+            #else
+            	
+            	#if($!{context.courseApprovalPublishSuccess})
+            	
+            		<div id="message_box_private">
+            			<div style="margin-top:5px;">
+            				<img id="close_message_private" style="float:right;cursor:pointer"  src="brands/default/en/images/pageSelected.png" />
+            			</div>
+		                <div class="width40pct">
+                                <div class="message_box_align"></div>
+                                <div class="message_box_align"><img src="brands/default/en/images/accept.png" alt="Success"></div>
+                                <div class="message_box_align">$brander.getBrandElement("$!{context.courseApprovalPublishSuccess}")</div>
+                            </div>    
+                    </div>        
+            	#end	
+            	
+            #end
+		
+		 	  <!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_approvals">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.summary.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.accraditation.editCourseApproval.caption.summary.subTitle")</div>
+			</td>
+		    </tr>
+		</table>
+
+			#springBind("approvalForm.courseApproval.active")
+            #set($IsActiveCourseApproval = $status.value) 
+                          
+            #springBind("approvalForm.appId")
+            
+            #if($!{IsActiveCourseApproval} == "true" )
+	            <div class="search_box_result" style="border:none;">
+	                <div style="float:left;">
+	                    <a onClick="javascript:window.location='acc_renewCourseApproval.do?appID=$!{status.value}';">
+	                        <div class="btn_start"></div>
+	                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Renew-Approval")</div>
+	                        <div class="btn_end"></div>
+	                    </a>
+	                </div>
+	                
+	                <div style="float:left;">
+	                    <a onClick="javascript:archiveCourseApproval();">
+	                        <div class="btn_start"></div>
+	                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Archive-Approval")</div>
+	                        <div class="btn_end"></div>
+	                    </a>
+	                </div>
+
+	                <div style="float:left;">
+	                    <a onClick="javascript:publishCourseApproval();">
+	                        <div class="btn_start"></div>
+	                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Publish-Approval")</div>
+	                        <div class="btn_end"></div>
+	                    </a>
+	                </div>
+
+ 					<div style="float:left;">
+	                    <a onClick="javascript:publishCourseApprovalToSF();">
+	                        <div class="btn_start"></div>
+	                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Publish Approval to SF</div>
+	                        <div class="btn_end"></div>
+	                    </a>
+	                </div>
+	                
+	            </div>
+			#end
+			
+			
+            
+            
+            
+            
+            <div style="height:20px;width:94%;"></div>
+
+
+		<div class="search_box_result">
+			<div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Summary")</span></div>
+			    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 		<tr>
+    					<td width="25%"><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approved-Course-Name")</div></td>
+                         
+                        
+                        #springBind("approvalForm.courseApproval.approvedCourseName")
+    					<td style="width:15px;">#if($status.error)
+    						<div class="required_field">
+    							<img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")">
+    						</div>
+                            	#elseif(! $status.value || $status.value.equals(""))
+                            	<div class="required_field">*</div>#else <div class="required_field">*</div>#end
+                        </td>
+                        <td>
+                        	<input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" />
+                        </td>
+    					<td width="25%">&nbsp;</td>
+                        
+                        
+                       
+    					<td>&nbsp;</td>
+    					<td>&nbsp;</td>
+                        
+					</tr>
+					
+			 		<tr>
+    					<td width="25%"><div class="row_text">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.courseid")</div></td>
+                         
+                        
+                        #springBind("approvalForm.courseApproval.course.bussinesskey")
+    					<td style="width:15px;">
+    						</td><td><input  disabled="disabled" type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td width="25%"><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-Course-Approval-Start")</div></td>
+                        
+                        
+                        #springBind("approvalForm.approvalEffectivelyStartDate")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td>
+                            
+                            #if($!{IsActiveCourseApproval} == "true" )
+                            	<input type="text" id="${status.expression}" name="${status.expression}" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" />
+	                            <script>
+		                            $("#${status.expression}").datepicker({ 
+		                                showOn: "both", 
+		                                buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+		                                buttonImageOnly: true,
+			   							yearRange: '-5:+10'   
+		                            });
+	                        	</script>
+                            #else
+                            	<input type="text" id="${status.expression}" name="${status.expression}" disabled="disabled" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" />
+                            #end
+                            </td>
+                        
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Approval-number")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovalNumber")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-Course-Approval-Ends")</div></td>
+                        #springBind("approvalForm.approvalEffectivelyEndDate")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td>
+                        
+                        #if($!{IsActiveCourseApproval} == "true" )    
+	                        <input type="text" id="${status.expression}" name="${status.expression}" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" />
+	                        <script>
+	                            $("#${status.expression}").datepicker({ 
+	                                showOn: "both", 
+	                                buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+	                                buttonImageOnly: true 
+	                            });
+	                        </script>
+	                    #else
+                            <input type="text" id="${status.expression}" name="${status.expression}" disabled="disabled" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" />
+                        #end     
+                    </td>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Approval-Type")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovaltype")
+    					<td></td><td><input type="text" class="input_text_field" style="margin-left:0px;" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Reminder-Date")</div></td>
+                        #springBind("approvalForm.submissionReminderDate")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" id="${status.expression}" name="${status.expression}" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" /></td>
+                        <script>
+                            $("#${status.expression}").datepicker({ 
+                                showOn: "both", 
+                                buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+                                buttonImageOnly: true 
+                            });
+                        </script>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approved-Credit-Hours")</div></td>
+                        #springBind("approvalForm.courseApproval.approvedCreditHours")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!status.value" /></td>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Date-most-Recently")</div></td>
+                        #springBind("approvalForm.mostRecentlySubmittedForApprovalDate")
+                        <td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" id="${status.expression}" name="${status.expression}" value="$!{status.value}" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipEndDate")" class="input_text_field" style="width:152px;" /></td>
+                        <script>
+                            $("#${status.expression}").datepicker({ 
+                                showOn: "both", 
+                                buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+                                buttonImageOnly: true 
+                            });
+                        </script>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Approval-Status")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovalStatus")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Approval-Information")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovalInformation")
+    					<td></td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Renewal-Fee")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovalRenewalFee")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Tags")</div></td>
+                        #springBind("approvalForm.courseApproval.tag")
+    					<td></td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course-Submission-Fee")</div></td>
+                        #springBind("approvalForm.courseApproval.courseApprovalSubmissionFee")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td>&nbsp;</td>
+                        <td>&nbsp;</td>
+    					<td>&nbsp;</td>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.regulatorCategory")</div></td>
+                        #springBind("approvalForm.courseApproval.regulatorCategory")
+                        #if($status.value)
+                        #springBind("approvalForm.courseApproval.regulatorCategory.displayName")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end
+                        </td>
+                        <td>
+                        	<input disabled type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" />
+                        </td>
+                        #else
+                        <td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end
+                        </td>
+                        <td>
+                        	<input disabled type="text" class="input_text_field" name="${status.expression}" value="" />
+                        </td>    
+                        #end
+    					<td>
+                            #springBind("approvalForm.appId")
+                            
+                            #if($!{IsActiveCourseApproval} == "true" )
+	                            <a onClick="javascript:window.location='acc_manageApproval.do?method=changeRegulatorCategory';">
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Change")</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+	                        #end    
+                        </td>
+    					<td></td>
+    					<td></td>
+					</tr>
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Course")</div></td>
+                        #springBind("approvalForm.courseApproval.course")
+                        #if($status.value)
+                        #springBind("approvalForm.courseApproval.course.courseTitle")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input disabled type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					#else
+                        <td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input disabled type="text" class="input_text_field" name="${status.expression}" value="" />
+    					#end
+    					<td>
+                            #springBind("approvalForm.appId")
+                            
+                            #if($!{IsActiveCourseApproval} == "true" )
+	                            <a onClick="javascript:window.location='acc_manageApproval.do?method=changeCourse';">
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Change")</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+	                        #end    
+                        </td>
+    					<td></td>
+    					<td></td>
+					</tr>
+					
+					
+					<!-- Start - TPMO-914 - LMS-15308 - Addition of Course Group Step in Edit Course Approval -->
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.addApproval.caption.courseGroup")</div></td>
+                        #springBind("approvalForm.courseApproval.courseGroups")
+                        #if($status.value.size()>0)
+                        	#springBind("approvalForm.courseApproval.courseGroups[0].name")
+    						<td>&nbsp;</td><td><input disabled type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					#else
+                        	<td>&nbsp;</td><td><input disabled type="text" class="input_text_field" name="${status.expression}" value="" />
+    					#end
+    					<td>
+    					
+                            #springBind("approvalForm.appId")
+                            #set($varApprovalId = $status.value)
+                            
+            		        #springBind("approvalForm.courseApproval.course")
+	                        #if($status.value)
+	                        	#springBind("approvalForm.courseApproval.course.id")
+	                        	#set($varCourseId = $status.value)
+	                        #end
+	                        
+                            #if($!{IsActiveCourseApproval} == "true" )
+	                            <a onClick="javascript:window.location='acc_addApprovalCoursegroup.do?approvalId=$!{varApprovalId}&courseId=$!{varCourseId}'">
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Change")</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+	                        #end    
+                        </td>
+    					<td></td>
+    					<td></td>
+					</tr>
+					<!-- End - TPMO-914 - LMS-15308 - Addition of Course Group Step in Edit Course Approval -->
+					
+					
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider")</div></td>
+                        #springBind("approvalForm.courseApproval.provider.name")
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+                            #elseif(! $status.value || $status.value.equals(""))<div class="required_field">*</div>#else <div class="required_field">*</div>#end</td><td><input type="text" disabled class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					<td>
+                            #springBind("approvalForm.appId")
+                            
+                            #if($!{IsActiveCourseApproval} == "true" )
+	                            <a onClick="javascript:window.location='acc_addApprovalProvider.do?approvalId=$!{status.value}&entity=Course';" >
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Change")</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+                            #end
+                            
+                        </td>
+    					<td></td>
+    					<td></td>
+					</tr>
+
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.addApproval.caption.courseTemplate-Name")</div></td>
+                        <td></td>
+                        #springBind("approvalForm.courseApproval.template")
+                        #set($containsTemplate = false)
+                        #if("$!status.value" != "")
+                        #springBind("approvalForm.courseApproval.template.name")
+                        	#set($containsTemplate = true)
+    						<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+                        #else                        	
+                        	<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="" /></td>
+                        #end
+    					<td>
+    						#springBind("approvalForm.appId")
+    						<table width="220" border="0" cellpadding="0" cellspacing="0">
+						    <tr>
+						       <td>
+	                            #if($!{IsActiveCourseApproval} == "true" )
+	                            <a onClick="javascript:window.location='acc_addApprovalCourseConfig.do?approvalId=$!{status.value}&entity=Course';" >
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Change")</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+	                            #end
+	                        </td>
+	                        <td>
+								#if($!{IsActiveCourseApproval} == "true" && $containsTemplate)
+									<a onClick="javascript:window.location='acc_manageApproval.do?method=unlinkTemplateFromCourseApproval&approvalId=$!{status.value}&entity=Course';" >
+				                		<div style="float:Left; margin-top:5px; margin-left:0px;">
+				                        	<div class="btn_start"></div>
+				                            <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Unlink</div>
+				                            <div class="btn_end"></div>
+										</div>
+									</a>
+								#end
+							</td>
+						</tr>
+					</table>
+				</td>                        
+    					<td></td>
+    					<td></td>
+					</tr>					
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.Certificate")</div></td>
+                        <td></td>
+                        #springBind("approvalForm.courseApproval.certificate")
+                        #set($varCertificatevalue = "")
+                        
+                        #if ("$!status.value" == "")
+							<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+                        #else
+                        #springBind("approvalForm.courseApproval.certificate.name")
+                        #set($varCertificatevalue = $status.value)
+	    					<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="$!{status.value}" /></td>
+    					#end
+                          <td>
+                          #springBind("approvalForm.appId")
+                          <table width="220" border="0" cellpadding="0" cellspacing="0">
+						    <tr>
+						       <td>
+								      
+		                            #if($!{IsActiveCourseApproval} == "true" )
+			                            <a onClick="javascript:window.location='acc_addApprovalCertificate.do?approvalId=$!{status.value}&entity=Course';" >
+			                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+			                                    <div class="btn_start"></div>
+			                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Change</div>
+			                                    <div class="btn_end"></div>
+			                                </div>
+			                            </a>
+			                        #end    
+		                        </td>
+		    					<td align="left">
+								    #if($!{IsActiveCourseApproval} == "true" && $varCertificatevalue != "")
+										<a onClick="javascript:window.location='acc_manageApproval.do?method=unlinkCertificateFromCourseApproval&approvalId=$!{status.value}&entity=Course';" >
+			                                <div style="float:Left; margin-top:5px; margin-left:0px;">
+			                                    <div class="btn_start"></div>
+			                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Unlink</div>
+			                                    <div class="btn_end"></div>
+			                                </div>
+			                            </a>
+			                        #end    
+								</td>
+							 </tr>
+							</table> 	
+    					<td></td>
+    					<td></td>
+					</tr>
+
+
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.affidavit")</div></td>
+                        #springBind("approvalForm.courseApproval.containsAffidavit")
+                        #set($containsAffidavit = $status.value)
+                        <td></td>
+                        #if ($status.value == false)
+    						<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="" /></td>
+    					#else
+                        	#springBind("approvalForm.courseApproval.affidavit.name")
+    						<td><input type="text" disabled class="input_text_field" name="${status.expression}" value="$!{status.value}" />
+    						</td>
+    					#end
+    					
+    					
+    					
+    					<td>
+    					#springBind("approvalForm.appId")
+    					<table width="220" border="0" cellpadding="0" cellspacing="0">
+						  <tr>
+						    <td>
+						   
+						    #if($!{IsActiveCourseApproval} == "true" )
+							    <a onClick="javascript:window.location='acc_addApprovalAffidavit.do?approvalId=$!{status.value}&entity=Course';" >
+	                                <div style="float:Left; margin-top:5px; margin-left:10px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Change</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+                            #end
+                            
+							</td>
+						    <td align="left">
+						    #if($!{IsActiveCourseApproval} == "true" && $containsAffidavit)
+								<a onClick="javascript:window.location='acc_manageApproval.do?method=unlinkAffidavitFromCourseApproval&approvalId=$!{status.value}&entity=Course';" >
+	                                <div style="float:Left; margin-top:5px; margin-left:0px;">
+	                                    <div class="btn_start"></div>
+	                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">Unlink</div>
+	                                    <div class="btn_end"></div>
+	                                </div>
+	                            </a>
+	                        #end    
+							</td>
+						  </tr>
+						</table>
+                            
+                            
+                            
+                            
+                        </td>
+                        
+    					<td></td>
+    					<td></td>
+					</tr>
+
+
+
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.UsePurchasedCertNo")</div></td>
+                        #springBind("approvalForm.courseApproval.usePurchasedCertificateNumbers")
+                        <td></td>    				
+                        <td>
+                        	<select id="$!{status.expression}" name="$!{status.expression}" class="input_text_field"  style="width:55px; height:20px;" >                                                                         	   
+                            <option value="false" >No</option>
+                            <option value="true" #if($!{status.value}) selected #end>Yes</option>                                             	                                              	                                                	   	  	                                                                                       	    												 														                            
+							</select>                        	                        
+                        </td>    					
+    					#springBind("approvalForm.courseApproval.certificateNumberGeneratorPrefix")
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.certificateNumberGeneratorPrefix")</div></td>
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>#end</td>
+    					<td><input onchange="javascript:showSampleCertificateNumFormat();" type="text" #if($!{useCertificateNumberGenerator} == false) disabled #end class="input_text_field" name="$!{status.expression}" value="$!{status.value}" maxlength="30" /></td>
+					</tr>					
+
+					<tr>
+    					<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.useCertificateNumberGenerator")</div></td>
+                        #springBind("approvalForm.courseApproval.useCertificateNumberGenerator")
+                        <td></td>    				
+                        <td>
+                        	<select id="$!{status.expression}" name="$!{status.expression}" class="input_text_field"  style="width:55px; height:20px;" onchange="javascript:handleCertificateNumberGenerator(this);">                                                                         	   
+                            <option value="false">No</option>
+                            <option value="true" #if($!{status.value}) selected #end>Yes</option>                                             	                                              	                                                	   	  	                                                                                       	    												 														                            
+							</select>                        	                        
+                        </td>    		
+    					#springBind("approvalForm.courseApproval.certificateNumberGeneratorNumberFormat")
+						<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.certificateNumberGeneratorNumberFormat")</div></td>
+    					<td>#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>#end</td>
+    					<td><input type="text" #if($!{useCertificateNumberGenerator} == false) disabled #end onchange="javascript:showSampleCertificateNumFormat();" class="input_text_field" name="$!{status.expression}" value="$!{status.value}" maxlength="50" /></td>
+					</tr>					
+
+					<tr>
+    					<td>
+							<div class="row_text">
+								$brander.getBrandElement("lms.accraditation.editApproval.caption.selfReported")
+							</div>
+						</td>
+    					<td></td>
+                        <td>
+							#springBind("approvalForm.courseApproval.selfReported")
+							<select id="$!{status.expression}" name="$!{status.expression}" class="input_text_field"  style="width:55px; height:20px;" >                                                                         	   
+								<option value="false">No</option>
+								<option value="true" #if($!{status.value}) selected #end>Yes</option>                                             	                                              	                                                	   	  	                                                                                       	    												 														                            
+							</select>     
+						</td>    				
+    					<td></td>
+                        <td></td>    				
+						<td><div class="block_text_in-r2">Example: $!{certNumberDigitChar}$!{certNumberDigitChar}-$!{certNumberDigitChar}$!{certNumberDigitChar}-$!{certNumberDigitChar}$!{certNumberDigitChar}$!{certNumberDigitChar}</div></td>
+					</tr>					
+
+					<tr>
+    					<td></td>
+    					<td></td>
+                        <td></td>    				
+                        #springBind("approvalForm.certificateNumberGeneratorNextNumberString")                        
+						<td><div class="row_text">$brander.getBrandElement("lms.accraditation.editApproval.caption.certificateNumberGeneratorNextNumber")</div></td>
+    					<td>
+    						#if($status.error)<div class="required_field"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"></div>
+    						#elseif(! $status.value || $status.value.equals(""))<div class="required_field" id="certificateNextNumberAsteric"  #if($!{useCertificateNumberGenerator} == false)style='display:none;' #end >*</div>#else <div class="required_field">*</div>
+    						#end
+						</td>
+    					<td><input type="text" #if($!{useCertificateNumberGenerator} == false) disabled #end onchange="javascript:showSampleCertificateNumFormat();" class="input_text_field" name="$!{status.expression}" value="$!{status.value}" maxlength="19" /></td>
+					</tr>
+					
+					<tr>
+    					<td></td>
+    					<td></td>
+                        <td></td>    				
+                                                
+						<td><div class="row_text">Certificate Expiration Period</div></td>
+    					<td>
+						</td>
+    					<td> #springBind("approvalForm.certificateExpirationPeriod") #if($!{status.value} || $!{status.value} > 0) #if($!{status.value} == 0) #set($expirationperiod="") #else #set($expirationperiod=$!{status.value}) #end #else #set($expirationperiod="") #end<input type="text"  class="input_text_field" name="$!{status.expression}" value="$expirationperiod" maxlength="19" /></td>
+					</tr>
+					
+			    </table>			 
+	        </div>
+		 
+		    <div style="height:20px;"></div>
+		 
+		 	<div class="search_box_result">
+			 	<div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</span></div>
+                #springBind("approvalForm.customFields")
+                #if($status.value.size()>0)
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                        #set($count = 0)
+                        #foreach($customField in $!{status.value})
+
+                            #set($id = "customField$count")
+                            #set($name = "customFields[$count].customFieldValueRef")
+                            #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                            #set($customFieldIdentifire = "customFields[$count]")
+                            $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+
+                            #set($count=$count+1)
+                        #end
+                    </table>
+                #end	 
+	        </div>
+
+                 <!-- *********************************************** -->
+					<div class="btn-div">
+						#if($!{IsActiveCourseApproval} == "true" )
+							<div style="float:right; margin-top:15px;">
+							  <a onClick="saveCourseSummary();">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>	
+						#end
+						<div style="float:right; margin-top:15px;margin-right:5px;">
+							<a onClick="javascript:window.location='acc_manageApproval.do';">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div>  
+					</div>	
+					
+					<!-- bottom-space -->
+					<div class="manage-bottom-space"></div>
+					<!-- bottom-space -->
+					
+            </div>
+			
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+            #parse("snippets/deleteConfirmation.vm")
+        <!-- Footer End -->
+	</td></tr>
+        </table>
+   
+</form>
+</body>
+</html>

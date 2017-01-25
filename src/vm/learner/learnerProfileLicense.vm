@@ -1,0 +1,100 @@
+<div class="content-Block">
+    <div id="e7a" class="Block-Contain-header">
+        <div id="e8" class="b-courseheaderDivleft">$brander.getBrandElement("lms.mylicense.manageLicense.profile.caption")</div>
+        <div id="e81" class="b-licenseDivRight">
+             #springBind("learnerProfileForm.notifyOnLicenseExpire")
+            <input type="checkbox" name="notifyOnLicenseExpire" #if($status.value) checked #end >
+        	Notify me when license expires
+        </div>
+    </div>
+
+		<div id="e7b" class="Search-inputfield-box">
+			#springBind("learnerProfileForm.learnerOfLicense")
+			$pager.setItems($!{status.value})
+			#set($totalCount = $pager.total)
+			#if($pager.hasItems())
+					#set($pageFirstIndex = $pager.firstIndex)
+					#set($pageLastIndex = $pager.lastIndex)
+					#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+					#set($currentPageCount = $pageLastIndex + 1)
+					#set($pageCurrIndex = $pager.index)
+			#else
+					#set($pageFirstIndex = 0)
+					#set($pageLastIndex = 0)
+					#set($currentPageSize = 0)
+					#set($currentPageCount = 0)
+					#set($pageCurrIndex = 0)
+			#end
+
+			<input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+			<input type="hidden" id="paging" name="paging" value="" />
+			<input type="hidden" id="sortDirection" name="sortDirection" value="" />
+			<input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+			<input type="hidden" id="showAll" name="showAll" value="false" />
+			<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+			 #if($!{context.showAll})
+				#set($showAll=$!{context.showAll})
+			#else
+				#set($showAll=false)
+			#end
+
+			<!-- All Icon -->
+			#if($!{status.value})
+				#if($totalCount > 5)
+					<div id="showEach" class="icon_all" onClick="javascript:window.location='lrn_learnerProfile.do?method=displayLearnerProfile&showAll=true';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+				#end
+			#end
+			<!-- Next Icon -->
+			#if($pager.nextIndex)
+					<div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='lrn_learnerProfile.do?method=displayLearnerProfile&pageIndex=$pager.nextIndex&paging=paging';" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+			#else
+					<div id="goNext" class="icon_disabled"></div>
+			#end
+			<!-- Back Icon -->
+			#if ($pager.prevIndex)
+					<div id="goBack" class="icon_back"  onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target0" onclick="javascript:window.location='lrn_learnerProfile.do?method=displayLearnerProfile&pageIndex=$pager.prevIndex&paging=paging';" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+			#else
+					<div id="goBack" class="icon_disabled"></div>
+			#end
+			<!-- Showing Results -->
+			<div id="resultDescription" class="box_description" style="margin-right:2px;">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing")$!pager.pageDescription </div>
+		
+		</div>
+		<!-- Result Header End -->
+		<div id="searchResult_1"  style="width:100%;">
+		#if($currentPageSize > 0)
+			<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+				<tr bgcolor="#efefef">
+					<td class="box_subheader" width="300px"><div  style="margin-left:5px;"  #if($context.sortDirection == 0) onclick="sortMyLicense(0,1,$pageCurrIndex,$showAll);" #else onclick="sortMyLicense(0,0,$pageCurrIndex,$showAll);" #end ><div  id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 0)) class="icon_down" #elseif($context.sortColumnIndex == 0) class="icon_up"  #end ></div >$brander.getBrandElement("lms.mylicense.manageLicense.column1.caption")</div ></td>
+					<td class="box_subheader"><div  style="margin-left:5px;"  #if($context.sortDirection == 0) onclick="sortMyLicense(1,1,$pageCurrIndex,$showAll);" #else onclick="sortMyLicense(1,0,$pageCurrIndex,$showAll);" #end ><div  id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 1)) class="icon_down" #elseif($context.sortColumnIndex == 1) class="icon_up"  #end ></div >$brander.getBrandElement("lms.mylicense.manageLicense.column2.caption")</div ></td>
+				</tr>
+				 #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+					#springBind("learnerProfileForm.learnerOfLicense[$loopIndex]")
+					   #set($licenseOfLearner = $!{status.value})
+						#if($loopIndex%2 == 0)
+						#set($alternate="row_1")
+						#else
+						#set($alternate="row_2")
+						#end
+					 <tr>
+					<td class="$alternate"><a href="lrn_licenseedit.do?method=displayMyLicense&Id=$licenseOfLearner.Id&redirectTo=profile"><u> $licenseOfLearner.industryCredential.credential.officialLicenseName</u></a></td>
+					<td class="$alternate">$licenseOfLearner.supportingInformation</td>
+					
+					</tr> 
+				#end
+		</table>
+	#else
+		<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+			<tr bgcolor="#efefef">
+				<td class="box_subheader" width="300px"><div  style="margin-left:5px;"  #if($context.sortDirection == 0) #end ><div  id="nameSort" ></div >$brander.getBrandElement("lms.mylicense.manageLicense.column1.caption")</div ></td>
+				<td class="box_subheader"><div  style="margin-left:5px;"  #if($context.sortDirection == 0)  #end ><div  id="nameSort" ></div >$brander.getBrandElement("lms.mylicense.manageLicense.column2.caption")</div ></td>
+			</tr>
+			<tr>
+			   <td colspan="7" style="border-right:1px solid;border-bottom:1px solid;border-color:#dfdfdf !Important;">
+					<div  class="result_blank">$brander.getBrandElement("lms.mylicense.manageLicense.noRecordFound.caption")</div >
+				</td>
+			</tr>
+		</table>
+	#end
+</div>
+</div>

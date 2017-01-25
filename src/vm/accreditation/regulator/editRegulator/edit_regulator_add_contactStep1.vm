@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+			
+                $("#toggleIconContactPerson").click(function() {
+                    toggleView('toggleIconContactPerson', 'collapsibleContactPerson');
+                });
+                $("#toggleIconAddrInfo").click(function() {
+                    toggleView('toggleIconAddrInfo', 'collapsibleAddrInfo');
+                });
+            });
+
+            function stateChangeFormSubmit() {
+                document.getElementById('wizardSubmitter').name = '_target0' ; 
+                document.getElementById('validateVariable').value='false';
+                document.regulatorForm.submit();
+            }
+
+            function setValidate() {
+                document.getElementById('validateVariable').value='true';
+            }
+
+        </script>
+    </head>
+
+    <body>
+        <form name="regulatorForm" method="post" action="acc_editReg_addContact.do">
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- Header starts -->
+                        #parse("snippets/managerWizardHeader.vm")
+                        <!-- Header ends -->
+                    </td></tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-sidebar" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <div>
+                                <div id="l-menu-back">
+                                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.header")<br>$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.showing1of2")</div>
+                                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.summary")</div>
+                                    <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.confirmation")</div>
+                                </div>
+                            </div>
+
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable">
+
+                            #springBind("regulatorForm.*")
+                            #if($status.error)
+                            <!-- error-box -->
+                           <table cellspacing="0" cellpadding="0" border="0" class="table-error" id="error-profile" style="display: table;">
+							<tbody>
+							 <tr>
+							  <td><div class="error">Required field must not be blank. Please provide required information and try again.</div></td>
+							 </tr>
+							</tbody>
+						   </table>
+                            <!-- error-box -->
+                            #end
+
+
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorAddContact.caption")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorAddContactStep1Description")</div>
+                                    </td>
+                                </tr>
+                            </table>		
+
+                            <div class="search_box_result">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td>
+                                            <div class="box_header">
+                                                <div id="toggleIconContactPerson" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                <span class="box_heading">$brander.getBrandElement("lms.accraditation.addRegulator.caption.profileInformation")</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div id="collapsibleContactPerson">
+                                                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                                    <tr>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.firstName")</span></td>
+														#springBind("regulatorForm.contact.firstName")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}"></input></td>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorWebsite")</span></td>
+														#springBind("regulatorForm.contact.websiteURL")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.middleName")</span></td>
+														#springBind("regulatorForm.contact.middleName")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input></td>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</span></td>
+														#springBind("regulatorForm.contact.emailAddress")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}"></input></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.lastName")</span></td>
+									#springBind("regulatorForm.contact.lastName")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}"></input></td>
+                                                        <td width="15%"></td>
+                                                        <td style="width:15px;"></td>
+                                                        <td></td>
+                                                    </tr>                
+                                                    <tr>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorPhone")</span></td>
+									#springBind("regulatorForm.contact.phone")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}"></input></td>
+                                                        <td width="15%"></td>
+                                                        <td style="width:15px;"></td>
+                                                        <td></td>
+                                                    </tr>
+                                   					<tr>
+                                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorPhoneExt")</span></td>
+									#springBind("regulatorForm.contact.phoneExt")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input></td>
+                                                        <td width="15%"></td>
+                                                        <td style="width:15px;"></td>
+                                                        <td></td>
+                                                    </tr>    
+                                                </table>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    <tr/>
+                                    </table>
+                                  </div>
+                                  <div style="height:20px;"></div>
+                                  <div class="search_box_result">                                    	
+                                   <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td>
+                                            <div class="box_header">
+                                                <div id="toggleIconAddrInfo" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                                <span class="box_heading">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorAddressInformation.caption")</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div id="collapsibleAddrInfo">
+                                                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                                    <tr>
+                                                        <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactAddress")</span></td>
+									#springBind("regulatorForm.contact.address.streetAddress")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                        <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactAddress2")</span></td>
+									#springBind("regulatorForm.contact.address2.streetAddress")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="20%"></td>
+									#springBind("regulatorForm.contact.address.streetAddress2")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                        <td width="20%"></td>
+									#springBind("regulatorForm.contact.address2.streetAddress2")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCity")</span></td>
+									#springBind("regulatorForm.contact.address.city")
+                                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value || ( $status.value == "" && $status.error == false ) ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                                        <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                        <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulator.contactCity")</span></td>
+									#springBind("regulatorForm.contact.address2.city")
+                                                        <td style="width:15px;"></td>
+                                                        <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                                    </tr>
+                                                    <tr>
+									#springBind("regulatorForm.contact.address.country")
+									#* ============================================================ *#
+									#* -----------adding country \state code for ADDRESS 1 -------- *#
+									#* ============================================================ *#
+									#set( $State1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+									#set( $StateLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+									#set( $ZipLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+									#set( $Country1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+									#foreach ($objCountry1 in $Country1)
+											#if($!{status.value} == $objCountry1.value)
+													#set( $State_var1 = "lms.manageUser.AddLearner.")
+													#set( $State_var2 = ".State")
+													#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+													#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+													#set( $State_label_var2 = ".label")
+													#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+													#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+													#set( $State_zip_var2 = ".label")
+													#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+													#set( $State1 = $brander.getBrandMapElements($State_var) )
+													#set( $StateLabel_1 = $brander.getBrandElement($State_label_var) )
+													#set( $ZipLabel_1 = $brander.getBrandElement($State_zip_var) )
+													#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+                                        <script type="text/javascript" language="javascript" > 
+                                            #set( $ZipType2 = ".type" )
+                                            #set( $ZipLength = ".length" )
+                                            #set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+                                            #set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+                                            zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+                                            zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+                                        </script>
+											#end
+									#end
+								#springBind("regulatorForm.contact.address2.country")
+									#* ============================================================ *#
+									#* -----------adding country \state code for ADDRESS 1 -------- *#
+									#* ============================================================ *#
+									#set( $State2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+									#set( $StateLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+									#set( $ZipLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+									#set( $Country2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+									#foreach ($objCountry1 in $Country2)
+											#if($!{status.value} == $objCountry1.value)
+													#set( $State_var1 = "lms.manageUser.AddLearner.")
+													#set( $State_var2 = ".State")
+													#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+													#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+													#set( $State_label_var2 = ".label")
+													#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+													#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+													#set( $State_zip_var2 = ".label")
+													#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+													#set( $State2 = $brander.getBrandMapElements($State_var) )
+													#set( $StateLabel_2 = $brander.getBrandElement($State_label_var) )
+													#set( $ZipLabel_2 = $brander.getBrandElement($State_zip_var) )
+													#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+                                        <script type="text/javascript" language="javascript" > 
+                                            #set( $ZipType2 = ".type" )
+                                            #set( $ZipLength = ".length" )
+                                            #set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+                                            #set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+                                            zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+                                            zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+                                        </script>
+											#end
+									#end
+
+                                        <tr>
+									##set($stateList = $brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+                                            <td width="15%"><span class="row_text">$StateLabel_1</span></td>
+									#springBind("regulatorForm.contact.address.state")
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div></td>
+                                            <td>
+                                                <select style="height:20px;width:182px" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" tabindex="18" >
+                                                    <option value="" selected></option>
+									#foreach ($objState in $State1)
+										#if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}") 
+                                                    <option value="$objState.value" selected>$objState.label</option>
+										#else
+                                                    <option value="$objState.value" >$objState.label</option>
+										#end
+									#end
+                                                </select>
+                                            </td>
+									##set($stateList = $brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+                                            <td width="15%"><span class="row_text">$StateLabel_2</span></td>
+									#springBind("regulatorForm.contact.address2.state")
+                                            <td style="width:15px;"></td>
+                                            <td>
+                                                <select style="height:20px;width:182px" class="input_text_field" name="${status.expression}" tabindex="18" >
+                                                    <option value="" selected></option>
+									#foreach ($objState in $State2)
+										#if($objState.value.toUpperCase() == "$!{status.value.toUpperCase()}") 
+                                                    <option value="$objState.value" selected>$objState.label</option>
+										#else
+                                                    <option value="$objState.value" >$objState.label</option>
+										#end
+									#end
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    <tr>
+									#springBind("regulatorForm.contact.address.zipcode")
+									#if($ZipLabel_1 != "_")
+                                            <td width="15%"><span class="row_text">$!ZipLabel_1</span></td>
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div></td>
+                                            <td><input type="text" #if($status.error) class="empty-required-field" #else class="input_text_field" #end name="${status.expression}" value="$!{status.value}" maxlength="50" /></td>
+									#else
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+									#end
+									#springBind("regulatorForm.contact.address2.zipcode")
+									#if($ZipLabel_2 != "_")
+                                            <td width="15%"><span class="row_text">$!ZipLabel_2</span></td>
+                                            <td style="width:15px;"></td>
+                                            <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength="50" /></td>
+									#else
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+									#end
+                                        </tr>
+                                        <tr>
+									#set($countryList = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))																
+                                            <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorCountry")</span></td>
+									#springBind("regulatorForm.contact.address.country")
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div></td>
+                                            <td>
+
+                                                <select  onChange="stateChangeFormSubmit(this)" style="height:20px;width:182px" #if($status.error) class="empty-required-field" #else class="input_text_field" #end  name="${status.expression}" tabindex="17" >
+										#foreach ($objCountry in $Country1)
+											#if($objCountry.value == "$!{status.value}") 
+                                                    <option value="$objCountry.value" selected>$objCountry.label</option>
+											#else 
+                                                    <option value="$objCountry.value" >$objCountry.label</option>
+											#end
+										#end
+                                                </select>
+                                            </td>
+									#set($countryList = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))																
+                                            <td width="15%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorCountry")</span></td>
+									#springBind("regulatorForm.contact.address2.country")
+                                            <td style="width:15px;"></td>
+                                            <td>
+
+                                                <select  onChange="stateChangeFormSubmit(this)" style="height:20px;width:182px" class="input_text_field" name="${status.expression}" tabindex="17" >
+										#foreach ($objCountry in $Country2)
+											#if($objCountry.value == "$!{status.value}") 
+                                                    <option value="$objCountry.value" selected>$objCountry.label</option>
+											#else 
+                                                    <option value="$objCountry.value" >$objCountry.label</option>
+											#end
+										#end
+                                                </select>
+                                            </td>
+                                        </tr>  
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            #springBind("regulatorForm.eventSource")
+                            <input type="hidden" value="" id="validateVariable" name="$status.expression" />
+                            <input type="hidden" id="currentpage" name="_page" value="0" />
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                            <!-- ************************************************* -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onClick="setValidate(); submitButtonForm(document.regulatorForm,'wizardSubmitter','_target1');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                    <a onClick="submitButtonForm(document.regulatorForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->		
+
+                        </div>
+                    </td></tr>
+                <!-- Body End -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                        <!-- Footer End -->
+                    </td></tr>
+            </table>
+        </form>
+    </body>
+</html>

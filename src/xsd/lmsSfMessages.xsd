@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.360training.com/vu360/schemas/lms/sfMessages"
+        xmlns:vu360-lms-sf="http://www.360training.com/vu360/schemas/lms/sfMessages"
+        elementFormDefault="qualified">
+
+    <element name="OrderCreatedRequest">
+        <complexType>
+            <sequence>
+                <element name="order" type="vu360-lms-sf:Order" nillable="false"/>
+            </sequence>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+     	    <attribute name="CCILeadId" type="string" use="optional"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+        </complexType>
+    </element>
+    
+    <element name="OrderCreatedResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+	        <attribute name="transactionResult" use="required">
+				<simpleType>
+					<list itemType="vu360-lms-sf:TransactionResultType"/>
+				</simpleType>
+	        </attribute>
+	        <attribute name="transactionResultMessage" type="string"/>
+    		<attribute name="customerGUID" type="string" />
+    	</complexType>
+	</element>
+
+    <element name="UpdateProfileRequest">
+        <complexType>
+            <sequence>
+				<element name="customer" type="vu360-lms-sf:Customer" nillable="false"/>
+				<element name="authenticationCredential" type="vu360-lms-sf:AuthenticationCredential" nillable="false"/>
+            </sequence>
+        </complexType>
+    </element>
+    <element name="UpdateProfileResponse">
+    	<complexType>
+	        <attribute name="transactionResult" use="required">
+				<simpleType>
+					<list itemType="vu360-lms-sf:TransactionResultType"/>
+				</simpleType>
+	        </attribute>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+    </element>
+
+    <element name="RefundRequest">
+        <complexType>
+            <sequence>
+                <element name="order" type="vu360-lms-sf:Order" nillable="false"/>
+            </sequence>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+        </complexType>
+    </element>
+    
+    <element name="RefundResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+	        <attribute name="transactionResult" use="required">
+				<simpleType>
+					<list itemType="vu360-lms-sf:TransactionResultType"/>
+				</simpleType>
+	        </attribute>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+    </element>
+		<!--  schema for course detail web-service -->	
+    <element name="CourseDetailsRequest">
+        <complexType>
+            <attribute name="courseGUID"    >
+	            <simpleType>
+	                <list  itemType="string"/>
+	            </simpleType>
+            </attribute>
+        </complexType>
+    </element>
+	<!-- end Message packet for VCS Course Detail --> 
+
+    <element  name="CourseDetailsResponse">
+        <complexType>
+            <sequence>
+                <element  maxOccurs="unbounded" minOccurs="0" name="coursePublishInfo" type="vu360-lms-sf:CourseDetails" />
+            </sequence>
+        </complexType>
+    </element>
+	
+	<simpleType name="OrderStatusType">
+		<restriction base="string">
+			<enumeration value="Pending"/>
+			<enumeration value="Approved"/>
+			<enumeration value="Denied"/>
+			<enumeration value="Closed"/>
+			<enumeration value="Suspended"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="TransactionResultType">
+		<restriction base="string">
+			<enumeration value="Success"/>
+			<enumeration value="Failure"/>
+		</restriction>
+	</simpleType>
+	<complexType name="AuthenticationCredential">
+		<attribute name="username" type="string" use="required"/>
+		<attribute name="password" type="string" use="required"/>
+		<attribute name="domain" type="string"/>
+	</complexType>
+	<complexType name="Address">
+		<sequence>
+			<element name="addressLine1" type="string" nillable="false"/>
+			<element name="addressLine2" type="string"/>
+			<element name="addressLine3" type="string"/>
+			<element name="city" type="string" nillable="false"/>
+			<element name="state" type="string" nillable="false"/>
+			<element name="zipCode" type="string" nillable="false"/>
+			<element name="country" type="string" nillable="false"/>
+		</sequence>
+	</complexType>
+	<complexType name="Contact">
+		<sequence>
+			<element name="billingAddress" type="vu360-lms-sf:Address" nillable="false"/>
+			<element name="shippingAddress" type="vu360-lms-sf:Address"/>
+			<element name="authenticationCredential" type="vu360-lms-sf:AuthenticationCredential" nillable="false"/>
+		</sequence>
+		<attribute name="firstName" type="string" use="required"/>
+		<attribute name="lastName" type="string" use="required"/>
+		<attribute name="emailAddress" type="string" use="required"/>
+		<attribute name="alternateEmailAddress" type="string"/>
+		<attribute name="primaryPhone" type="string" use="required"/>
+		<attribute name="alternatePhone" type="string"/>
+		<attribute name="billingShippingAddressSame" type="boolean"/>
+	</complexType>
+	<complexType name="Customer">
+		<sequence>
+			<element name="primaryContact" type="vu360-lms-sf:Contact" nillable="false"/>
+			<element name="primaryAddress" type="vu360-lms-sf:Address" nillable="false"/>
+		</sequence>
+		<attribute name="customerName" type="string" use="required"/>
+		<attribute name="companyName" type="string" />
+		<attribute name="customerId" type="string" use="required"/>
+	</complexType>
+	<complexType name="Order">
+		<sequence>
+			<element name="customer" type="vu360-lms-sf:Customer" nillable="false"/>
+			<element maxOccurs="unbounded" minOccurs="0" name="lineItem" type="vu360-lms-sf:OrderLineItem" nillable="false"/>
+		</sequence>
+		<attribute name="orderId" type="string" use="required"/>
+		<attribute name="orderDate" type="dateTime" use="required"/>
+		<attribute name="distributorId" type="string" use="required"/>
+		<attribute name="system" type="string" default="VU360-SF"/>
+		<attribute name="issubscription" type="boolean"/>
+		<!-- <attribute name="orderStatus" type="OrderStatusType" use="required"/> -->
+	</complexType>
+	<complexType name="OrderLineItem">
+		<attribute name="groupguid" type="string"/>
+		<attribute name="guid" type="string" use="required" />
+		<!--  This could be a courseGUID or a courseGroupGUID -->
+		<attribute name="lineitemguid" type="string" />
+		<attribute name="quantity" type="integer" use="required" />
+		<attribute name="termOfService" type="integer" use="required" />
+		 <attribute name="subscriptioncode" type="string" />
+        <attribute name="subscriptiontype" type="string" />
+        <attribute name="subscriptionname" type="string" />
+	</complexType>
+
+
+	<complexType name="CourseDetails">
+            <sequence>
+                <element name="courseGUID" type="string" />
+                <element  maxOccurs="unbounded" minOccurs="0"  name="synchronousClass"  type="vu360-lms-sf:SectionInfo"/>
+            </sequence>
+        </complexType>
+
+		<complexType name="SectionInfo">
+        <sequence>
+            <element name="sectionID" type="string"/>
+            <element name="sectionName" type="string"/>
+            <element name="sectionStartDate" type="string"/>
+            <element name="sectionEndDate" type="string"/>
+            <element name="availableSeats" type="integer"/>
+            <element name="sectionStatus" type="string"/>
+			<element name="sectionEnrollmentCloseDate" type="string" />
+            <element name="sectionMeetingType" type="string"/>
+            <element name="sessions"  maxOccurs="unbounded" minOccurs="0"  type="vu360-lms-sf:SessionInfo"/>
+            <element name="instructors"  maxOccurs="unbounded" minOccurs="0" type="vu360-lms-sf:InstructorInfo"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="SessionInfo">
+        <sequence>
+            <element name="SessionID" type="string"/>
+            <element name="SessionStartDateTime" type="string"/>
+            <element name="SessionEndDateTime" type="string"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="InstructorInfo">
+        <sequence>
+            <element name="InstructorID" type="string"/>
+            <element name="InstructorFirstName" type="string"/>
+            <element name="InstructorLastName" type="string"/>
+            <element name="InstructorRole" type="string"/>
+        </sequence>
+    </complexType>
+    
+    <element name="CourseApprovalRequest">
+    <complexType>
+      <attribute name="CourseGUID" type="string" use="required" />
+       <attribute name="CourseGroupGUID" type="string" use="required" />
+    </complexType>
+  </element>
+  
+  <element name="CourseApprovalResponse">
+    <complexType>
+      <sequence>
+        <element name="courseApproval" type="vu360-lms-sf:CourseApproval" minOccurs="0" maxOccurs="unbounded" />
+      </sequence>
+      
+    </complexType>
+  </element>
+  
+  <complexType name="RegulatoryApproval">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="regulatorCategories" type="vu360-lms-sf:RegulatoryCategory" maxOccurs="unbounded" minOccurs="0" nillable="false" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="CredentialCategoryRequirement">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="numberOfHours" type="double" />
+      <element name="seatTimeMeasurement" type="string" />
+      <element name="reciprocity" type="string" />
+      <element name="courseValidation" type="string" />
+      <element name="courseApprovalPeriod" type="string" />
+      <element name="onlineCEAllowed" type="boolean" />
+      <element name="correspondenceCEAllowed" type="boolean" />
+      <element name="courseAssessments" type="string" />
+      <element name="correspondenceAllowedPreLicensing" type="boolean" />
+      <element name="correspondenceAllowedPostLicensing" type="boolean" />
+      <element name="reportingFees" type="decimal" />
+      <element name="CERequiresProviderApproval" type="boolean" />
+      <element name="daysToGainProviderApproval" type="int" />
+      <element name="daysToGainCourseApproval" type="int" />
+      <element name="daysToGainCourseRenewal" type="int" />
+      <element name="CredentialCategory" type="vu360-lms-sf:CredentialCategory" nillable="false" />
+      <element name="name" type="string" />
+      <element name="description" type="string" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="CredentialCategory">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="name" type="string" />
+      <element name="categoryType" type="string" />
+      <element name="hours" type="decimal" />
+      <element name="credentials" type="vu360-lms-sf:Credential" nillable="false" maxOccurs="unbounded" minOccurs="0" />
+      <element name="completionDeadlineMonths" type="double" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="Credential">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="officialLicenseName" type="string" />
+      <element name="shortLicenseName" type="string" />
+      <element name="informationLastVerifiedDate" type="dateTime" nillable="true" />
+      <element name="totalNumberOfLicense" type="int" />
+      <element name="otherJurisdiction" type="string" />
+      <element name="active" type="boolean" />
+      <element name="credentialType" type="string" />
+      <element name="renewalDeadlineType" type="string" />
+      <element name="staggeredBy" type="string" />
+      <element name="staggeredTo" type="string" />
+      <element name="renewalFrequency" type="string" />
+      <element name="hardDeadlineMonth" type="string" nillable="true" />
+      <element name="hardDeadlineDay" type="string" nillable="true" />
+      <element name="hardDeadlineYear" type="string" nillable="true" />
+      <element name="description" type="string" nillable="true" />
+      <element name="preRequisite" type="string" nillable="true" />
+      <element name="requirements" type="vu360-lms-sf:CredentialCategoryRequirement" nillable="false" maxOccurs="unbounded" minOccurs="0" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="RegulatoryCategory">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="regulator" type="vu360-lms-sf:Regulator" nillable="false" maxOccurs="unbounded" minOccurs="0" />
+      <element name="categoryType" type="string" />
+      <element name="courseApprovalRequired" type="boolean" />
+      <element name="courseApprovalPeriod" type="double" />
+      <element name="courseApprovalPeriodUnit" type="string" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="CourseApproval">
+    <complexContent>
+      <extension base="vu360-lms-sf:RegulatoryApproval">
+        <sequence>
+          <element name="approvedCourseName" type="string" />
+      	  <element name="courseApprovalNumber" type="string" />
+          <element name="courseApprovaltype" type="string" />
+          <element name="approvedCreditHours" type="decimal" />
+          <element name="Course" type="vu360-lms-sf:Course" nillable="false" maxOccurs="1" minOccurs="1"/>
+          <element name="credentialCategory" type="vu360-lms-sf:CredentialCategory" nillable="false" maxOccurs="unbounded" minOccurs="0" />
+          <element name="active" type="boolean" />
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  
+  <complexType name="Course" >
+  	<sequence>
+  	  <element name="id" type="long" />
+      <element name="courseGUID" type="string" />
+      <element name="courseStatus" type="string" />
+      <element name="courseId" type="string" />
+      <element name="name" type="string" />
+      <element name="retired" type="boolean" />
+      <element name="code" type="string" />
+      <element name="finalExamInfo" type="string" />
+      <element name="publishedonstorefront" type="boolean" />
+      <element name="bussinesskey" type="string" />
+      <element name="approvedcoursehours" type="decimal" />
+      <element name="ceus" type="decimal" />
+      <element name="approvalNumber" type="string" />
+    </sequence>
+  </complexType>
+  
+  <complexType name="Regulator">
+    <sequence>
+      <element name="id" type="long" />
+      <element name="name" type="string" />
+      <element name="phone" type="string" nillable="true" />
+      <element name="fax" type="string" />
+      <element name="website" type="string" />
+      <element name="emailAddress" type="string" />
+      <element name="jurisdiction" type="string" />
+      <element name="address" type="vu360-lms-sf:Address" />
+      <element name="credentialCategory" type="vu360-lms-sf:CredentialCategory" nillable="false" maxOccurs="unbounded" minOccurs="0" />
+      <element name="active" type="boolean" />
+      <element name="CourseApprovalLink" type="string" />
+    </sequence>
+  </complexType>
+  	
+</schema>

@@ -1,0 +1,213 @@
+#set($ssn = $!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+<style>
+    a:link, a:visited{    
+    text-decoration:none;
+    }
+</style>
+<script>
+    function switchd(){
+    location.href="admSwitchManagerMode.do?switchBackUrl=" + window.location.href;
+    }
+	function switchRoleType(id, url, type){
+	location.href=url + "?" + type + "=" + id;
+	}
+</script>
+<div id="header" class="page_header">
+    <!-- logo -->
+    <div style="width:200px;float:left;">
+        #if($adminSelectedEntityType == 'NONE')
+            <div id="b1" class="currentUser">$brander.getBrandElement("lms.administrator.commonHeader.caption.currentcustomer"):<span class="current_user_message">$brander.getBrandElement("lms.administrator.commonHeader.caption.notset")</span>
+            </div>
+            #elseif($adminSelectedEntityType == 'CUSTOMER')
+                <div class="currentUser">$brander.getBrandElement("lms.administrator.commonHeader.caption.currentcustomer"): <span class="current_user_message">
+                        <a class="thumbnail" href="javascript:void(0);" id="adminHeaderLink">#simpleDotPadding($!{adminSelectedCustomer.name},24)</a>
+                </span>
+                </div>
+                <div class="span-1" id="adminHeaderLinkWindow">
+                    <div class="headerAdmin" title="Click here to hide">
+						#simpleDotPadding($!{adminSelectedCustomer.name},12)
+					</div>
+                    <div class="others">
+						Email: 
+						<span class="tool-tips" onclick="location.href='mailto:$!{adminSelectedCustomer.email}'">
+							#simpleDotPadding($!{adminSelectedCustomer.email},16)
+						</span>
+                    </div>
+                    <div class="others">
+						Login as: 
+						<span class="tool-tips" onclick="switchd();">
+							Manager
+						</span>
+                    </div>
+                    #if($adminSelectedCustomer.customerType.equalsIgnoreCase('b2c'))
+                        <div class="others">
+							Login as: 
+							<span class="tool-tips" onClick="window.location.href='switchuser.do?username=$!{customerUserName}&switchBackUrl='+window.location.href;">
+								Learner
+							</span>
+                        </div>
+                    #end
+                    <div class="others">
+						Reseller: 
+						<span class="tool-tips" onclick="switchRoleType($!{adminSelectedCustomer_Reseller.id},'admSelectDistributor.do', 'distributor');">
+							#simpleDotPadding($!{adminSelectedCustomer_Reseller.name},20)
+						</span>
+                    </div>
+                </div>
+                #elseif($adminSelectedEntityType == 'DISTRIBUTOR')
+                    <div class="currentUser">$brander.getBrandElement("lms.administrator.commonHeader.caption.currentdistributor"): 
+						<span class="current_user_message">
+                            <a class="thumbnail" href="javascript:void(0);" id="adminHeaderLink">
+								#simpleDotPadding($!{adminSelectedDistributor.name},24)
+							</a>
+						</span>
+                    </div>
+                    <div class="span-1" id="adminHeaderLinkWindow">
+                        <div class="headerAdmin" title="Click here to hide">
+							#simpleDotPadding($!{adminSelectedDistributor.name},12)
+						</div>
+                        <div class="others">Email: 
+							<span class="tool-tips" onClick="location.href='mailto:$!{adminSelectedDistributor.distributorEmail}'">
+								#simpleDotPadding($!{adminSelectedDistributor.distributorEmail},16)
+							</span>
+                        </div>
+                    </div>
+                #else
+                    <div class="currentUser">$brander.getBrandElement("lms.administrator.commonHeader.caption.currentlearner"): 
+						<span class="current_user_message">
+                            <a class="thumbnail" href="javascript:void(0);" id="adminHeaderLink">$!{adminSelectedLearner.vu360User.firstName}
+								$!{adminSelectedLearner.vu360User.lastName}
+							</a>
+						</span>
+                    </div>
+                    <div class="span-1" id="adminHeaderLinkWindow">
+                        <div class="headerAdmin" title="Click here to hide">
+							$!{adminSelectedLearner.vu360User.firstName} $!{adminSelectedLearner.vu360User.lastName}
+						</div>
+                        <div class="others">
+							Email: 
+							<span class="tool-tips" onClick="location.href='mailto:$!{adminSelectedLearner.vu360User.emailAddress}'">
+								$!{adminSelectedLearner.vu360User.emailAddress}
+							</span>
+                        </div>
+                        <div class="others">
+							Customer: 
+							<span class="tool-tips" onClick="switchRoleType($!{adminSelectedLearner_Customer.id}, 'admSelectCustomer.do', 'customer');">
+								$!{adminSelectedLearner_Customer.name}
+							</span>
+                        </div>
+                        <div class="others">
+							Reseller: 
+							<span class="tool-tips" onClick="switchRoleType($!{adminSelectedLearner_Reseller.id}, 'admSelectDistributor.do', 'distributor');">
+								$!{adminSelectedLearner_Reseller.name}
+							</span>
+                        </div>
+                        <div class="others">
+							Login as: 
+							<span class="tool-tips" onClick="window.location.href='switchuser.do?username=$!{adminSelectedLearner.vu360User.username}&switchBackUrl='+window.location.href;">
+								Learner
+							</span>
+                        </div>
+                    </div>
+                #end
+                <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+		</div>
+    <!-- logo-end -->
+    <!-- top-nav-right-menu -->
+    <div style="float:right;">
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Resellers", $userData, $ssn))
+            <div style="margin-right: 3px;" class="header_icon">
+                <a onclick="submitForm('Resellers','LMS-ADM-0019','adm_addDistributorMain.do')" tabindex="1" href="#" #if($menu == "Resellers") class="header_icon_selected" #end>
+                    <img id="administrator-resellers" onmouseover="document.getElementById('administrator-resellers').src='brands/default/en/images/headericons/hover/distributors.png'" onmouseout="document.getElementById('administrator-resellers').src='brands/default/en/images/headericons/distributors.png'"  #if($menu == "Resellers") src="brands/default/en/images/headericons/distributors.png" #else src="brands/default/en/images/headericons/distributors.png" #end class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Distributors")
+            	</a>
+            </div>
+        #end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Customers", $userData, $ssn))
+            <div class="header_icon">
+                <a onclick="submitForm('Customers','LMS-ADM-0013','adm_addCustomerMain.do?method=editCustomerProfile')" tabindex="2" href="#" #if($menu == "Customers") class="header_icon_selected" #end>
+ 				
+                    <img id="administrator-customers" src="brands/default/en/images/headericons/customers_on.png" onmouseover="this.src='brands/default/en/images/headericons/hover/customers_hover.png'" onmouseout="this.src='brands/default/en/images/headericons/customers_on.png'" class="icon_style" />
+					
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Customers")
+            	</a>
+            </div>
+        #end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Security", $userData, $ssn))
+            <div class="header_icon">
+                <a onclick="submitForm('Security','LMS-ADM-0011','mgr_manageSecurityRoles.do')" tabindex="3" href="#" #if($menu == "Security") class="header_icon_selected" #end>
+                    <img id="administrator-security" onmouseover="document.getElementById('administrator-security').src='brands/default/en/images/headericons/hover/security.png'" onmouseout="document.getElementById('administrator-security').src='brands/default/en/images/headericons/security.png'" src="brands/default/en/images/headericons/security.png" class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Security")
+            	</a>
+            </div>
+        #end
+		#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+            <div class="header_icon">
+
+			#if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0005", $userData, $ssn))
+			<a onclick="submitForm('Tools','LMS-ADM-0005','mgr_alertCourse.do')"
+			#elseif($userPermissionChecker.hasAccessToFeature("LMS-ADM-0006", $userData, $ssn))
+			<a onclick="submitForm('Tools','LMS-ADM-0006','mgr_sendMailToLearners.do')"
+			#elseif($userPermissionChecker.hasAccessToFeature("LMS-ADM-0007", $userData, $ssn))
+			<a onclick="submitForm('Tools','LMS-ADM-0007','mgr_viewAssignSurveyMain.do')"
+			#else
+			<a onclick="submitForm('Tools','LMS-ADM-0008','mgr_manageSurveys.do')"
+			#end
+                tabindex="4" href="#" #if($menu == "Tools") class="header_icon_selected" #end>
+                    <img id="administrator-tools" 
+                    onmouseover="document.getElementById('administrator-tools').src='brands/default/en/images/icon-tools-hover.png'" 
+                    onmouseout="document.getElementById('administrator-tools').src='brands/default/en/images/icon-tools-normal.png'" 
+                    src="brands/default/en/images/icon-tools-normal.png" class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.mycourses.header.Tools")
+            	</a>
+            </div>
+		#end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Reports", $userData, $ssn))
+            <div class="header_icon">
+                <a onclick="submitForm('Reports','LMS-ADM-0004','adm_ManageReports.do')"  tabindex="5" href="#" #if($menu == "Reports") class="header_icon_selected" #end>
+                    <img id="administrator-reports" onmouseover="document.getElementById('administrator-reports').src='brands/default/en/images/icon-reports-hover.png'" onmouseout="document.getElementById('administrator-reports').src='brands/default/en/images/icon-reports-normal.png'" src="brands/default/en/images/icon-reports-normal.png" class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Reports")
+            	</a>
+            </div>
+        #end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Users", $userData, $ssn))
+            <div class="header_icon">
+                <a onclick="submitForm('Users','LMS-ADM-0002','adm_learnerEnrollments.do?method=showSearchLearnerPage')"  tabindex="6" href="#" #if($menu == "Users") class="header_icon_selected" #end>
+                    <img id="administrator-learners" onmouseover="document.getElementById('administrator-learners').src='brands/default/en/images/icon-users-hover.png'" onmouseout="document.getElementById('administrator-learners').src='brands/default/en/images/icon-users-normal.png'"  src="brands/default/en/images/icon-users-normal.png" class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Users")
+                </a>
+            </div>
+        #end
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Search", $userData, $ssn))
+            <div class="header_icon">
+                <a onclick="submitForm('Search','LMS-ADM-0001','adm_searchMember.do')"  tabindex="7" href="#" #if($menu == "Search") class="header_icon_selected" #end>
+                    <img id="administrator-search" onmouseover="document.getElementById('administrator-search').src='brands/default/en/images/headericons/hover/search.png'" onmouseout="document.getElementById('administrator-search').src='brands/default/en/images/headericons/search.png'" src="brands/default/en/images/headericons/search.png" class="icon_style" />
+                    <br/>$brander.getBrandElement("lms.administrator.commonHeader.caption.Search")
+				</a>
+			</div>
+		#end
+		
+		<!-- LMS-15500 -->
+		#if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+	        #if($userPermissionChecker.hasAccessToFeatureGroup("Admin Predict Account", $userData, $ssn))
+				<div class="header_icon">
+					<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+						<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+						<br/>$brander.getBrandElement("lms.header.caption.Predict")
+					</a>
+				</div>
+			#end
+		#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') 
+			#if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+			<div class="header_icon">
+				<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+					<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+					<br/>$brander.getBrandElement("lms.header.caption.Predict") 
+				</a>
+			</div>
+			#end
+		#end
+	</div>
+<!-- top-nav-right-menu-end -->
+</div>

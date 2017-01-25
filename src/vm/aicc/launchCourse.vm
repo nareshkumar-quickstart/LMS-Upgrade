@@ -1,0 +1,78 @@
+<html>
+<META HTTP-EQUIV="cache-control" CONTENT="no-cache" />
+<META HTTP-EQUIV="expires" CONTENT="0" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
+
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.min.js"></script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+#**
+<!--
+#if ($context.course.courseType.equalsIgnoreCase("Scorm Course"))
+<script>document.write('<script src="javascript/lmsSCORMAdapter.js?ts=' + (new Date()).getTime() + '"\><\/script>');</script>
+<script type="text/javascript">
+	this.onbeforeunload = function () {
+        	var checkConfirm = getUnloadAwayConfirmation();
+        	
+        	if(checkConfirm !=null && checkConfirm !='')
+	        	return checkConfirm;
+        }
+        
+    this.onunload = function () {
+		        var msg = CloseSCORMCourseIfOpen(true); 
+		        if(msg !=null && msg != '')
+			        return msg;
+        }
+</script>
+#end
+-->
+**#
+<script language="javascript" type="text/javascript">
+	var launchWindow;
+    function launchCourse(courseId, enrollmentId) {    	
+        IS_LS360_SCORM = false;
+   		IS_LS360_SCORM = ($context.course.courseType.equalsIgnoreCase("Scorm Course"))? true:false;
+   		/*
+   		if (IS_LS360_SCORM)
+    	{
+    		stopBothTimers();
+    	}
+   		*/
+        var url = "/lms/lrn_launchCourse.do";
+        var params = "?method=displayLearnerProfile&source=AICC&externallmssessionid=${context.externallmssessionid}&externallmsurl=${context.externallmsurl}&lmsprovider=${context.lmsProvider}&courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'coursePage','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+        launchWindow.focus();
+        launchWindow.opener=this.window;
+    }
+    
+    function launchCourse(courseId, enrollmentId, courseType) {        	       	 
+        	IS_LS360_SCORM = false;       	
+        	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+        	/*
+        	if (IS_LS360_SCORM)
+	    	{
+	    		stopBothTimers();
+	    	}	        	
+        	*/        	
+            var url = "#springUrl("/lrn_launchCourse.do")";
+			var params = "?method=displayLearnerProfile&source=AICC&externallmssessionid=${context.externallmssessionid}&externallmsurl=${context.externallmsurl}&lmsprovider=${context.lmsProvider}&courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            
+            
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+           
+        	}
+        	
+
+</script>
+
+<body onLoad="launchCourse('$context.courseGUID','$context.enrollmentId', '$context.course.courseType');">
+If your course did not automatically launch in a new window, <a href="javascript:launchCourse('$context.courseGUID','$context.enrollmentId', '$context.course.courseType')">click here to launch your course</a>.
+</body>
+</html>

@@ -1,0 +1,32 @@
+	#set($ssn=$!{request.getSession(true)})
+	#set($menu = $ssn.getAttribute("featureGroup"))
+<div id="frame_header" class="page_header">
+	<!-- logo -->
+		<div style="width:200px; float:left;">
+		 <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+	</div>
+	<!-- logo-end -->
+	<!-- top-nav-right-menu -->
+	<div class="headerMenuContainer2">
+        #if($userPermissionChecker.hasAccessToFeatureGroup("Courses", $userData, $ssn))
+        	<div onclick="submitForm('Courses','ManageSynchronousCourse','ins_manageSynchronousCourse.do')" class="header_icon" onmouseover="document.getElementById('reports_icon').src='brands/default/en/images/headericons/hover/trainingplans.png'" onmouseout="document.getElementById('reports_icon').src='brands/default/en/images/headericons/trainingplans.png'"><a tabindex="3" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "Courses")style="font-weight:bold" #end><img id="reports_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconMyCoursesGif")" alt=""  /><br />COURSES</a></div>
+        #end
+        <div onclick="submitForm('Courses','LMS-INS-0003','ins_synchronousClasses.do')" class="$brander.getBrandElement("lms.mycourses.cssClass.myCourse")" onmouseover="document.getElementById('mycourses_icon').src='brands/default/en/images/profiles_hover.png'" onmouseout="document.getElementById('mycourses_icon').src='brands/default/en/images/profiles_on.png'">
+        	<a tabindex="1" href="#" class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")" #if($menu == "Courses")style="font-weight:bold" #end>
+        	<img id="mycourses_icon" height="60" src="$brander.getBrandElement("lms.pixel.iconInstructorHomeOutGif")" alt="" /><br />HOME </a>
+        </div>
+		
+		<!-- LMS-15500 -->
+		#if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') 
+	        #if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+				<div class="header_icon">
+					<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+						<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+						<br/>$brander.getBrandElement("lms.header.caption.Predict")
+					</a>
+				</div>
+			#end
+		#end	
+     </div>
+	 <!-- top-nav-right-menu-end -->
+</div>

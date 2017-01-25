@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" language="javascript">
+      $(document).ready(function()
+      {
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+        $('#content2a').scroll(function()
+        {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+    function cancelform() {
+        document.getElementById("action").value="cancelQuestionInList";
+        document.surveyForm.submit();
+    }
+
+    function saveform(){
+        document.getElementById("action").value="saveEditSurveyQuestionInList";
+        document.surveyForm.submit();
+    }
+
+   function addRemoveResponce(act){
+   
+			if(act == "add"){
+				document.getElementById("addRemove").value="add";
+				document.getElementById("action").value="editaddRemoveResponces";
+			}else if(act == "remove"){
+				document.getElementById("addRemove").value="remove";
+				document.getElementById("action").value="removeResponse";
+			}
+			 document.surveyForm.submit();
+	}
+    function submitFormWithAddRemove(){
+        document.getElementById("addRemove").value="none";
+        document.surveyForm.submit();
+    }
+
+    function setPersonalInfo(index) {
+        if(document.getElementById('piCheck'+index).checked) {
+            document.getElementById('pi'+index).value="true";
+        }else{
+            document.getElementById('pi'+index).value="false";
+        }
+    }
+    function setResponceRequired(index) {
+        if(document.getElementById('rrCheck'+index).checked) {
+            document.getElementById('rr'+index).value=true;
+        }else{
+            document.getElementById('rr'+index).value=false;
+        }
+    }
+
+    function setSelected(objCheckbox,hiddenId) {
+        document.getElementById(hiddenId).value=objCheckbox.checked;
+    }
+</script>
+<style>
+	.textAreaforNotes {
+		border: 1px solid #DDDDDD; 
+		height: 45px; 
+		margin: 2px 5px 0 0; 
+		overflow-y: auto; 
+		position: static; 
+		text-align: left; 
+		width: 98%;
+	}
+</style>
+</head>
+
+<body onLoad="document.surveyForm.questionArea.focus();">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                #parse("snippets/adminHeader.vm")
+        #else
+                #parse("snippets/managerHeader.vm")
+        #end
+        <!-- header-end -->
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <!-- left-menu-content -->
+            #parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-menu-content-end -->
+		</table>
+	</td>
+	
+    <TD id="content" >
+	<div id="scrollable">
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_surveys">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.surveys.managesurveys.caption.EditQuestion")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.addQuestion.info.caption.description")</div>
+			</td>
+		    </tr>
+		</table>
+            <form name="surveyForm" action="adm_manageSyrvey.do" method="POST">
+
+            #springBind("manageSurveyForm.*")
+            #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+
+
+            <!-- Logo+Manage-User-end -->
+
+            <input type="hidden" id="action" name="method" value="addQuestionView"/>
+
+            <div style="margin-bottom: 10px; overflow-h: auto;" class="search_box_result" id="question">
+
+                <!-- Result Header Start -->
+                <div class="box_header" id="resultHeader">
+                    <!-- Result Heading -->
+                    <div class="box_heading">
+                        $brander.getBrandElement("lms.administrator.searchMember.caption.question")
+                    </div>
+                </div>
+                <!-- Result Header End -->
+
+                <table>
+                <tr>
+                    <td width="150px">$brander.getBrandElement("lms.manageSecurityRoles.caption.Type")</td>
+                    <td>
+                        <div class="input_field_area-user-f3" style="width:40%">
+                        #springBind("manageSurveyForm.surveyQuestionType")
+                            <select name="${status.expression}"  onChange="document.surveyForm.submit();" id="show" disabled>
+                                #foreach($questionType in $context.surveyQuestionTypes)
+                                    <option value="$questionType" #if($questionType == $!{status.value}) selected #end>$brander.getBrandElement("$questionType")</option>
+                                #end
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Question</td>
+                    <td  width="450px">
+                        <div class="managerBtn-popup" >
+                            <div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.manager-bottom-space4")">
+                                #springBind("manageSurveyForm.surveyQuestionText")
+                                <textarea id="" rows="" name="${status.expression}" cols="" class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.inputfield-box-L2-in-c")">$!{status.value}</textarea>&nbsp;
+                            </div>
+                            <!-- 6 -->
+                            <script language="javascript" type="text/javascript" >
+                                function toggleCheckBoxValue(){
+                                    var chkboxValue = document.getElementById('response-required-checkbox').value ;
+                                    if ( chkboxValue == "false")
+                                        chkboxValue = true;
+                                    else if  ( chkboxValue == "true" )
+                                        chkboxValue = false;
+                                    document.getElementById('response-required-checkbox').value =chkboxValue;
+                                }
+                            </script>
+                            
+                        
+                    </td>
+                </tr>
+                <tr height="20px;"> </tr>
+                <tr>
+                	<td> </td>
+                	<td>
+                		<div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.manager-bottom-space4")">
+							#springBind("manageSurveyForm.surveyQuestionType")
+							 #if(${status.value} != "survey.question.custom" )
+                            #springBind("manageSurveyForm.surveyQuestionRequired")
+                            <p>
+                                <input type="checkbox" onChange="toggleCheckBoxValue();" name="checkbox" #if($!{status.value} == true) checked #end/>
+                                <input type="hidden" id="response-required-checkbox" name="$!{status.expression}" value="$!{status.value}" />
+                                $brander.getBrandElement("lms.administrator.searchMember.caption.responserequired")
+                            </p>
+							#end
+                            </div>
+                	</td>
+                </tr>
+                #if($context.displayNotes == "true")
+                <tr>
+                	<td height="30px;" width="80px;" valign="top"><div>$brander.getBrandElement("lms.administrator.searchMember.caption.notes")<div></td>
+                	<td>
+                		#set($notes = $context.notes.get($context.questionId))
+						<div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.manager-bottom-space4")" style="position:static;" >
+							  <textarea id="" rows="" cols="" disabled="disabled"  name="${status.expression}" class="textAreaforNotes" style="position:static;">$!notes</textarea>&nbsp;
+						</div>
+					</td>
+                </tr>
+                #end
+                
+                </table>
+
+            </div>
+
+            #springBind("manageSurveyForm.surveyQuestionType")
+            #if(${status.value} == "survey.question.multiplechoice.multipleselect" || ${status.value} == "survey.question.dropdown.singleselect"  )
+                <div style="margin-bottom: 10px; height:140px" class="search_box_result" id="question">
+                <!-- Result Header Start -->
+                    <div class="box_header" id="resultHeader">
+                        <!-- Result Heading -->
+                        <div class="box_heading">
+                            RESPONSE
+                        </div>
+                    </div>
+                    <!-- Result Header End -->
+                    <table>
+                    <tr>
+                        <td width="150px"><div style="margin-left: 10px; margin-top: 0px;">Answer Choices (each choice on separate line)</div></td>
+                        <td width="450px">
+                            #springBind("manageSurveyForm.currentMultipleSelectSurveyQuestion.surveyAnswerLines")
+                            <div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.manager-bottom-space4")">
+                                <textarea id="" rows="" cols="" name="${status.expression}" class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.inputfield-box-L2-in-d")">$!{status.value}</textarea>&nbsp;
+                            </div>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+            #end
+
+            #springBind("manageSurveyForm.surveyQuestionType")
+            #if(${status.value} == "survey.question.multiplechoice.singleselect" )
+            <div style="margin-bottom: 10px; height:140px" class="search_box_result" id="question">
+            <!-- Result Header Start -->
+                <div class="box_header" id="resultHeader">
+                    <!-- Result Heading -->
+                    <div class="box_heading">
+                        RESPONSE
+                    </div>
+                </div>
+                <!-- Result Header End -->
+                <table>
+                <tr>
+                    <td width="150px">
+                        <div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.group-name4")">
+                        <div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.block_text_in-r-fc")">
+                            $brander.getBrandElement("lms.editMultipleChoice.caption.AnswerChoices")</div><div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.Org-grp_4c")">$brander.getBrandElement("lms.editMultipleChoice.caption.eachChoice")</div>
+                        </div>
+                    </td>
+                    <td width="450px">
+                        #springBind("manageSurveyForm.currentSingleSelectSurveyQuestion.surveyAnswerLines")
+                        <!-- 6 -->
+                        <div class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.manager-bottom-space4")">
+                            <textarea id="notesText" rows="" cols="" name="${status.expression}" class="$brander.getBrandElement("lms.editMultipleChoice.cssClass.inputfield-box-L2-in-d")">$!{status.value}</textarea>&nbsp;
+                        </div>
+                    </td>
+                </tr>
+                </table>
+            </div>
+            #end
+
+            #springBind("manageSurveyForm.surveyQuestionType")
+            #if(${status.value} == "survey.question.personal.information" )
+                <div style="margin-bottom: 10px; height:auto" class="search_box_result" id="question">
+                    <!-- Result Header Start -->
+                    <div class="box_header" id="resultHeader">
+                        <!-- Result Heading -->
+                        <div class="box_heading">
+                            Personal Information
+                        </div>
+                    </div>
+                    <!--  Table  -->
+                    <table>
+                        #springBind("manageSurveyForm.mngPersonalInfos")
+                        #set($totalCount = $!{status.value.size()} - 2)
+                        #foreach($count in [0..$totalCount])
+                            <tr>
+                                <td height="25%" width="150px;">
+                                    #springBind("manageSurveyForm.mngPersonalInfos[$count].selected")
+                                    <input type="checkbox" id="piCheck0" name="checkbox" class="ques-check" #if($!{status.value}) checked #end onclick="setSelected(this,'${status.expression}');"/>
+                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                    #springBind("manageSurveyForm.mngPersonalInfos[$count].personalInfoItem.displayName")
+                                    <div class="ques-check-value" style="width:80%;float:right;margin-top:2px;">$!{status.value}</div>
+                                </td>
+                                <td height="25%" width="150px;">
+                                    #springBind("manageSurveyForm.mngPersonalInfos[$count].required")
+                                    <input type="checkbox" id="rrCheck0" name="checkbox" class="ques-check" #if($!{status.value}) checked #end onclick="setSelected(this,'${status.expression}');"/>
+                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                    <div class="ques-check-value" style="width:80%;float:right;margin-top:2px;">$brander.getBrandElement("lms.administrator.searchMember.caption.responserequired")</div>
+                                </td>
+                            </tr>
+                        #end
+                    </table>
+                </div>
+            #end
+
+            #springBind("manageSurveyForm.surveyQuestionType")
+            #if(${status.value} == "survey.question.custom" )
+
+                <div id="add-remove-responses" >
+                    <input type="hidden" name="addRemove" id="addRemove" value="" >
+                    <table border="0" cellpadding="0" celllspacing="0" width="100%">
+                        <tr>
+                            <td width="130">
+                                <div class="btn-left" style="margin-left:15px;">
+                                    <a class="button" onClick="addRemoveResponce('add');"><span class="button">Add Response</span></a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-left" >
+                                    <a class="button" onClick="addRemoveResponce('remove');"><span class="button">Remove Response</span></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                #set($index = 0)
+                #foreach($loop in [1..${context.resNumber}])
+                    #springBind("manageSurveyForm.aggregateSurveyQuestionItem[$index]")
+                               #set($aggregateSurveyQuestion = $status.value)
+					<div style="margin-bottom:10px; margin-top:10px; height:auto" class="search_box_result" id="question$loop">
+						<!-- Result Header Start -->
+						<div id="resultHeader" class="box_header">
+							<input type="checkbox" style="float:left;" name="responseCheck" value=$aggregateSurveyQuestion.question.id></input>
+							<!-- Result Heading -->
+							<div class="box_heading">
+								$brander.getBrandElement("lms.administrator.searchMember.caption.response")
+							</div>
+						</div>
+                        <!--  Table  -->
+                        <table>
+                            <tr>
+                                <td height="25px" width="125px">
+                                    <span style="margin-left:10px;">Label</span>
+                                </td>
+                                <td width="25px">
+                                    <div class="required_field" style="margin-left:10px; margin-right:0;">*</div>
+                                </td>
+                                #springBind("manageSurveyForm.responceLabels[$index]")
+                                <td width="450px">
+                                    <input type="text" name="${status.expression}" style="width:150px;" value="$!{status.value}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="25px" width="125px">
+                                    <span style="margin-left:10px">Type</span>
+                                </td>
+                                <td width="25">
+                                    <div class="required_field" style="margin-left:10px; margin-right:0; visibility:hidden;">*</div>
+                                </td>
+                                <td width="450px">
+                                    #springBind("manageSurveyForm.customQuestionResponceTypes[$index]")
+                                    <select name="${status.expression}" disabled style="margin:10px; margin-left:0; width:150px;" onChange="submitFormWithAddRemove();" >
+                                        #foreach($questionType in $context.customResponceTypes)
+                                            <option value="$questionType" #if($questionType == $!{status.value}) selected #end>$brander.getBrandElement("$questionType")</option>
+                                        #end
+                                    </select>
+                                </td>
+                            </tr>
+                            #springBind("manageSurveyForm.customQuestionResponceTypes[$index]")
+                            #set($resType = ${status.value})
+                            #if($resType == "survey.customresponce.textbox")
+                                <tr id="response-text-limit" >
+                                    <td valign="top" height="25" width="150">
+                                        <span style="margin-left:10px">Characters</span>
+                                    </td>
+                                    <td valign="top">
+                                        <div class="required_field" style="margin-left:10px; margin-right:0; visibility:hidden;">*</div>
+                                    </td>
+                                    <td valign="top">
+                                        #springBind("manageSurveyForm.isMultiline[$index]")
+                                        <input type="radio" #if(${status.value} == true) checked="checked" #end name="${status.expression}" value=true style="float:left;" />
+                                        <div style="float:left; margin-left:5px; margin-top:3px;">Multiline <span style="font-size:10px; color:#666666;">(Unlimited Characters)</span></div>
+                                        <input type="radio" #if(${status.value} == false) checked="checked" #end name="${status.expression}" value=false style="float:left; margin-left:15px;" />
+                                        <div style="float:left; margin-left:5px; margin-top:3px;">Single Line <span style="font-size:10px; color:#666666;">(< 256 Characters)</span></div>
+                                    </td>
+                                </tr>
+                            #end
+                            #if($resType == "survey.customresponce.multipleselect" || ${status.value} == "survey.customresponce.singleselect")
+                                <tr>
+                                    <td valign="top" height="85px" width="125px" >
+                                        <div style="margin-left:10px; margin-top:10px">Answer Choices (each choice on separate line)</div>
+                                    </td>
+                                    <td valign="top" width="25px">
+                                        <div class="required_field" style="margin-left:10px; margin-right:0; margin-top:10px">*</div>
+                                    </td>
+                                    <td valign="top" width="450px">
+                                        #springBind("manageSurveyForm.answerChoices[$index]")
+                                        <textarea rows="" cols="" name="${status.expression}" style="width:470px; height:65px; margin-top:10px;">$!{status.value}</textarea>
+                                    </td>
+                                </tr>
+                            #end
+                            <tr id="response-required-multiple">
+                                                               <td height="25px" colspan="3">
+                                                               <script>
+                                                               function setVal(idCkbox){
+                                                               
+                                                               var realId="req"+idCkbox;
+
+                                                               var value=document.getElementById(realId).value;
+                                                              
+                                                               if(value=="true"){
+                                                               document.getElementById(realId).value="false";
+                                                               }
+                                                               else{
+                                                               document.getElementById(realId).value="true";
+                                                               }
+                                                               }
+															   function check(){
+															   alert("fff");
+															   document.getElementById(response-required-checkbox).checked;
+															   }
+                                                               </script>
+                                                                       #springBind("manageSurveyForm.resRequired[$index]")
+                                                                       <input id="req$index" type="hidden" name="${status.expression}" value="${status.value}" >
+                                                                       <input type="checkbox" name="checkbox" id="response-required-checkbox" onClick="setVal('$index');" style="margin-left:10px;" #if(${status.value}=="true") checked #end/>
+                                                                  $brander.getBrandElement("lms.administrator.searchMember.caption.responserequired")
+                                                               </td>
+                                                       </tr>
+                        </table>
+                    </div>
+                    #set($index = $index + 1)
+                #end
+            #end
+
+				<div style="float:right; margin-top:15px;">
+					  <a onClick="saveform();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="cancelform();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+                <input type="hidden" id="actionmethod" name="method" value=""/>
+          
+            <!-- scrollable-div -->
+
+            </form>
+        </div>
+    </td></tr>
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+        <!-- footer -->
+		#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+		   #parse("snippets/adminFooter.vm")
+		#else
+		   #parse("snippets/managerFooter.vm")
+		#end
+		<!-- footer-end -->
+		</td></tr>
+</table>
+</body>
+</html>

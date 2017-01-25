@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+	function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.viewCustomerEntitlementForm.submit();
+    } 
+	function deleteEntitlements(buttonclick){
+		var isChecked = false;
+		if (document.viewCustomerEntitlementForm.entitlementIds.checked) {
+			isChecked = true;
+		}
+		else {		
+			for(var i = 0; i < document.viewCustomerEntitlementForm.entitlementIds.length; i++) { 
+				if(document.viewCustomerEntitlementForm.entitlementIds[i].checked) {
+					isChecked = true;
+				}
+			}
+		}
+
+		if (isChecked) {
+	           	confirm("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")", function () {
+					document.getElementById('action').value=buttonclick	
+					document.viewCustomerEntitlementForm.submit();			
+				});
+        } else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+    
+	$(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+	});
+
+</script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content --><!-- <div class="leftmenu-top-shadow"></div> -->
+        #parse("snippets/adminCustomerLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="courseLogoCustomer">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.administrator.View.caption.CustomerEntitlements")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.administrator.View.caption.subtitle")</div>
+					</td>
+				    </tr>
+				</table>            
+ 
+            <!-- Logo+Manage-User-end -->
+
+            <!--Group-Name-div -->
+            <div class="group-name">
+                <div>$!{context.selectedCustomer.Name}</div>
+            </div>
+
+            <!-- Group-Name-div -->
+            $pager.setItems($context.CustomerEntitlementsList)
+            #set($totalCount = $pager.total)
+            #if($pager.hasItems())
+                #set($pageFirstIndex = $pager.firstIndex)
+                #set($pageLastIndex = $pager.lastIndex)
+                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                #set($currentPageCount = $pageLastIndex + 1)
+ 		    #set($pageCurrIndex = $pager.index)
+
+            #else
+                #set($pageFirstIndex = 0)
+                #set($pageLastIndex = 0)
+                #set($currentPageSize = 0)
+                #set($currentPageCount = 0)
+		    #set($pageCurrIndex = 0)
+            #end
+            <form name="viewCustomerEntitlementForm" method="get" action="adm_SearchEntitlements.do">
+				<input type="hidden" id="action" value="" name="action">
+                <div id="resultBox" class="content-Block-new"><!-- content-Block-new -->
+                    <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                        <div style="float:left; height:23px;">
+                            <div style="float:left; margin-top:2px;">
+								<a onClick="window.location.href='adm_addCustomerContract.do?method=showForm';" style="text-decoration:none;">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.administrator.View.caption.AddEntitlements")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+                        </div>
+						<!-- LMS-15701 - LMS allows customer contracts to be deleted
+						<div style="float:left; height:23px;">
+                            <div style="float:left; margin-top:2px;">
+								<a onClick="deleteEntitlements('removeEntitlement');" style="text-decoration:none;">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.administrator.View.caption.RemoveContracts")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+                        </div>
+                        -->
+                        <!-- All Icon -->
+                        <a href="adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&showAll=true">
+                                <div id="e14d" class="icon_all"  onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" ></div>
+                        </a>
+                        #if( $pager.nextIndex )
+                        <div id="e14c" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="window.location.href='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&pageIndex=$pager.nextIndex';" ></div>
+                        #else
+                        <div class="icon_disabled">&nbsp;</div>
+                        #end
+                        #if( $pager.prevIndex )
+                        <div id="e14b" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="window.location.href='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&pageIndex=$pager.prevIndex';" ></div>
+                        #else
+                        <div class="icon_disabled">&nbsp;</div>
+                        #end
+                        #set($totalCountminus1 = $totalCount - 1)
+                        #if($pageFirstIndex == 0 && $pageLastIndex <= 9 && $pageLastIndex!=0)
+                        #set($x = $pageFirstIndex+1)
+                        #elseif($pageFirstIndex > 0)
+                        #set($x = $pageFirstIndex+1)
+                        #elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+                        #set($x = $pageFirstIndex+1)
+                        #else
+                        #set($x = 0)
+                        #end
+                        #if($pageLastIndex != 0)
+                        #set($y = $pageLastIndex+1)
+                        #else
+                        #set($y = 0)
+                        #end
+                        <div id="e14a" style="float:right;margin-top: 5px;" class="">$brander.getBrandElement("lms.administrator.entitlementSearch.caption.Showing") $x - $y $brander.getBrandElement("lms.administrator.entitlementSearch.caption.of") $totalCount </div>
+                    </div><!-- Result Header end -->
+
+                    <div id="searchResult"><!-- searchResult -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17"><input type="radio" id="chkAll" name="selectedEntitlements" style="display:none" ></td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.viewAllEntitlements.caption.EntitlementName")</td>
+                                <td class="box_subheader">Contract Type</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.administrator.View.caption.SeatsOrdered")</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.administrator.View.caption.SeatsUsed")</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.administrator.View.caption.SeatsRemaining")</td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.viewAllEntitlements.caption.ExpirationDate")</td>
+                            </tr>
+                            #if($currentPageSize > 0)
+                                #set($count = 0)
+                                #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                    #set($customerEntitlement = $context.CustomerEntitlementsList.get($loopIndex))
+                                    #if($count%2 == 0)
+                                        #set($alternate="row_1")
+                                    #else
+                                        #set($alternate="row_2")
+                                    #end
+                                    <tr>
+						    <td class="$alternate"> 
+						    																					
+                                        <input type="radio" name="entitlementIds" value="$!{customerEntitlement.Id}"  id="chk$velocityCount" #if(${customerEntitlement.SystemManaged})disabled="disabled"#end ></td>                                                                                
+                                        <td class="$alternate">
+		                                    #if($customerEntitlement.enrollmentType=='Subscription')
+		                                    	<a href="adm_editCustomerContract.do?method=viewSubscriptionCustEntitlementDetails&contractId=$!{customerEntitlement.Id}">$!{customerEntitlement.Name}</a>
+		                                    	#else
+		                                    	<a href="adm_editCustomerContract.do?method=viewCustEntitlementDetails&contractId=$!{customerEntitlement.Id}">$!{customerEntitlement.Name}</a>
+		                                   	#end
+                                        </td>
+                                        
+                                        <td class="$alternate">#if ($customerEntitlement.enrollmentType == 'CourseGroup') Course Group #else $customerEntitlement.enrollmentType #end</td>
+                                        <td class="$alternate">#if(${customerEntitlement.AllowUnlimitedEnrollments}) Unlimited #else ${customerEntitlement.MaxNumberSeats} #end</td>
+                                        #if($!{customerEntitlement.NumberSeatsUsed}<=0)
+                                            <td class="$alternate">0</td>
+                                        #else
+                                            <td class="$alternate">$!{customerEntitlement.NumberSeatsUsed}</td>
+                                        #end
+                                        <td class="$alternate" >#set($remainSeats = ${customerEntitlement.MaxNumberSeats}-${customerEntitlement.NumberSeatsUsed}) 
+                                            #if(${customerEntitlement.AllowUnlimitedEnrollments}) Unlimited #else $!{remainSeats} #end
+                                        </td>
+                                        <td class="$alternate">#if(${customerEntitlement.endDate}) $formUtil.formatDate(${customerEntitlement.endDate}, 'MM/dd/yyyy') #else $formUtil.daysToDateConversion(${customerEntitlement.startDate}, ${customerEntitlement.defaultTermOfServiceInDays}) #end</td>
+
+                                    </tr>
+                                    #set($count = $count+1)
+                                #end
+                            #else
+                            <tr>
+                                <td colspan="7" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                    <div class="result_blank">No records found. </div>
+                                </td>
+                            </tr>
+                    #end
+                        </table>
+                    </div><!-- searchResult -->
+
+                </div><!-- content-Block-new -->
+            </form>
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+        </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+
+    
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.administrator.customerContract.caption.confirmDelete")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+</div>
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.administrator.customerContract.caption.noSelect")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+
+</body>
+</html>

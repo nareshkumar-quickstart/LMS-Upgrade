@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<link href="brands/default/en/css/css_search_net.css" type="text/css" rel="stylesheet">
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" type="text/javascript">
+
+    $(document).ready(function(){
+        if ($('#right-pannel').height()<$(window).height()) {
+            $('#right-pannel').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        }
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+</script>
+</head>
+
+<body>
+<form name="manageform" id="manageform" method="post" action="ins_viewCourseGroups.do">
+
+<!-- main-container -->
+<div id="main-container">
+
+	<!-- header -->
+	#parse("snippets/instructorHeader.vm")
+	<!-- header-end -->
+	
+	<!-- content-area -->
+	<div id="frame_body">
+		
+		<!-- left-pannel-content -->
+		#parse("snippets/instructorCourseLeftMenu.vm")
+		<!-- left-pannel-content -->
+		
+		<!-- right-pannel -->
+		<div id="right-pannel" class="scrollable">	
+		
+			<!-- Logo+Manage-User -->
+	        <div class="page_description" id="pageDescription">
+				<!-- Page Icon -->
+				<div id="logoHolder" class="courseLogoCourses">&nbsp;</div>				
+				<!-- Page Heading -->
+				<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.instructor.manageCourseGroup.removeCourseGroup.caption.title")</div>
+				<!-- Page Description -->
+				<div id="pageDescriptionText">$brander.getBrandElement("lms.instructor.manageCourseGroup.removeCourseGroup.caption.subtitle")</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Search Box -->
+			<div id="resultBox" class="search_box_result" style="border-bottom:none;">
+			
+				<!-- Result Header Start -->
+				<div id="resultHeader" class="box_header">
+					<!-- Button panel -->
+					<div style="float:left; height:23px;">	
+						<div class="table-heading">$brander.getBrandElement("lms.instructor.manageCourseGroup.removeCourseGroup.caption.summary")</div>
+					</div>
+					<!-- Button panel - end -->
+				</div>                
+	           	<!-- Result Header End -->
+				
+				<!-- Search Result Start -->
+				<div id="searchResult">
+					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						<tr bgcolor="#efefef">							
+							<td class="box_subheader" style="height: 25px; padding-left: 5px; width:30%;" >$brander.getBrandElement("lms.instructor.manageCourseGroup.removeCourseGroup.caption.courseGroup")</td>
+							<td class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:70%;" >$brander.getBrandElement("lms.instructor.manageCourseGroup.removeCourseGroup.caption.status")</td>							
+						</tr>
+						#foreach($cd in $context.courseGroupDeletetionStatus)
+						<tr bgcolor="#efefef">							
+							<td class="row_1" >$cd.get("name")</td>
+							<td class="row_1" style="border-right: medium none;" >$brander.getBrandElement($cd.get("status"))</td>
+						</tr>
+						#end
+					</table>
+				</div>				
+			    <!-- Search Result End -->
+	    	</div>
+	    	<!-- Search Box - end-->
+			
+			<!-- Wizard Footer button-div -->
+            <div class="managerBtn">
+				<div style="float: right; margin-top:25px; margin-right:0px;">
+					<div>
+						<a onClick="document.manageform.submit();">
+							<div class="btn_start"></div>
+							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnOK")</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+				</div>  
+			</div>
+			
+			<!-- Wizard Footer button-div - end -->
+			
+			<!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+			
+		</div>		
+		<!-- right-pannel end -->		
+    </div>
+    <!-- content-area end -->
+	
+	<!-- footer -->
+	#parse("snippets/instructor/instructorFooter.vm")
+	<!-- footer-end -->
+</div><!-- main-container -->
+</form>
+</body>
+</html>

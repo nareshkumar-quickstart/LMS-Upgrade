@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript" language="javascript">
+
+        function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.alert_message_box_text').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+            }
+        function FormSubmit(buttonclick) {
+            var boolChecked=0;
+            var objCheckBoxes = document.getElementsByName("chk");
+            var countCheckBoxes = objCheckBoxes.length;
+            for(var i = 0; i < countCheckBoxes; i++){
+            if(objCheckBoxes[i].checked){
+            boolChecked=1;
+            break;
+            }
+            }
+            if(boolChecked==0){
+            alert("Please check one");
+            }else{
+            document.getElementById('action').value=buttonclick;
+            document.viewEnrollmentForm.submit();
+            }
+        }
+
+        function openPopup(popupName,id) {
+            var boolChecked=0;
+            var swappedID;
+            var objCheckBoxes = document.getElementsByName("chk");
+            var countCheckBoxes = objCheckBoxes.length;
+            //alert(countCheckBoxes);
+            for(var i = 0; i < countCheckBoxes; i++){
+            if(objCheckBoxes[i].checked){
+            boolChecked=1;
+            break;
+            }
+            }
+            if(boolChecked==0){
+            alert("Please check one");
+            }else{
+            if(popupName=='extend'){
+            }
+            else if(popupName=='swap'){
+            var j=0;
+            for(var i = 0; i < countCheckBoxes; i++){
+            if(objCheckBoxes[i].checked){
+            swappedID=objCheckBoxes[i].value;
+            j++;
+            }
+            }
+            if(j>1){
+            alert("Please check one");
+            }else{
+            window.location.href="mgr_swapCourse.do?Id=$!{context.userId}&swappedId="+swappedID;
+            }
+            }
+            }
+        }
+
+       
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+
+              } else {  
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+        function setEnrollmentSelection(checkbox, id){
+            document.getElementById(id).value = checkbox.checked;
+        }
+
+        function selectAllCheckBoxes(countCheckBoxes, chkBox, count)
+        {
+            var objCheckAll=document.getElementById("chkAll"+count);
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "]";
+                    var objCheckBox=document.getElementById("chk"+count+i);
+                    objCheckBox.checked=true;
+                    var hiddenid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "].selected";
+                    changeRowColor(objCheckBox);
+                    setEnrollmentSelection(objCheckBox,hiddenid);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "]";
+                    var objCheckBox=document.getElementById("chk"+count+i);
+                    objCheckBox.checked=false;
+                    var hiddenid = "viewLearnerEntitlementItems[" + count + "].viewLearnerEnrollmentItems[" + i + "].selected";
+                    changeRowColor(objCheckBox);
+                    setEnrollmentSelection(objCheckBox,hiddenid);
+                }
+            }
+        }
+
+        function showExtendEnrollment(){
+            document.getElementById('actionMethod').value='showExtendEnrollment';
+            document.viewLearnerEnrollmentForm.submit();
+        }
+        function EditCancel() {
+            document.getElementById('actionMethod').value='cancelEnrollment';
+            document.viewLearnerEnrollmentForm.submit();
+        }
+        function expireEnrollment(){
+            if ($("INPUT[type='checkbox'][name='allCourses']:checked").length>0) {
+                confirm("$brander.getBrandElement("lms.enrollment.showEnrollments.expireCourses.warning")", function () {
+                    document.getElementById('actionMethod').value='expireEnrollment';
+                    document.viewLearnerEnrollmentForm.submit();
+                });
+            }else {
+                $('#selectLearner').modal({close:false,position: ["40%",]});
+            }
+        }
+
+        function dropEnrollment(){
+            if ($("INPUT[type='checkbox'][name='allCourses']:checked").length>0) {
+                confirm("$brander.getBrandElement("lms.enrollment.showEnrollments.dropCourses.warning")", function () {
+                    document.getElementById('actionMethod').value='dropEnrollment';
+                    document.viewLearnerEnrollmentForm.submit();
+                });
+            }else {
+                $('#selectLearner').modal({close:false,position: ["40%",]});
+            }
+        }
+
+        function swapEnrollment(){
+            document.getElementById('actionMethod').value='swapEnrollment';
+            document.viewLearnerEnrollmentForm.submit();
+        }
+
+
+        $(document).ready(function()
+        {
+           
+        });
+    </script>
+
+</head>
+
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/managerHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <form name="viewLearnerEnrollmentForm" method="post" action="mgr_learnerEnrollment.do">
+            <input type="hidden" id="actionMethod" name="method" value=""/>
+            <!-- content-area -->
+
+            <!-- left-pannel-content -->
+            #parse("snippets/planEnrollLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table></td>
+			
+<TD id="content" >
+	<div id="scrollable">
+                #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems")
+                #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                    </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.enrollment.showEnrollments.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.enrollment.showEnrollments.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+                <!-- Logo+Manage-User-end -->
+
+                <!--Group-Name-div -->
+                #springBind("viewLearnerEnrollmentForm.userName")
+                <div class="group-name" style="border-bottom:0px;">
+                    <div>$!{status.value}</div>
+                </div>
+                <!-- Group-Name-div -->
+
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                    <div class="btn-left2">
+						<!--<input type="button" value="$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.extend")" class="btn-submit_n71" onclick="showExtendEnrollment();"/>-->
+						<a class="button" onClick="showExtendEnrollment();"><span class="button">$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.extend")</span></a>
+					</div>
+                    
+					<div class="btn-left2">
+						<!--<input type="button" value="$brander.getBrandElement("lms.enrollment.swapEnrollments.button.caption.swap")" class="btn-submit_n71" onclick="swapEnrollment();" />-->
+						<a class="button" onClick="swapEnrollment();"><span class="button">$brander.getBrandElement("lms.enrollment.swapEnrollments.button.caption.swap")</span></a>
+					</div>
+                    
+					<div class="btn-left2">
+						<!--<input type="button" value="$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.expire")" class="btn-submit_n71" onclick="expireEnrollment();" />-->
+						<a class="button" onClick="expireEnrollment();"><span class="button">$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.expire")</span></a>
+					</div>
+					
+					
+                    <div class="btn-left2">
+						<!--<input type="button" value="$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.drop")" class="btn-submit_n71" onclick="dropEnrollment();" />-->
+						<a class="button" onClick="dropEnrollment();"><span class="button">$brander.getBrandElement("lms.enrollment.showEnrollments.button.caption.drop")</span></a>
+					</div>
+                </div>
+                <!-- button-div -->
+
+                #set($count = -1)
+                #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems")
+                #set($entitlementList = ${status.value})
+
+                #foreach($ent in $entitlementList)
+                    #set($count = $count + 1)
+                    #set($totalCount = $ent.viewLearnerEnrollmentItems.size())
+                    #set($viewLearnerEnrollmentItemList = $ent.viewLearnerEnrollmentItems)
+
+                    #if($viewLearnerEnrollmentItemList.size() > 0 )
+                    <!-- Entitlement A -->
+                        <div class="content-Block-new" >
+                            <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$ent.entitlement.name</div>
+                            </div>
+                            <!-- 1 -->
+                            <div id="searchResult">
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                    <tr bgcolor="#efefef" style="padding-left:5px;">
+                                        <td class="check_box_top" width="17"><input type="checkbox" name="chkHeader" id="chkAll$count" onClick="selectAllCheckBoxes($totalCount,this,$count);" /></td>
+                                        <td class="box_subheader_noLink" width="60%">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.Courses")</td>
+                                        <td class="box_subheader_noLink">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.Progress")</td>
+                                        <td class="box_subheader_noLink">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.endDate")</td>
+                                    </tr>
+                                        #set($enrCount = -1)
+                                        #foreach($enr in $viewLearnerEnrollmentItemList)
+                                            #set($enrCount = $enrCount + 1)
+                                            #springBind("viewLearnerEnrollmentForm.viewLearnerEntitlementItems[$count].viewLearnerEnrollmentItems[$enrCount].selected")
+                                            #if($velocityCount%2==0)
+                                                #set($alternate="row_2")
+                                            #else
+                                                #set($alternate="row_1")
+                                            #end
+                                            <tr>
+                                                <td class="$alternate" width="17"><input type="checkbox" id="chk$count$enrCount" name="allCourses" #if(${status.value}) checked #end onclick="setEnrollmentSelection(this,'${status.expression}');changeRowColor(this);" /></td>
+                                                <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+                                                <td class="$alternate">$!enr.learnerEnrollment.course.courseTitle</td>
+                                                <td class="$alternate">$!enr.learnerEnrollment.enrollmentStatus</td>
+                                                <td class="$alternate">#if ($!enr.learnerEnrollment.enrollmentEndDate) $date.format("MM/dd/yyyy",$!enr.learnerEnrollment.enrollmentEndDate) #else &nbsp; #end</td>
+                                            </tr>
+                                        #end
+                                </table>
+                                <input id="action" type="hidden" name="action" value="delete" />
+                            </div>
+                            <!-- 1 -->
+                        </div>
+
+                        <div class="manager-bottom-space"></div>
+                        #end
+                    #end
+                    <!-- End-Entitlement A -->
+
+                    <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.managerBtn")">
+                         <div class="btn-left2">
+							<!--<input type="button" value="Cancel" onclick="EditCancel();" class="btn-submit_n71" />-->
+							<a class="button" onClick="EditCancel();"> &nbsp; Cancel </a>
+							</div>
+                    </div>
+
+            </div><!-- right-pannel-content-end -->
+
+        </form>
+
+    </td></tr><!-- content-2a area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+    <div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+        <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text"></div>
+        <br style="clear:both" />
+        <!--<div class='buttons'>
+            <div class='no simplemodal-close'>
+                <div class="btn_start">&nbsp;</div>
+                <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</div>
+                <div class="btn_end">&nbsp;</div>
+            </div>
+            <div class='yes'>
+                <div class="btn_start">&nbsp;</div>
+                <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+                <div class="btn_end">&nbsp;</div>
+            </div>
+    </div>-->
+	
+	<div class='buttons'>
+            <div class='simplemodal-close'>
+               
+
+				<a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <!-- </div>
+            <div class='yes'> -->
+                
+				<a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+
+    <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <!--<div class="btn_start">&nbsp;</div>
+                <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+                <div class="btn_end">&nbsp;</div>-->
+				<a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div><!-- Alert Message Box Ends -->
+
+</body>
+</html>

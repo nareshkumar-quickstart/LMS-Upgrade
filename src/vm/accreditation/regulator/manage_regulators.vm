@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+  
+      <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	<script type='text/javascript' src='javascript/dialogBox.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='regulators']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='regulators']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+        });
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+    function search() {
+        document.getElementById('actionmethod').value='searchRegulator';
+        document.getElementById('showAll').value=false;
+        document.manageRegulatorForm.submit();
+    }
+
+    function editRegulator() {
+        document.getElementById('actionmethod').value='editRegulatorSummary';
+        document.manageRegulatorForm.submit();
+    }
+
+	function deleteRegulator(){
+		confirmDelete( //conditionResult, successMessage, failureMessage, successCallbackFunction
+			($("INPUT[type='checkbox'][name='regulators']:checked").length>0)
+			, "Are you sure you want to delete the regulator(s)?"
+			, '$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")'
+			, function () {
+				document.getElementById('actionmethod').value='deleteRegulator';
+				document.manageRegulatorForm.submit();
+			}
+		)	
+	}
+
+    function sortRegulator(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('actionmethod').value='searchRegulator';
+        document.manageRegulatorForm.submit();
+    }
+
+    function checkAll( countCheckBoxes ) {
+        var objCheckAll=document.getElementById("chkAll");
+        if (objCheckAll.checked) {
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = true;
+                changeRowColor(objCheckBox);
+            }
+        }else{
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = false;
+                changeRowColor(objCheckBox);
+            }
+        }
+    }
+
+    </script>
+</head>
+
+<body>
+<form name="manageRegulatorForm" method="post" action="acc_manageRegulator.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_regulator.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.manageRegulators")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.manageRegulatorDescription")</div>
+		</td>
+	</tr>
+</table>
+
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+
+                <!-- Result Heading -->
+					<div class="control-button-position">
+						<a onClick="window.location.href='acc_addRegulator.do'" >
+						<div class="btn_start"></div>
+						<div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.addRegulator")</div>
+						<div class="btn_end"></div>
+						</a>
+					</div>
+					
+					<div class="control-button-position">
+						<a onclick="deleteRegulator();">
+						<div class="btn_start"></div>
+						<div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.deleteRegulator")</div>
+						<div class="btn_end"></div>
+						</a>
+					 </div>
+                   
+                </div>
+                <div id="searchBox" style="float:left; height:170px; width:300px; left:37%;" class="visible">
+                    <b>$brander.getBrandElement("lms.accraditation.manageRegulator.caption.searchRegulator")</b><br/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorName")</div> <input type="text" onkeypress="doEnter(event);" name="regName" value="$!{context.name}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorAlias")</div> <input type="text" onkeypress="doEnter(event);" name="regAlias" value="$!{context.alias}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</div> <input type="text" onkeypress="doEnter(event);" name="regEmailAdd" value="$!{context.email}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    
+                    <div style="float: right; margin-top: 2px; margin-right: 15px;">
+                        <div class="btn_start"></div>
+                        <div onclick="search();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float: right; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onmousedown="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>                    
+
+                </div>
+                <div class="result_left_side">
+                    <!-- Result Description -->
+
+                $pager.setItems($!{context.regulators})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                         #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                 #end
+
+					<div class="control-button-position">
+						<a onClick="showSearchBox(this);">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+							<div class="btn_end"></div>
+						</a>
+                    </div>
+                    
+ 				   #if($!{context.name})
+                    #set($name=${context.name})
+                   #else
+                    #set($name='')
+                  #end
+                   #if($!{context.alias})
+                    #set($alias=${context.alias})
+                   #else
+                    #set($alias='')
+                  #end
+                   #if($!{context.email})
+                    #set($email=${context.email})
+                   #else
+                    #set($email='')
+                  #end
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageRegulator.do?method=searchRegulator&showAll=true&regName=$name&regAlias=$alias&regEmailAdd=$email';" ></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageRegulator.do?method=searchRegulator&pageIndex=$pager.nextIndex&paging=paging&regName=$name&regAlias=$alias&regEmailAdd=$email';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageRegulator.do?method=searchRegulator&pageIndex=$pager.prevIndex&paging=paging&regName=$name&regAlias=$alias&regEmailAdd=$email';" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                    <td class="box_subheader" width="30%"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorName")</div></td>
+                    <td class="box_subheader"><div #if($context.sortColumnIndex==1) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorAlias")</td>
+                    <td class="box_subheader"><div #if($context.sortColumnIndex==2)class="icon_up" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</td>
+                    <td class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==3) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorJurisdiction")</td>
+                  </tr>
+                </table>
+                  <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+            <!-- Search Result Start -->
+            <div id="searchResult_2">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader" width="30%"><div #if($context.sortDirection == 0) onclick="sortRegulator(0,1,$pageCurrIndex,$showAll);" #else onclick="sortRegulator(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorName")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortRegulator(1,1,$pageCurrIndex,$showAll);" #else onclick="sortRegulator(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorAlias")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortRegulator(2,1,$pageCurrIndex,$showAll);" #else onclick="sortRegulator(2,0,$pageCurrIndex,$showAll);" #end ><div id="userNameSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorEmailAddress")</div></td>
+                        <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="sortRegulator(3,1,$pageCurrIndex,$showAll);" #else onclick="sortRegulator(3,0,$pageCurrIndex,$showAll);" #end ><div id="accountSort" #if($context.sortColumnIndex==3 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==3) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorJurisdiction")</div></td>
+                    </tr>
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                    #set($regulator = $context.regulators.get($loopIndex))
+                    #if($loopIndex%2 == 0)
+                        #set($alternate="row_1")
+                    #else
+                        #set($alternate="row_2")
+                    #end
+                    #if($loopIndex == $pageLastIndex)
+                        <tr>
+                            <td class="$alternate" width="17px" style="border-bottom:none;">
+								<input type="checkbox" id="chk$loopIndex" name="regulators" value="${regulator.id}" style="margin-left:-2px" onclick="changeRowColor(this);"/>
+							</td>
+                            <td class="$alternate" style="border-bottom:none;">
+								<a class="list-item-underline-a" href="acc_manageRegulator.do?method=editRegulatorSummary&id=$regulator.id">$!{regulator.name}</a>
+							</td>
+                            <td class="$alternate" style="border-bottom:none;"><a class="list-item-underline-a" href="acc_manageRegulator.do?method=editRegulatorSummary&id=$regulator.id">$!{regulator.alias}</a>&nbsp;</td>
+                            <td class="$alternate"style="border-bottom:none;">$!{regulator.emailAddress}&nbsp;</td>
+                            <td class="$alternate" style="border-bottom:none; border-right:none;">$!{regulator.jurisdiction}&nbsp;</td>
+                        </tr>
+                     #else
+                        <tr>
+                            <td class="$alternate" width="17px">
+								<input type="checkbox" id="chk$loopIndex" name="regulators" value="${regulator.id}" style="margin-left:-2px" onclick="changeRowColor(this);"/>
+							</td>
+                            <td class="$alternate">
+								<a class="list-item-underline-a" href="acc_manageRegulator.do?method=editRegulatorSummary&id=$regulator.id">$!{regulator.name}</a>
+							</td>
+                            <td class="$alternate"><a class="list-item-underline-a" href="acc_manageRegulator.do?method=editRegulatorSummary&id=$regulator.id">$!{regulator.alias}</a>&nbsp;</td>
+                            <td class="$alternate">$!{regulator.emailAddress}&nbsp;</td>
+                            <td class="$alternate" style="border-right:none;">$!{regulator.jurisdiction}&nbsp;</td>
+                        </tr>
+
+                    #end
+                    #end
+                </table>
+            </div>
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        </div>
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+
+    <!-- Alert Message Box -->
+	#parse("snippets/messageAlert.vm")				
+	<!-- Alert Message Box - Ends -->
+
+	<!-- Delete Message Box -->
+	#parse("snippets/deleteConfirmation.vm")	
+	<!-- Delete Message Box - end-->
+
+</form>
+</body>
+</html>

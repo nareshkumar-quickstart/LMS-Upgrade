@@ -1,0 +1,305 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript"></script>
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+   
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    
+
+<script type="text/javascript">
+    
+    function submitLogoContainer(value){
+        document.frmLogoContainer.method.value=value;
+        document.frmLogoContainer.submit();
+    }
+	
+$(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            
+            $("#txtStartDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#txtEndDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            
+            $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+            
+        });
+        
+	
+	
+	 function setFieldsAndSubmitLogoContainer(value){
+	 	document.getElementById('startDate').value = document.getElementById('txtStartDate').value;
+	 	document.getElementById('endDate').value = document.getElementById('txtEndDate').value;
+	 	document.getElementById('courseId').value = document.getElementById('txtCourseId').value;
+	 	
+	 	document.frmLogoContainer.method.value = value;
+        document.frmLogoContainer.submit();
+    }
+    
+</script>
+</head>
+<body>
+#set($currentReport=$reportForm.getCurrentReport())
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="header" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultHeader.vm")
+		</td>
+    </tr>
+    <!-- TopBar Start -->
+    <tr id="row-tabs">
+        <td id="blank-tab">
+            &nbsp;
+        </td>
+        <td id="tabs" align="center">
+            <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class='selected'>
+						<a href="#springUrl('/acc_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+					</td>
+                    <td>
+						<a href="#springUrl('/acc_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a>
+					</td>
+                    <td id='last'>
+						<a href="#springUrl('/acc_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a>
+					</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- TopBar End -->
+
+    <tr id="main" style="background:none;">
+        <td valign="top" id="left-navigation">
+            <script type="text/javascript">
+                 
+            </script>
+
+            <div id="sidebar-scroller" style="overflow-x: hidden;">
+                 #parse("snippets/reportLeftMenu.vm")
+            </div>
+        </td>
+        <td id="content">
+            <div id="scrollable">
+            			#set($ssn=$!{request.getSession(true)})
+						#set($sDirection = $ssn.getAttribute("errorOnProctorReport"))
+						#set($sDirectionCourseID = $ssn.getAttribute("errorOnProctorReportCourseID"))
+						#if($sDirection || $sDirectionCourseID)
+							    <!-- error-box -->
+							    		
+				                <div id="message_box" style="float:left;">
+				                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				                        #if($sDirection)
+					                        <div class="width40pct">
+					                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					                                <div class="message_box_align">$brander.getBrandElement($sDirection)</div>
+					                        </div>
+					                    #end    
+					                    #if($sDirectionCourseID)
+					                        <div class="width40pct">
+					                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					                                <div class="message_box_align">$brander.getBrandElement($sDirectionCourseID)</div>
+					                        </div>
+					                    #end    
+				                        $ssn.setAttribute("errorOnProctorReport", null)
+				                </div>
+				                <!-- error-box -->
+		                #end
+		                
+
+                
+                <!-- for center-align-div -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.right-pannel-report")">
+    
+                <!-- form for logo container -->
+                <form name="frmLogoContainer" action="acc_ManageReports.do" method="POST">
+                   	  <input type="hidden" name="method" value="" >
+                      <input type="hidden" id="startDate" name="startDate" value="" >
+                      <input type="hidden" id="endDate" name="endDate" value="" >
+                      <input type="hidden" id="courseId" name="courseId" value="" >
+                      
+    					#if($null.isNull($currentReport)) <!-- Do Nothing -->
+    					
+    					#else
+    					<div style="float: right; padding-top: 20px;" class="wizard-left-button">
+                          <a style="text-decoration:none;" onclick="submitLogoContainer('selectReportForEdit');">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.reports.summaryReport.save.copy.and.edit")</div>
+                                <div class="btn_end"></div>
+                            </a>
+                            <img style="cursor:pointer;" onClick="submitLogoContainer('setFavouriteReport');" #if($currentReport.favorite) src="brands/default/en/images/star-acti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteRemove")"/> #else src="brands/default/en/images/star-inacti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteAdd")"/>#end
+                        </div>
+    					#end
+    					<!-- Logo+Manage-User -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr>
+                                <td id="page-icon" class="reportLogo">
+                                    &nbsp;
+                                </td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.topHeading")</div>
+                                    <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.description")</div>
+                                </td>
+                            </tr>
+                        </table>
+    					
+    					
+                        <!-- Logo+Manage-User-end -->
+                </form>
+    
+                <!-- User-profile -->
+    					#if($null.isNull($currentReport))
+    						<div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+    							No Reports Found
+    						</div>
+                        #else
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                    <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                        <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$currentReport.title</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                        <!-- s -->
+                        <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <!-- 1 -->
+                        <div id="e13" class="$brander.getBrandzElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                            <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table1Description")</div>
+                        </div>
+                        
+                        
+                        
+                        
+                        <div  style="margin-top:30px;">
+                        
+		                    <div  style="width: 100px; float:left">
+		                    	$brander.getBrandElement("lms.instructor.courseSummary.caption.courseID") :
+		                     </div>	<input type="text" class="input_field" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:5px; width:170px;" name="txtCourseId" id="txtCourseId"/>
+		                   <br><br>
+		                    
+		                    <div  style=" width: 100px; float:left">
+								<b>$brander.getBrandElement("lms.proctor.proctorCompletionCertificates.caption.dateRange") :</b>
+							</div >		<br/><br/>
+								
+							<div  style="width: 100px; float:left">
+								$brander.getBrandElement("lms.enrollment.swapEnrollments.caption.startDate")
+							</div >
+							
+								<input type="text" class="input_field"  date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:5px; width:170px;" name="txtStartDate" id="txtStartDate" /><br/><br/>	
+							
+							
+							
+								<script type="text/javascript">
+									$("txtStartDate").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+									});
+								</script>
+						
+						
+						
+						  
+						
+						
+								<div  style="width: 100px; float:left">
+									$brander.getBrandElement("lms.enrollment.swapEnrollments.caption.endDate")
+								</div >
+								<input type="text" class="input_field"  date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" onKeyPress="if(event.keyCode==13){doSearch();}" style="font-size:9px; float:left; margin-right:5px; width:170px;" name="txtEndDate" id="txtEndDate"/><br/><br/>	
+							</div>
+						
+                                     
+                        
+                        
+                        
+                        <!-- 2 -->
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+    						<div style="float:left;">
+    							<a onclick="setFieldsAndSubmitLogoContainer('executeReport');" style="text-decoration:none;">
+    								<div class="btn_start" style="margin-left:0px;"></div>
+    								<div class="btn_normal">Execute Report</div>
+    								<div class="btn_end"></div>
+    							</a>
+    						</div>						
+                        </div>
+                        <!-- 0 -->
+                        <!-- space -->
+                        
+                        <!-- space -->
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- User-profile-end -->
+    #end
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+                
+    #set($lastExecutionSummary=$reportForm.getCurrentReportLastExecutionSummary())
+    
+    #if($null.isNull($lastExecutionSummary))
+                            <!-- No Execution Summary -->
+    #else
+                <!-- User-profile -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                    <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                        <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2ViewResults") |<span class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft3")"> $brander.getBrandElement("lms.reports.summaryReport.caption.table2LastRunOn") $lastExecutionSummary.executionDate</span></div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                        <!-- s -->
+                        <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <!-- 1 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                            <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table2Description")</div>
+                        </div>
+                        <!-- 2 -->
+                        <div id="e13">
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsHTML');" src="brands/default/en/images/ico-html.gif" width="35" height="41" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2HTML")</div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsCSV');" src="brands/default/en/images/ico-excel.gif" width="35" height="41" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2EXCEL")</div>
+                        </div>
+                        <!-- 0 -->
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- User-profile-end -->
+                <!-- space -->
+                <div class="manager-bottom-space"> </div>
+                <!-- space -->
+    #end 
+            </div>
+        </td>
+    </tr>
+    <!-- content-area-end -->
+    <tr>
+    <!-- Footer BLOCK -->
+        <td id="footer" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultFooter.vm")
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

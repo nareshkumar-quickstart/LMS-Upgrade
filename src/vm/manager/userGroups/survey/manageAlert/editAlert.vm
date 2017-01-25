@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/learnerNewHead.vm")
+<head>
+
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-password-strength.js"> </script>
+
+
+<script type="text/javascript" language="javascript" src="javascript/wisiwig/richtext.js" ></script>
+<script type="text/javascript" language="javascript" src="javascript/wisiwig/config.js" ></script>
+
+<script type='text/javascript'>
+        
+    $(document).ready(function() {
+       $('#close_message').click(function(){
+			$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+		});
+    });
+
+</script>
+<script type="text/javascript" language="javascript" >
+        function updateAlert() {
+        try{
+                if (document.getElementById(rteFormName).style.display == ""){ 
+                    var newHTML = getXHTML(trim(document.getElementById(rteFormName).value));}
+                else { 
+                    var newHTML = getXHTML(trim(document.getElementById(rteName).contentWindow.document.body.innerHTML));
+                }
+                document.getElementById(rteFormName).value=newHTML;
+				document.getElementById("field_message").value=newHTML;
+           //     alert(newHTML);
+               // submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target2');
+            }catch(e){
+                //alert(e);
+            }
+            document.getElementById('actionmethod').value='updateAlertDetails';
+            document.editAlertForm.submit();
+        }
+         
+    </script>
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+       
+		show();
+});
+
+
+function show(){
+	if ( $("#chk").is(':checked') ) {
+		for(i=1; i<=3; i++){
+			$("#show" + i).css({"display":"none"}); 
+		}
+		document.getElementById('chkValue').value = 'true';
+	}
+	else {	
+		for(i=1; i<=3; i++){
+			$("#show" + i).removeAttr("style");
+		}
+		document.getElementById('chkValue').value = 'false';
+	}   
+ }
+ function showOnEdit(){
+	 document.getElementById('chk').checked==false;
+	 //document.getElementById('tblShow').style.display = "block"; 
+	 }
+</script>
+</head>
+
+<body>
+<form name="editAlertForm" method="post" action="mgr_alertCourse.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!--Header Start -->
+     #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/managerHeader.vm")
+			#end
+    <!-- Header End -->
+	</td>
+	</tr>
+	
+    <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="194"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="350">
+
+                             <a href='mgr_alertCourse.do?method=showEditAlertPage&alertId=$request.getParameter("alertId")'><div class="tab_selected">$brander.getBrandElement("lms.manageAlert.editAlert.caption.summary")</div></a>
+                            <a href='mgr_manageRecipient.do?alertId=$request.getParameter("alertId")'><div class="tab">$brander.getBrandElement("lms.manageAlert.editAlert.caption.recipients")</div></a>
+                            <a href='mgr_manageTrigger.do?alertId=$request.getParameter("alertId")'><div class="tab" STYLE="border-right:1px solid #DADADA;">$brander.getBrandElement("lms.manageAlert.editAlert.caption.triggers")</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+
+            </td>
+    <!-- Body Start -->
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 --> 
+       #parse("snippets/compliance/complianceLeftMenu.vm")
+	   </table>
+	  </td>
+	  
+      <TD id="content" >
+	<div id="scrollable">
+					#springBind("alertForm.*")
+                    #if($status.error)
+                        <div  id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div  class="width40pct">
+                            <div  class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div >
+                            <div  class="message_box_align">$error</div >
+                        </div >
+                        #end
+                        </div ><!-- error-box -->
+                    #end
+                    
+              <div  id="error-message-box" style="display:none;">
+                        <div  class="error_box">
+                            <div  id="errors"></div >
+                            <div  id="close-errors" class="close_icon"></div >
+
+                        </div >
+                    </div >
+
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="icon_surveys">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.manageAlert.editAlert.caption.editAlert")</div >
+						            <div id="page-help">$brander.getBrandElement("lms.myAlert.addAlert.subheading")</div >
+						        </td>
+						    </tr>
+						</table>
+            <!-- Search Result Start -->
+           			
+                    <div  class="search_box_result">
+
+                        <div  class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manageAlert.editAlert.caption.summary")</span></div >
+						<table border="0" width="100%" cellpadding="0" cellspacing="3">
+							<tr>
+								<td width="25%" height="30"><span class="row_text">$brander.getBrandElement("lms.manageAlert.alert.caption.alertName")</span></td>
+								<td>
+									#springBind("alertForm.alert.alertName")
+									<div  class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div >
+									<input type="text" class="input_text_field" id="field_name" style="width:498px;" name="$!{status.expression}" value="$!{status.value}"></input>
+								</td>
+							</tr>
+							<tr> 
+								<td width="25%">&nbsp;</td> 
+								<td> 
+									#springBind("alertForm.defaultMessage")
+									<input type="checkbox" id="chk" name="defaultMessage" #if(${status.value} == "true") checked #end onclick="show(this);" style="float:left; margin-left: 15px;"/>
+									<input type="hidden" id="chkValue" name="chkValue" value=""/>
+									<div  style="float:left; margin-top:3px; margin-left: 5px;">$brander.getBrandElement("lms.manager.manageAlert.addAlert.caption.defaultMessage")</div >
+								</td> 
+							</tr> 
+							<tr id="show1">
+								<td width="25%"><span class="row_text">From</span></td>
+								<td>
+									#springBind("alertForm.alert.fromName")
+									<div  class="required_field" ><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div > 
+									<input type="text" class="input_text_field" id="field_from" style="width:498px;"name="$!{status.expression}" value="$!{status.value}"></input>
+								</td>
+							</tr>
+							<tr id="show2" >
+								<td width="25%"><span class="row_text">Subject</span></td>
+								<td>
+									#springBind("alertForm.alert.alertSubject")
+									<div  class="required_field"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="margin-top:2px; width:12px; background-color: #66FF00"/></div >
+									<input type="text" class="input_text_field" id="field_subject" style="width:498px;"name="$!{status.expression}" value="$!{status.value}"></input>
+								</td>
+							</tr>
+							<tr id="show3" >
+								<td width="25%" valign="top"><div  class="row_text" style="margin-top:3px;">Message</div ></td>
+								<td>									
+									<div style="width:502px; margin-left:17px;">
+									#springBind("alertForm.alert.alertMessageBody") 
+									<input type="hidden" class="input_text_field" id="field_message" style="width:498px;"name="$!{status.expression}" value="$!{status.value}"></input>
+									<script type="text/javascript" language="javascript">
+									var strSource = "$escapeTool.unescapeHtml($status.value)" ;
+
+									initRTE(strSource, '');
+									</script>
+									</div >
+								</td>
+							</tr>
+						</table>
+
+                    </div >
+                     <!-- <div  style="float:right; margin-top:15px; margin-right:10px;">
+			<input type="hidden" id="currentpage" name="_page" value="0"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+              <div  >
+              <a class="button" onClick="submitButtonForm(document.addAlertForm,'wizardSubmitter','_target1');"><span class="button_wizard">Next</span></a>
+                
+              </div >
+           </div >
+
+           <div  style="float:left; margin-top:15px; margin-left:15px;">
+              <div >
+               <a class="button" onClick="submitButtonForm(document.addAlertForm,'wizardSubmitter','_cancel');"><span class="button_wizard">Cancel</span></a>
+               
+                
+              </div >
+
+           </div >  -->
+	<!-- <div  style="float:right; margin-top:15px; "> 
+                        <input type="hidden" id="currentpage" name="_page" value="0"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                            <div  class="btn_start"></div > 
+                            <div  class="btn_normal" onClick="submitButtonForm(document.addAlertForm,'wizardSubmitter','_target1');">Save</div > 
+                            <div  class="btn_end"></div > 
+                        
+                    </div > 
+                    <div  style="float:right; margin-top:15px; margin-left:10px;"> 
+                        <div > 
+                            
+                                <div  class="btn_start"></div > 
+                                <div  class="btn_normal" onClick="submitButtonForm(document.addAlertForm,'wizardSubmitter','_cancel');">Cancel</div > 
+                                <div  class="btn_end"></div > 
+                           
+                        </div > 
+                    </div >   -->
+					 <div style="float:right; margin-top:15px;">
+					  <a onClick="updateAlert();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="javascript:window.location='mgr_alertCourse.do';" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>				
+
+        <div  style="height:30px;"></div >
+                </div >
+            </td></tr>
+			
+			<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       		#parse("snippets/adminFooter.vm")
+    		#else
+      		 #parse("snippets/managerFooter.vm")
+    		 #end   
+			 </td>
+			 </tr>
+        </table>
+	</form>
+    </body>
+</html>
+ #springBind("alertForm.alert.alertMessageBody") 
+#if($!{status.value}!="default")
+<script type='text/javascript'>
+	showOnEdit();
+</script>
+#end 

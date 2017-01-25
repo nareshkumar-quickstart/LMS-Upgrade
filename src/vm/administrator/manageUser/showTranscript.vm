@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+
+
+
+</head>
+
+<body>
+
+<input type="hidden" id="action" name="method" />
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+        #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	<tr><td>
+	<!-- Tabs Start -->
+            <div class="tab_bar">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td width="204">
+                            #if(!$learnerId)
+                                #set($learnerId = $context.id)
+                            #end
+                            <a href="adm_learnerProfile.do?id=$!{learnerId}&method=displayLearnerProfileProfile&Id=$!{learnerId}"><div class="tab">$brander.getBrandElement("lms.Instructor.caption.Profile")</div></a>
+                            <a href="adm_learnerProfile.do?id=$!{learnerId}&method=displayLearnerTranscript&Id=$!{learnerId}&action=displayLearnerTranscript"><div class="tab_selected" style="border-right-style:solid;">$brander.getBrandElement("lms.Instructor.caption.Transcripts")</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- Tabs End -->
+			</td></tr>
+<tr id="main"> <!-- SECOND BLOCK -->
+	
+        <!-- right-pannel-content -->
+<TD  >
+	 <div class="scrollable-no-sidebar" style="overflow-x:hidden; height:89%;">
+
+                <!-- Page Description -->
+                <div id="pageDescription" class="page_description">
+                    <!-- Page Icon -->
+                    <div id="pageIcon" class="icon_search"></div>
+                    <!-- Page Heading -->
+                    <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.transcript.caption.LearnerTranscript")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.transcript.caption.TranscriptDesc")</div>
+                </div>
+
+        </div>
+		</td>
+		</tr>
+		<tr><td valign="top" id="scrollable" align=center width=100%>
+		<div id="transcriptBox" class="search_box_result" style="overflow-x:auto;overflow-y:auto; height:60%; width:99%; border:1px solid blue;">
+		
+		  <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:-1px;" >
+                                <tr bgcolor="#efefef" 	>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.CourseName")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.SearchSurveyStatus")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.mycourses.courseProgress")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.FirstAccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.LastAccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.noacccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.coursedetails.coursestatistics.preAssessmentScore.label.text")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.coursedetails.coursestatistics.averageQuizScore.label.text")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.HighestPostScore")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.posttest.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.CompletionDate")</span></td>
+                                    <td class="box_subheader" style="border-right:none;"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.timespent.defaulttext")</span></td>
+                                </tr>
+                                #set($index = 0)
+                                #foreach($pair in $context.results)
+                                    #if($index % 2 == 0)
+                                        #set($alternate = "row_1")
+                                    #else
+                                        #set($alternate = "row_2")
+                                    #end
+                                    <tr height="25">
+                                        <td class="$alternate">$!{pair.courseName}</td>
+                                        <td class="$alternate" style="width:70px;">$!{pair.courseStatus}</td>
+                                        <td class="$alternate">$!{pair.percentComplete}</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.firstAccessDate})} &nbsp;</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.lastAccessDate})} &nbsp;</td>
+                                        <td class="$alternate">$!{pair.numberQuizesTaken}</td>
+                                        <td class="$alternate">$!{pair.preTestScore}</td>
+                                        <td class="$alternate">$!{pair.averageQuizScore}</td>
+                                        <td class="$alternate">$!{pair.higestPostScore}</td>
+                                        <td class="$alternate">$!{pair.numberPostTestsTaken}</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.complitionDate})} &nbsp;</td>
+                                        <td class="$alternate" style="border-right:none;">$!{pair.totalTimeInSeconds} sec</td>
+                                    </tr>
+                                    #set($index = $index + 1)
+                                #end
+                            </table>
+							</div>
+
+            <!-- space -->
+            <div class="manager-bottom-space">&nbsp;</div>
+            <!-- space -->
+
+            <!-- right-pannel-content-end -->
+        
+        <!-- content-area-end -->
+    </td></tr>
+	
+	
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+	
+</table>
+
+
+</body>
+
+</html>

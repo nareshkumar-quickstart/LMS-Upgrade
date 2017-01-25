@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+## this must be included on every page for all head items
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/tree_collapseExpand.js"></script>
+<script type="text/javascript" type="text/javascript">
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.alert_message_box_text_3').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+    function removeCourseGroup(){
+        if ($("INPUT[type='checkbox'][name='courseGroups']:checked").length>0 || $("INPUT[type='checkbox'][name='courses']:checked").length>0) {
+            confirm("$brander.getBrandElement("lms.administrator.manageEntitlementGroup.remove.confirmMessage")", function () {
+                document.getElementById('action').value='removeCourseGroup';
+                document.manageEntitlementCourseGroupsForm.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+    
+    function saveCourseGroups(){
+    	if ($("INPUT[type='checkbox'][name='courseGroups']:checked").length>0 || $("INPUT[type='checkbox'][name='courses']:checked").length>0) {            
+    		document.getElementById('action').value='saveCourseGroups';
+    		document.manageEntitlementCourseGroupsForm.submit();
+    	}else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+
+    $(document).ready(function(){
+        if ($('#right-pannel').height()<$(window).height()) {
+            $('#right-pannel').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        }
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+   
+</script>
+</head>
+
+#macro( treeManageCourseGroup $treeNodes $contractType $selectedCourses $nullTool $brander)
+	#set($currentRowIndex = 1)
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+            #set($currentRowNamePrefix='childOf:')
+        #else
+        	#set($currentRowName=$node.value.id)
+        #end
+        <div id="row$currentRowIndex" #if ($!{node.depth}>0) name="$currentRowNamePrefix$parentId" #else name="$currentRowName" #end class="$rowColor" indx="$currentRowIndex" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()} && ${node.value.courses.size()} == 0)
+            	<div id="divIcon$currentRowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else   
+				<div id="divIcon$currentRowIndex" class="icon_collapse" onclick="collapseExpandTreeNode(this);" nodeid="${node.value.id}"></div>
+            #end
+            <div class="org_checkbox">
+            	<input type="checkbox" id="_courseGroup${node.value.id}" name="courseGroups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end />
+            </div>
+            #set ($padLimit=60-$node.depth*5)
+            <div class="row_title">
+	        	<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.courseGroup.iconCourseGroup.png")" />#dotPaddingWithOutTitle(${node.value.name},$padLimit)
+            </div>
+            <div class="head_1b-e-1"></div>
+        </div>
+        #set ($currentRowIndex = $currentRowIndex + 1)
+        #if(${node.value.courses.size()} > 0)
+        	#set ($nodeDepth = ${node.depth} + 1)
+        	#treeManageCourses($node.value.courses $contractType $rowColor ${node.value.id} $currentRowIndex $nodeDepth $selectedCourses $nullTool $brander)
+        	##set ($currentRowIndex = $currentRowIndex + ${node.value.courses.size()})
+        #end                 
+    #end
+#end
+
+#macro( treeManageCourses $courses $contractType $rowColor $parentId $rowIndex $nodeDepth $selectedCourses $nullTool $brander)
+	#set($childRowNamePrefix='childOf:')
+	#foreach($course in $courses)		
+		#if(${rowColor} == "org_row2")
+			#set ($rowColor = "org_row1")
+		#else
+			#set ($rowColor = "org_row2")
+		#end
+		<div id="row${rowIndex}" name="${childRowNamePrefix}${parentId}" class="${rowColor}" indx="${rowIndex}" parentRef="$!{parentId}">
+			<div class="icon_blank">&nbsp;</div>
+			#foreach($i in [1..${nodeDepth}])
+                #if ($!{nodeDepth}>0)
+            		<div class="icon_blank2"></div>
+                #end
+            #end
+			<div id="divIcon$rowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+			#if(${contractType} == "course")
+				<div class="org_checkbox">
+					#set ($setChecked = false)
+					#foreach($selectedCourse in $selectedCourses)
+						#set ($courseId = "$parentId:$course.id.toString()")
+						#if($selectedCourse.equals($courseId))
+							#set ($setChecked = true)
+						#end
+					#end
+	            	<input type="checkbox" id="_course${course.id}" name="courses" value="$!{parentId}:${course.id}" #if ($setChecked) checked #end />
+	            </div>
+            #end
+            #set ($padLimit=60-$node.depth*5)
+			<div class="row_title">
+				<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />#dotPaddingWithOutTitle(${course.courseTitle},$padLimit)
+			</div>
+			<div class="head_1b-e-1">$!{course.id}</div>
+		</div>
+		#set ($rowIndex = $rowIndex + 1)
+	#end	
+#end
+<body>
+    <form name="manageEntitlementCourseGroupsForm" method="post" action="adm_manageEntitlementCourses.do">
+    	<input type="hidden" id="action" name="method" />
+    	<input type="hidden" id="contractId" name="contractId" value="$!{context.contractId}"/>
+    	<input type="hidden" id="contractType" name="contractType" value="$!{context.contractType}"/>
+        <div id="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.main-container")">
+        <!-- header -->
+        #parse("snippets/adminHeader.vm")
+        <!-- header-end -->
+        <div id="content2a"><!-- content-area -->
+           <!-- left-menu-content -->
+            #parse("snippets/adminCustomerLeftMenu.vm")
+            <!-- left-menu-content-end -->
+                <div id="right-pannel"><!-- right-pannel-content -->
+                    <!-- Logo+Manage-User -->
+			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="courseLogoCustomer">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.caption.editCourses")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.editCoursesDesc")</div>
+					</td>
+				    </tr>
+				</table>
+         
+                    <!-- Logo+Manage-User-end -->
+
+                    <div class="content-Block-new">
+                        <div id="e12" class="Block-Contain-header">
+                            <div style="float:left; height:23px;">
+                                <div style="float:left;">
+									<a class="button" onClick="saveCourseGroups();"><span class="button">Add Course</span></a>									
+                                 </div>
+                                <div style="float:left;">
+									<a class="button" onClick="removeCourseGroup();"><span class="button">Remove Course</span></a>
+									
+                                    
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="User-checkbox-row-d2">
+                            <div class="User-checkbox-row-d2a">Courses</div>
+                            <div class="head_1b-e">Course Id</div>
+                        </div>
+                        #treeManageCourseGroup(${context.coursesTreeAsList} ${context.contractType} ${context.selectedCourses} $nullTool $brander)
+                    </div>
+                    <!-- space -->
+                    <div id="e39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <div id="e12" class="Block-Contain-header">
+                        <div style="float:right; height:23px;">
+                            <div style="float:right;margin-top:15px; margin-right:10px;">
+								<a class="button" onClick="saveCourseGroups()"><span class="button">Save</span></a>									
+                             </div>
+                            <div style="float:right;margin-top:15px; margin-right:10px;">
+								<a class="button" onClick="#"><span class="button">Cancel</span></a>
+                             </div>
+                        </div>
+                    </div>
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </div><!-- content-area-end -->
+            <!-- tooltip -->
+            
+            <!-- tooltip -->
+            <!-- footer -->
+            <div id="footer">
+            #parse("snippets/adminFooter.vm")
+            <!-- footer-end -->
+        </div>
+    </form>
+</body>
+</html>

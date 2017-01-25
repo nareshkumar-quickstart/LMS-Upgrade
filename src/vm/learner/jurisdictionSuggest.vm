@@ -1,0 +1,699 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Course Approval</title>
+#parse("snippets/footerLinksHeader.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script> 
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/dialogBox.js' ></script>
+
+
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles-breadcrumb.css" />
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles-icons.css" />
+<script type="text/javascript" src="brands/default/en/scripts/scripts-password-strength.js"></script>
+<script language=javascript>
+	function checkAnswer(objCheckBox){
+	        if(objCheckBox.checked){
+	            document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+	        }else {
+	            document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+	        }
+	}
+	
+	function FormSubmit(buttonclick) {
+	        document.getElementById('action').value=buttonclick;
+		  document.getElementById('method').value=buttonclick;
+		  
+		var apvid = document.getElementById('approvalId').value;
+		if(apvid == "-1" && $('[name="name"]').length>0)
+		{
+			showError('message_box1');
+		}
+		else
+		{	
+	        document.creditReportingForm.submit();
+	    }
+	}
+	
+	function mySubmitForm(YN){
+	
+		document.forms[0].jurisdictionSuggestionYN.value=YN;
+		document.forms[0].method.value='displayLearnerProfile';
+		FormSubmit('displayLearnerProfile');
+	}
+	
+	
+		function skipApprovalYesNo()
+		{
+			confirm("$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.manageLearnerGroup.deleteConfirm")", function () {
+				mySubmitForm('N');
+			});
+		}
+	
+	
+	// To if the value provided is alpha-numeric or not
+	function isAlphaNumeric(expression) 
+	{
+	        var nums = "0123456789abcdefghijklmnopqrstuvwxyz";
+	        if (expression.length==0)
+	                return false;
+	                for (var n=0; n < expression.length; n++){
+	                        if(nums.indexOf(expression.toLowerCase().charAt(n))==-1)
+	                                return false;
+	                }
+	        return(true);
+	}
+	
+	// To if the value provided is numeric or not
+	function isNumeric(expression) 
+	{
+	        var nums = "0123456789";
+	        if (expression.length==0)
+	                return false;
+	                for (var n=0; n < expression.length; n++){
+	                        if(nums.indexOf(expression.charAt(n))==-1)
+	                                return false;
+	                }
+	        return(true);
+	}
+	
+	$(document).ready(function() {
+	        
+ 			$('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            
+            $('#close_message1').click(function(){
+                $("#message_box1").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box1").hide();} );
+            });
+            
+            $('#close_message1').click(function(){
+                $("#message_box1").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box1").hide();} );
+            });
+            
+	});
+	
+	
+	
+function showError(errorDiv) {
+$(document).ready(function(){
+         $("#message_box1").show();
+});
+document.getElementById("error_box").style.display = 'block';
+}
+function hideError(errorDiv) {
+$(document).ready(function(){
+         $("#message_box1").hide();
+});
+document.getElementById("error_box").style.display = 'none';
+} 
+
+function callActionForCustomFields(approvalId){
+		//hideError('message_box1');
+		document.getElementById("b13").style.display = 'none';
+		var varApprovalId="0";
+		document.getElementById("approvalId").value = approvalId;
+		 
+		if(approvalId==-1){
+			varApprovalId = document.getElementById('courseApprovalId').value;
+		}else{
+			document.getElementById('courseApprovalId').value = approvalId;
+			varApprovalId = document.getElementById("CC_"+approvalId).value;
+		}
+
+
+
+		#set($courseDescriptionOverlay = "/lrn_launchCourse.do?isAjaxCall=yes&courseId=CNGCourseID&learnerEnrollmentId=CNGEnrollmentId&method=displayCourseCustomFields&courseApprovalId=CNGconfigId&externallmssessionid=CNGAICCSID&source=CNGSource&externallmsurl=CNGAICCURL")
+		
+		//---------------------------------------------------------
+		//Making URL that will hit by Ajax call
+		//--------------------------------------------------------- 
+		var courseDescriptionOverlayUrl = "#springUrl(${courseDescriptionOverlay})";
+		
+		#springBind("creditReportingForm.externallmssessionid")		
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGAICCSID','${status.value}');
+		
+		
+		#springBind("creditReportingForm.externallmsurl")
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGAICCURL','${status.value}');
+		
+		#springBind("creditReportingForm.source")
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGSource','${status.value}');
+		
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGconfigId',varApprovalId);
+		
+		#springBind("creditReportingForm.courseId")
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGCourseID','${status.value}');
+		
+		#springBind("creditReportingForm.learnerEnrollmentId")
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl.replace('CNGEnrollmentId','${status.value}');
+		courseDescriptionOverlayUrl = courseDescriptionOverlayUrl;
+		//-----------------------------------------------------------
+		
+		// Clear the table called table1
+		$("#table1 > tbody").html("");
+				
+		jQuery.ajax({
+	    	  url: courseDescriptionOverlayUrl,
+	          dataType: "json",
+	          cache: false,
+	          async: false,  
+	          	success: function(courseDescriptionJSON) {
+			         
+					var courseScheds = courseDescriptionJSON.courseApprovalUsingAjaxCall ; 
+					
+		    		for(var index = 0; index < courseScheds.length; index++){
+						var courseSched = courseScheds[index];
+						var courseTitle = courseSched.field;
+						
+						if(document.getElementById("divRF")){
+							 if(courseTitle.length>0){
+							 	document.getElementById("divRF").style.display="block";
+							 }else{
+							 	document.getElementById("divRF").style.display="none";
+							 }
+						 }
+						 
+						 <!-- Show label if Custom fields or reporting fields size is greater than one -->
+						 #springBind("creditReportingForm.missingCustomFields")
+			             var CFSize = $status.value.size();	
+			             
+						 if(courseTitle.length>0 || CFSize>0){
+						 	document.getElementById("divDescription").style.display="block";
+						 }else{
+						 	document.getElementById("divDescription").style.display="none";
+						 }
+						 <!-- Show label End -->
+						 
+						  var tempNode = document.createElement('div');
+						  var html_fields =  '<table>' + courseTitle+ ' </table>';
+						  tempNode.innerHTML = html_fields
+						  var tempTable = tempNode.firstChild;
+						  var tbody = document.getElementById('tbody1');
+						 var scripts = [];
+                          var $script;
+                          
+						  for (var i=0, tr; tr = tempTable.rows[i]; i++) {
+                            $script = $(tr).find('script')
+							if($script.length) {
+								var $parent = $script.parent();
+								if($parent) {
+									if($script.html().length) {
+										scripts.push($script.html());
+										$script.remove();
+									}
+								}
+							}
+							
+						    tbody.appendChild(tr);
+						  } 
+						  
+						var source = "";
+						for(var i=0; i<scripts.length; i++) {
+							source += scripts[i] + ";\n";
+						}
+						var script = document.createElement("script");
+						script.text = source;
+						document.getElementsByTagName('head')[0].appendChild(script);
+					}
+					new MaskFieldsAsPassword($(".ssnEncrypt"), $("input:password.ssn"), true, 1000);
+			}
+	        
+	   });
+			   
+			    
+				#springBind("creditReportingForm.courseApprovalId")
+				
+				if($status.value == document.getElementById('courseApprovalId').value){
+				
+				
+					#set($Upcount=0)	 
+					#springBind("creditReportingForm.creditReportingFields")
+					
+					#foreach($customField in $status.value)
+						
+						var varFieldtype='${customField.creditReportingFieldRef.fieldType}';
+						var varFieldid='${customField.creditReportingFieldRef.id}';
+					
+						if(varFieldtype=='SINGLELINETEXTCREDITREPORTINGFIELD' || varFieldtype=='NUMERICCREDITREPORTINGFIELD' || varFieldtype=='DATETIMECREDITREPORTINGFIELD'
+							|| varFieldtype=='STATICCREDITREPORTINGFIELD' || varFieldtype=='MULTIPLELINETEXTCREDITREPORTINGFIELD'	|| varFieldtype=='SSNCREDITREPORTINGFIELD' || varFieldtype=='TELEPHONENUMBERCREDITREPORTINGFIELD'){
+							
+							if(document.getElementById('creditReportingField${Upcount}')!=null){
+								#if($customField.creditReportingFieldValueRef.value)
+									//alert('${customField.creditReportingFieldValueRef.value}');
+									document.getElementById('creditReportingField${Upcount}').value = '${customField.creditReportingFieldValueRef.value}';
+								#end	
+							}
+						}
+						
+						if(varFieldtype=='MULTISELECTCREDITREPORTINGFIELD'){
+							var msRF =document.getElementById('creditReportingField${Upcount}');
+							
+							#set($choiceCounter=0)
+							if(msRF!=null){
+								#foreach($MSchoices in $customField.selectedChoices)
+									if('${MSchoices.selected}'){
+										for (i=0;i<msRF.length;i++)
+										{
+											if( msRF.options[i].value=='${MSchoices}'){
+												msRF.options[i].selected = "1";
+											}
+										}
+									}
+									#set($choiceCounter=$choiceCounter+1)
+								#end	
+							}	
+						}
+						
+						
+						
+						if(varFieldtype=='SINGLESELECTCREDITREPORTINGFIELD'){
+							var elements = document.getElementsByName('creditReportingFields[${Upcount}].creditReportingFieldValueRef.value');
+							if(elements!=null){
+								for (i=0;i<elements.length;i++) {
+									
+								  if(elements[i].value == '${customField.creditReportingFieldValueRef.value}') {
+								    elements[i].checked = true;
+								  }
+								}
+							}
+
+						}
+						
+						#set($Upcount=$Upcount+1)
+					#end
+					
+				} // if
+				
+				
+				$(".ssn").unmask();
+				$(".telephone").unmask();
+				
+				// Imposing restrictions and masking on text boxes using CSS.
+				// If css 'alphanumeric' style applied on textbox, user cannot enter !<>?~`^
+				// If css 'numeric' style applied on textbox, user can enter digits 0 to 9 and '.' only
+				// If css 'ssn' and 'telephone' styles applied on textbox, user can enter data according to mask given below.
+				// Note: if you found space between css styles like 'input_text_field telephone', this is actually two styles applied on same field  
+				
+				$('.alphanumeric').alphanumeric({ichars:'!<>?~`^'});
+		        $('.numeric').numeric({allow:"."});
+		        $("input:text.ssn").mask("999-99-9999",{placeholder:" "});
+				$(".telephone").mask("(999) 999-9999",{placeholder:" "});
+				
+				document.getElementById("b13").style.display = 'block';					
+		}
+		
+var selCourseApprovalIdOnLoad = -1;
+function infoMsg(){
+	$('#findOutMoreDiv').modal({
+			close:false,
+			position: ["40%",],
+			overlayId:'confirmModalOverlay',
+			containerId:'confirmModalContainer' 
+			}
+		);
+}
+
+function skipWarningMsg(){
+	$('#skipWarningMsgDiv').modal({
+			close:false,
+			position: ["40%",],
+			overlayId:'confirmModalOverlay',
+			containerId:'confirmModalContainer' 
+			}
+		);
+}
+
+
+
+function hideShowDivRF(objs){
+	var $parent = $('div.search_box_result_jurisdiction'); 
+	if( $parent.is(':hidden')){
+		  $parent.show()
+		  $('#crd1').attr('src', '/lms/brands/default/en/images/down-arrow.png');
+	}
+	else{ 
+	  	$parent.hide();
+		$('#crd1').attr('src', '/lms/brands/default/en/images/top-arrow.png');	  	
+	} 
+	
+}
+
+function hideShowDivCF(objs){
+
+	var $parent = $('div.search_box_result_custom'); 
+	if( $parent.is(':hidden')){
+		  $parent.show()
+		  $('#crd2').attr('src', '/lms/brands/default/en/images/down-arrow.png');
+	}
+	else{ 
+	  	$parent.hide();
+		$('#crd2').attr('src', '/lms/brands/default/en/images/top-arrow.png');	  	
+	} 
+	
+}
+
+
+
+</script>
+</head>
+<body>
+        <table id="table-layout" border="1" cellpadding="0" cellspacing="0">
+            <!-- Header Row -->
+            <tr>
+                <td id="header" colspan="2">
+                    <!-- header -->
+			            <div id="header">
+			                <!-- logo -->
+			                <div class="$brander.getBrandElement("lms.mycourses.cssClass.wel-logo")">
+			                    <div id="a1" class="$brander.getBrandElement("lms.mycourses.cssClass.welcomeMessage")"></div>
+			                    <div id="a2" class="$brander.getBrandElement("lms.mycourses.cssClass.logo")"><img src="$brander.getBrandElement("lms.header.logo.src")"></div>
+			                </div>
+			                <!-- logo-end -->
+			            </div>
+			            <div class="box_header">
+			            	#springBind("creditReportingForm.courseName")
+		    			    #if($status.value) 
+		    			    	<span class="box_heading" style="text-align:center; width:100%">${status.value}</span>
+		    			    #end
+			            </div>
+			        <!-- header -->
+                </td>
+            </tr>
+            <!-- Page -->
+            <tr id="main">
+                <!-- Page Content -->
+                <td id="content">
+                    <!-- Page Scrollable Area -->
+                    <form id="creditReportingForm" name="creditReportingForm" method=post  action="#springUrl("/lrn_launchCourse.do")" onsubmit="FormSubmit('saveMissingCustomFieldsAndCreditReportingFields')">
+                    <input type=hidden name="jurisdictionSuggestionYN" id="jurisdictionSuggestionYN" value="Y">
+                    <input type=hidden name="threeOptionsPage" id="threeOptionsPage" value="Y">
+                    <div id="content2a"  style="overflow-y:auto;height:85%;position:relative;min-width:10px;padding:0; "><!-- content-area -->
+                        <!-- Logo+Manage-User -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-left:15px;margin-bottom:15px">
+						    <tr>
+						    	#springBind("creditReportingForm.courseApproval")
+			                	#if($status.value.size()>0) 
+				    			<td id="logoHolder" class="courseLogoCoursesApproval">&nbsp;</td>
+				    			<td id="page-description">
+
+				    				#springBind("creditReportingForm.findMoreInfoLink")
+			    			    	<div id="page-heading">$brander.getBrandElement("lms.launchCourse.courseAapproval")</div>
+			    			    	<div id="page-help">$brander.getBrandElement("lms.launchCourse.courseAapproval.helpText") $escapeTool.unescapeHtml($status.value) </div>
+			    			    	
+				    			</td>
+				    			#end
+						    </tr>
+						</table>
+                        <!-- Logo+Manage-User-end -->
+                        <div id="error_box" style="display: none;">
+                        <div id="message_box1">
+			                    <img id="close_message1" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+			                        <div class="width40pct">
+			                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			                            <div class="message_box_align">Please select jurisdiction.</div>
+			                        </div>
+			                </div>
+			            </div>
+ 						
+						#springBind("creditReportingForm.*")
+			            #if($status.error)
+			                <!-- error-box -->
+			                <div id="message_box">
+			                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+			                    #foreach($errorCode in $status.errorCodes)
+			                        #if($errorCode != 'custom.field.required')
+			                        #set ($error = $brander.getBrandElement($errorCode))
+			                        <div class="width40pct">
+			                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			                            <div class="message_box_align">$!error</div>
+			                        </div>
+			                        #end
+			                    #end
+			                    #foreach($errorMessage in $status.errorMessages)
+			                        #if(!$!errorMessage.equals(""))
+			                        <div class="width40pct">
+			                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			                            <div class="message_box_align">$!errorMessage</div>
+			                        </div>
+			                        #end
+			                    #end
+			                </div>
+			                <!-- error-box -->		           
+				            #end
+								
+						
+						 #springBind("creditReportingForm.learnerEnrollmentId")
+						<input type=hidden name="${status.expression}" id="learnerEnrollmentId" value="$status.value">
+						 #springBind("creditReportingForm.courseId")
+						<input type=hidden name="${status.expression}" id="courseId" value="$status.value">
+			
+						 #springBind("creditReportingForm.source")
+						 #if($status.value)
+						 <input type=hidden name="${status.expression}" id="source" value="$status.value">
+						 #else
+						 <input type=hidden name="${status.expression}" id="source" value="">
+						 #end
+			
+						 #springBind("creditReportingForm.externallmssessionid")
+						 #if($status.value)
+							<input type=hidden name="${status.expression}" id="externallmssessionid" value="$status.value">
+						 #else
+						 	<input type=hidden name="${status.expression}" id="externallmssessionid" value="">
+						 #end
+						
+						#springBind("creditReportingForm.externallmsurl")
+						#if($status.value)
+						<input type=hidden name="${status.expression}" id="externallmsurl" value="$status.value">
+						#else
+						<input type=hidden name="${status.expression}" id="externallmsurl" value="">
+						#end
+			
+						<input type=hidden name="action" id="action" value="'saveMissingCustomFieldsAndCreditReportingFields'">
+						<input type=hidden name="method" id="method" value="'saveMissingCustomFieldsAndCreditReportingFields'">
+						
+						
+						 #springBind("creditReportingForm.courseApprovalId")
+						 <input type=hidden name="courseApprovalId" id="courseApprovalId" value="$status.value">
+						 #set($errorExists=false)
+						 	
+						 #set($prevCourseApprovalId=$status.value)
+							
+							###########################Option 1
+							#set($optNumber=0)
+							#springBind("creditReportingForm.suggestedCourseApprovalFound")
+							#if($!{status.value} == "true")
+							#set($optNumber = ($optNumber+1) )
+							<table width="75%" cellspacing="0" cellpadding="0" style="margin-top:2px;" class="table-border-jurisdiction">
+							  <tr>
+							 	<td class="box_subheader_noLink_noborder"  style="width:55px; ">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option1.caption")</td>
+							 	<td rowspan="2" colSpan="4">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.text")</td>
+			                 </tr>
+			                 <tr>
+			                 <!--<td class="box_subheader_noLink_noborder"  style="width:55px; float: left; ">&nbsp;</td>-->
+			                 <td rowspan="1" colSpan="4">
+									########################### Name of Regulator 
+									#springBind("creditReportingForm.courseApproval")
+			                        #foreach($loopCourseApproval in $status.value)
+								 		#if($prevCourseApprovalId==$loopCourseApproval.courseApprovalId)
+								 			<!-- <input name="name" id="CC_$loopCourseApproval.courseApprovalId" type="radio" value="$loopCourseApproval.courseApprovalId" onclick="callActionForCustomFields($loopCourseApproval.courseApprovalId);" checked  /> -->
+                                            <script>selCourseApprovalIdOnLoad = '$loopCourseApproval.courseApprovalId';</script>
+                                            <div class="reg-heading"> <input value="$loopCourseApproval.courseApprovalId" id="CC_$loopCourseApproval.courseApprovalId" type="hidden" />  $loopCourseApproval.holdingRegulator </div>
+											#break($foreach)
+								 		#end
+			                        #end
+			                 </td>
+			                 </tr>
+			                 <tr>
+			                 <td>&nbsp;</td>
+							 	<td class="box_subheader_noLink_noborder" width="350px" colspan="2">
+ 				                 <div id="divDescription" style="margin-left:15px;"></div>  
+ 				                 
+									##################### Custome Fields
+									#springBind("creditReportingForm.missingCustomFields")
+					                #if($status.value.size()>0)
+	 				                  <!-- Custome fields Start-->
+	 				                 <div class="box_header" style="width: 550px; border-left:1px solid #DFDFDF;border-top:1px solid #DFDFDF;border-right:1px solid #DFDFDF; border-bottom:none;background-color:#efefef;">
+									<span class="box_heading">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.customField.caption")</span>
+									<span class="box_heading_arrow">&nbsp;</span>
+									<span class="box_heading_text">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.customField.lable")</span></div>
+ 				                      <!-- Custome fields End-->
+ 				                    #end  
+ 				                  
+ 				                  
+					                <!-- customer fields -->
+									#springBind("creditReportingForm.missingCustomFields")
+					                #if($status.value.size()>0)
+						      			#set($errorExists=true)
+										
+										    <div style="width: 82.25%;margin-left:0px;"  >
+								                <div class="search_box_result search_box_result_custom"  style="display: block;">  
+								                    <table width="100%" cellpadding="0" cellspacing="10px">
+													
+							                        #set($count=0)
+							                        #foreach($customField in $status.value)
+							
+							                            #set($id = "customField$count")
+							                            #set($name = "missingCustomFields[$count].customFieldValueRef")
+							                            #set($customFieldValueIdentifire = "missingCustomFields[$count].customFieldValueRef.id")
+							                            #set($customFieldIdentifire = "missingCustomFields[$count]")
+							                            $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+							
+														#set($count=$count+1)
+							                        #end
+							                      </table>
+							                   </div> 
+						                   </div>
+					                #end
+			                  <!-- customer fields End-->
+			               
+			                
+								<!--Reporting fields -->
+								##this reporting file no shown in NEC type learner
+								##springBind("creditReportingForm.missingCreditReprotingFields")
+
+ 								#springBind("creditReportingForm.missingCreditReprotingFields")
+				                #if($status.value.size()>0 ) 
+			  	                <div class="box_header" style="width: 550px; border-left:1px solid #DFDFDF;border-top:1px solid #DFDFDF;border-right:1px solid #DFDFDF; border-bottom:none;background-color:#efefef;">
+								<span class="box_heading">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.reportingField.caption")</span>
+								<span class="box_heading_arrow">&nbsp;</span>
+								<span class="box_heading_text">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.reportingField.text")</span></div>
+								#end 
+								
+ 								#springBind("creditReportingForm.courseApproval")
+				                #if($status.value.size()>0 ) 
+				  	               <div id="divRF" style="">
+					                	<div class="search_box_result_jurisdiction" style="display: block;">
+											 <table id="table1" width="100%" cellpadding="0"  cellspacing="10px">
+													<tbody id="tbody1"></tbody>
+											 </table>
+										 </div>	
+								   </div>
+								   #set($isNotNecField = "true")
+								#end    			
+								#springBind("creditReportingForm.missingCreditReprotingFields")
+				                #if($status.value.size()>0  && ! $isNotNecField ) 
+				  	               <div id="divRF" style="">
+					  	                <div class="box_header" style=" width: 550px; border-left:1px solid #DFDFDF;border-top:1px solid #DFDFDF;border-right:1px solid #DFDFDF; border-bottom:none;background-color:#efefef;"><span class="box_heading">Reporting Fields</span></div>
+					                	<div class="search_box_result_jurisdiction">
+											 <table id="table1" width="100%" cellpadding="0" border=3 cellspacing="10px">
+													<tbody id="tbody1"></tbody>
+											 </table>
+										 </div>	
+								   </div> 			
+								#end 
+							 	<div id="b13" style="display: none;"/>
+							 		
+							 	</td>
+			                 </tr> 
+			                 <tr>
+			                 <td>&nbsp;			                 </td>
+			                 <td>  										 		
+				                 <div class="left" style="height: 30px;float:left;margin-left:-3px;">
+				                    <a class="button" onClick="FormSubmit('saveMissingCustomFieldsAndCreditReportingFields');" tabindex="30">
+				            	    <span class="button">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option2.btn.lable")</span>
+				            		<input type=hidden name="approvalId" id="approvalId">
+				      	            </a>
+				                </div>
+							  </td>
+			                 </tr> 
+			                  
+						</table>	
+						
+						
+						<p class="ruler"></p>
+						#end 
+						
+						
+						
+						#springBind("creditReportingForm.noneSuggestedCourseApprovalFound")
+						#if($!{status.value} == "true")
+						#set($optNumber = ($optNumber+1) )
+						<p style="clear:both;"></p>
+						############## Option 2
+						<table width="75%" cellspacing="0" cellpadding="0" style="margin-top:2px;margin-left:15px;" class="table-border-jurisdiction">
+							  <tr>
+							 	<td class="box_subheader_noLink_noborder" style="width:60px">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option.caption") $optNumber </td>
+							 	<td>$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option3.text")</td>
+			                 </tr>
+			                 <tr>
+							 	<td class="" >&nbsp;</td>
+							 	<td class="box_subheader_noLink_noborder">&nbsp;
+							 		##ShowAllRegulatorButton.
+									<input type="hidden" id="showAllRegulators" name="showAllRegulators" value="">
+							 		<div class="left" style="height: 30px;float:left;margin-left:0px;">
+					                    <a class="button" onClick="document.getElementById('showAllRegulators').value='Y';  FormSubmit('ShowAllRegulators');" tabindex="30">
+					            	    <span class="button">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option3.btn.lable") </span>
+					      	            </a>
+					                </div>
+							 	</td>
+			                 </tr>   
+						</table>
+						
+						<!-- <p class="ruler"></p> -->
+						
+					  #end
+					  
+					  #######################################################################################################################################
+					  ################ THE BELOW OPTION BUTTON "SKIP REGULATOR AND GOTO COURSE" HAS BEEN HIDDEN ON THE REQUEST OF BUSSINESS  ################
+					  ################                       JUST APPLYING STYLE "DISPLAY: NONE" ON THE PARENT TABLE                         ################
+					  #######################################################################################################################################
+					  
+					  #springBind("creditReportingForm.courseApproval")
+		                #if($status.value.size()>0)
+			      			#set($errorExists=true)
+			      			#set($optNumber = ($optNumber+1) )
+			      			     ###########################Option 3
+  				                <table width="75%" cellspacing="0" cellpadding="0" style="margin-top:2px;margin-left:15px; display:none;" class="table-border-jurisdiction">
+									  <tr>
+									 	<td class="box_subheader_noLink_noborder" style="width:60px">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option.caption") $optNumber</td>
+									 	<td >$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option1.text")</td>
+					                 </tr>
+					                 <tr>
+									 	<td class="box_subheader_noLink_noborder" >&nbsp;</td>
+									 	<td class="box_subheader_noLink_noborder">&nbsp;
+									 		<div class="left" style="height: 30px;float:left;margin-left:0px;">
+							                    <a class="button" onClick="skipApprovalYesNo()" tabindex="30">
+							            	    <span class="button">$brander.getBrandElement("lms.launchCourse.suggestedRegulator.option1.btn.lable")</span> 
+							            		<input type=hidden name="approvalId" id="approvalId">
+							      	            </a>
+							                </div>
+									 	</td>
+					                 </tr>   
+								</table>
+						#end			
+					  
+					  	
+                    </div>
+                    </form>
+                    <!-- END: Page Scrollable Area -->
+					</td>
+                </tr>
+                <!-- END: Page-->
+                
+            </table>
+	<!-- daiglog Box find out more -->
+	#parse("/learner/findoutMore.vm")
+	#parse("/learner/skipWarningMsg.vm")
+</body>
+</html>
+
+<script language=javascript>
+	if(parseFloat(selCourseApprovalIdOnLoad)!=-1){
+		callActionForCustomFields(selCourseApprovalIdOnLoad);
+	}
+</script>

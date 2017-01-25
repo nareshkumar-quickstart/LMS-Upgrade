@@ -1,0 +1,975 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+        function checkAnswer(objCheckBox){
+            if(objCheckBox.checked){
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+            }else {
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+            }
+        }
+    </script>
+</head>
+
+<style type="text/css">
+#scrollable{
+    overflow:auto;
+    overflow-x:hidden;
+    background-color: #FFFFFF;
+    padding-left:14px;
+    padding-right:10px;
+    border-left:1px solid #EEEEEE;
+}
+
+b
+{
+	font-size:11px;
+}
+</style>
+
+<body>
+<form name="addCourseConfigForm" method="post" action="acc_addCourseConfig.do" >
+   <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        
+            <div id="l-menu-back">
+         	 <div class="l-menu-back-text-h">Add Course Configuration<br> Wizard showing 11 of 11</div>
+            	 <div class="l-menu-back-text-acted">1.Summary</div>
+            	 <div class="l-menu-back-text-acted">2. Course Policy</div>
+				 <div class="l-menu-back-text-acted">3. Course Completion</div>
+				 <div class="l-menu-back-text-acted">4. Pre-Assessment Policy</div>
+				 <div class="l-menu-back-text-acted">5. Quiz Policy</div>
+				 <div class="l-menu-back-text-acted">6. Post Assessment Policy</div>
+				 <div class="l-menu-back-text-acted" title="Special Post Assessment Validation" >7. Special Post Assessment ...</div>
+				 <div class="l-menu-back-text-acted">8. Validation</div>
+				 <div class="l-menu-back-text-acted">9. Disclaimar Options</div>
+				 <div class="l-menu-back-text-acted">10. Max Seat Time Enforcement</div>
+				 <div class="l-menu-back-text-acted">11. Min Seat Time Requirements</div>
+				 <div class="l-menu-back-text-act">12. Confirmation</div>
+            </div>
+     	 
+		 
+	</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+		
+		 	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.AddCoursConfigurationTemplate")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.confirmField")</div>
+		</td>
+	</tr>
+</table>			  
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Summary</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.courseConfigTemplate.name")
+						  	  <td width="30%"><div class="row_text"><b>Template Name</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+				   </table>																	
+	          </div>
+		 
+		 <div style="height:10px"></div>
+		 	
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Course Policy</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.showOrientationScenes")
+						  	  <td width="30%"><div class="row_text"><b>Show Orientation Scenes</b></div></td>
+    						  <td width="18%"><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.idleTimeAmount")
+							  <td width="30%"><div class="row_text"><b>Idle User Timeout (Seconds)</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.showContent")
+						  	  <td><div class="row_text"><b>Enable Content</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  #springBind("courseConfigForm.playerCourseFlow")
+							  <td><div class="row_text"><b>Course Flow</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.showEndOfCourseScene")
+						  	  <td><div class="row_text"><b>Enable End of Course Scene</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.courseConfiguration.enforceTimedOutlineAllScenes")
+							  <td><div class="row_text"><b>Enforce Timeout</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+						  	  <td><div class="row_text"><b>Allow User to Review Course After Completion</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  #springBind("courseConfigForm.actiontotakeuponidletimeout")
+							  <td><div class="row_text"><b>Action to Take Upon Idle Time Out</b></div></td>
+							  <td><div class="row_text">$status.value</div></td>
+					      </tr>			
+
+							<tr>
+							 #springBind("courseConfigForm.courseConfiguration.courseEvaluationSpecified")
+							  <td><div class="row_text"><b>Course Evaluation</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+                             
+							 #springBind("courseConfigForm.specialQuestionnaireSpecified")
+							  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.specialQuestionnaire")</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+
+					      </tr>
+			 	    	  <tr>
+							 #springBind("courseConfigForm.displayCourseEvaluation")
+							  <td><div class="row_text"><b>Display Course Evaluation</b></div></td>
+							  <td><div class="row_text">
+							  #if(${status.value}=="survey.event.beforeafter.course") Before & After Assessment #end #if(${status.value}=="survey.event.before.course") Before Post Assessment #end #if(${status.value}=="survey.event.after.course") After Post Assessment #end
+							  </div></td>
+                                                        
+							 #springBind("courseConfigForm.displaySpecialQuestionnaire")
+							  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.displaySpecialQuestionnaire")</b></div></td>
+							  <td><div class="row_text">
+							  #if(${status.value}=="survey.event.beforeafter.course") Before & After Assessment #end #if(${status.value}=="survey.event.before.course") Before Post Assessment #end #if(${status.value}=="survey.event.after.course") After Post Assessment #end
+							  </div></td>
+                             
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.mustCompleteCourseEvaluation")
+						  	  <td><div class="row_text"><b>Must Complete Course Evaluation</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                                                        
+                              #springBind("courseConfigForm.mustCompleteSpecialQuestionnaire")
+						  	  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.mustCompleteSpecialQuestionnaire")</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                             
+					      </tr>
+			 	    	  <tr>
+								#springBind("courseConfigForm.mustStartCourseWithinSpecifiedAmountOfTimeAfterRegistrationSpecified")								
+							  	<td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.mustCompleteWithinAfterRegistration")</b></div></td>
+							  	<td>
+									<div class="row_text">
+								  		#if(${status.value})
+								  			#springBind("courseConfigForm.mustStartCourseWithinSpecifiedAmountOfTimeAfterRegistration")
+								  			$!{status.value}
+								  			#springBind("courseConfigForm.mustStartCourseWithinSpecifiedAmountOfTimeAfterRegistrationUnit")
+								  			#if($!{status.value} == "Minutes")
+								  				$brander.getBrandElement("lms.constants.minutes")
+							  				#elseif($!{status.value} == "Hours")
+							  					$brander.getBrandElement("lms.constants.hours")
+						  					#elseif($!{status.value} == "Days")
+						  						$brander.getBrandElement("lms.constants.days")	
+			  								#end
+		  								#else
+		  									$!{status.value}
+			  							#end
+						  			</div>
+					  			</td>
+							  #springBind("courseConfigForm.suggestedCourse")
+						  	  <td><div class="row_text"><b>Course Recommendation Panel</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>			
+			 	    	 
+						  <tr>
+                              #springBind("courseConfigForm.rateCourse")
+						  	  <td><div class="row_text"><b>Allow User to Rate Course</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                                                        
+                              
+						  	  <td></td>
+    						  <td></td>
+                             
+					      </tr>
+						  
+						  <tr>
+						  	  <td></td>
+							  <td></td>
+							  <td></td>
+							  <td></td>
+					      </tr>			
+
+						  
+						  	  <td><div class="row_text"></div></td>
+    						  <td><div class="row_text"></div></td>
+							  <td><div class="row_text">&nbsp;</div></td>
+							  <td><div class="row_text">&nbsp;</div></td>
+					      </tr>			
+				#springBind("courseConfigForm.endOfCourseInstructions")							  							  			  <tr>
+						  	  <td colspan="4"><div><b>End Of Course Instructions</b></div></td>
+					  </tr>	
+		  			  <tr>
+						  	  <td colspan="4"><div  style="width:98%;overflow:auto;height:150px;border:1px solid #cccccc" class="row_text">$escapeTool.unescapeHtml($status.value) </div></td>
+    						  
+					  </tr>						  
+				  </table>																	
+	          </div>
+
+		 	<div style="height:10px"></div>
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Course Completion</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.mustAttemptPostAssessment")
+						  	  <td width="30%"><div class="row_text"><b>Post Assessment Attempted</b></div></td>
+    						  <td width="18%"><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.courseConfiguration.mustViewEverySceneInTheCourse")
+							  <td width="30%"><div class="row_text"><b>View Every Course in Scene</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.mustDemonstratePostAssessmentMastery")
+						  	  <td><div class="row_text"><b>Post Assessment Mastery</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.courseConfiguration.canOnlyBeCompleteAfterNumberOfCourseLaunches")
+							  <td><div class="row_text"><b>Complete After Number of Unique Visits (Launches) of Course</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.mustDemonstratePreAssessmentMastery")
+						  	  <td><div class="row_text"><b>Pre-Assessment Mastery</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                             
+							  #springBind("courseConfigForm.unitOfDaysOfRegistration")
+							  <td><div class="row_text"><b>Must Complete Within Specified Amount of Time ( $!{status.value} ) After First Visit</b></div></td>
+							   #springBind("courseConfigForm.minutesAfterFirstCourseLaunch")
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.mustDemonstrateQuizMastery")
+						  	  <td><div class="row_text"><b>Quiz Mastery</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					
+                              #springBind("courseConfigForm.daysOfRegistraion")
+							  <td><div class="row_text"><b>Must Complete Within Specified Days After registration Date</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.respondToCourseEvaluation")
+						  	  <td><div class="row_text"><b>Respond to Course Evaluation</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td></td>
+							  <td></td>
+					      </tr>							  							  								  							  										
+				   </table>																	
+	          </div>
+			  
+		 	<div style="height:10px"></div>
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Pre-Assessment Policy</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preAssessmentEnabled")
+						  	  <td width="30%"><div class="row_text"><b>Enabled</b></div></td>
+    						  <td width="18%"><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.preEnableAssessmentProctoring")
+							  <td width="30%"><div class="row_text"><b>Enable Proctored Assessment (via Affidavit)</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preassessmentNoquestion")
+						  	  <td><div class="row_text"><b>Number of Question</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.preAllowQuestionSkipping")
+							  <td><div class="row_text"><b>Allow Skipping Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preassessmentMasteryscore")
+						  	  <td><div class="row_text"><b>Mastery Score</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.preUseUniqueQuestionsOnRetake")
+							  <td><div class="row_text"><b>Ask Unique Questions on Retake</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preRandomizeQuestions")
+						  	  <td><div class="row_text"><b>Randomize Questions</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b></b></div></td>
+							  <td><div class="row_text"></div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preRandomizeAnswers")
+						  	  <td><div class="row_text"><b>Randomize Answers</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b>Content Remediation</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preassessmentEnforcemaximumtimelimit")
+						  	  <td><div class="row_text"><b>Automatically Grade Assessment after (Minutes)</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.preGradingBehavior")
+							  <td><div class="row_text"><b>Grade Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preassessmentMaximumnoattempt")
+						  	  <td><div class="row_text"><b>Maximum Number of Attempts</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+                              #springBind("courseConfigForm.preEnableRestrictiveAssessmentMode")
+						  	  <td><div class="row_text"><b>Restrictive Mode</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preActionToTakeAfterMaximumAttemptsReached")
+						  	  <td><div class="row_text"><b>Action to Take After Failing Maximum Attemps</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  
+							   #springBind("courseConfigForm.preEnableWeightedScoring")
+						  	  <td><div class="row_text"><b>Weighted Scoring</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+                              ##springBind("courseConfigForm..preassessmentAllowpauseresumeassessment")
+							  ##<td><div class="row_text"><b>Allow Pause and Resume Assessment</b></div></td>
+							  ##<td><div class="row_text">$!{status.value}</div></td>
+							  ##<td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.preScoringType")
+						  	  <td><div class="row_text"><b>Show the Learner</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  #springBind("courseConfigForm.preShowQuestionAnswerReview")
+                              <td><div class="row_text"></div></td>
+    						  <td><div class="row_text"></div></td>
+					      </tr>
+                               <tr>
+                                    #springBind("courseConfigForm.preShowQuestionLevelResults")
+                                  <td><div class="row_text"><b>Show feedback while reviewing questions</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                                  #springBind("courseConfigForm.preAdvancedQuestionSelectionType")
+                                  <td><div class="row_text"><b>Enable Advanced Question Selection</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                               <tr>
+                                  #springBind("courseConfigForm.preShowQuestionAnswerReview")
+                                  <td><div class="row_text"><b>Allow reviewing questions and answers after grading</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>                                  
+                                  #springBind("courseConfigForm.preAllowPauseResumeAssessment")
+                                  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.allowStudentToStopAndResumePreAss")</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                              
+                              <tr>
+                              	#springBind("courseConfigForm.preLockoutAssessmentActiveWindow")
+                              	<td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.lockoutFunctionalityClickForActiveWindow")</b></div></td>
+                              	<td><div class="row_text">${status.value}</div></td>
+                              </tr>
+                               </table>																	
+	          </div>
+			  
+		 	<div style="height:10px"></div>
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Quiz Policy</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentEnabled")
+						  	  <td width="30%"><div class="row_text"><b>Enabled</b></div></td>
+    						  <td width="18%"><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.quizAssessmentEnableAssessmentProctoring")
+							  <td width="30%"><div class="row_text"><b>Enable Proctored Assessment (via Affidavit)</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentNoquestion")
+						  	  <td><div class="row_text"><b>Number of Question</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.quizAssessmentAllowQuestionSkipping")
+							  <td><div class="row_text"><b>Allow Skipping Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentMasteryscore")
+						  	  <td><div class="row_text"><b>Mastery Score</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.quizAssessmentUseUniqueQuestionsOnRetake")
+							  <td><div class="row_text"><b>Ask Unique Questions on Retake</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentRandomizeQuestions")
+						  	  <td><div class="row_text"><b>Randomize Questions</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b></b></div></td>
+							  <td><div class="row_text"></div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentRandomizeAnswers")
+						  	  <td><div class="row_text"><b>Randomize Answers</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b>Content Remediation</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentEnforcemaximumtimelimit")
+						  	  <td><div class="row_text"><b>Automatically Grade Assessment after (Minutes)</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.quizAssessmentGradingBehavior")
+							  <td><div class="row_text"><b>Grade Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentMaximumnoattempt")
+						  	  <td><div class="row_text"><b>Maximum Number of Attempts</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  #springBind("courseConfigForm.quizAssessmentEnableRestrictiveAssessmentMode")
+						  	  <td><div class="row_text"><b>Restrictive Mode</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentActionToTakeAfterMaximumAttemptsReached")
+						  	  <td><div class="row_text"><b>Action to Take After Failing Maximum Attemps</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  #springBind("courseConfigForm.quizAssessmentEnableWeightedScoring")
+						  	  <td><div class="row_text"><b>Weighted Scoring</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  
+                              ##springBind("courseConfigForm.quizAssessmentAllowpauseresumeassessment")
+							  ##<td><div class="row_text"><b>Allow Pause and Resume Assessment</b></div></td>
+							  ##<td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.quizAssessmentScoringType")
+						  	  <td><div class="row_text"><b>Show the Learner</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  #springBind("courseConfigForm.quizAssessmentShowQuestionAnswerReview")
+                              <td><div class="row_text"><b></b></div></td>
+    						  <td><div class="row_text"></div></td>
+					      </tr>
+                               <tr>
+                                #springBind("courseConfigForm.quizAssessmentShowQuestionLevelResults")
+                                  <td><div class="row_text"><b>Show feedback while reviewing questions</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                                  #springBind("courseConfigForm.quizAssessmentAdvancedQuestionSelectionType")
+                                  <td><div class="row_text"><b>Enable Advanced Question Selection</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                               <tr>
+                                  #springBind("courseConfigForm.quizAssessmentShowQuestionAnswerReview")
+                                  <td><div class="row_text"><b>Allow reviewing questions and answers after grading</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>                                  
+                                  
+
+ 								   #springBind("courseConfigForm.quizAllowPauseResumeAssessment")
+                                  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.allowStudentToStopAndResumeQuiz")</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                              
+                              <tr>
+                              	#springBind("courseConfigForm.quizLockoutAssessmentActiveWindow")
+                              	<td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.lockoutFunctionalityClickForActiveWindow")</b></div></td>
+                              	<td><div class="row_text">${status.value}</div></td>
+                              </tr>
+				   </table>																	
+	          </div>
+
+		 	<div style="height:10px"></div>
+
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Post Assessment Policy</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postAssessmentEnabled")
+						  	  <td width="30%"><div class="row_text"><b>Enabled</b></div></td>
+    						  <td width="18%"><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.postEnableAssessmentProctoring")
+							  <td width="30%"><div class="row_text"><b>Enable Proctored Assessment (via Affidavit)</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postassessmentNoquestion")
+						  	  <td><div class="row_text"><b>Number of Question</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.postAllowQuestionSkipping")
+							  <td><div class="row_text"><b>Allow Skipping Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postassessmentMasteryscore")
+						  	  <td><div class="row_text"><b>Mastery Score</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.postUseUniqueQuestionsOnRetake")
+							  <td><div class="row_text"><b>Ask Unique Questions on Retake</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postRandomizeQuestions")
+						  	  <td><div class="row_text"><b>Randomize Questions</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b></b></div></td>
+							  <td><div class="row_text"></div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postRandomizeAnswers")
+						  	  <td><div class="row_text"><b>Randomize Answers</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  <td><div class="row_text"><b>Content Remediation</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postassessmentEnforcemaximumtimelimit")
+						  	  <td><div class="row_text"><b>Automatically Grade Assessment after (Minutes)</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              #springBind("courseConfigForm.postGradingBehavior")
+							  <td><div class="row_text"><b>Grade Questions</b></div></td>
+							  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postassessmentMaximumnoattempt")
+						  	  <td><div class="row_text"><b>Maximum Number of Attempts</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  #springBind("courseConfigForm.postEnableRestrictiveAssessmentMode")
+						  	  <td><div class="row_text"><b>Restrictive Mode</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+                              
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postActionToTakeAfterMaximumAttemptsReached")
+						  	  <td><div class="row_text"><b>Action to Take After Failing Maximum Attemps</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+							  #springBind("courseConfigForm.postEnableWeightedScoring")
+						  	  <td><div class="row_text"><b>Weighted Scoring</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  
+                              ##springBind("courseConfigForm.postassessmentAllowpauseresumeassessment")
+							  ##<td><div class="row_text"><b>Allow Pause and Resume Assessment</b></div></td>
+							  ##<td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.postScoringType")
+						  	  <td><div class="row_text"><b>Show the Learner</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+							  #springBind("courseConfigForm.postShowQuestionAnswerReview")
+                              <td><div class="row_text"><b></b></div></td>
+    						  <td><div class="row_text"></div></td>
+					      </tr>					
+                                       <tr>
+                                #springBind("courseConfigForm.quizAssessmentShowQuestionLevelResults")
+                                  <td><div class="row_text"><b>Show feedback while reviewing questions</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                                  #springBind("courseConfigForm.postAdvancedQuestionSelectionType")
+                                  <td><div class="row_text"><b>Enable Advanced Question Selection</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                               <tr>
+                                  #springBind("courseConfigForm.postShowQuestionAnswerReview")
+                                  <td><div class="row_text"><b>Allow reviewing questions and answers after grading</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>                                  
+                                 
+								#springBind("courseConfigForm.postAllowPauseResumeAssessment")	
+                                  <td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.allowStudentToStopAndResumePostAss")</b></div></td>
+                                  <td><div class="row_text">$!{status.value}</div></td>
+                              </tr>
+                              
+                              <tr>
+                              	#springBind("courseConfigForm.postLockoutAssessmentActiveWindow")
+                              	<td><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.CourseConfiguation.PreAssessmentPolicy.lockoutFunctionalityClickForActiveWindow")</b></div></td>
+                              	<td><div class="row_text">${status.value}</div></td>
+                              </tr>
+				   </table>																	
+	          </div>
+
+		 	<div style="height:10px"></div>
+			
+			
+		 	<div style="height:10px"></div>
+			  
+        	  <div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Special Post Assessment Validation</span></div>
+
+             <!-- ****************************************************************************** -->
+             <table heigth="100%" width="100%" border="0" cellpadding="3" cellspacing="3">
+			 		<tbody><tr>
+    					<td></td>
+						<td width="30%"></td>
+						<td></td>
+					</tr>
+					
+					<tr>
+                      #springBind("courseConfigForm.requireProctorValidation")
+                      #set ($requireProctorVal=${status.value})
+                      
+				  	  <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidation")</b></div></td>
+					  <td><div class="row_text">
+					  	 #if(${status.value}=="true")  
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOn")
+					  	 	#else
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOff")
+					  	 #end
+					  	 </div></td>
+			       </tr>
+					<tr>
+                      #springBind("courseConfigForm.proctorValidatorName")
+				  	  <td width="30%"><div class="row_text">
+				  	  		<b>Proctor Validator</b></div>
+				  	  </td>
+					  <td><div class="row_text">
+					   #if(${requireProctorVal}=="true")  
+					  	  #if(${status.value}=="ansi")  
+					  	  	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.ansi")
+					  	  #elseif( ${status.value}=="nyInsurance")
+					  	  	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.nyInsurance")
+					  	  #end
+					   #else
+					   		$brander.getBrandElement("lms.courseDesc.label.tbd")	  
+					   #end	
+					  	</div></td>
+			       </tr>
+			       
+					<tr>
+                      #springBind("courseConfigForm.requireLearnerValidation")
+				  	  <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidation")</b></div></td>
+					  <td><div class="row_text">
+					  	#if(${status.value}=="true")  
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOn")
+					  	 	#else
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOff")
+					  	 #end
+					  	</div></td>
+			       </tr>
+					<tr>
+                      #springBind("courseConfigForm.caRealEstateCE")
+				  	  <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCE")</b></div></td>
+					  <td><div class="row_text">
+					  	#if(${status.value}=="true")  
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCEOn")
+					  	 	#else
+					  	 	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCEOff")
+					  	 #end
+					  	</div></td>
+			       </tr>
+				   <tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+					
+			 	</tbody></table>	
+        	  </div>
+        	          	  
+        	  <div style="height:10px"></div>
+        	  <div class="search_box_result">
+			  	   <div class="box_header"><span class="box_heading">Validation</span></div>
+				   <table border="0" width="100%" cellpadding="3" cellspacing="3" heigth="100%">
+			 	    	  <tr>
+                              #springBind("courseConfigForm.courseConfiguration.enableIdentityValidation")
+						  	  <td width="30%"><div class="row_text"><b>Enable Identity Validation</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.validationTimeBetweenQuestion")
+						  	  <td><div class="row_text"><b>Require Identity Validation Every Seconds</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  <tr>
+                              #springBind("courseConfigForm.allowSecondsToAnswerEachQuestion")
+						  	  <td width="30%"><div class="row_text"><b>Allow Seconds to Answer Each Question</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>
+			 	    	  
+                         <tr>
+                              #springBind("courseConfigForm.validationNoMissedQuestionsAllowed")
+						  	  <td width="30%"><div class="row_text"><b>Number of Missed Questions Allowed</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>	
+						  <tr>
+                              #springBind("courseConfigForm.numberOfValidationQuestions")
+						  	  <td width="30%"><div class="row_text"><b>Number of Validation</b></div></td>
+    						  <td><div class="row_text">$!{status.value}</div></td>
+					      </tr>	
+			 	    	  
+					      
+				   </table>																	
+
+
+	          </div>
+			  		  	
+						<div style="height:10px"></div>
+			 
+			 <div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">ACKNOWLEDGEMENT</span></div>
+
+             <!-- ****************************************************************************** -->
+             <table heigth="100%" width="100%" border="0" cellpadding="3" cellspacing="3">
+			 		<tbody><tr>
+    					<td width="30%" height="5"></td>
+    					<td ></td>
+						
+					</tr>
+					<tr>
+                        #springBind("courseConfigForm.acknowledgeEnabled")
+    					
+                            <td><div class="row_text"><b>Embedded Acknowledgement Enabled</b></div></td>
+						
+    					<td><td><div class="row_text">$!{status.value}</div></td></td>
+                        
+					</tr>
+					
+					<tr>
+                        
+    					
+						<td><div class="row_text"><b>Embedded Acknowledgement Text </b></div></td>
+						<td></td>
+						
+					</tr>
+						 #springBind("courseConfigForm.acknowledgeText")
+		  			  <tr>
+						  	  <td colspan="4"><div  style="width:98%;overflow:auto;height:150px;border:1px solid #cccccc" class="row_text">$escapeTool.unescapeHtml($status.value) </div></td>
+    						  
+					  </tr>						  
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+			 </tbody></table>	
+             <!-- ****************************************************************************** -->
+        	  </div>
+		
+						
+						<div style="height:10px"></div>
+			<div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Maximum Seat Time Enforcement</span></div>
+
+             <!-- ****************************************************************************** -->
+             <table heigth="100%" width="100%" border="0" cellpadding="3" cellspacing="3">
+			 		<tbody><tr>
+    					<td width="30%" height="5"></td>
+    					<td></td>
+						
+					</tr>
+					<tr>
+                        #springBind("courseConfigForm.seattimeenabled")
+    					
+                        <td><div class="row_text"><b>Seat Time Enabled</b></div></td>
+    					<td>$status.value</td>
+                        
+					</tr>
+					
+					
+					<tr>
+                        
+						<td>
+							#springBind("courseConfigForm.seattimeinhour")
+                                                        <div class="row_text"><b>Seat Time</b>
+							</td>
+							<td>
+							$status.value Hour(s)
+						
+								#springBind("courseConfigForm.seattimeinmin")
+								$status.value Minute(s)
+							</div>
+						
+                        
+						</td>
+					</tr>
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+					<tr>
+                        
+    					
+						<td><div><b>Message Seat Time Course Launch</b> </div></td>
+						<td></td>
+						
+					</tr>
+					
+    				
+                                    
+                                       #springBind("courseConfigForm.messageseattimecourselaunch")
+									   <tr>
+						  	  <td colspan="4"><div  style="width:98%;overflow:auto;height:150px;border:1px solid #cccccc" class="row_text">$escapeTool.unescapeHtml($status.value) </div></td>
+    						  
+					
+					</tr>
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+					
+					<tr>
+                       
+    					
+						<td><div><b>Message Seat Time Exceeds</b> </div></td>
+						<td></td>
+						
+					</tr>
+					
+					
+    					
+						
+                                       #springBind("courseConfigForm.messageseattimeexceeds")
+						<tr>
+						  	  <td colspan="4"><div  style="width:98%;overflow:auto;height:150px;border:1px solid #cccccc" class="row_text">$escapeTool.unescapeHtml($status.value) </div></td>
+    						  
+					  </tr>		
+					
+					
+					
+					
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+			 </tbody></table>	
+             <!-- ****************************************************************************** -->
+        	  </div>						
+						
+						
+						
+						
+						<div style="height:10px"></div>
+			<div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Minimum Seat Time Requirements</span></div>
+
+             <!-- ****************************************************************************** -->
+             <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
+			 		<tbody><tr>
+    					<td width="30%" height="5"></td>
+    					<td ></td>
+						
+					</tr>
+					<tr>
+                        #springBind("courseConfigForm.displaySeatTimeTextMessage")
+    					
+                        <td><div class="row_text"><b>Seat Time Text Message</b></div></td>
+    					<td>$status.value</td>
+                        
+					</tr>
+					<tr>
+                        #springBind("courseConfigForm.lockPostAssessmentBeforeSeatTime")
+    					
+                        <td><div class="row_text"><b>Lock Post Assessment</b></div></td>
+    					<td>$status.value</td>
+                        
+					</tr>
+					
+					<tr>
+                       #springBind("courseConfigForm.postMinimumSeatTimeBeforeAssessmentStart")
+                                
+                       <td ><div class="row_text"><b>Minimum Seat Time Before Assessment Unlocks</b>
+								</div></td>
+								
+								
+						<td>$status.value 
+                                
+                                #springBind("courseConfigForm.postMinimumSeatTimeBeforeAssessmentStartUnits")
+                                $status.value
+</td>
+
+								
+								
+								
+					</tr>
+					
+					
+					<tr>
+    					<td height="5"></td>
+						<td></td>
+						<td></td>
+                        <td></td>
+					</tr>
+			 </tbody></table>	
+             <!-- ****************************************************************************** -->
+        	  </div>
+						
+						
+		 
+		 <input type="hidden" id="currentpage" name="_page" value="11" />
+         <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_finish');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Finish</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target10');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+       </div>
+	   
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

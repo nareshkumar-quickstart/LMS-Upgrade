@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#set($adminCurrentMode = $currentMode)
+#set($expTrace = $ExceptionTrace)
+	<head>
+			#if($!adminCurrentMode == 'ROLE_LEARNER')
+				#parse("snippets/learnerNewHead.vm")
+			#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+				#parse("snippets/learnerNewHead.vm")
+			#elseif($!adminCurrentMode == 'ROLE_REGULATORYANALYST')
+				#parse("snippets/accreditation/accreditationDefaultHead.vm")
+			#elseif($!adminCurrentMode == 'ROLE_INSTRUCTOR')
+				#parse("snippets/instructor/instructorHead.vm")
+			#elseif($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+				#parse("snippets/learnerNewHead.vm")
+			#end
+	</head>
+<body>
+
+
+   <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header">
+		        <!-- Header starts -->
+			#if($!adminCurrentMode == 'ROLE_LEARNER')
+				#parse("snippets/learnerNewHeader.vm")
+			#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+		        #parse("snippets/managerHeader.vm")
+			#elseif($!adminCurrentMode == 'ROLE_REGULATORYANALYST')
+		        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+			#elseif($!adminCurrentMode == 'ROLE_INSTRUCTOR')
+				#parse("snippets/instructorHeader.vm")
+			#elseif($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+				#parse("snippets/adminHeader.vm")
+			#end
+		        
+		        <!-- Header ends -->
+			</td>
+		</tr>
+		<tr id="main"> <!-- SECOND BLOCK -->
+			<TD id="content" >
+            	<div id="scrollable">
+            	
+            		<h1>&nbsp;</h1>
+            		<h3>We have encountered a problem. Please try again and if the problem persist, please contact support department<h3>
+            		<br>
+            		<!-- <br>
+					Current Mode = $!{adminCurrentMode}
+            		<br><br> -->
+            		<a href="$!{request.getHeader("Referer")}">
+            			<h3>Click here to go back to previous URL</h3>
+            		</a>
+            		<br>
+            		#if($expTrace)
+            			<div style="visibility:hidden">$expTrace</div>
+		            #end
+            	</div>
+			</td>
+    	</tr>
+
+
+		<!-- Body End -->
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer">
+		        <!-- Footer Start -->
+		            #parse("snippets/managerFooter.vm")
+		        <!-- Footer End -->
+			</td>
+		</tr>
+
+	</table>
+
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+
+<script language="javascript" type="text/javascript">
+	function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.learnerPreferences.submit();
+    }
+    $(document).ready(function() {
+        
+    });
+</script>
+</head>
+<body>
+<form name="learnerPreferences" action="lrn_updatePreferences.do" method="post">
+<input type="hidden" id="action" name="action" />
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+        #parse("snippets/learnerNewHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+       <!-- left-pannel-content -->
+        #parse("snippets/learnerProfileLeftMenu.vm")
+        <!-- left-pannel-content -->
+		</table></td>
+		
+        <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+
+#if($context.responseCode != "null" )
+#if($context.responseCode == "100" )
+<iframe src="$!{context.storeFrontURL}" width="100%" height="1200px" scrolling="auto" frameborder="no" >
+  <p>Your browser does not support iframes.</p>
+</iframe>
+#else
+Error: User not found
+#end
+#else
+Error: Store not found
+#end
+        </div>
+    <!-- content2-area-end -->
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/learnerNewFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+#parse("snippets/reportManagerHead.vm")
+<script language="javascript">
+function selectTab(){
+var reportType = getReportType();
+
+document.getElementById("tdGraphLink").className = "";
+document.getElementById("tdDataLink").className = "";
+
+if (reportType == 'g'){
+	document.getElementById("tdGraphLink").className = "selected";
+	}
+else if (reportType == 'd'){
+	document.getElementById("tdDataLink").className = "selected";
+}
+
+}
+
+function getReportType(){
+var reportType = '$request.getParameter("type")';
+if (reportType.length>1)
+	reportType = 'g';
+return reportType.toLowerCase();
+}
+function exportReport()
+{
+var reportType = getReportType();
+	
+var exportTo = document.getElementById("ddlExportTo").value;
+document.location.href = "mgr_ManageReports.do?method=exportReport&type=" + reportType + "&format=" + exportTo ;
+}
+</script>
+</head>
+<body onload='selectTab();'>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                #set($currentReport=$reportForm.getCurrentReport())
+                <!-- header -->
+                #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                    #parse("snippets/adminHeader.vm")
+                #else
+                    #parse("snippets/managerHeader.vm")
+                #end  
+                <!-- header-end -->
+        	</td>
+		</tr>
+		<!-- TopBar Start -->
+    	<tr id="row-tabs">
+            <td id="blank-tab">
+                &nbsp;
+            </td>
+            <td id="tabs" align="center">
+                <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+    						<a href="#springUrl('/mgr_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+    					</td>
+                        <td id="tdGraphLink">
+    						<a href="#springUrl('/mgr_ManageReports.do?method=loadReportPage&type=g')">Graphical View</a>
+    					</td>
+                        <td id="tdDataLink">
+    						<a href="#springUrl('/mgr_ManageReports.do?method=loadReportPage&type=d')">Tabular View</a>
+    					</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <!-- TopBar End -->
+		
+
+		<tr id="main"> <!-- SECOND BLOCK -->
+			<td id="left-navigation" valign="top">
+           		<div id="sidebar-scroller" style="overflow-x: hidden;">
+                     #parse("snippets/reportLeftMenu.vm")
+                </div>
+			</td>
+			<td id="content" >
+				<div id="scrollable">		
+                    <!-- Logo+Manage-User -->
+                    <div class="logoContainer" id="logomainContainer">
+	    				<a class="button" onclick="document.location.href='#springUrl('/mgr_ManageReports.do?method=browseReports')';" >
+	    					  <span class="button">Back</span>
+	    				</a>
+                		<div class="btn-right3-new">
+ 							<a class="button" onclick="exportReport();" >
+    						  <span class="button">Export</span>
+    						</a>&nbsp;
+    						<select id="ddlExportTo" style="width:120px;height:23px;font-size:12px;">
+							  <option value="EXCEL">MS Excel Format</option>
+							  <option value="PDF">PDF Format</option>
+							</select>&nbsp;		
+    					</div>			<!-- HTML Report -->
+	    						
+					<br><br>
+					<div id="reportDataContainer">
+						$context.reportHTML
+					</div>					
+                </div>
+    		</td>			
+    	</tr>
+    	<tr>
+        <!-- Footer BLOCK -->
+            <td id="footer" colspan="2">
+                #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                    #parse("snippets/adminFooter.vm")
+                #else
+                    #parse("snippets/managerFooter.vm")
+                #end
+            </td>
+        </tr>
+    </table>
+
+         
+        
+</body>
+</html>

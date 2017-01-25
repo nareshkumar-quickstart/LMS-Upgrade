@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+        
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type="text/javascript" src="javascript/ui.datepicker.js"></script>   
+
+        <script language="javascript" type="text/javascript">
+
+            $(document).ready(function(){
+              	$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+				if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+				}
+				$('#sideBar').height($('#right-pannel').height());
+				$("#startDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#endDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });    
+            });
+
+            function search() {
+                document.getElementById('actionmethod').value='searchGradeBook';
+                document.getElementById('showAll').value=false;
+                document.manageGrdBkForm.submit();
+            }
+
+            function editResources() {
+                document.getElementById('actionmethod').value='editResource';
+                document.manageGrdBkForm.submit();
+            }
+
+            function sortGradeBook(sortColumnIndex,sortDirection,pageIndex,showAll){
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('pageIndex').value=pageIndex;
+                document.getElementById('actionmethod').value='searchGradeBook';
+                document.manageGrdBkForm.submit();
+            }
+           
+        </script>
+    </head>
+
+    <body>
+        <form name="manageGrdBkForm" id="manageGrdBkForm" method="post" action="ins_mngGradeBook.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+  	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+			</td></tr>
+			
+                <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+         #parse("snippets/instructorResourcesLeftMenu.vm")
+		</table></td>
+
+		<TD id="content" >
+			<div id="scrollable">
+                        <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                          		    <tr>
+                          			<td id="page-icon" class="page-icon-tools">
+                          			    &nbsp;
+                          			</td>
+                          			<td id="page-description">
+                          			    <div id="page-heading">$brander.getBrandElement("lms.instructor.ManageGradeBook.Heading")</div>
+                          			    <div id="page-help">
+											One Gradebook is created per each class schedule in a course. The Gradebooks are created automatically by enrollments into that class. Search for existing Gradebooks. Click the Class Name to open the Gradebook for that class. Click Edit Activities to manage, add, or remove activities for that class.
+										</div>
+                          			</td>
+                          		    </tr>
+                          		</table>  						
+          
+
+                        <div id="resultBox" class="search_box_result" >
+                            <div id="resultHeader" class="box_header" >
+                                <div class="box_heading">
+                                    $brander.getBrandElement("lms.instructor.ManageGradeBook.caption.gradebooks")
+                                </div>
+                                <div id="searchBox" style="float:left; height:175px; left:47%;" class="visible">
+                                    $brander.getBrandElement("lms.instructor.ManageGradeBook.caption.searchSche")<br/><br/><br/>
+                                    <div style="float:left">$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.className")</div> <input type="text" onkeypress="doEnter(event);" name="className" value="$!{context.className}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                                    
+                                    <div style="float:left">$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.startDate")</div> 
+                                      <input type="text" id="startDate"  date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" style="width:155px; margin-left:13px;" name="startDate" value="$!{context.startDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/><br/><br/>
+                                    <div style="float:left">$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.endDate")</div> 
+                                      <input type="text" id="endDate"   date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")"  style="width:155px; margin-left:19px;" name="endDate" value="$!{context.endDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/><br/><br/>
+                                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="search();">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                    <div style="float:right; margin-top:2px; ">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </div>
+                                <div class="result_left_side">
+                                    <!-- Result Description -->
+                                    $pager.setItems($!{context.gradeBookList})
+                                    #set($totalCount = $pager.total)
+                                    #if($pager.hasItems())
+                                            #set($pageFirstIndex = $pager.firstIndex)
+                                            #set($pageLastIndex = $pager.lastIndex)
+                                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                            #set($currentPageCount = $pageLastIndex + 1)
+                                            #set($pageCurrIndex = $pager.index)
+                                    #else
+                                            #set($pageFirstIndex = 0)
+                                            #set($pageLastIndex = 0)
+                                            #set($currentPageSize = 0)
+                                            #set($currentPageCount = 0)
+                                            #set($pageCurrIndex = 0)
+                                    #end
+                                    <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                                    <input type="hidden" id="paging" name="paging" value="" />
+                                    <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                                    <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                                    <input type="hidden" id="showAll" name="showAll" value="false" />
+                                    <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+                                    #if($!{context.showAll})
+                                        #set($showAll=$!{context.showAll})
+                                    #else
+                                        #set($showAll=false)
+                                    #end
+                                    <div style="float:left; margin-top:2px;" >
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="showSearchBox(this);">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                    <!-- All Icon -->
+                                    #if($totalCount>10)
+                                        <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='ins_mngGradeBook.do?method=searchGradeBook&showAll=true';" ></div>
+                                    #end
+                                    <!-- Next Icon -->
+                                    #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_mngGradeBook.do?method=searchGradeBook&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                                    #else
+                                        <div id="goNext" class="icon_disabled"></div>
+                                    #end
+                                    <!-- Back Icon -->
+                                    #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_mngGradeBook.do?method=searchGradeBook&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                                    #else
+                                        <div id="goBack" class="icon_disabled"></div>
+                                    #end
+                                    <!-- Showing Results -->
+                                    #if($totalCount>1)
+                                        <div id="resultDescription" class="box_description" #if($totalCount<11) style="margin-right:-22px;" #end> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                                    #else
+                                         <div id="resultDescription" class="box_description" style="margin-right:-22px;" > $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                                    #end
+                                </div>
+                            </div>
+                            <!-- Result Header End -->
+                            #if($currentPageSize == 0)
+                                <!-- Result Subheader Start -->
+                                <div id="searchResult_1">
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                        <tr bgcolor="#efefef">
+                                            <td class="box_subheader"  height="20px" ><div style="margin-left:5px;" >$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.className")</div></td>
+                                            <td class="box_subheader" width="130px"><div style="margin-left:5px;" >$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.startDate")</div></td>
+                                            <td class="box_subheader" width="130px"><div style="margin-left:5px;" >$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.endDate")</div></td>
+                                            <td class="box_subheader" width="100px" style="border-right:none;"><div style="margin-left:5px;" >&nbsp;</div></td>
+                                        </tr>
+                                    </table>
+                                    <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div>
+                                </div>
+                                <!-- Result Subheader End -->
+                            #else
+                                <!-- Search Result Start -->
+                                <div id="searchResult_2">
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                        <tr bgcolor="#efefef">
+                                            <td class="box_subheader" height="20px"><div style="margin-left:5px;" #if($context.sortDirection == 0) onclick="sortGradeBook(0,1,$pageCurrIndex,$showAll);" #else onclick="sortGradeBook(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down"#end></div>$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.className")</div></td>
+                                            <td class="box_subheader" width="130px"><div style="margin-left:5px;" #if($context.sortDirection == 0) onclick="sortGradeBook(1,1,$pageCurrIndex,$showAll);" #else onclick="sortGradeBook(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down"#end></div>$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.startDate")</div></td>
+                                            <td class="box_subheader" width="130px"><div style="margin-left:5px;" #if($context.sortDirection == 0) onclick="sortGradeBook(2,1,$pageCurrIndex,$showAll);" #else onclick="sortGradeBook(2,0,$pageCurrIndex,$showAll);" #end ><div id="userNameSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.instructor.searchSynchronousClass.caption.endDate")</div></td>
+                                            <td class="box_subheader" width="100px" style="border-right:none;"><div style="margin-left:5px;" >&nbsp;</div></td>
+                                        </tr>
+                                        #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                            #set($gradeBook = $context.gradeBookList.get($loopIndex))
+                                            #if($loopIndex%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+                                            #if($loopIndex == $pageLastIndex)
+                                                <tr>
+                                                    <td class="$alternate" height="20px" ><u><a style="text-decoration: underline;" href="ins_mngGradeBook.do?method=editGradebookCourseActivityView&synClsId=$!{gradeBook.synchronousClass.id}&gradebookId=$!{gradeBook.id}" title="Click to open Gradebook for this class" >$!{gradeBook.synchronousClass.sectionName}</u></a></td>
+                                                    <td class="$alternate" style="border-bottom:none;">$date.format('MM/dd/yyyy',$!{gradeBook.synchronousClass.classStartDate})</td>
+                                                    <td class="$alternate" style="border-bottom:none;">$date.format('MM/dd/yyyy',$!{gradeBook.synchronousClass.classEndDate})</td>
+                                                    <td class="$alternate" style="border-right:none; border-bottom:none;"><a href="ins_mngActivity.do?method=searchActivity&sortColumnIndex=.&sortDirection=.&grdBkId=$!{gradeBook.id}&pageCurrIndex=0" style="text-decoration: underline;" title="Add/Remove Activities for this class">$brander.getBrandElement("lms.instructor.ManageGradeBook.caption.editActv")</a></td>
+                                                </tr>
+                                            #else
+                                                <tr>
+                                                    <td class="$alternate" height="20px"><u><a style="text-decoration: underline;" href="ins_mngGradeBook.do?method=editGradebookCourseActivityView&synClsId=$!{gradeBook.synchronousClass.id}&gradebookId=$!{gradeBook.id}" title="Click to open Gradebook for this class" >$!{gradeBook.synchronousClass.sectionName}</u></a></td>
+                                                    <td class="$alternate">$date.format('MM/dd/yyyy',$!{gradeBook.synchronousClass.classStartDate})</td>
+                                                    <td class="$alternate" >$date.format('MM/dd/yyyy',$!{gradeBook.synchronousClass.classEndDate})</td>
+                                                    <td class="$alternate" style="border-right:none;" ><a href="ins_mngActivity.do?method=searchActivity&sortColumnIndex=.&sortDirection=.&grdBkId=$!{gradeBook.id}&pageCurrIndex=0" style="text-decoration: underline;" title="Add/Remove Activities for this class">$brander.getBrandElement("lms.instructor.ManageGradeBook.caption.editActv")</a></td>
+                                                </tr>
+                                            #end
+                                        #end
+                                    </table>
+                                </div>
+                                <!-- Search Result End -->
+                             #end
+                        </div>
+                    </div>
+                </td></tr>
+
+                <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+                <!-- Footer Start -->
+                #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+	</td></tr>				
+            </table>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,225 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	#springBind("enrollmentForm.searchType")
+	#set($searchType=${status.value})
+	 <head>
+			#parse("snippets/learnerNewHead.vm")
+		<!--	<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+			<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+			<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+			<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+
+				$(document).ready(function()
+				{
+						
+				});
+				
+				
+			</script>
+
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+	</head>
+
+
+
+	<body>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+			<!-- header -->
+			##parse("snippets/managerHeader.vm")
+				#parse("snippets/managerWizardHeader.vm")
+			<!-- header-end -->
+			</td>
+		</tr>
+		
+		<tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->					
+				<div>
+						<div id="l-menu-back">
+							<div class="l-menu-back-text-h">Assign Enrollment Wizard<br/>showing 3 of 6</div>
+							<div class="l-menu-back-text-acted">1. Select Enrollment Method</div>
+							<div class="l-menu-back-text-acted">2. Select Surveys</div>
+							<div class="l-menu-back-text-act">3. Select Training Plans</div>
+
+							<div class="l-menu-back-text">4. Select Enrollment Dates</div>
+							<div class="l-menu-back-text">5. Configure Enrollment Settings</div>
+							<div class="l-menu-back-text">6. View Results</div>
+						</div>
+					</div>
+		    	</table>
+			</td>
+					
+			<TD id="content-rightpanel">
+		    <div id="scrollable">
+				 #springBind("enrollmentForm.enrollCourses")
+               #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                </div>
+                <!-- error-box -->
+                #end
+
+
+						<!-- Logo+Manage-User -->
+						<div class="scrollable_4">
+
+						<!-- Logo+Manage-User-end -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">Assign Enrollment - Select Training Plans</div>
+			    <div id="page-help">$brander.getBrandElement("lms.enrollment.searchEnrollment.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+							<!-- Search Result Start -->
+						   
+									<!-- Result Header End -->
+								
+							<!-- #springBind("enrollmentForm.listMap")
+							#foreach($map in $!{status.value})
+								$map.Name
+							
+								#foreach($course in $map.courseList)
+									$course.courseTitle
+								#end
+							#end -->
+							<form name="trainingPlanForm" method="post" action="mgr_assignEnrollments.do" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+											<div class="search_box_result" style="margin-top:20px;">
+							<div class="box_header" ><span class="box_heading">Training Plans</span></div>
+							<table border="0" width="100%" cellpadding="0" cellspacing="0">
+							 #set($flag=0)
+						     #springBind("enrollmentForm.surveySuggestedCourses")
+							#foreach($suggestedSurvey in $!{status.value})
+								#set($flag=$flag+1)
+                                            #if($flag%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+
+								<tr class="$alternate">
+									<td height="10">
+										<input type="checkbox" value="$suggestedSurvey.survey.id"class="survey-respondent-checkbox" name="surveyTraining"/>
+										<b>$suggestedSurvey.survey.name</b>
+									</td>
+								</tr>
+							 #foreach($learnerCourse in $suggestedSurvey.learnerCourses)
+									#set($flag=$flag+1)
+                                            #if($flag%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+								<tr class="$alternate">
+									<td height="10" >
+										#springBind("enrollmentForm.users")
+										<input type="checkbox" value="$learnerCourse.id"class="survey-respondent-checkbox"  name="${status.expression}" style="margin-left:25px;"/>
+										$learnerCourse.learnerName
+									</td>
+								</tr> 
+								
+								 #foreach($courses in $learnerCourse.courses)
+									
+								 #set($flag=$flag+1)
+                                            #if($flag%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+								<tr class="$alternate">
+									<td height="10" >
+										 #springBind("enrollmentForm.enrollCourses")
+										 #set($isChecked = "false")
+															#foreach($courseId in $!{status.value})
+																#if(${courses.id} == $courseId)
+																	#set($isChecked = "true")											
+																#end
+															#end
+											#if($isChecked == "true")
+										<input type="checkbox" class="survey-respondent-checkbox" checked name="${status.expression}" value="$courses.id" style="margin-left:45px;"/>
+										 #else
+										 <input type="checkbox" class="survey-respondent-checkbox"  name="${status.expression}" value="$courses.id" style="margin-left:45px;"/>
+										 #end
+										$courses.courseTitle
+									</td>
+								</tr>
+								  #end
+								#end
+						#end
+							</table>
+						</div>
+						
+							<!-- Search Result End -->
+
+					<!-- ************************************************************** -->
+
+							<!-- button-div -->
+							<div class="managerBtn">
+									<input type="hidden" id="currentpage" name="_page" value="10" />
+									<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+									<div style="float:right; margin-top:3px;">
+									  <a onClick="submitButtonForm(document.trainingPlanForm,'wizardSubmitter','_target5');" style="text-decoration:none;">
+										  <div class="btn_start"></div>
+										  <div class="btn_normal">Next</div>
+										  <div class="btn_end"></div>
+									  </a>
+									</div>
+									<div style="float:right; margin-top:3px;margin-right:5px;">
+									  <a onClick="submitButtonForm(document.trainingPlanForm,'wizardSubmitter','_target9');" style="text-decoration:none;">
+										  <div class="btn_start"></div>
+										  <div class="btn_normal">Previous</div>
+										  <div class="btn_end"></div>
+									  </a>
+									</div>
+									<div style="float:left; margin-top:3px;margin-left:10px;">
+										<a onClick="submitButtonForm(document.trainingPlanForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+											<div class="btn_start"></div>
+											<div class="btn_normal">Cancel</div>
+											<div class="btn_end"></div>
+										</a>
+									</div>	
+							</div>
+
+							<!-- space -->
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+							<!-- space -->
+					</form>
+
+			<!-- right-pannel-content-end -->
+			</div>
+
+			
+
+	<!-- content-area-end -->
+	</div>
+</td></tr>
+
+		  <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+        	<!-- footer -->
+        	#parse("snippets/managerFooter.vm")
+        	<!-- footer-end -->
+			</td>
+		</tr>
+
+	</table>
+	</body>
+	</html>

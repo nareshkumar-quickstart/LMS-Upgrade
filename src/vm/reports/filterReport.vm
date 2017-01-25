@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/reportNewHead.vm")
+<link rel="stylesheet" type="text/css" href="$brander.getBrandElement("lms.css.datepicker.css")" />
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script type="text/javascript" src="javascript/reportfilter.js"></script>
+<script type="text/javascript" language="javascript">
+<!--
+    function saveReportFilters(){
+        document.getElementById("action").value = "saveReportFilters";
+        document.manageReportFiltersForm.submit();
+		
+    }
+
+    function cancelReportFilters(){
+        document.getElementById("action").value = "cancelReportFilters";
+        //document.manageReportFiltersForm.submit();
+		window.location="adm_ManageReports.do";
+    }
+
+#set($currentReport=$reportForm.getCurrentReport())
+#if($null.isNotNull($currentReport))
+var filterData = {
+#set($fieldList = $reportForm.currentReport.fields)
+        filterfields:[
+                     
+#if($fieldList)
+#set ($fieldIter = $mill.wrap($fieldList))
+#foreach($fieldElem in $fieldIter)
+#set($field = $fieldIter.more())
+#if($field.filterable)
+{id:"$field.id",name:"$field.displayName",datatype:"$field.dataType"} #if($fieldIter.hasMore()),#end
+#end
+#end
+#end
+                     
+                     ],
+#set($stringOpList = $reportForm.operandMap.get("string"))
+       filterOperandString:[
+#if($stringOpList)
+#set ($opIter = $mill.wrap($stringOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+#set($integerOpList = $reportForm.operandMap.get("int"))
+       filterOperandInteger:[
+#if($integerOpList)
+#set ($opIter = $mill.wrap($integerOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+#set($booleanOpList = $reportForm.operandMap.get("boolean"))
+       filterOperandBoolean:[
+#if($booleanOpList)
+#set ($opIter = $mill.wrap($booleanOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ],
+#set($dateOpList = $reportForm.operandMap.get("date"))
+       filterOperandDate:[
+#if($dateOpList)
+#set ($opIter = $mill.wrap($dateOpList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+{id:"$op.id",label:"$op.label"} #if($opIter.hasMore()),#end
+#end
+#end
+                     ]
+    };
+#end
+
+$(document).ready(function() {
+    $('#right-pannel-report').scroll(function() {
+        $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+    });
+    $('#close_message').click(function() {
+        $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+    });
+});
+//-->
+</script>
+</head>
+<body>
+<div id="main-container">
+
+    <!-- header -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminHeader.vm")
+    #else
+        #parse("snippets/managerHeader.vm")
+    #end
+    <!-- header-end -->
+
+    <!-- TopBar Start -->
+    <div id="topBar" class="Block-Contain-header-report">
+        <div id="reportlistheading" class="master-div">
+            <div name="eTopMenu" class="menu-text">REPORT LIST</div>
+        </div>
+        <div class="master-div2">
+            <div class="master-div3-position"></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=browseReports')" class="sub-top-nav">SUMMARY</a></div></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=reportFieldMenu')" class="sub-top-nav">FIELDS</a></div></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=displayReportFilters')" class="sub-top-nav"><b>FILTERS</b></a></div></div>
+            <div class=""></div>
+        </div>
+    </div>
+    <!-- TopBar End -->
+
+    <div id="content2r">
+    <!-- content-area -->
+        <!-- left-pannel-content -->
+        #parse("snippets/reportLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+        <!-- <div id="right-pannel"> -->
+
+        <div id="right-pannel">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+
+                #springBind("reportForm.*")
+                #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                    </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+                <div class="page_description" id="pageDescription">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+                    
+                            <div id="titleHolder" class="courseTitle1">Report Filters</div>
+                            <div id="detailsHolder">On this page you may create filters for this report. To add a new filter, click on the Add Filter Button. To remove a filter click on the Remove Filter Button</div>
+                  
+                    
+                </div>
+                <!-- Logo+Manage-User-end -->
+
+                <form name="manageReportFiltersForm" action="#springUrl('/adm_ManageReports.do?')" method="POST">
+                    <input type="hidden" id="action" name="method" value=""/>
+
+                <!-- User-profile -->
+                    <div class="content-Block-filter">
+
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">Filters</div>
+                        </div>
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="Search-inputfield-box4">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="model" style="display:none">
+                                <img src="brands/default/en/images/minus-c.gif" value="Delete" style="cursor:pointer" title="Remove Filter"/>
+                                <select class="c1 input_field_report_select"><option value="" datatype="">Select Filter</option></select>
+                                <select class="c2 input_field_report_select"><option value="">Select Operand</option></select>
+                                <input class="input_field_report" type="text" />
+                                <input type="hidden" class="c3" value=""/>
+                                <input type="hidden" class="c4" value="false"/>
+                                <input type="hidden" class="c5" value=""/>
+                            </div>
+
+                            <div id="noReportFilter" class="search-content-row" style=#if($filterItems && $filterItems.size() > 0)"display:none" #else "display:block" #end>
+                                <div class="">The report has no filter.</div>
+                            </div>
+                            <input type="hidden" name="hasFilters" id="hasFilters" value=#if($filterItems && $filterItems.size() > 0)"true" #else "false" #end/>
+
+#set($filterItems = $reportForm.reportFilterItems)
+                            <div id="filterContainer">
+#set($index = 0)
+#foreach($filterItem in $filterItems)
+                                <div style="padding: 5px; display: block;">
+                                    <img src="brands/default/en/images/minus-c.gif" id="btnDelete$index" value="Delete" style="cursor:pointer" title="Remove Filter"/>
+                                    <select id="reportFilterItems[$index].reportFieldId" name="reportFilterItems[$index].reportFieldId" class="c1 input_field_report_select">
+#set($currentFilterDataType = "")
+#set($fieldList = $reportForm.currentReport.fields)
+#if($fieldList)
+#set ($fieldIter = $mill.wrap($fieldList))
+#foreach($fieldElem in $fieldIter)
+#set($field = $fieldIter.more())
+#if($field.filterable)
+                                        <option value="$field.id" datatype="$field.dataType" #if($filterItem.reportFieldId == $field.id) selected #end>$field.displayName</option>
+#if($filterItem.reportFieldId == $field.id)
+#set($currentFilterDataType = $field.dataType.toLowerCase())
+#end
+#end
+#end
+#end
+                                    </select>
+                                    <select id="reportFilterItems[$index].filterOperandId" class="c2 input_field_report_select">
+#set($opList = $reportForm.operandMap.get($currentFilterDataType))
+#if($opList)
+#set ($opIter = $mill.wrap($opList))
+#foreach($opElem in $opIter)
+#set($op = $opIter.more())
+                                        <option value="$op.id" #if($filterItem.filterOperandId == $op.id) selected #end>$op.label</option>
+#end
+#end
+                                    </select>
+#if( $currentFilterDataType.equalsIgnoreCase("string"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterStringValue" type="text" name="reportFilterItems[$index].filterStringValue" value="$!{filterItem.filterStringValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("int") ||  $currentFilterDataType.equalsIgnoreCase("integer"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterIntegerValue" type="text" name="reportFilterItems[$index].filterIntegerValue" value="$!{filterItem.filterIntegerValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("double"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterDoubleValue" type="text" name="reportFilterItems[$index].filterDoubleValue" value="$!{filterItem.filterDoubleValue}"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("date") || $currentFilterDataType.equalsIgnoreCase("datetime"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterDateValue" type="text" name="reportFilterItems[$index].filterDateValue" value="$date.format('MM/dd/yyyy',$!{filterItem.filterDateValue})"/>
+#elseif( $currentFilterDataType.equalsIgnoreCase("boolean"))
+                                    <input class="input_field_report" id="reportFilterItems[$index].filterBooleanValue" type="text" name="reportFilterItems[$index].filterBooleanValue" value="$!{filterItem.filterBooleanValue}"/>
+#else
+
+#end
+                                    <input type="hidden" class="c3" id="reportFilterItems[$index].id" name="reportFilterItems[$index].id" value="$filterItem.id"/>     
+                                    <input type="hidden" class="c4" id="reportFilterItems[$index].markedForDeletion" name="reportFilterItems[$index].markedForDeletion" value="false"/>     
+                                    <input type="hidden" class="c5" id="reportFilterItems[$index].filterType" name="reportFilterItems[$index].filterType" value="$filterItem.filterType"/>     
+                                </div>
+#set($index = $index + 1)
+#end
+                            </div>
+
+
+                            <!-- 2 -->
+                            <div id="e13" class="search-btn-row">
+                                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")">
+								#if(!$currentReport.systemOwned)
+									<a class="button"  id="btnAdd">
+										<span class="button">Add Filter</span>
+									</a>
+								#end
+								</div>
+                            </div>
+                            <!-- 0 -->
+                        </div>
+
+                    </div>
+                    <!-- User-profile-end -->
+        
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+
+                    <!-- button-div -->
+                    <div class="managerBtn">
+                        
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-right3")">
+							<a class="button" onclick="cancelReportFilters();" >
+								<span class="button">Cancel</span>
+							</a>
+							#if(!$currentReport.systemOwned)
+							<a class="button" onclick="saveReportFilters();" >
+								<span class="button">Save</span>
+							</a>
+							#end
+						</div>
+                    </div>
+                <!-- scrollable-div -->
+                </form>
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+
+            </div>
+            <!-- for center-align-div -->
+        </div>
+    <!-- content-area-end -->
+    </div>
+    <!-- footer -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+       #parse("snippets/managerFooter.vm")
+    #end  
+    <!-- footer-end -->
+</div>
+
+</body>
+</html>

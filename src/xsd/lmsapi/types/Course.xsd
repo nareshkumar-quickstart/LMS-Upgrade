@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Chameleon Namespace Design:
+		This design approach says to give the "main" schema a targetNamespace, and the "supporting" schemas have no targetNamespace.
+		There are two things to note about this design approach:
+
+		First, a schema is able to access components in schemas that have no targetNamespace, using <include>. The TrainingPlan 
+		schema uses the components in Course.xsd (and have no targetNamespace).
+
+		Second, note the chameleon-like characteristics of schemas with no targetNamespace:
+
+    	The components in the schemas with no targetNamespace get namespace-coerced. That is, the components "take-on" the 
+    	targetNamespace of the schema that is doing the <include>
+        For example, Courses in Courses.xsd gets implicitly coerced into the TrainingPlan targetNamespace. This is the reason that 
+        the Courses element in TrainingPlan.xsd was able to reference Courses defined in Courses.xsd in the default namespace using 
+        type="Courses".
+
+		"Chameleon effect" ... This is a term coined by Henry Thompson to describe the ability of components in a schema with no 
+		targetNamespace to take-on the namespace of other schemas. This is powerful!
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+	
+	<xsd:complexType name="Courses">  
+    	<xsd:sequence>  
+        	<!-- This will be a courseGUID -->
+            <xsd:element name="Course" type="Course" minOccurs="1" maxOccurs="unbounded" nillable="false"  />
+    	</xsd:sequence>  
+    </xsd:complexType>
+    
+	<xsd:complexType name="Course">  
+    	<xsd:sequence>  
+        	<!-- This will be a courseGUID -->
+            <xsd:element name="courseID" type="xsd:string"  />
+    	</xsd:sequence>  
+    </xsd:complexType>
+	
+</xsd:schema>

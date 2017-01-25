@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/learnerHead.vm")
+
+<body>
+<script type="text/javascript">
+	function addCourseInEntitlementAction(){
+		document.getElementById('courseAction').value = 'addCourseInEntitlement';
+		document.courseGroupSearchForm.submit();
+	}
+
+	function setCourseSelection(checkbox){
+		document.getElementById(checkbox.id).value = checkbox.checked;
+	}
+
+	function changeRowColor(checkbox) {
+		var tr=checkbox.parentNode.parentNode;
+		if (checkbox.checked) {
+			tr.style.background="#E9F9FE";
+		} else {
+			tr.style.background="#ffffff";
+		}
+	}
+</script>
+<form name="courseGroupSearchForm" action="adm_SearchCourseAndCourseGroup.do" method="POST">
+<div id="main-container">
+
+	<!-- header -->
+	<div id="header">
+		<!-- logo -->
+		<div class="$brander.getBrandElement("lms.administrator.commonHeader.cssClass.wel-logo")">
+			<div id="e1" class="$brander.getBrandElement("lms.administrator.commonHeader.cssClass.welcome_message")">$brander.getBrandElement("lms.addQuestion.caption.WelcomeStudentReturning")</div>
+			<div id="e2" class="$brander.getBrandElement("lms.administrator.commonHeader.cssClass.logo")"><img src="$brander.getBrandElement("lms.administrator.commonHeader.pixel.logo_360.gif")" alt=""/></div>
+		</div>
+	</div>
+	<!-- header-end -->
+	<div id="content2a">
+	<!-- content-area -->
+		<!-- left-pannel-content -->
+		<div id="left-pannel"></div>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+			<!-- Logo+Manage-User -->
+			<!--<div class="$brander.getBrandElement("lms.distributerGroups.cssClass.courseLogoContainer")">
+				<div id="e3" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.courseLogo2")"><img src="$brander.getBrandElement("lms.pixel.iconManageOrgGroupGif")" alt="" /></div>
+				<div id="e4" class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.courseTitleDiv")">
+					<div id="e5" class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.courseTitle1")">$brander.getBrandElement("lms.assignEnrollment.caption.title")</div>
+					<div id="e6" class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.caption.courseDetails")">$brander.getBrandElement("lms.assignEnrollment.caption.subtitle")</div>
+				</div>
+			</div>-->
+			<!-- Logo+Manage-User-end -->
+				#if($!{context.entitlementType}=="courseGroup")
+					#foreach($entitlement in $!{context.distributorEntitlements})
+						<!-- User-list -->
+						<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+							<div id="e12" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.Block-Contain-header")">
+								<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$entitlement.name</div>
+							</div>
+							<!-- 1 -->
+							<div id="e7c" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.User-checkbox-box")">
+								<div id="e15" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-row")">
+									<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"><input type="checkbox" id="" /></div>
+									<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")">$brander.getBrandElement("lms.administrator.addCourseGroup.caption.CourseGroupName")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.entitlementView.caption.SeatsOrdered")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.entitlementView.caption.SeatsUsed")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.addCourseGroup.caption.SeatsReamining")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.expirationDate")</div>
+								</div>
+								<!-- 1 -->
+								<div id="e15" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.User-checkbox-row-h")">
+									<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"></div>
+									<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")"></div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.maxNumberSeats}</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.numberSeatsUsed}</div>
+									#set($remainingSeat = $!{entitlement.maxNumberSeats} - $!{entitlement.numberSeatsUsed})
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$remainingSeat</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.endDate}</div>
+								</div>
+								
+									#foreach($courseGroup in $entitlement.courseGroups)
+										<!-- 1 -->
+										<div id="e16" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+											<div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.User_coll_1")"><input type="checkbox" id="chkCG$velocityCount" name="selectedCourse" value="$courseGroup.id}" onclick="setCourseSelection(this);changeRowColor(this);" /></div>
+											<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2b")">$courseGroup.name</div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+										</div>
+									#end
+							<!-- 1 -->
+							</div>
+							<!-- 1 -->
+						</div>
+						<!-- End-User-list -->
+					
+						<!-- space -->
+						<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+						<!-- space -->
+					#end
+				#else
+					#foreach($entitlement in $!{context.distributorEntitlements.keySet()})
+						<!-- User-list -->
+						<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+							<div id="e12" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.Block-Contain-header")">
+								<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$!{entitlement.name}</div>
+							</div>
+							<!-- 1 -->
+							<div id="e7c" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.User-checkbox-box")">
+								<div id="e15" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-row")">
+									<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"><input type="checkbox" id="" /></div>
+									<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")">$brander.getBrandElement("lms.administrator.addCourseGroup.caption.courseName")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.entitlementView.caption.SeatsOrdered")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.entitlementView.caption.SeatsUsed")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.administrator.addCourseGroup.caption.SeatsReamining")</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.expirationDate")</div>
+								</div>
+								<!-- 1 -->
+								<div id="e15" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.User-checkbox-row-h")">
+									<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"></div>
+									<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")"></div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.maxNumberSeats}</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.numberSeatsUsed}</div>
+									#set($remainingSeat = $!{entitlement.maxNumberSeats} - $!{entitlement.numberSeatsUsed})
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$remainingSeat</div>
+									<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_H3")">$!{entitlement.endDate}</div>
+								</div>
+								
+									#foreach($course in $!{context.distributorEntitlements.get($entitlement)})
+										<!-- 1 -->
+										<div id="e16" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+											<div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.User_coll_1")"><input type="checkbox" id="chkC$velocityCount" name="selectedCourse" value="$course.id}" onclick="setCourseSelection(this,'${status.expression}');changeRowColor(this);" /></div>
+											<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2b")">$course.courseTitle</div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+											<div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.User_coll_3")"></div>
+										</div>
+									#end
+							<!-- 1 -->
+							</div>
+							<!-- 1 -->
+						</div>
+						<!-- End-User-list -->
+					
+						<!-- space -->
+						<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+					#end
+				#end
+			
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.managerBtn")">
+				<div><input type="button" value="Close" onclick="self.close();" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.btn-66w-l")" /></div>
+				<div><input type="button" value="Update" onclick="return addCourseInEntitlementAction();" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn-66w")" /></div>
+				<input type="hidden" id="courseAction" name="courseAction" value=""/>
+			</div>
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content2-area-end -->
+	</div>
+	<!-- footer -->
+	
+	<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

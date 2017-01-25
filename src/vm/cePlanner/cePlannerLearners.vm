@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    ##parse("snippets/instructorHead.vm")
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        function addLearner() {
+            document.getElementById('action').value="add";
+            document.cePlannerForm.submit();
+        }
+        function deleteLearners(index) {
+		var deleteIndex=index;
+		
+            document.getElementById('action').value="delete";
+			document.getElementById('deleteIndex').value=deleteIndex;
+            document.cePlannerForm.submit();
+        }
+		
+		
+		$(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+    });
+       
+    </script>
+</head>
+
+<body>
+    <form name="cePlannerForm" method="post" action="ce_planner.do">
+    #springBind("cePlannerForm.action")
+    <input type="hidden" id="action" name="action" value="action" >
+	 <input type="hidden" id="deleteIndex" name="deleteIndex" value="0" >
+    <div id="main-container">
+
+        <!--Header Start -->
+         #parse("snippets/cePlannerHeader.vm")
+        <!-- Header End -->
+
+        <div id="content2a">
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.cePlanner.cePlannerLearners.leftPanel.header.step4.caption")</div>
+                    <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText1")</div>
+                    <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText2")</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText3")</div>
+                    <div class="l-menu-back-text">$brander.getBrandElement("lms.cePlanner.createProfile.leftPanel.header.subText4")</div>
+                </div>
+            </div>
+            <div id="right-pannel">
+
+                #springBind("cePlannerForm.*")
+                #if($status.error)
+                    <div id="message_box">
+                      <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                      #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                      #end
+                    </div>
+                #end
+
+                <table border="0" width="100%" cellpadding="0" cellspacing="3" width="100%">
+                    <tr>
+                        <td style="padding-right:10px;">
+                            <div id="pageDescription" class="page_description">
+                                <div id="pageIcon"  class="courseLogoUser"></div>
+                                <div id="pageHeading" class="page_heading" style="margin-top:5px;">$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageHeading.caption")</div>
+                                <div id="pageDescriptionText" style="margin-top:2px;" >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageDescriptionText.caption")</div>
+                               <div id="pageDescriptionText"><u>$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageDescriptionText2.caption")</u></div><p></p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:40px;">
+                            <div id="pageDescription" class="page_description">
+                                <div id="pageDescriptionText" style="padding-top:5px;">$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageDescriptionText3.caption")</div>
+                                <div id="pageDescriptionText" style="padding-top:5px;">$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageDescriptionText4.caption")</div>
+                                <div id="pageDescriptionText" style="padding-top:5px;">$brander.getBrandElement("lms.cePlanner.cePlannerLearners.pageDescriptionText5.caption")</div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="search_box_result" style="*margin-right:10px;_width:99%;">
+                    <div class="box_header">
+                        <div id="add-learner" style="float:left; margin-top:2px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="addLearner();" >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.btn.addLearner")</div>
+                            <div class="btn_end"></div>
+                        </div>
+                    </div>
+                    <table id="learners-table" border="0" width="100%" cellpadding="0" cellspacing="5">
+                        <tr>
+                            <td width="15">
+                                &nbsp;
+                            </td>
+                            #springBind("cePlannerForm.firstNames[0]")
+                            <td>
+                                <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.firstName")</div>
+                            </td>
+                            <td>
+                                <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                            </td>
+                            #springBind("cePlannerForm.lastNames[0]")
+                            <td>
+                                <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.lastName")</div>
+                            </td>
+                            <td>
+                                <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                            </td>
+                            #springBind("cePlannerForm.emailAddresses[0]")
+                            <td>
+                                <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.emailAddress")</div>
+                            </td>
+                            <td>
+                                <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                            </td>
+                            #springBind("cePlannerForm.passwords[0]")
+                            <td>
+                                <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.password")</div>
+                            </td>
+                            <td>
+                                <input type="password" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                            </td>
+                        </tr>
+                        #springBind("cePlannerForm.numberOfLearners")
+                        #set($learnerNum = ${status.value})
+                        #if($learnerNum > 0)
+                          #foreach($index in [1..$learnerNum])
+                            <tr class="learner">
+                                <td width="15">
+                                    <div class="icon_minus" ><img src="brands/default/en/images/minus-c.gif" onClick="deleteLearners($index);" title="Click to delete representative"/></div>
+                                </td>
+                                #springBind("cePlannerForm.firstNames[$index]")
+                                <td>
+                                    <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.firstName")</div>
+                                </td>
+                                <td>
+                                    <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                                </td>
+                                #springBind("cePlannerForm.lastNames[$index]")
+                                <td>
+                                    <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.lastName")</div>
+                                </td>
+                                <td>
+                                    <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                                </td>
+                                #springBind("cePlannerForm.emailAddresses[$index]")
+                                <td>
+                                    <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.emailAddress")</div>
+                                </td>
+                                <td>
+                                    <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                                </td>
+                                #springBind("cePlannerForm.passwords[$index]")
+                                <td>
+                                    <div >$brander.getBrandElement("lms.cePlanner.cePlannerLearners.caption.password")</div>
+                                </td>
+                                <td>
+                                    <input type="password" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                                </td>
+                            </tr>
+                          #end
+                        #end
+                    </table>
+                </div>
+
+                <input type="hidden" id="currentpage" name="_page" value="3" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<input type="hidden" id="wizardControl" name="wizardControl" value="1"/>
+
+                <div style="float:left; margin-top:25px; margin-left:15px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="location.href='login.do';"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.cancel")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+
+                <div style="float:right; margin-top:25px; margin-right:5px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target2');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.next")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+
+                <div style="float:right; margin-top:25px;">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" onClick="submitButtonForm(document.cePlannerForm,'wizardSubmitter','_target1');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.previous")</span></div>
+                    <div class="btn_end"></div>
+                </div>
+					
+
+
+            </div>
+        </div>
+        #parse("footer.vm")
+    </div>
+    </form>
+</body>
+</html>

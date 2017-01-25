@@ -1,0 +1,125 @@
+#**
+---------------------------------------------------------------------------- 
+@Author: Praveen Gaurav (feb.04.2009)
+@Description: This Macro is used for padding of leading ... notation for 
+              extra long strings. User has to send two parameters 
+              pValue: The actual string for padding.
+              pLength: Length of string desired.
+----------------------------------------------------------------------------
+*#
+
+#macro( dotPadding $pValue $pLength )
+		#set($strlen=$pValue.length())
+	#if($strlen<=$pLength)
+		<div title="$pValue">$pValue</div>
+	#else
+		#set($actLen=$math.sub($strlen,$pLength))
+		<div title="$pValue">	$stringUtil.chop($pValue,$actLen)...</div>
+	#end
+#end
+
+#macro( dotPaddingWithOutTitle $pValue $pLength )
+		#set($strlen=$pValue.length())
+	#if($strlen<=$pLength)
+		$pValue
+	#else
+		#set($actLen=$math.sub($strlen,$pLength))
+		$stringUtil.chop($pValue,$actLen)...
+	#end
+#end
+
+#macro( simpleDotPadding $pValue $pLength )
+		#set($strlen=$pValue.length())
+	#if($strlen<=$pLength)
+		$pValue
+	#else
+		#set($actLen=$math.sub($strlen,$pLength))
+		$stringUtil.chop($pValue,$actLen)...
+	#end
+#end
+
+#**
+---------------------------------------------------------------------------- 
+@Author: 
+@Description: This Macro is used for generating error message.
+----------------------------------------------------------------------------
+**#
+
+	#macro( customShowErrors $separator $classOrStyle )
+		    #foreach($errorCode in $status.errorCodes)
+		    	#set ($error = $brander.getBrandElement($errorCode))
+		        #if($classOrStyle == "")
+		            <b>${error}</b>
+		        #else
+		            #if($classOrStyle.indexOf(":") == -1)
+		                #set($attr="class")
+		            #else
+		                #set($attr="style")
+		            #end
+		            <span ${attr}="${classOrStyle}">${error}</span>
+		        #end
+		        ${separator}
+		    #end
+		#end
+				
+#**
+---------------------------------------------------------------------------- 
+@Author: Praveen Gaurav (fmar.16.2010)
+@Description: To get country by country code and state by state code.
+----------------------------------------------------------------------------
+*#
+
+
+	#macro( getCountryByCountryCode $countryCode )
+		#set($Country1=$brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+		#foreach ($country in $Country1)
+				#if($country.value==$!{countryCode})
+					#set($countryName=$country.label)
+				#end
+		#end
+		$!{countryName}
+	#end
+
+	#macro( getStateByStateCode $countryCode $stateCode )
+		#set($State1=$brander.getBrandMapElements("lms.manageUser.AddLearner.${countryCode}.State"))
+		#if($countryCode=="US")
+			#set($State1=$brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+		#end
+		#foreach ($state in $State1)
+				#if($state.value==$!{stateCode})
+					#set($stateName=$state.label)
+				#end
+		#end
+		$!{stateName}
+	#end
+	
+	#macro( LogoutURL $brander $logoutSuccessUrl)
+		#set($ssn=$request.getSession(true))
+		#set($isCASAuthenticated=$ssn.getAttribute("isCASAuthenticated"))
+		<a href="logout#if($isCASAuthenticated)?logoutSuccessUrl=$logoutSuccessUrl#end" class="$brander.getBrandElement("lms.mycourses.cssClass.log-out")">$brander.getBrandElement("lms.login.logout")</a>
+	#end
+	
+	
+	#macro( getcourseIconPath $courseIcon)
+		#set( $courseIcon = $lstSubscriptioncourses[$index].courseType )
+		#set( $courseIconPath = "" )
+			
+		#if($courseIcon == "Self Paced Course")	
+			#set( $courseIconPath = "lms.pixel.iconSelfPaced" )	
+		#elseif($courseIcon == "DFC")					
+			#set( $courseIconPath = "lms.pixel.iconDiscussionForum" )					
+		#elseif($courseIcon == "Weblink")		
+			#set( $courseIconPath = "lms.pixel.iconWeblinkCourse" )						
+		#elseif($courseIcon == "Scorm Course")		
+			#set($courseIconPath = "lms.pixel.iconScormCourse")		
+		#elseif($courseIcon == "Legacy Course")	
+			#set($courseIconPath = "lms.pixel.iconLegacyCourse")		
+		#elseif($courseIcon == "Learner Assignment")	
+			#set($courseIconPath = "lms.pixel.iconhomeworkAssignMent")
+		#else
+			#set($courseIconPath = "lms.pixel.iconOnlineGif")		
+		#end
+		
+		$!{courseIconPath}
+	#end
+	

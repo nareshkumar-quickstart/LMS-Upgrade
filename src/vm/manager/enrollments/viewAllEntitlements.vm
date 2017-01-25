@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        #parse("snippets/learnerNewHead.vm")
+		
+
+		
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<!--        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+        <script type="text/javascript">
+            function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.manageform.submit();
+            }
+
+
+            $(document).ready(function(){
+               
+            });
+        function onAllPage(){
+                document.getElementById('pageIndex').value=0;
+                document.getElementById('showAll').value="true";
+                document.getElementById('sortDirection').value=$context.sortDirection;
+                document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+                document.manageform.submit();
+        }
+        function onPreviousPage(previousIndex){
+                document.getElementById('pageIndex').value=previousIndex;
+                document.getElementById('showAll').value="false";
+                document.getElementById('sortDirection').value=$context.sortDirection;
+                document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+                var itemNo= document.getElementById('pageCurrIndex').value
+         var items=$pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+                document.manageform.submit();
+        }
+
+        function sortLearner(sortColumnIndex, sortDirection, showAll){
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.manageform.submit();
+        }
+        function onNextPage(nextIndex){
+                document.getElementById('pageIndex').value=nextIndex;
+                document.getElementById('showAll').value="false";
+                document.getElementById('sortDirection').value=$context.sortDirection;
+                document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+                 var itemNo= document.getElementById('pageCurrIndex').value
+         var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+                //alert(document.getElementById('pageCurrIndex').value);
+                document.manageform.submit();
+        }
+        </script>
+    <head>
+
+
+    <body>
+        <form name="manageform" method="post" action="">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+             <!-- header -->
+            #parse("snippets/managerHeader.vm")
+            <!-- header-end -->
+			</td>
+		</tr>
+		
+ 	 <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+                #parse("snippets/planEnrollLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+			
+                <!-- right-pannel-content -->
+				<TD id="content">
+			 	 <div id="scrollable">
+                    <!-- Logo+Manage-User -->
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-plan">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.viewAllEntitlements.caption.title")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.viewAllEntitlements.caption.subtitle")</div>
+						        </td>
+						    </tr>
+						</table>					
+			
+                    <!-- Logo+Manage-User-end -->
+
+                    <!-- scrollable-div -->
+
+                    <div class="content-Block-new"><!-- User-list -->
+
+                        <div id="searchResult">
+                                <div id="resultHeader" class="box_header">
+                                        <div class="result_left_side">
+                                                $pager.setItems(${context.entitlement})
+                                                #set($totalCount = $pager.total)
+                                                #if($pager.hasItems())
+                                                        #set($pageFirstIndex = $pager.firstIndex)
+                                                        #set($pageLastIndex = $pager.lastIndex)
+                                                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                                        #set($currentPageCount = $pageLastIndex + 1)
+                                                        #set($pageCurrIndex = $pager.index)
+                                                #else
+                                                        #set($pageFirstIndex = 0)
+                                                        #set($pageLastIndex = 0)
+                                                        #set($currentPageSize = 0)
+                                                        #set($currentPageCount = 0)
+                                                        #set($pageCurrIndex = 0)
+                                                #end
+
+                                                <!-- All Icon -->
+                                                <div id="all" class="icon_all" onClick="return onAllPage();" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+
+                                                <!-- Next Icon -->
+                                                #if($pager.nextIndex)
+                                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="return onNextPage($pager.nextIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+                                                #else
+                                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                                #end
+
+                                                <!-- Back Icon -->
+                                                #if ($pager.prevIndex)
+                                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="return onPreviousPage($pager.prevIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+                                                #else
+                                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                                #end
+                                                <!-- Showing Results -->
+
+                                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription</div>
+                                        </div>
+                                </div>
+                                #if($totalCount>0)
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                    #if ($context.sortDirection == 0 && $context.sortColumnIndex == 0)
+                                        <tr bgcolor="#efefef" height="24">
+                                            <td class="box_subheader" style="border-left:1px solid;" width="36%"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_up" #elseif ($context.sortColumnIndex == 0) class="icon_down" #end ></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.EntitlementName")</div></td>
+                                            <td class="box_subheader" width="24%"><div onClick=#if($context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="nameSort" ></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.MaximumEnrollments")</div></td>
+                                            <td class="box_subheader" width="20%"><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" ></div>&nbsp;Enrollments Used</div></td>
+                                            <td class="box_subheader" width="20%"><div onClick=#if($context.sortDirection == 0) "sortLearner('3','1','$!context.showAll');" #else "sortLearner('3','0','$!context.showAll');" #end ><div id="nameSort"></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.ExpirationDate")</div></td>
+                                        </tr>
+                                    #else
+                                        <tr bgcolor="#efefef" height="24">
+                                            <td class="box_subheader" style="border-left:1px solid;" width="36%"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 0)) class="icon_up" #elseif ($context.sortColumnIndex == 0) class="icon_down" #end ></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.EntitlementName")</div></td>
+                                            <td class="box_subheader" width="24%"><div onClick=#if($context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 1)) class="icon_up" #elseif ($context.sortColumnIndex == 1) class="icon_down" #end ></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.MaximumEnrollments")</div></td>
+                                            <td class="box_subheader" width="20%"><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 2)) class="icon_up" #elseif ($context.sortColumnIndex == 2) class="icon_down" #end ></div>&nbsp;Enrollments Used</div></td>
+                                            <td class="box_subheader" width="20%"><div onClick=#if($context.sortDirection == 0) "sortLearner('3','1','$!context.showAll');" #else "sortLearner('3','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 1 )&&($context.sortColumnIndex == 3)) class="icon_up" #elseif ($context.sortColumnIndex == 3) class="icon_down" #end ></div>&nbsp;$brander.getBrandElement("lms.viewAllEntitlements.caption.ExpirationDate")</div></td>
+                                        </tr>
+                                    #end
+                                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                                <input type="hidden" id="showAll" name="showAll" value="false" />
+
+                                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                    #set($entitlement = $context.entitlement.get($loopIndex))
+                                    #if($velocityCount%2==0)
+                                    #set($alternate="row_2")
+                                    #else
+                                    #set($alternate="row_1")
+                                    #end
+                                    <tr height="24">
+                                        <td class="$alternate" style="border-left:1px solid;" >
+                                        	#if($entitlement.enrollmentType=='Subscription')
+                                        	<a href="mgr_showEntitlementDetails.do?method=viewSubscriptionEntitlementDetails&Id=$entitlement.getId()">$!{entitlement.getName()}</a>
+                                        	#else
+                                        	<a href="mgr_showEntitlementDetails.do?method=viewEntitlementDetails&Id=$entitlement.getId()">$!{entitlement.getName()}</a>
+                                        	#end
+                                        </td>
+                                        <td class="$alternate">
+                                            #if($entitlement.isAllowUnlimitedEnrollments() == true)
+                                            $brander.getBrandElement("lms.viewAllEntitlements.unlimited")
+                                            #else 
+                                            $entitlement.getMaxNumberSeats()
+                                            #end
+                                        </td>
+                                        #if($entitlement.getNumberSeatsUsed()<=0)
+                                          <td class="$alternate">0</td>
+                                        #else
+                                        		   <td class="$alternate">$entitlement.getNumberSeatsUsed()</td>
+                                        #end
+                                        
+                                        <td class="$alternate">
+                                            #if ($!{entitlement.getEndDate()})
+                                            $date.format('MM/dd/yyyy',$!{entitlement.getEndDate()})
+                                            #else
+                                            $!{entitlement.getDefaultTermOfServiceInDays()} $brander.getBrandElement("lms.viewAllEntitlements.caption.days")
+                                            #end
+                                        </td>
+                                    </tr>
+                                    #end
+                                </table>
+                                #else
+                                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                    <tr bgcolor="#efefef" height="24">
+                                        <td class="box_subheader_noLink" style="border-left:1px solid;" width="36%">$brander.getBrandElement("lms.viewAllEntitlements.caption.EntitlementName")</td>
+                                        <td class="box_subheader_noLink" width="24%">$brander.getBrandElement("lms.viewAllEntitlements.caption.MaximumEnrollments")</td>
+                                        <td class="box_subheader_noLink" width="20%">Enrollments Used</td>
+                                        <td class="box_subheader_noLink" width="20%">$brander.getBrandElement("lms.viewAllEntitlements.caption.ExpirationDate")</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="6" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                            <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                        </td>
+                                    </tr>
+                                    </table>
+                                #end
+                            <input id="action" type="hidden" name="action" value="delete" />
+                        </div>
+                    </div><!-- End-User-list -->
+
+                    <!-- space -->
+                    <div class="manager-bottom-space">
+                    </div>
+                    <!-- space -->
+
+                </div><!-- right-pannel-content-end -->
+
+            </td><!-- content-area-end -->
+			</tr>
+			
+       
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td>
+		</tr>
+		
+        </table>
+        </form>
+
+    </body>
+</html>

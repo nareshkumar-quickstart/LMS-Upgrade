@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    #parse("snippets/compliance/complianceHead.vm")
+    <head>
+
+
+		<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+		<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+		<script type='text/javascript' src='javascript/js_survey.js' ></script>
+		<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		
+		<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+		<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+
+		<script type='text/javascript'>
+				
+			$(document).ready(function() {
+				$('#sideBar').height($('.scrollable').height());
+				
+				$('#close_message').click(function(){
+					$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+				});
+			});
+
+			function getLearnerGrpByOrgGroup(v){
+			var obj=v;
+
+			}
+		</script>    
+	</head>
+	
+	#macro( treeviewAddRecipientOrgGrp $treeNodes )
+		#set($lastDepth = 0)
+		#set($arrParent = [])   
+			#set($count=0)
+			## this line is required to get total org groups
+			
+		#foreach($node in $treeNodes)
+
+			#set($depthDiff = ${node.depth} - ${lastDepth})
+			#set ($var=$velocityCount%2)
+			#if ($!{var}==0)
+				#set ($rowColor="org_row2")
+			#else 
+				#set ($rowColor="org_row1")
+			#end
+			#set ($val=0)
+			$arrParent.add($node.depth,$node.value.id)
+			#if ($!{node.depth}>0)
+				#set ($val=$node.depth - 1)
+				#set($parentId=$arrParent.get($val))
+			#end
+			<div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+				<div class="icon_blank">&nbsp;</div>
+				#foreach($i in [1..${node.depth}])
+					#if ($!{node.depth}>0)
+						<div class="icon_blank2"></div>
+					#end
+				#end
+				#if(${node.isLeaf()})
+					<div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+				#else 
+					<div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+				#end
+				#set($count=$count+1)
+				<div class="org_checkbox"><input type="checkbox" id="_orgGroup$count" name="orgGroup" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end onClick="getLearnerGrpByOrgGroup(this.id);"/></div>
+				#set ($padLimit=100-$node.depth*5)
+				<div class="row_title">#dotPadding(${node.value.name},$padLimit)</div>
+			</div>
+		#end
+	#end
+    <body>
+        <form name="addRecipientForm" method="post" action="mgr_addRecipient.do?alertId=$addRecipientForm.alertId">
+        <input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             #parse("snippets/managerWizardHeader.vm")
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageAlert.editRecipient.addOrgGroup.showingWizard")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.summary")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.selectRecipientType")</div>
+
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageAlert.editRecipient.addOrgGroup.selectOrgGroup")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.confirmation")</div>
+                    </div>
+                </div>
+		</table>
+	</td>
+	
+    <TD id="content" >
+	<div id="scrollable">
+                #springBind("addRecipientForm.*")
+                   		#if($status.error)
+                        	<div id="message_box"><!-- error-box -->
+                        	<img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        	#foreach($errorCode in $status.errorCodes)
+                        	#set ($error = $brander.getBrandElement($errorCode))
+                        	<div class="width40pct">
+                            	<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            	<div class="message_box_align">$error</div>
+                        	</div>
+                        	#end
+                        	</div><!-- error-box -->
+                    	#end
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.addRecipientGroup")</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.selectRecipients")</div>
+                    </div>
+
+                    <div id="table-frame" class="table-frame">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr bgcolor="#efefef">
+                                <td class="table-last-column-heading" style="border-top:0" colspan="5">
+                                    $brander.getBrandElement("lms.manageAlert.editRecipient.addOrgGroup.orgGroup")
+                                </td>
+                            </tr>
+							<tr bgcolor="#FFFFFF">
+								<td>
+									#treeviewAddRecipientOrgGrp(${orgGroupTreeAsList})
+								</td>
+							</tr>
+                        </table>
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="4" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target6');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target1');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>	
+				
+                </div>
+            </td></tr>
+		<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">	
+           #parse("snippets/managerFooter.vm")
+	</td>
+	</tr>
+        </table>
+    </body>
+
+</html>

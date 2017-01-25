@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#**
+---------------------------------------------------------------------------- 
+@Author: Praveen Gaurav (jan.23.2009)
+----------------------------------------------------------------------------
+*#
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+	#parse("snippets/learnerHead.vm")
+	<body onLoad="document.searchManageForm.searchkey.focus();">
+		<script type="text/javascript" src="$brander.getBrandElement("lms.manageUser.searchLearner.js.360js")"></script>  
+		<script type="text/javascript">
+			function toggle_visibility(divId,id,nxtid,lstid,ssId,simpleId,advancedId,subTitleId) {
+			var divSimple=  document.getElementById(simpleId);   
+			var divAdvanced=document.getElementById(advancedId);
+			toggle_buttonName(divSimple,divAdvanced);
+			var div= document.getElementById(divId);  
+			var e = document.getElementById(id);
+			var f = document.getElementById(nxtid);
+			var lst = document.getElementById(lstid);
+			var ss = document.getElementById(ssId);
+			var title=document.getElementById(subTitleId);
+
+			if(e.style.display == 'block'){
+			e.style.display = 'none';
+			f.style.display = 'none';
+			lst.style.display = 'none';
+			ss.style.display = 'block';
+			document.getElementById('action').value="advanceSearch";
+			document.getElementById('direction').value="prev";
+			document.getElementById('pageIndex').value="0";
+			##   //alert(title);
+			title.firstChild.data="Simple Search";
+			document.searchManageForm.searchkey.focus();
+			}
+			else{
+			e.style.display = 'block';
+			f.style.display = 'block';
+			lst.style.display = 'block';
+			ss.style.display = 'none';
+			document.getElementById('action').value="simpleSearch";
+			document.getElementById('direction').value="prev";
+			document.getElementById('pageIndex').value="0";
+			title.firstChild.data="Advanced Search";
+			document.searchManageForm.firstname.focus();
+			}
+			}
+			function toggle_buttonName(objdivSimple,objdivAdvanced)
+			{
+			if(objdivSimple.style.display =='block'){
+			objdivAdvanced.style.display= 'block';
+			objdivSimple.style.display ='none';
+			}
+			else{
+			objdivAdvanced.style.display= 'none';
+			objdivSimple.style.display ='block';
+			}
+			} 
+
+			function deleteConfirmation() {
+			var answer = confirm("Do You want to delete Learner?")
+			if (answer){
+			return true;
+			}
+			else{
+			return false;
+			}
+			}
+
+			function FormSubmit(buttonclick) {
+			//alert(buttonclick);
+			document.getElementById('action').value=buttonclick;
+			document.searchManageForm.submit();
+			}  
+			
+		</script>
+		<script type="text/javascript">
+function changeRowColor(checkbox) {
+
+	var tr=checkbox.parentNode.parentNode;
+
+		  if (checkbox.checked) {
+			 tr.style.background="#E9F9FE";
+		  } else {
+			 tr.style.background="#ffffff";      
+		  }
+	}
+
+	function selectAllCheckBoxes(countCheckBoxes)
+	{
+		var objCheckAll=document.getElementById("chkAll");
+
+		if (objCheckAll.checked) {
+			for(var i = 1; i <= countCheckBoxes; i++){
+				var objCheckBox=document.getElementById("chk"+i);
+				objCheckBox.checked=true;
+				changeRowColor(objCheckBox);
+			}
+		}else{
+			for(var i = 1; i <= countCheckBoxes; i++){
+				var objCheckBox=document.getElementById("chk"+i);
+				objCheckBox.checked=false;
+				changeRowColor(objCheckBox);
+			}
+		}
+	}
+</script>
+
+<script type="text/javascript" src="javascript/jquerySlider.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){	
+			$(".$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")").show();
+			$(".$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")").click(function(){
+				//image object
+				var pImgObject=this.getElementsByTagName("div")[1].getElementsByTagName("img")[0];
+
+				if(pImgObject.getAttribute("isHidden")=="1") {
+					pImgObject.src="brands/default/en/images/minus.gif";
+					pImgObject.setAttribute("isHidden","0"); 
+					pImgObject.title="Collapse";
+				}else{
+					pImgObject.src="brands/default/en/images/plus.gif";
+					pImgObject.setAttribute("isHidden","1");
+					pImgObject.title="Expand";
+				
+				}
+
+$(this).next(".$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")").slideToggle(100);
+
+			});
+		});
+	</script>
+<div id="main-container" style="overflow:scroll">
+
+	<!-- header -->
+#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	<div id="content2a">
+	<!-- content-area -->
+
+<!-- -->
+
+		<!-- left-pannel-content -->
+		<div id="left-pannel">
+			<!-- left-menu-content -->
+			#parse("snippets/managerLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</div>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+			
+			<!-- Logo+Manage-User -->
+<div id="e1" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogoContainer")">
+<div id="e3" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogo2")"><img src="brands/default/en/images/pageicons/users.png" alt="" /></div>
+<div id="e4" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitleDiv")">
+
+	<div id="e5" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitle1")">$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.manageLearnerGroup")</div>
+	<div id="e6" class="$brander.getBrandElement("lms.mycourses.cssClass.courseDetails")">$brander.getBrandElement("lms.manageUser.manageLearnerGroup.manageLearnerGroupDesc")</div>
+	
+
+</div>
+</div>
+<!-- Logo+Manage-User-end -->
+		<!-- Content Will Come Here -->
+
+			<form name="searchManageForm" method="post" action="mgr_addlearnerInLearnerGroup.do">
+
+				<!-- Search-User -->
+				<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+					<div id="e7a" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+						<div id="e8" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.searchUsers")</div>
+						<div id="e9" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-ContainerheaderRight")">#if($!context.searchType=='advanceSearch') Advanced Search #else Simple Search  #end &nbsp;<img isHidden= "0" id="imgSlider" title="Collapse" src="brands/default/en/images/minus.gif"></div>
+					</div>
+					<div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+						<div id="e10" style=#if($!context.searchType=="advanceSearch") "display:none" #else "display:block"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div id="ss" onKeyPress="if(event.keyCode==13){FormSubmit('simpleSearch');}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input type="text" name="searchkey" value="$!{context.searchKey}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<div id="e15" style=#if($!context.searchType=="advanceSearch") "display:block" #else "display:none"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}" type="text" name="firstname" value="$!{context.firstName}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<div id="e16" style=#if($!context.searchType=="advanceSearch") "display:block" #else "display:none"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}" type="text" name="lastname"value="$!{context.lastName}"  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<div id="e17" style=#if($!context.searchType=="advanceSearch") "display:block" #else "display:none"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.eMailAddress")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}" type="text" name="emailaddress" value="$!{context.emailAddress}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					
+					<div id="e11a" style=#if($!context.searchType=="advanceSearch") "display:none" #else "display:block"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onclick="toggle_visibility('e11','e15','e16','e17','e10','e11a','e11b','e9');">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AdvancedSearch")</a></div>
+						##<div><input type="button" value="Search" name="qsearch" onclick="FormSubmit('simpleSearch');" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn-66w")" /></div>
+						<div class="btn-right1"><input type="button" value="Search" name="qsearch" onclick="FormSubmit('simpleSearch');" class="btn-submit_n71" /></div>
+					</div>
+
+					<div id="e11b" style=#if($!context.searchType=="advanceSearch") "display:block" #else "display:none"  #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">	
+						<div  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onclick="toggle_visibility('e11','e15','e16','e17','e10','e11a','e11b','e9');">$brander.getBrandElement("lms.manageUser.searchLearner.caption.SimpleSearch")</a></div>
+						##<div><input type="button" value="Search" name="qsearch" onclick="FormSubmit('advanceSearch');" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn-66w")" /></div>
+						<div class="btn-right1"><input type="button" value="Search" name="qsearch" onclick="FormSubmit('advanceSearch');" class="btn-submit_n71" /></div>
+					</div>
+					<input id="action" type="hidden" name="action" value="advanceSearch" />
+					<input id="direction" type="hidden" name="direction" value="prev" />
+					<input id="pageIndex" type="hidden" name="pageIndex" value="0" />
+				</div>
+				<!-- Search-User-end -->
+</div>
+				<!-- space -->
+				<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+				<!-- space -->
+
+				<!-- User-list -->
+				<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+					#if ($!{context.totalRecord} > 0)
+					<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">User List</div>
+						<div id="e14d" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><a href="?action=allSearch&direction=prev&pageIndex=0"><img onclick="location.href=$pagelink.param('index',$!pager.prevIndex)" src="$brander.getBrandElement("lms.pixel.checkboxGif")" width="8" height="8" title="Show All" /></a></div>
+
+						#if($!{context.recordShowing} == $!{context.totalRecord})
+						<div id="e14c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img onclick="location.href=$pagelink.param('index',$!pager.nextIndex)" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10" title="Next Page" /></div>
+						#else
+						<div id="e14c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><a href="?action=$!{context.searchType}&direction=next&pageIndex=$!{context.pageNo}&sortBy=${context.sortBy}"&sortDirection=${context.sortDirection}"><img onclick="location.href=$pagelink.param('index',$!pager.nextIndex)" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10" title="Next Page" /></a></div>
+						#end
+
+						#if ($!{context.pageNo} == 0)
+						<div id="e14b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10" title="Previous Page"/></div>
+						#else
+						<div id="e14b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><a href="?action=$!{context.searchType}&direction=prev&pageIndex=$!{context.pageNo}&sortBy=${context.sortBy}"&sortDirection=${context.sortDirection}"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10" title="Previous Page"/></a></div>
+						#end
+
+						<div id="e14a" class="Search-ContainerheaderRight">Showing $!{context.recordShowing} of $!{context.totalRecord}</div>
+					</div>
+					#else
+					<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Users List</div>
+						<div id="e14d" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><a href="?action=allSearch&direction=prev&pageIndex=0"><img onclick="location.href=$pagelink.param('index',$!pager.prevIndex)" src="$brander.getBrandElement("lms.pixel.checkboxGif")" width="8" height="8" title="Show All" /></a></div>
+						<div id="e14c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img onclick="location.href=$pagelink.param('index',$!pager.nextIndex)" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+						<div id="e14b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+						<div id="e14a" class="Search-ContainerheaderRight"> </div>
+					</div>
+					#end
+
+					<div id="e7c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+					#set($totCount=$context.members.size())
+						#set($pagenum = $!{context.pageNo})
+						#if ($!{context.totalRecord} > 0)
+						<div id="e15" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-row")">
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes($totCount);" name="allSelectedLearner"/></div>
+
+							<a title="Click To Sort" style="cursor:pointer;" href="?action=sort&direction=${context.direction}&pageIndex=${pagenum}&sortBy=firstName&sortDirection=${context.sortDirection}"><div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div></a>
+							<a title="Click To Sort" style="cursor:pointer;" href="?action=sort&direction=${context.direction}&pageIndex=${pagenum}&sortBy=lastName&sortDirection=${context.sortDirection}"><div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")" >$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div></a>
+							<a title="Click To Sort" style="cursor:pointer;" href="?action=sort&direction=${context.direction}&pageIndex=${pagenum}&sortBy=emailAddress&sortDirection=${context.sortDirection}"><div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H4")" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.UserName")</div></a>
+							##<a title="Click To Sort" style="cursor:pointer;" href="?action=sort&direction=${context.direction}&pageIndex=${pagenum}&sortBy=role&sortDirection=${context.sortDirection}"><div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H2")" >$brander.getBrandElement("lms.manageUser.addNewLearner.caption.role")</div></a>
+							<a title="Click To Sort" style="cursor:pointer;" href="?action=sort&direction=${context.direction}&pageIndex=${pagenum}&sortBy=accountLocked&sortDirection=${context.sortDirection}"><div class="$brander.getBrandElement("lms.enrollment.showEnrollments.cssClass.User_coll_H2c")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AccountLocked")</div></a>
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1a")"></div>
+						</div>
+						#else
+						<div id="e15" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-row")">
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes($totCount);" name="allSelectedLearner"/></div>
+							<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div>
+							<div class="$brander.getBrandElement("lms.assignEnroll.User_coll_H2a")" >$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div>
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H4")" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.UserName")</div>
+							##<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H2")" >$brander.getBrandElement("lms.manageUser.addNewLearner.caption.role")</div>
+							<div class="$brander.getBrandElement("lms.enrollment.showEnrollments.cssClass.User_coll_H2c")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AccountLocked")</div>
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1a")"></div>
+						</div>
+						#end
+
+						#foreach($user in ${context.members})
+						<div id="e16" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_1")"><input type="checkbox" name="selectedLearner" value="${user.learner.id}" id="chk$velocityCount" onClick="changeRowColor(chk$velocityCount);"/></div>
+							<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2b")">#dotPadding($!{user.firstName} 12)</div>
+							<div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.User_coll_2b")">#dotPadding($!{user.lastName} 12)</div>
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_4")">#dotPadding($!{user.emailAddress} 30)</div>
+							<!--<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_2a")">
+								#if ($!{learner.lmsAdministrator})
+								ADMIN
+								#elseif ($!{learner.trainingAdministrator})
+								MANAGER
+								#else
+								LEARNER
+								#end
+							</div>-->
+							<div class="$brander.getBrandElement("lms.enrollment.showEnrollments.cssClass.User_coll_2d")">
+							#if(${learner.accountNonLocked})
+							no
+							#else
+							yes
+							#end
+							</div>
+						</div>
+						#end
+						<div id="e12" class="search-content-row1a"><!-- using for bottom space --></div>
+					</div>
+				</div>
+				<!-- End-User-list -->
+				<!-- space -->
+				<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+				<!-- space -->
+
+				<div class="managerBtn">
+					<div class="btn-left2"><input type="button" value="Cancel" name="cancel" onclick="javascript:window.location='mgr_manageOrganizationGroup.do';" class="btn-submit_n71" /></div>
+					<div class="btn-right1"><input type="button" value="Update" name="update" onclick="FormSubmit('update');" class="btn-submit_n71" /></div>
+				</div>
+
+				#*<div class="managerBtn">
+					<div><input type="button" value="Cancel" name="cancel" onclick="javascript:window.location='mgr_manageOrganizationGroup.do';" class="btn-66w-l" /></div>
+					<div><input type="button" value="Update" name="update" onclick="FormSubmit('update');" class="btn-66w" /></div>
+				</div>*#
+				<input type="hidden" id="action" name="action" />
+				</form>
+				
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			</div>
+			 
+		</div>
+		<!-- footer -->
+                ## this must be included on every page for all analytics
+                #parse("snippets/managerFooter.vm")
+                <!-- footer-end -->
+	</body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://enrollment.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://enrollment.types.lmsapi.message.webservice.lms.vu360.softech.com" 
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<xsd:include schemaLocation="Learner.xsd"/>
+	
+	<xsd:complexType name="LearnerCourses">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserId" type="xsd:string" minOccurs="1" maxOccurs="1" />
+        	<xsd:element name="Courses" type="LearnerEnrollCourses" minOccurs="1" maxOccurs="1" />
+   		</xsd:sequence>  
+	</xsd:complexType>
+	
+	<xsd:complexType name="LearnerEnrollCourses">  
+    	<xsd:sequence>  
+        	<!-- This will be a courseGUID -->
+            <xsd:element name="CourseId" type="xsd:string" minOccurs="1" maxOccurs="unbounded" nillable="false"  />
+    	</xsd:sequence> 
+    	<xsd:attribute name="enrollmentStartDate" type="xsd:date" use="required" />
+         <xsd:attribute name="enrollmentEndDate" type="xsd:date" use="required" /> 
+    </xsd:complexType>
+    
+    <xsd:complexType name="LearnerEnrolledCourses">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserId" type="xsd:string" minOccurs="0" maxOccurs="1" />
+        	<xsd:element name="Courses" type="EnrolledCourses" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence> 
+    	<xsd:attribute name="errorCode" type="xsd:string" />
+	    <xsd:attribute name="errorMessage" type="xsd:string" />
+    </xsd:complexType>
+    
+    <xsd:complexType name="EnrolledCourses">  
+    	<xsd:sequence>  
+        	<xsd:element name="Course" type="EnrolledCourse" minOccurs="1" maxOccurs="unbounded" />
+    	</xsd:sequence> 
+    </xsd:complexType>
+    
+    <xsd:complexType name="EnrolledCourse">  
+    	<xsd:sequence>  
+        	<xsd:element name="CourseId" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="false"  />
+    	</xsd:sequence> 
+    	<xsd:attribute name="errorCode" type="xsd:string" />
+	    <xsd:attribute name="errorMessage" type="xsd:string" />
+    </xsd:complexType>
+    
+    <xsd:complexType name="FailedCourses">  
+    	<xsd:sequence>  
+        	<xsd:element name="Courses" type="EnrolledCourses" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence> 
+    </xsd:complexType>
+    
+    <xsd:simpleType name="DuplicatesEnrollment">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Ignore"/>
+			<xsd:enumeration value="Update"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+</xsd:schema>

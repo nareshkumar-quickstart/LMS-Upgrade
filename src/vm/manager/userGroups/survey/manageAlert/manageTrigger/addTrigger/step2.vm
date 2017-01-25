@@ -1,0 +1,209 @@
+ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+    <head>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+ <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+ <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+
+
+
+
+<script type='text/javascript'>
+        
+    $(document).ready(function() {
+        $('#sideBar').height($('.scrollable').height());
+    });
+</script>
+    </head>
+    <body>
+	 #springBind("addTriggerForm.alertId")
+    <form name="addTriggerForm" method="post" action="mgr_addTrigger.do?alertId=$!{status.value}">
+<input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             #parse("snippets/managerWizardHeader.vm")
+		</td></tr>
+		
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.triggerWizardShowing")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manager.manageAlert.addAlert.caption.Summary")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manager.manageAlert.addAlert.caption.confirmation")</div>
+                    </div>
+                </div>
+		</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="icon_surveys">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.manageTrigger.caption.addTrigger")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+						        </td>
+						    </tr>
+						</table>	
+
+                    <div id="resultBox" class="search_box_result">
+                        <div id="resultHeader" class="box_header">
+                            <div class="box_heading">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.summary")</div>
+
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+                                <td width="200" height="20">
+
+                                <span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manager.manageAlert.manageTrigger.caption.triggerName")</span></td>
+                                <td>
+                                #springBind("addTriggerForm.triggerName")
+                                <span class="row_text">$!{status.value}</span></td>
+                            </tr>
+							#springBind("addTriggerForm.event_date")
+						    #if($!{status.value}=="event")
+                            <tr>
+							<td height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.event")</span></td>
+
+                                <td><span class="row_text">
+                                    #springBind("addTriggerForm.days")
+                                $!{status.value} $brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.days")
+                                #springBind("addTriggerForm.before")
+	                           #if($!{status.value}=='true') $brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.before") #end 
+                                #springBind("addTriggerForm.after")
+                                #if($!{status.value}=='true') $brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.after") #end
+                               #springBind("addTriggerForm.selectedavailableAlertEvents")
+										$pager.setItems($!{status.value})
+										#set($totalCount = $pager.total)
+										#if($pager.hasItems())
+												#set($pageFirstIndex = $pager.firstIndex)
+												#set($pageLastIndex = $pager.lastIndex)
+												#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+												#set($currentPageCount = $pageLastIndex + 1)
+												#set($pageCurrIndex = $pager.index)
+										#else
+												#set($pageFirstIndex = 0)
+												#set($pageLastIndex = 0)
+												#set($currentPageSize = 0)
+												#set($currentPageCount = 0)
+												#set($pageCurrIndex = 0)
+										#end
+								
+								<!-- LMS-9794 | S M Humayun | 13 Apr 2011 -->
+								<!--</span></td>-->
+								
+								 #if($!{context.showAll})
+									#set($showAll=$!{context.showAll})
+								#else
+									#set($showAll=false)
+								#end
+								 #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+									#springBind("addTriggerForm.selectedavailableAlertEvents[$loopIndex]")
+									   #set($learner = $!{status.value})
+										#if($loopIndex%2 == 0)
+										#set($alternate="row_1")
+										#else
+										#set($alternate="row_2")
+										#end
+
+								<!-- LMS-9794 | S M Humayun | 13 Apr 2011 -->
+								<!--<td><span class="row_text">-->
+
+                                    $learner.dbDisplayName </span>
+
+                                </td>
+								#end
+                            </tr>
+                            #springBind("addTriggerForm.licenseExpireDate")
+							#set($licenseExpireDate = $!{status.value})
+							#if($licenseExpireDate != "")
+                            <tr>
+								<td height="20"><span class="row_text" style="font-weight:bold;">License Expiration Date</span></td>
+								<td height="20">
+								
+                                <span class="row_text">$!{licenseExpireDate}</span>
+								
+								</td>
+							</tr>
+                            #end
+							#springBind("addTriggerForm.event_date")
+							#elseif($!{status.value}=="date")
+                            <tr>
+                                <td height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.date")</span></td>
+                                <td>
+                                #springBind("addTriggerForm.date")
+                                <span class="row_text">$!{status.value}</span></td>
+                            </tr>
+							#end
+                            <!--
+                            <tr>
+                                <td height="20"><span class="row_text" style="font-weight:bold;">Recurrence Schedule</span></td>
+                                <td><span class="row_text">Weekly</span></td>
+                            </tr>
+                            <tr>
+                                <td height="20"><span class="row_text" style="font-weight:bold;">Recurrence</span></td>
+                                <td><span class="row_text">Every 2 days</span></td>
+                            </tr>
+                            <tr>
+                                <td height="20"><span class="row_text" style="font-weight:bold;">Recurrence Range</span></td>
+                                <td><span class="row_text">Start Date: 6/14/2010</span></td>
+                            </tr>
+                            <tr>
+                                <td height="20"><span class="row_text" style="font-weight:bold;">&nbsp;</span></td>
+                                <td><span class="row_text">End Date: 7/14/2010</span></td>
+                            </tr>
+                            -->
+
+                        </table>
+                    </div>
+                        <input type="hidden" id="currentpage" name="_page" value="1"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						
+						<div style="float:right; margin-top:15px;">
+						  <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_finish');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:15px;margin-right:5px;">
+						  <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:15px;margin-left:10px;">
+							<a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div>		
+					</div>
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+           #parse("snippets/managerFooter.vm")
+	</td></tr>
+        </table>
+        </form>
+    </body>
+</html>

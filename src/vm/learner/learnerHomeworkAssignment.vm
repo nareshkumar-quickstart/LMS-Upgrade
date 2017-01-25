@@ -1,0 +1,404 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript" src="javascript/js_manager.js" language="javascript"></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script type="text/javascript" src="javascript/jquery-1.8.3.js"></script>
+<script type="text/javascript" src="javascript/360js.js" language="javascript" ></script>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+
+#parse("snippets/learnerNewHead.vm")
+
+<style type="text/css">
+
+
+input.file2 {
+    position: relative;
+    text-align: right;
+    z-index: 2;
+    *text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    height: 22px;
+    width: 505px;
+    cursor:pointer
+}
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+
+</style>
+</head>
+<script type="text/javascript">
+function msg()
+{
+document.getElementById("searchBox").style = 'none';
+}
+
+function cancelInformation(){
+		//document.getElementById('actionmethod').value='cancelHWSubmission';
+        //document.editCourseForm.submit();
+		window.close();
+}
+
+function saveInformation(){
+		document.getElementById('actionmethod').value='saveHWSubmission';
+       	document.creditReportingForm.submit();
+		
+}
+
+function FormSubmit(methodName,downloadfilename){
+	document.getElementById('actionmethod').value=methodName;
+	
+	document.getElementById('downloadfilename').value=downloadfilename;
+	//alert(document.getElementById('downloadfilename').value);
+	document.creditReportingForm.submit();
+}
+
+$(document).ready(function()
+	{
+	  $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel').height()<$('#frame_body').height()) {
+        $('#right-pannel').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel').height());
+	
+	$('#frame_body').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+	  initFileUploads();
+	  var isSave = '$context.savesuccessfully';
+	  if(isSave == 'true'){
+	  		window.close();
+	  	}
+	
+		
+
+}); 
+
+ 
+function newFileId(fileId)
+{
+  //alert(fileId);
+  fncCreateElement();
+} 
+     
+function fncCreateElement(){
+		
+	   var hdnval;
+	   var mySpan = document.getElementById('fileinputs');
+
+	   var myLine = document.getElementById('hdnLine');
+	   
+	   myLine.value++;
+	   
+	   //var fileid = "files["+ myLine.value +"]";
+	   var fileid = "impFile"+myLine.value;
+	   //var filename = "impFile"+myLine.value;
+	   var filename = "file";
+	   
+	   //alert(fileid);
+	   //alert(filename);	   
+	   var newId = 'newFileId(' + myLine.value + ');';
+	   
+	   var myElement2 = document.createElement('input');
+	   myElement2.setAttribute('type',"file");
+	   myElement2.setAttribute('name',filename);
+	   myElement2.setAttribute('className',"file2");
+       //myElement2.style.cssText="width:535px;float:left";	   
+	   myElement2.setAttribute('id',fileid);
+	   myElement2.setAttribute('onclick',newId);
+	   
+
+	   mySpan.appendChild(myElement2);
+	   
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+		fakeFileUpload.style.left = '5px';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:408px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+		image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        fakeFileUpload.appendChild(image);
+        
+        
+        
+        var x = document.getElementById(fileid);
+        
+        x.className = 'file2';
+        var clone = fakeFileUpload.cloneNode(true);
+        x.parentNode.appendChild(clone);
+        x.relatedElement = clone.getElementsByTagName('input')[0];
+        //alert(clone.getElementsByTagName('input')[0]);
+        x.onchange = x.onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+           
+        
+	   	
+    }
+
+var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+	    if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+		fakeFileUpload.style.left = '5px';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:408px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+		image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        
+        
+        var x = document.getElementsByTagName('input');
+        
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file2';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            //alert(clone.getElementsByTagName('input')[0]);
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+            
+        }
+    }
+	
+	function addTableRow(){
+	var count = countMyself();
+	var maxRow = parseInt(document.creditReportingForm.noOfHomeworkAssignmentuploaded.value);
+	if(count < maxRow){
+			$('#myTable tr:last').after("<tr><td><div class='fileinputs'><input type='file' name='file"+count+"' id='impFile' class='file'></div></td></tr>");
+			initFileUploads();
+			}
+	}
+	
+	function countMyself() {
+    // Check to see if the counter has been initialized
+    if ( typeof countMyself.counter == 'undefined' ) {
+        // It has not... perform the initilization
+        countMyself.counter = 0;
+    }
+
+    // Do something stupid to indicate the value
+    return ++countMyself.counter;
+}
+	
+
+</script>
+<body>
+<form name="creditReportingForm" method="POST" action="lrn_download.do" enctype="multipart/form-data" >
+			
+	<input type="hidden" id="actionmethod" name="method" value=""/>
+	<input type='hidden' id="downloadfilename" name="downloadfilename" value="" />
+	#springBind("creditReportingForm.fileName")								
+	<input type="hidden" id="fileName" value="$!{status.value}" name="${status.expression}"/>
+	#springBind("creditReportingForm.learnerEnrollmentId")
+	<input type="hidden" id="learnerEnrollmentId" value="$!{status.value}" name="${status.expression}"/>
+	#springBind("creditReportingForm.courseId")
+	<input type="hidden" id="courseId" value="$!{status.value}" name="${status.expression}"/>
+	#springBind("creditReportingForm.noOfHomeworkAssignmentuploaded")
+	<input type="hidden" id="noOfRecords" value="$!{status.value}" name="${status.expression}"/>
+	
+<div id="main-container">
+#parse("snippets/learnerNewHeaderForHWAssign.vm")
+<div id="scrollable">
+	#springBind("creditReportingForm.*")
+	            #if($status.error)
+	                <!-- error-box -->
+	                <div id="message_box">
+	                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+	                    #foreach($errorCode in $status.errorCodes)
+	                        #set ($error = $brander.getBrandElement($errorCode))
+	                        <div class="width40pct">
+	                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+	                            <div class="message_box_align">$error</div>
+	                        </div>
+	                    #end
+	                </div>
+	                <!-- error-box -->		           
+		            #end
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px;margin-left: 15px;margin-right: 15px;">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.learner.homeworkAssignment.courseText")$!{context.courseTitle}</div>
+			    <div id="page-help">$brander.getBrandElement("lms.learner.homeworkAssignment.courseDescription")</div>
+			</td>
+			</tr>
+		</table>
+			<div class="buttonContainereditmessage"  style="height:auto;width:100%">
+							  <div style="float: center; margin-top: 3px; margin-left: 10px;">
+								  <div>
+									 
+									  <a onClick="showSearchBox();">
+										  <div class="btn_start"></div>
+										  <div class="btn_normal">$brander.getBrandElement("lms.learner.homeworkAssignment.btnDownload")</div>
+										  <div class="btn_end"></div>
+									  </a>
+								  </div>
+							   </div>
+						
+			</div>
+			<div class="popup-lr">
+			<div id="searchBox" class="visible">
+			
+			<div class="popup-heading" style="background-color:#d3d3d3;">DOWNLOAD FILES</div>
+			<p>These are the files the Instructor has uploaded for this Assignement. Click each to download</p>
+
+			
+				<table class="popup-styler" cellpadding="0" cellspacing="0" width="100%">
+			
+				<thead>
+				<tr>
+					<td align = "center">&nbsp;</td>
+					<td align = "center" >&nbsp;</td>
+						<td>File Name</td>
+						<td>Size</td>
+					<td align = "center">&nbsp;</td>
+				</tr>
+				</thead>
+				
+				<tbody>
+				#springBind("creditReportingForm.fileDetails")
+				
+				#set ($index = 1)
+				#set ($map = $!{status.value})
+                #foreach($option in $map.keySet())
+				<tr>
+					<td align = "center">$index</td>
+					<td align = "center" class="popup-icon"></td>
+					<td class="popup_filename">
+						
+					
+					$option</td>
+					#set( $startstr = "'" )
+					#set( $endstr = "'" )
+					#set( $filename = "$startstr$option$endstr" )
+					
+					#set( $starfilesizetstr = "" )
+					#set( $endfilesizestr = "KB" )
+					#set( $strfilesize = "$starfilesizetstr$map.get($option)$endfilesizestr" )
+					
+		
+					<td align = "center">$strfilesize</td>
+					<td><a onClick="FormSubmit('downloadFile',$filename);" style="cursor: pointer;">Download</a></td>
+		            #set ($index = $index + 1)
+				</tr>
+				#end
+				</tbody>
+				</table>
+				
+				
+			</td>
+			<td></td>
+			</tr>
+			<tr>
+			<td align='right'>
+			<div class="popup-cancel">
+			<div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Close</div>   
+			</div>
+			</td>
+			</tr>
+			</table>
+			</div>
+			</div>
+			#if($!{context.homeworkAssignment} != "Pass")
+						<div class="search_box_result" style="margin-top: 10px;margin-left: 15px;margin-right: 15px;">
+                        <div class="box_header">
+                            <span class="box_heading">$brander.getBrandElement("lms.learner.homeworkAssignment.caption.details")</span>
+                        </div>
+						<table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                         <tbody>
+							<tr>
+                                <td width="150" style="vertical-align:text-top;"><span class="row_text">$brander.getBrandElement("lms.learner.homeworkAssignment.label.attachment")</span></td>
+                                <td>
+									
+									<div class="required_field">*</div>
+									<table id="myTable" width="80%" cellspacing="3" cellpadding="0" border="0">
+										<tr><td width="30px">
+												
+									            <input name="hdnLine" id = "hdnLine" type="hidden" value="0">
+									            <!-- <a onclick="fncCreateElement();" class="btn_normal" style="float: right;margin: 10px 6px -24px 10px;">Add</a>-->
+												<div id = "fileinputs" class="fileinputs" style="overflow-y: auto; height:auto; width: 550px;">
+											     <input name="file" onclick="fncCreateElement();" id="file0" type="file"/>
+											     
+									           </div>	
+											</td>
+										</tr>
+									</table>
+							    </td>
+                            </tr>
+						</tbody>
+						</table>
+			</div>
+			
+			  	
+				<div style="float: right; margin-top: 15px; margin-right: 15px;">
+				<a onClick="saveInformation();">
+                  <div class="btn_start"></div>
+                  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnLearnerAssignmentSave")</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>
+           
+		   <div style="float: right; margin-top: 15px; margin-right: 5px;">
+              <div>
+                  <a onClick="cancelInformation();">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+           #end
+							</tbody>
+						</table>
+			</div>
+			</div>
+#parse("snippets/learnerNewFooter.vm")
+<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

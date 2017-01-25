@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/learnerHead.vm")
+<script type="text/javascript" src="javascript/jquerySlider.js"></script>
+<script type="text/javascript">
+
+	function doSearch(buttonclick) {
+		document.getElementById('action').value="courseSearch";
+			document.getElementById('searchType').value=buttonclick;
+		document.searchTrainingPlansForm.submit();
+	} 
+	
+	function toggleSearch(searchType){
+		var title=document.getElementById("e9");
+		if(searchType == 'simpleSearch'){
+			document.getElementById("e7b").style.display = "none";
+			document.getElementById("e7c").style.display = "block";
+			title.firstChild.data="Simple Search";
+			document.getElementById('searchType').value = 'simpleSearch';
+			document.searchCustomerForm.simpleSearchCriteria.focus();
+		}else{
+			document.getElementById("e7b").style.display = "block";
+			document.getElementById("e7c").style.display = "none";
+			title.firstChild.data="Advanced Search";
+			document.getElementById('searchType').value = 'advancedSearch';
+			
+			document.searchCustomerForm.customerName.focus();
+
+		}
+	}
+	
+	function changeRowColor(checkbox) {
+	var tr=checkbox.parentNode.parentNode;
+if (checkbox.checked) {
+			 tr.style.background="#E9F9FE";
+		 } else {
+			 tr.style.background="#ffffff";      
+		 }
+	}
+	function reset() {
+		var searchType = document.getElementById('searchType').value;
+		if(searchType == 'simpleSearch'){
+			document.getElementById('simpleSearchCriteria').value = '';
+		}else{
+			document.getElementById('searchCourseName').value = '';
+			document.getElementById('searchCourseId').value = '';
+			document.getElementById('searchKeyword').value = '';
+		}
+	}
+	
+	
+	$(document).ready(function(){
+		//hide the all of the element with class msg_body
+		//$(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")").hide();
+		//toggle the componenet with class msg_body
+		$(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Block-Contain-header")").click(function(){
+			//image object
+			var pImgObject=this.getElementsByTagName("div")[1].getElementsByTagName("img")[0];
+
+			if(pImgObject.getAttribute("isHideen")=="1") {
+				pImgObject.src="brands/default/en/images/plus.gif";
+				pImgObject.setAttribute("isHideen","0"); 
+				pImgObject.title="Collapse";
+			}else{
+			pImgObject.src="brands/default/en/images/minus.gif";
+				
+				pImgObject.setAttribute("isHideen","1");
+				pImgObject.title="Expand";
+			}
+
+			$(this).next(".$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-inputfield-box")").slideToggle(600);
+
+		});
+	});
+	
+</script>
+<body>
+   <form name="edittrainingCourse" method="post" action="mgr_editTrainingPlanCourse.do">
+<div id="main-container">
+
+	#parse("snippets/managerHeader.vm")
+	<div id="content2a">
+	<!-- content-area -->
+		<!-- left-pannel-content -->
+		<div id="left-pannel">
+			<!-- left-menu-content -->
+			<div id="leftmenu">
+				#parse("snippets/trainingPlanLeftMenu.vm")
+			</div>
+			<!-- left-menu-content-end -->
+		</div>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+			
+			<!-- Logo+Manage-User -->
+			<div class="courseLogoContainer">
+				<div id="e3" class="courseLogo2"><img src="$brander.getBrandElement("lms.manageUser.regInvitation.pixel.iconRegistrationGIF")"  alt="" /></div>
+				<div id="e4" class="courseTitleDiv">
+					<div id="e5" class="courseTitle1">Edit Training Plan</div>
+					<div id="e6" class="courseDetails">Manage training plans description goes here.</div>
+				</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+
+			<!--Group-Name-div -->
+			<div class="group-name2">
+				<div>Shuja’s Training Plan</div>
+			</div>
+			<!-- Group-Name-div -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.administrator.entitlementSearch.cssClass.managerBtn")">
+				##<div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.btn-left2")"><input type="image" src="$brander.getBrandElement("lms.manager.editTrainingPlan.pixel.btn-edit-learners.gif")" width="96" height="29" alt="" name="imagesubmit1" align="top"/></div>
+				<div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.btn-left2")"><input type="image" src="$brander.getBrandElement("lms.manager.editTrainingPlan.pixel.btn-courses.gif")" width="108" height="29" alt="" name="imagesubmit1" align="top"/></div>
+				<div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.btn-left2")"><input type="image" src="$brander.getBrandElement("lms.manager.editTrainingPlan.pixel.btn-dates.gif")" width="108" height="29" alt="" name="imagesubmit1" align="top"/></div>
+				##<div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.btn-left2")"><input type="image" src="$brander.getBrandElement("lms.manager.editTrainingPlan.pixel.btn-settings.gif")" width="108" height="29" alt="" name="imagesubmit1" align="top"/></div>
+			</div>
+			<!-- button-div -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+
+			
+			#if($!{context.typeOfSearch} == "simpleSearch")
+		#set($searchType = "simpleSearch")
+		#elseif($!{context.typeOfSearch} == "advancedSearch")
+				#set($searchType = "advancedSearch")
+				#else
+#set($searchType = "simpleSearch")
+								#end
+
+
+			<!-- Search-User -->
+			<div class="content-Block">
+				<div id="e7a" class="Block-Contain-header">
+					<div id="e8" class="Search-Containerheaderleft">Search Courses & Course Groups</div>
+					<div id="e9" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-ContainerheaderRight")">#if($searchType=='advancedSearch') $brander.getBrandElement("lms.manageUser.searchLearner.caption.AdvancedSearch") #else $brander.getBrandElement("lms.manageUser.searchLearner.caption.SimpleSearch") #end &nbsp<img isHideen="1" id="imgSlider" title="Expand" src="brands/default/en/images/minus.gif"></div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" style=#if($searchType=='advancedSearch') "display:block" #else "display:none" #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+					<!-- s -->
+					<div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1a")"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e10" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.mycourses.courseName")</div>
+						##springBind("trainingPlanForm.searchCourseName")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input type="text" id="searchCourseName"  name="searchCourseName"  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<!-- 2 -->
+					<div id="e11" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.courseId")</div>
+						##springBind("trainingPlanForm.searchCourseID")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input type="text" id="searchCourseId" name="searchCourseID" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<!-- 3 -->
+					<div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")">$brander.getBrandElement("lms.survey.caption.Keywords")</div>
+						##springBind("trainingPlanForm.searchKeyword")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input type="text" id="searchKeyword"  name="searchKeyword"  class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<!-- 4 -->
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onclick="toggleSearch('simpleSearch')">$brander.getBrandElement("lms.manageUser.searchLearner.caption.SimpleSearch")</a>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onClick="reset();" >$brander.getBrandElement("lms.survey.caption.resetSearch")</a></div>
+						##<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" value="Search" name="_target5" onclick="return doSearch('advancedSearch');" src="$brander.getBrandElement("lms.surveyInformation.pixel.search.gif")" /></div>
+						
+						<div class="btn-right1"><input type="image" value="Search" name="_target5" onclick="return doSearch('advancedSearch');" src="brands/default/en/images/btn-search_n.gif" /></div>
+					</div>
+					<!-- 0 -->
+				</div>
+				<div id="e7c" style=#if($searchType=='simpleSearch' || $searchType=='allSearch') "display:block" #else "display:none" #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+					<!-- s -->
+					<div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1a")"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e10" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"></div>
+						##springBind("trainingPlanForm.simpleSearchKey")
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input id="simpleSearchCriteria" type="text" name="simpleSearchKey" value="" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onclick="toggleSearch('advancedSearch')">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AdvancedSearch")</a>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onClick="reset();" >$brander.getBrandElement("lms.survey.caption.resetSearch")</a></div>
+						##<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" value="Search" name="_target5" onclick="return doSearch('simpleSearch');" src="$brander.getBrandElement("lms.surveyInformation.pixel.search.gif")" /></div>
+
+						<div class="btn-right1"><input type="image" value="Search" name="_target5" onclick="return doSearch('simpleSearch');" src="brands/default/en/images/btn-search_n.gif" /></div>
+						<input id="action" type="hidden" name="action" value="" />
+						<input id="searchType" type="hidden" name="searchType" value="${searchType}" />
+					</div>
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- Search-User-end -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+			<!-- Courses -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+					<div id="e13" class="Search-Containerheaderleft">Courses</div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="User-checkbox-box">
+				
+				#foreach($course in ${context.trainingCourseList})
+				
+
+					<!-- 1 -->
+					<div id="e15" class="User-checkbox-row">
+						<div class="User_coll_1">
+							<div class="arrow-transfer2"><a href=""><img src="brands/default/en/images/arrow-up.gif" width="10" height="6" alt="" /></a></div>
+							<div class="arrow-transfer2"><a href=""><img src="brands/default/en/images/arrow-down.gif" width="10" height="6" alt="" /></a></div>
+						</div>
+						<div class="Org-grp_4e">$!{course.courseTitle}</div>
+					</div>
+					#end
+					
+					<!-- 0 -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- End-Courses -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			#*<div class="managerBtn">
+				<div class="btn-right"><input type="image" src="brands/default/en/images/save-2.gif" width="66" height="29" alt="" name="imagesubmit1" align="top"/></div>
+				<div class="btn-right"><input type="image" src="brands/default/en/images/cancel.gif" onclick="window.location.href='mgr_searchTrainingPlans.do';return false;" width="66" height="30" alt="" name="imagesubmit1" align="top"/></div>
+			</div>*#
+			<div class="managerBtn">
+				<div class="btn-right1"><input type="image" src="brands/default/en/images/btn-save_n.gif"  alt="" name="imagesubmit1" align="top"/></div>
+				<div class="btn-right1"><input type="image" src="brands/default/en/images/btn-cancel_n.gif" onclick="window.location.href='mgr_searchTrainingPlans.do';return false;"  alt="" name="imagesubmit1" align="top"/></div>
+			</div>
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+		
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content2-area-end -->
+	</div>
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

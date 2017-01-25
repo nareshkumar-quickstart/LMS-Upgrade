@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+## this must be included on every page for all head items
+#parse("snippets/learnerNewHead.vm")
+
+
+	
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/courseDescriptionDialog.css"/>
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/tree_collapseExpand.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/courseDescriptionDialog.js"></script>
+<script type="text/javascript" type="text/javascript">
+    document.title="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.title")";
+    	var courseGroupJSONObject = new Array();
+	
+	// Define Branded Course Type Icon Image Paths
+	//Weblink
+	var iconWeblinkCourse = "$brander.getBrandElement('lms.pixel.iconWeblink')";
+	//DFC
+	var iconDiscussionForum = "$brander.getBrandElement('lms.pixel.iconDFC')";
+	//Self-Paced
+	var iconSelfpaced = "$brander.getBrandElement('lms.pixel.iconSelfPaced')";
+	// Online Sync
+	var iconActiveVirtualClassroom = "$brander.getBrandElement('lms.pixel.iconOnlineAnimatedSync')";
+	// Offline Sync
+	var iconInactiveVirtualClassroom = "$brander.getBrandElement('lms.pixel.iconOnlineSync')";
+	// Offline Classroom
+	var iconOfflineClassroom = "$brander.getBrandElement('lms.pixel.iconOffineSync')";
+    		var courseIdLabel = '$brander.getBrandElement("lms.courseDesc.label.courseId")';
+        //var courseTypeLabel = "$brander.getBrandElement("lms.courseDesc.label.courseType")";
+        var courseCreditHoursLabel = '$brander.getBrandElement("lms.courseDesc.label.creditHours")';
+        var coursePathLabel = "$brander.getBrandElement('lms.courseDesc.label.coursePath')";
+        var courseDescriptionLabel = '$brander.getBrandElement("lms.courseDesc.label.courseDescription")';
+        var courseOverviewLabel = '$brander.getBrandElement("lms.courseDesc.label.courseOverview")';			   
+        var courseGuideLabel = '$brander.getBrandElement("lms.courseDesc.label.courseGuide")';			   
+		var coursePrerequisitesLabel = '$brander.getBrandElement("lms.courseDesc.label.prerequisites")';
+		var courseLearningObjectivesLabel = '$brander.getBrandElement("lms.courseDesc.label.learningObjectives")';
+        var courseQuizInfoLabel = '$brander.getBrandElement("lms.courseDesc.label.quizInfo")';
+        var courseFinalExamInfoLabel = '$brander.getBrandElement("lms.courseDesc.label.finalExamInfo")';
+        var courseEndOfCourseInstructionsLabel = '$brander.getBrandElement("lms.courseDesc.label.endInstructions")';
+        var courseAdditionalDetailsLabel = '$brander.getBrandElement("lms.courseDesc.label.additionalDetails")';	
+        var courseDeliveryMethodLabel = '$brander.getBrandElement("lms.courseDesc.label.deliveryMethod")';
+        var courseApprovedHoursLabel = '$brander.getBrandElement("lms.courseDesc.label.approvedHours")';
+        var courseDurationLabel = '$brander.getBrandElement("lms.courseDesc.label.duration")';
+		var courseApprovalNumberLabel = '$brander.getBrandElement("lms.courseDesc.label.approvalNumber")';
+    
+</script>
+</head>
+
+#macro( treeManageCourseGroup $treeNodes $contractType $contractCourseGroups $nullTool $brander)
+	#set($currentRowIndex = 1)
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+		#if(!$nullTool.isNull(${node.depth}))
+			#set($depthDiff = ${node.depth} - ${lastDepth})
+		#else
+			#set($depthDiff = ${lastDepth})
+		#end
+        #set ($var=$currentRowIndex%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if (!$nullTool.isNull(${node.depth}) && ${node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+            #set($currentRowNamePrefix='childOf:')
+			#set ($currentRowDivName = "$currentRowNamePrefix$parentId")
+        #else
+			#set($parentId='')
+        	#set($currentRowDivName=$node.value.id)
+        #end
+        <div id="row$currentRowIndex" name="row$currentRowIndex" class="$rowColor" indx="$currentRowIndex" parentRef="$!{parentId}">
+            <input type="hidden" name="$currentRowDivName" value="" />
+            <table  width="100%" height="100%" cellpadding="0" cellspacing="0">
+            	<tr>
+            		<td class="icon_blank">&nbsp;</td>
+				#if(!$nullTool.isNull(${node.depth}))
+					#foreach($i in [1..${node.depth}])
+						#if (${node.depth}>0)
+					<td class="icon_blank2"></td>
+						#end
+					#end
+				#end
+	            #if(${node.isLeaf()} && ($contractType == "Course" || $contractType == "Subscription"))
+	            	<td id="divIcon$currentRowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></td>
+	            #else     
+	            	<td id="divIcon$currentRowIndex" class="icon_collapse" onclick="collapseExpandTreeNode(this);" nodeid="${node.value.id}">
+	            	</td>
+	            #end
+	            <td class="row_title">
+	            	#if(${node.isLeaf()} && ($contractType == "Course" || $contractType == "Subscription"))
+	            		<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />&nbsp;$!{node.value.courseTitle}
+	            	#else            	
+		        		<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.courseGroup.iconCourseGroup.png")" />&nbsp;$!{node.value.name}
+		        	#end
+	            </td>
+	            <td style="width:20%;" class="contentColumn">
+		            #if(${node.isLeaf()} && !$nullTool.isNull($node.value.bussinesskey))
+		            	$!{node.value.bussinesskey}
+		            #end
+	            </td>	            
+	            
+	            <td style="width:20%;" class="contentColumn">
+	            #if(($contractType == "Course" || $contractType == "Subscription") && ${node.isLeaf()})
+			        <a href="javascript:void(0)" onclick="openCourseDescriptionOverlay($!{node.value.id}, 0, $!{parentId})">Show Description</a>
+			    #end &nbsp;    
+	            </td>
+	            
+	           </tr>
+	         </table>   
+        </div>
+        #set ($currentRowIndex = $currentRowIndex + 1)
+        #if($contractType == "courseGroup" && $contractCourseGroups.contains($node.value))
+	        #if(${node.value.courses.size()} > 0)  
+				#if(!$nullTool.isNull(${node.depth}))
+					#set ($nodeDepth = ${node.depth} + 1)
+				#else
+					#set ($nodeDepth = 1)
+				#end
+	        	#treeManageCourses($node.value.courses $contractType $rowColor ${node.value.id} $currentRowIndex $nodeDepth $nullTool $brander)
+	        	##set ($currentRowIndex = $currentRowIndex + ${node.value.courses.size()})
+	        #end                 
+        #end
+    #end
+#end
+
+#macro( treeManageCourses $courses $contractType $rowColor $parentId $rowIndex $nodeDepth $nullTool $brander)
+	#set($childRowNamePrefix='childOf:')
+	#set ($currentRowDivName = "$childRowNamePrefix$parentId")
+	#foreach($course in $courses)
+		#if($course.courseStatus == "Published" || $course.courseStatus == "published")
+			#if(${rowColor} == "org_row2")
+				#set ($rowColor = "org_row1")
+			#else
+				#set ($rowColor = "org_row2")
+			#end
+			<div id="row${rowIndex}" name="row${rowIndex}" class="${rowColor}" indx="${rowIndex}" parentRef="$!{parentId}">
+				<input type="hidden" name="$currentRowDivName" value="" />
+				<table width="100%" height="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td class="icon_blank">&nbsp;</td>
+						#foreach($i in [1..${nodeDepth}])
+							#if ($!{nodeDepth}>0)
+								<td class="icon_blank2"></td>
+							#end
+						#end
+						<td id="divIcon$rowIndex" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></td>
+						
+						<td class="row_title">
+							<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />&nbsp;$!{course.courseTitle}
+						</td>
+						
+						<td  style="width:20%;" class="contentColumn">
+							#if(!$nullTool.isNull($course.bussinesskey))
+								$!{course.bussinesskey}
+							#end
+						</td>
+						<td style="width:20%;" class="contentColumn" >
+							<a href="javascript:void(0)" onclick="openCourseDescriptionOverlay($!{course.id}, 0, $parentId)">Show Description</a>
+						</td>
+					</tr>
+				</table>
+			</div>		
+			#set ($rowIndex = $rowIndex + 1)
+		#end
+	#end	
+#end
+<body>
+    <form name="manageEntitlementCourseGroupsForm" method="post" action="adm_manageEntitlementCourses.do">
+    	<input type="hidden" id="action" name="method" />
+    	<input type="hidden" id="contractId" name="contractId" value="$!{context.contractId}"/>
+    	<input type="hidden" id="contractType" name="contractType" value="$!{context.contractType}"/>
+      
+	  
+	  <!--  <div id="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.main-container")"> -->
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->	  
+              <!-- header -->
+              #parse("snippets/managerHeader.vm")
+		    </td>     
+		</tr>
+		       
+			  <td  id="row-tabs" colspan="2">
+              <!-- TAB BAR -->
+              #parse("snippets/managerViewEntitlementTab.vm")
+              <!-- TAB BAR END -->    
+			  </td>
+			  
+        <!-- header-end -->
+   <!--     <div id="content2a"> --></div><!-- content-area -->
+        
+        <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                  <!-- left-menu-content -->
+                  #parse("snippets/planEnrollLeftMenu.vm")
+                  <!-- left-menu-content-end -->   
+				</table>
+			</td>
+			         	
+       <!--        <div id="right-pannel"> --><!-- right-pannel-content -->    
+	   			<TD id="content">
+			 	 <div id="scrollable">                
+					<!-- Logo+Manage-User -->	
+					
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-plan">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+								#if($context.contractType == "courseGroup")
+						            <div id="page-heading">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.caption.editCourseGroups")</div>
+								#elseif($context.contractType == "Course")
+									 <div id="page-heading">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.caption.editCourses")</div>
+								#end
+								#if($context.contractType == "courseGroup")
+						            <div id="page-help">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.caption.editCourseGroupsDescription")</div>
+								#elseif($context.contractType == "Course")
+								    <div id="page-help">$brander.getBrandElement("lms.administrator.manageEntitlementGroup.caption.editCoursesDescription")</div>
+								#end
+						        </td>
+						    </tr>
+						</table>
+												            
+			    	
+                    <!-- Logo+Manage-User-end -->
+
+		            <!-- button-div -->
+		            <div class="buttonContainereditmessage">
+		              <div style="float:right; margin-top:5px;">
+							<a onClick="javascript:window.location='mgr_viewAllEntitlements.do';" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</div>
+							<div class="btn_end"></div>
+							</a>
+						</div>
+		            </div>
+		            <!-- button-div -->
+		            
+                    <div class="content-Block-new">
+                        <div id="e12" class="Block-Contain-header">
+                            <div style="float:right; height:23px;">
+                                &nbsp;
+                            </div>
+                        </div>
+                        <div class="User-checkbox-row-d2">
+                        	<table width="100%" height="100%" cellpadding="0">
+                        		<tr>
+                        			<td class="columnHeader">
+                        				#if($context.contractType == "courseGroup")
+			                            	Course Groups
+			                            #elseif($context.contractType == "Course")
+			                            	Courses
+			                            #end
+                        			</td>
+                        			<td width="20%" class="columnHeader">Course Id</td>
+                        			<td width="20%" class="columnHeader">Course Description</td>
+                        		</tr>
+                        	</table>                        	
+                        </div>
+                        #treeManageCourseGroup(${context.treeAsList} ${context.contractType} ${context.contractCourseGroups} $nullTool $brander)
+                    </div>
+                    <!-- space -->
+                    <div id="e39" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+		            <!-- button-div -->
+		            <div class="buttonContainereditmessage">
+		               <div style="float:right; margin-top:5px;">
+							<a onClick="javascript:window.location='mgr_viewAllEntitlements.do';" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</div>
+							<div class="btn_end"></div>
+							</a>
+						</div>
+		            </div>
+		            <!-- button-div -->
+		            
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </td><!-- content-area-end -->
+			</tr>
+			
+           <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+			<!-- footer -->
+		        #parse("snippets/managerFooter.vm")
+			</td>
+			</tr>
+		    <!-- footer-end -->
+		</table>
+    </form>    					
+    
+    <div id="overlay" style="display:none">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td>
+                    <div id="overlay-header"></div>
+                    <div id="overlay-close">Close</div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="overlay-details"></div>
+                </td>
+            </tr>
+        </table>
+    </div>    
+</body>
+</html>

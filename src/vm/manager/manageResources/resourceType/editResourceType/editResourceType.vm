@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                
+            });
+
+            function saveResourceType() {
+                document.getElementById('actionmethod').value='saveResourceType';
+                document.editResourceTypeForm.submit();
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="editResourceTypeForm" method="post" action="ins_manageResourceType.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+
+            <div id="main-container">
+
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+
+                <!-- Body Start -->
+                <div id="frame_body">
+
+                   #parse("snippets/instructorResourcesLeftMenu.vm")
+                    <div class="scrollable">
+                        #springBind("resourceTypeForm.*")
+                        #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set ($error = $brander.getBrandElement($errorCode))
+                                    <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$!error</div>
+                                    </div>
+                                #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+
+                        <!-- Page Description -->
+                        <div id="pageDescription" class="page_description">
+                            <!-- Page Icon -->
+                            <div id="pageIcon" class="icon_resources"></div>
+                            <!-- Page Heading -->
+                            <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.PageHeading.caption.EditResourceType")</div>
+                            <!-- Page Description -->
+                            <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.EditResourceType")</div>
+                        </div>
+
+                        <div class="search_box_result">
+                             <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.Summary")</span></div>
+                             <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.ResourceTypeName")</span></td>
+                                        #springBind("resourceTypeForm.resourceType.name")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td width="50%">
+                                            <input type="text" id="field_resource_name" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength=255 tabIndex="1" />
+                                        </td>
+                                        <td width="30%"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                     #springBind("resourceTypeForm.resourceType.description")
+                                        <td valign="top" width="20%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.Description")</span></td>
+                                        <td style="width:15px;"></td>
+                                        <td width="50%">
+                                            <textarea class="input_text_area" name="${status.expression}" tabIndex="2" >$!{status.value}</textarea>
+                                        </td>
+                                        <td width="30%"></td>
+                                        <td></td>
+                                    </tr>
+                             </table>
+                         </div>
+
+                        <div style="float:right; margin-top:25px; margin-right:15px;" tabIndex="4" >
+                            <div class="btn_start"></div>
+                                <a onClick="saveResourceType();">
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Save")</div>
+                                </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                        <div style="float:right; margin-top:25px; margin-left:25px;" tabIndex="3" >
+                            <div class="btn_start"></div>
+                                <a  onclick="location.href='ins_manageResourceType.do';">
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Body End -->
+
+                <!-- Footer Start -->
+                #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+
+                
+            </div>
+        </form>
+    </body>
+</html>

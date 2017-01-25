@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script type="text/javascript">
+    function backToSearch(){
+        document.getElementById('actionmethod').value='resetSearchMembers';
+        document.selectMemberForm.submit();
+    }
+    $(document).ready(function(){
+      
+    });
+    
+</script>
+</head>
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+    
+        <!-- content-area -->
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+            <div class="logoContainer" id="logomainContainer">
+                <div id="logoHolder" class="courseLogoSearch">&nbsp;</div>
+                 <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.administrator.selectMember.caption.title")</div>
+                 <div id="detailsHolder" class="courseDetails">
+                            #if(${adminSelectedEntityType} == 'CUSTOMER')
+                                $!{adminSelectedCustomer.name} $brander.getBrandElement("lms.administrator.selectMember.caption.subtitle") $brander.getBrandElement("lms.administrator.selectMember.caption.customer")
+                            #elseif(${adminSelectedEntityType} == 'LEARNER')
+                                $!{adminSelectedLearner.vu360User.firstName} $!{adminSelectedLearner.vu360User.lastName} $brander.getBrandElement("lms.administrator.selectMember.caption.subtitle")
+                            #elseif(${adminSelectedEntityType} == 'DISTRIBUTOR')
+                                $!{adminSelectedDistributor.name} $brander.getBrandElement("lms.administrator.selectMember.caption.subtitle") $brander.getBrandElement("lms.administrator.selectMember.caption.reseller")
+                            #end
+                        </div>
+              </div>
+            <!-- Logo+Manage-User-end -->
+
+            <!-- button-div -->
+            <div class="managerBtn1">
+                <form name="selectMemberForm" action="adm_searchMember.do" method="POST">
+                <input type="hidden" id="actionmethod" name="method" value=""/>
+				<div style="float:left; margin-top:2px;">
+				  <a onClick="window.location.href='#springUrl("/adm_searchMember.do")'" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Back to Search Results</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+				<div style="float:left; margin-top:2px;">
+				  <a onClick="backToSearch();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Back to Search</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+           #if(${adminSelectedEntityType} == 'CUSTOMER')
+				<div style="float:left; margin-top:2px;">
+				  <a onClick="switchd();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Log in As Manager</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				#if($adminSelectedCustomer.customerType.equalsIgnoreCase('b2c'))
+                <div style="float:left; margin-top:2px;">
+				  <a onClick="window.location.href='switchuser.do?username=$!{customerUserName}&switchBackUrl='+window.location.href;" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Log in As Learner</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+                #end
+           #elseif(${adminSelectedEntityType} == 'LEARNER')
+              <div style="float:left; margin-top:2px;">
+				  <a onClick="window.location.href='switchuser.do?username=$!{adminSelectedLearner.vu360User.username}&switchBackUrl='+window.location.href;" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Log in As Learner</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+           #end
+                </form>
+            </div>
+            <!-- button-div -->
+
+            <div id="resultBox" class="content-Block-new"><!-- content-Block-new -->
+                <div id="resultHeader" class="Block-Contain-header"><!-- Result Header Start -->
+                    #if(${adminSelectedEntityType} == 'CUSTOMER')
+                        <div class="Search-Containerheaderleft">Selected Customer</div>
+                    #elseif(${adminSelectedEntityType} == 'DISTRIBUTOR')
+                        <div class="Search-Containerheaderleft">$brander.getBrandElement("lms.admin.selectedReseller")</div>
+                    #elseif(${adminSelectedEntityType} == 'LEARNER')
+                        <div class="Search-Containerheaderleft">Selected Learner</div>
+                    #else
+                        &nbsp;
+                    #end
+                </div><!-- Result Header End -->
+                <div id="searchResult"><!-- searchResult -->
+                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="box_subheader" width="200px" height="22px">$brander.getBrandElement("lms.administrator.selectMember.caption.Name")</td>
+                            <td class="box_subheader" width="100px">$brander.getBrandElement("lms.administrator.searchMember.caption.Type")</td>
+                            <td class="box_subheader" width="150px" >$brander.getBrandElement("lms.administrator.searchMember.caption.EmailAddress")</td>
+                            <td class="box_subheader" width="50px" style="border-right:none;">$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</td>
+                        </tr>
+               #if(${adminSelectedEntityType} == 'CUSTOMER')
+                        <tr>
+                            <td class="row_1" width="200px">$!{adminSelectedCustomer.name}</td>
+                            <td class="row_1" width="100px">Customer</td>
+                            <td class="row_1" width="150px">&nbsp; #if($!{adminSelectedCustomer.email})  $!{adminSelectedCustomer.email} #else &nbsp;  #end</td>
+                            <td class="row_1" width="50px" style="border-right:none;">#if($!{adminSelectedCustomer.active}) Active #else Inactive #end</td>
+                        </tr>
+               #elseif(${adminSelectedEntityType} == 'DISTRIBUTOR')
+                        <tr>
+                            <td class="row_1" width="200px">$!{adminSelectedDistributor.name}</td>
+                            <td class="row_1" width="100px">$brander.getBrandElement("lms.admin.reseller")</td>
+                            <td class="row_1" width="150px">&nbsp; #if($!{adminSelectedDistributor.distributorEmail}) $!{adminSelectedDistributor.distributorEmail}  #else &nbsp; #end</td>
+                            <td class="row_1" width="50px" style="border-right:none;">#if($!{adminSelectedDistributor.active}) Active #else Inactive #end</td>
+                        </tr>
+               #elseif(${adminSelectedEntityType} == 'LEARNER')
+                        <tr>
+                            <td class="row_1" width="200px"><a href="adm_learnerProfile.do?id=$adminSelectedLearner.id" >$!{adminSelectedLearner.vu360User.firstName} $!{adminSelectedLearner.vu360User.lastName}</a></td>
+                            <td class="row_1" width="100px">Learner</td>
+                            <td class="row_1" width="150px">#if($!{adminSelectedLearner.vu360User.emailAddress}=="") &nbsp; #else $!{adminSelectedLearner.vu360User.emailAddress} #end</td>
+                            <td class="row_1" width="50px" style="border-right:none;">#if($!{adminSelectedLearner.vu360User.accountNonLocked}) Active #else Inactive #end</td>
+                        </tr>
+               #end
+                    </table>
+                </div><!-- searchResult -->
+            </div><!-- content-Block-new -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+        </td>
+    <!-- content-area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+	
+</table>
+
+</body>
+</html>

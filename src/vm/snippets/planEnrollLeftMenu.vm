@@ -1,0 +1,95 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+#set($distributorFeatureGroup = $ssn.getAttribute("distributorFeatureGroup"))
+#set($distributorFeature = $ssn.getAttribute("distributorFeature"))
+
+#if(! $distributorFeature)
+	#if($userPermissionChecker.hasAccessToFeatureGroup("Plan & Enroll", $userData, $ssn))
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0008", $userData, $ssn))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_viewPlanAndEnroll.do')" #if($menu == "LMS-MGR-0008") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.generic.label.enroll")</div>
+		 </td>
+		 </tr>
+		#end
+
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0009", $userData, $ssn))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0009','mgr_searchTrainingPlans.do')" #if($menu == "LMS-MGR-0009") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption")</div>
+		</td>
+		</tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0010", $userData, $ssn))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0010','mgr_manageSynchronousCourse.do')" #if($menu == "LMS-MGR-0010") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.manager.manageCustomCourses.caption.manageCustomCourses")</div>
+		</td>
+		</tr>
+		#end
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0011", $userData, $ssn))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')" #if($menu == "LMS-MGR-0011") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.viewAllEntitlements.caption.title")</div>
+		</td>
+		</tr>
+		#end
+		
+		
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0025", $userData, $ssn))
+		<!-- LMS-14193
+		#*
+		<tr>
+			<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0025','mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner')" #if($menu == "LMS-MGR-0025") class="selected" #end>
+				<div class="band_text">$brander.getBrandElement("lms.manager.planenroll.viewEnrollmentDetailForCertEnableDisable.pageHeading")</div>
+			</td>
+		</tr>
+		*#
+		-->
+		#end
+		
+	#end
+#else
+	#if($distributorFeatureGroup.contains("Plan & Enroll"))
+
+		#if($distributorFeature.contains("LMS-MGR-0011"))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011',''mgr_viewEnrollMain.do')" #if($menu == "LMS-MGR-0011") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.generic.label.enroll")</div>
+		 </td>
+		 </tr>
+		#end
+		#if($distributorFeature.contains("LMS-MGR-0008"))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_searchTrainingPlans.do')" #if($menu == "LMS-MGR-0008") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption")</div>
+		 </td>
+		 </tr>
+		#end
+
+		#if($distributorFeature.contains("LMS-MGR-0010"))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0010','mgr_manageCustomCourses.do')" #if($menu == "LMS-MGR-0010") class="selected" #end>
+		<div class="band_text">$brander.getBrandElement("lms.manager.manageCustomCourses.caption.manageCustomCourses")</div>
+		</td>
+		</tr>
+		#end
+		#if($distributorFeature.contains("LMS-MGR-0009"))
+		<tr>
+		<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+		<td id="manageUsers" onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0009','mgr_assignTraningPlan.do')" #if($menu == "LMS-MGR-0009") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.viewAllEntitlements.caption.title")</div>
+		</td>
+		</tr>
+		#end
+		
+
+	#end
+#end

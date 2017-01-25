@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+
+        function search() {
+            document.getElementById('action').value="search";
+            document.addRequirement.submit();
+        }
+
+        function doEnter(event){
+            if(event==null){
+                event = window.event;
+            } 
+            var unicode=event.which? event.which : event.keyCode;
+            if (unicode == 13){
+                if(document.all){//ie
+                    window.event.cancelBubble = true;
+                    window.event.returnValue = false;
+                    search();
+                }else{//firefox
+                    if(event.cancelable){
+                        event.preventDefault();
+                    }
+                    search();
+                }
+            }
+        }
+
+       function changeRowColor(checkbox, id) {
+            var tr = checkbox.parentNode.parentNode;
+            var tdarr = $(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+              document.getElementById(id).value = checkbox.checked;
+        }
+
+        function selectAllCheckBoxes(pageFirstIndex,pageLastIndex) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = pageFirstIndex; i <= pageLastIndex; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    var hiddenid = "approvalCredential[" + i + "].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            }else{
+                for(var i = pageFirstIndex; i <= pageLastIndex; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    var hiddenid = "approvalCredential[" + i + "].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            }
+        }
+
+        function onAllSearch() {
+            document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=0;
+            document.getElementById('paging').value="";
+            document.getElementById('showAll').value="true";
+            document.getElementById('showAllAction').value="true";
+            document.addRequirement.submit();
+        }
+
+        function onNextPage(nextIndex) {
+            //document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=nextIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+            document.addRequirement.submit();
+        }
+
+        function onPreviousPage(prevIndex) {
+            //document.getElementById('action').value="search";
+            document.getElementById('pageIndex').value=prevIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) -  parseInt(itemNo);
+            document.addRequirement.submit();
+        }
+         function sortCourseApproval(sortColumnIndex, sortDirection,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+           document.getElementById('action').value="search";
+           document.getElementById('showAll').value=showAll;
+            document.addRequirement.submit();
+     }
+    </script>
+</head>
+
+<body>
+   <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+                #parse("snippets/managerWizardHeader.vm")
+            <!-- Header End -->
+			</td</tr>
+			
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div>
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.AddRequirementWizard")<br>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.showing-1-of-3")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.SelectCredentialLHead")</div>
+            <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.SelectRequirementLHead")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.ConfirmationLHead")</div>
+          </div>
+        </div>
+      </table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("requirementForm.*")
+            #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                        #end
+                </div>
+                <!-- error-box -->
+            #end
+
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.changeprovider.caption.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>				  
+			
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+            <form name="addRequirement" method="post" action="acc_addApprovalRequirement.do" >
+                          <!-- Page Description -->
+                #springBind("requirementForm.sortColumnIndex")
+                #set($sortColumnIndex = $status.value)
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$status.value" />
+                #springBind("requirementForm.sortDirection")
+                #set($sortDirection = $status.value)
+                <input type="hidden" id="sortDirection" name="sortDirection" value="$status.value" />
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                                         <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>Select Credential</b></div>
+                </div>
+                <div id="searchBox" style="float:left; height:150px; width:300px; left:37%;" class="visible">
+                    $brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.SearchCredentials")<br/><br/><br/>
+                    #springBind("requirementForm.credentialName")
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Name")</div> <input type="text" style="font-size:9px; float:right; margin-right:15px; width:170px;" onkeypress="doEnter(event);" name="$!{status.expression}" value="$!{status.value}"/><br/><br/>
+                    #springBind("requirementForm.credentialType")
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Type")</div> <input type="text" style="font-size:9px;float:right; margin-right:15px; width:170px" onkeypress="doEnter(event);" name="$!{status.expression}" value="$!{status.value}"/><br/><br/>
+                    #springBind("requirementForm.credentialValidation")
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Validation")</div> <input type="text" style="font-size:9px;float:right; margin-right:15px; width:170px" onkeypress="doEnter(event);" name="$!{status.expression}" value="$!{status.value}"/><br/><br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="search();" >$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Cancel</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <input type="hidden" id="action" name="action" value="" />
+                </div>
+                <div class="result_left_side">
+                    <!-- Result Description -->
+                        #springBind("requirementForm.approvalCredential")
+                        $pager.setItems($!{status.value})
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                                #set($pageFirstIndex = $pager.firstIndex)
+                                #set($pageLastIndex = $pager.lastIndex)
+                                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                #set($currentPageCount = $pageLastIndex + 1)
+                                #set($pageCurrIndex = $pager.index)
+                        #else
+                                #set($pageFirstIndex = 0)
+                                #set($pageLastIndex = 0)
+                                #set($currentPageSize = 0)
+                                #set($currentPageCount = 0)
+                                #set($pageCurrIndex = 0)
+                        #end
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                        #springBind("requirementForm.showAll")
+                       #if($!{status.value})
+                            #set($showAll=$!{status.value})
+                        #else
+                           #set($showAll=false)
+                       #end
+                    <div class="control-button-position">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onclick="return onAllSearch();"></div>
+                    <input type="hidden" id="showAllAction" name="showAllAction" value="" >
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="return onNextPage($pager.nextIndex);"></div>
+                    #else
+                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"onclick="return onPreviousPage($pager.prevIndex);"></div>
+                    #else
+                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                     #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                    #end
+                </div>
+                <input type="hidden" id="searchpage" name="_page" value="0" />
+          </form>
+            </div>
+            <!-- Result Header End -->
+
+            <!-- Search Result Start -->
+            <form name="searchResult" style="margin-bottom:0; margin-top:-1px; margin-left:0;" method="post" action="acc_addApprovalRequirement.do" >
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px" height="20px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader"><div class="icon_up" ></div>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.CredentialName")</td>
+                        <td class="box_subheader" style="border-right:none;"><div class="icon_up" ></div>$brander.getBrandElement("lms.accreditation.credential.caption.shortLicenseName")</td>
+                    </tr>
+                   
+                </table>
+                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+                <div id="searchResult_2">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px" height="20px"><input id="chkAll" type="checkbox" name="selectAll" onclick="selectAllCheckBoxes($pageFirstIndex,$pageLastIndex);" style="margin-left:3px"/> </td>
+                        <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 0) "sortCourseApproval('0','1',$showAll);" #else "sortCourseApproval('0','0',$showAll);" #end ><div id="firstNameSort" #if($sortColumnIndex == 0 && $sortDirection == 0) class="icon_up" #else class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.CredentialName")</a></td>
+                        <td class="box_subheader" style="border-right:none;"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 1) "sortCourseApproval('1','1',$showAll);" #else "sortCourseApproval('1','0',$showAll);" #end ><div id="accountSort" #if($sortColumnIndex == 1 && $sortDirection == 0) class="icon_up" #else class="icon_down" #end ></div>$brander.getBrandElement("lms.accreditation.credential.caption.shortLicenseName")</a></td>
+                    </tr>
+                    #set($index=0)
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                            #if($loopIndex%2 == 0)
+                                #set($alternate="row_1")
+                            #else
+                                #set($alternate="row_2")
+                            #end
+                            #if($loopIndex == $pageLastIndex)
+                                <tr>
+                                        <td class="$alternate" width="17px" style="border-bottom:none;">
+                                            #springBind("requirementForm.approvalCredential[$loopIndex].selected")
+                                            <input type="checkbox"  id="chk$loopIndex" name="row" style="margin-left:-2px"   #if(${status.value} == 'true') checked #end onclick="changeRowColor(this,'${status.expression}');"/>
+                                            <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                        </td>
+                                        #springBind("requirementForm.approvalCredential[$loopIndex].credential.officialLicenseName")
+                                        <td class="$alternate" style="border-bottom:none;">$!{status.value}&nbsp;</td>
+                                        #springBind("requirementForm.approvalCredential[$loopIndex].credential.shortLicenseName")
+                                        <td class="$alternate" style="border-bottom:none;border-right:none;">$!{status.value}&nbsp;</td>
+                               </tr>
+                             #else
+                                  <tr>
+                                        <td class="$alternate" width="17px" >
+                                            #springBind("requirementForm.approvalCredential[$loopIndex].selected")
+                                            <input type="checkbox"  id="chk$loopIndex" name="row" style="margin-left:-2px"  #if(${status.value} == 'true') checked #end onclick="changeRowColor(this,'${status.expression}');"/>
+                                           <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                        </td>
+                                        #springBind("requirementForm.approvalCredential[$loopIndex].credential.officialLicenseName")
+                                        <td class="$alternate">$!{status.value}&nbsp;</td>
+                                        #springBind("requirementForm.approvalCredential[$loopIndex].credential.shortLicenseName")
+                                        <td class="$alternate" style="border-right:none;">$!{status.value}&nbsp;</td>
+                               </tr>
+                            #end
+                             #set($index=$index+1)
+                    #end
+                </table>
+             </div>
+              #end
+            <!-- Search Result End -->
+        </div>
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.searchResult,'wizardSubmitter','_target1');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.searchResult,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+        <input type="hidden" id="currentpage" name="_page" value="0"/>
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+    </form>
+
+        </div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+</body>
+</html>

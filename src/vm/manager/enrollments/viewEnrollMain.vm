@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<!--        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+<script type="text/javascript">
+function FormSubmit(buttonclick) {
+document.getElementById('action').value=buttonclick;
+document.manageform.submit();
+}
+
+    
+    $(document).ready(function(){
+    
+    });
+    function onAllPage(){
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('showAll').value="true";
+        document.getElementById('sortDirection').value=$context.sortDirection;
+        document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+        document.manageform.submit();
+    }
+    function onPreviousPage(previousIndex){
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('showAll').value="false";
+        document.getElementById('sortDirection').value=$context.sortDirection;
+        document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+        document.manageform.submit();
+    }
+
+    function sortLearner(sortColumnIndex, sortDirection, showAll){
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.manageform.submit();
+    }
+	
+    function onNextPage(nextIndex){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('showAll').value="false";
+        document.getElementById('sortDirection').value=$context.sortDirection;
+        document.getElementById('sortColumnIndex').value=$context.sortColumnIndex;
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        //alert(document.getElementById('pageCurrIndex').value);
+        document.manageform.submit();
+    }
+</script>
+<head>
+     <body>
+     <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+         <tr> <!-- First Block -->
+            <td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+            #parse("snippets/managerHeader.vm")
+            <!-- header-end -->
+            </td>
+         </tr>                                
+         
+         <!-- </TABS> -->
+         <tr id="main">
+           <!-- <LEFT NAGIVATION> -->
+           <td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+                #parse("snippets/planEnrollLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+         <!-- </LEFT NAGIVATION> -->
+         
+         <td id="content">
+         	 <div id="scrollable">
+         	 <!-- <PAGE DESCRIPTION> -->
+         	 <table id="table-description" border="0" cellpadding="0" cellspacing="0">
+             	 <tr>
+             	 <td>
+             
+             	 <table id="table-page-description" border="0" cellpadding="0" cellspacing="0">
+             	 <tr>
+             	 <td id="page-icon" class="page-icon-plan">
+            	  &nbsp;
+            	 </td>
+             	 <td id="page-description">
+             	 <div id="page-heading">Enroll</div>
+             	 <div id="page-help">This assistant will help you enroll users into courses.</div>
+             
+             	 </td>
+             	 </tr>
+         	     </table>
+         
+         		 </td>
+         		 </tr>
+             </table>
+			 
+        <!-- </TOP CONTROLS> -->
+         <table id="table-content" border="0" cellpadding="0" cellspacing="0">
+         <tr>
+         <td>
+         <table class="content-table" border="0" cellpadding="0" cellspacing="0" width="100%">
+         <tr>
+         <td class="content-table-header" colspan="2">
+         <div class="content-table-heading">Enroll Users Assistant</div>
+         
+         </td>
+         </tr>
+         <tr class="multiline-row">
+         <td>
+         <p>
+         This is the enroll users assistant. You will be guided through the steps necessary to successfully enroll users into courses.<br/><br/>
+         Click the "Next" button to proceed to the next screen. If You want to change something on a previous screen, click the "Previous" button. You may cancel this assistant at any time by clicking the "Cancel" button.<br/><br/>
+         <b>To enroll users by courses click the "Enroll Users by Courses" button or to enroll users by training plan click the "Enroll Users by Training plan" button appearing below.</b>
+         
+         </p>
+         <!--<p>This is the assign security roles assistant. This assistant will help you assign security roles to your users. You will be guided through the steps necessary to successfully assign security roles to your users.<br/><br/> Click the "Next" button to proceed to the next screen. If You want to change something on a previous screen, click the "Previous" button. You may cancel this assistant at any time by clicking the "Cancel" button.<br/><br/> <b>To get started click the "Begin Assign Security Roles" button below.</b></p> -->
+         </td>
+         </tr>
+         <tr style="display:table-row;">
+         <td style="padding-top:35px;">
+         <div class="large-button-container">
+             <table>
+    			<td>
+    			<a href="#" style="text-decoration:none;" onclick="submitForm('Courses','LMS-MGR-0008','mgr_assignEnrollments.do')">
+    				<div class="button-large" style="background-image:url(brands/default/en/images/icon-courses-normal.png); background-position: 10px 20px;">Enroll Users by Course</div>
+    			</a>
+             	</td>
+    			<td>
+    			<a href="#" style="text-decoration:none;" onclick="submitForm('Courses','AssignTrainingPlans','mgr_assignTraningPlan.do')">
+    				<div class="button-large" style="background-image:url(brands/default/en/images/icon-training-plan-blue.png); background-position: 10px 20px;">Enroll Users by Training Plan</div>
+    			</a>
+    			</td>
+    			<td>
+    			<a href="#" style="text-decoration:none;" onclick="submitForm('Courses','AssignTrainingPlans','mgr_assignSubscriptionEnrollments.do')">
+    				<div class="button-large" style="background-image:url(brands/default/en/images/icon-subscription-yellow.png); background-position: 10px 20px;">Assign Subscription</div>
+    			</a>
+    			</td>
+    		 </table>
+         </div>
+         </td>
+         </tr>
+         <tr style="display:none;">
+         
+         <td style="padding-top:35px;">
+         <div class="large-button-container">
+         <a href="#" style="text-decoration:none;">
+         <div class="button-large">Button Three</div>
+         </a>
+         <a href="#" style="text-decoration:none;">
+         <div class="button-large">Button Four</div>
+         </a>
+         
+         </div>
+         </td>
+         </tr>
+         <tr style="display:none;">
+         <td  style="padding-top:35px;" align="center">
+         <a href="#" style="text-decoration:none;">
+         <div class="button-large" style="float:none;">Enroll Users by Training Plan</div>
+         </a>
+         
+         </td>
+         </tr>
+         <tr>
+         <td height="35">
+         &nbsp;
+         </td>
+         </tr>
+         </table>
+         </td>
+         
+         </tr>
+         </table>
+         <!-- <BOTTOM CONTROLS> -->
+         
+         <!-- </BOTTOM CONTROLS> -->
+         </div>
+         </td>
+         </tr>
+         <tr> <!-- Footer BLOCK -->
+         <td id="footer" colspan="2">
+         <!-- footer -->
+         #parse("snippets/managerFooter.vm")
+         <!-- footer-end -->
+         </td>
+         </tr>
+     </table>
+     </body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+
+
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script language="javascript" type="text/javascript" src="$brander.getBrandElement("lms.manageUser.360js.js")"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>        
+    <link type="text/css" href="brands/default/en/css/css_search_net.css" rel="stylesheet"/>
+    <script type="text/javascript" language="javascript">
+        function onAllPage(){
+            document.getElementById('pageIndex').value=0;
+            document.getElementById('showAll').value="true";
+            document.getElementById('learnerGroupSearchAction').value="search";
+            document.learnerGroupMailForm.submit();
+        }
+
+        function onNextPage(nextIndex){
+            document.getElementById('pageIndex').value=nextIndex;
+            document.getElementById('showAll').value="false";
+            document.getElementById('learnerGroupSearchAction').value="search";
+            var itemNo = document.getElementById('pageCurrIndex').value;
+            var items = $pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+            document.learnerGroupMailForm.submit();
+        }
+
+        function onPreviousPage(previousIndex){
+            document.getElementById('pageIndex').value=previousIndex;
+            document.getElementById('showAll').value="false";
+            document.getElementById('learnerGroupSearchAction').value="search";
+            var itemNo = document.getElementById('pageCurrIndex').value;
+            var items = $pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+            document.learnerGroupMailForm.submit();
+        }
+
+        function sortLearnerGrp(sortColumnIndex, sortDirection, showAll, currentIndex){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('showAll').value=showAll;
+            document.getElementById('pageCurrIndex').value=currentIndex;
+            document.getElementById('learnerGroupSearchAction').value="search";
+            document.learnerGroupMailForm.submit();
+        }
+
+        function FormSubmit() {
+            document.getElementById('learnerGroupSearchAction').value="next";
+            return true;
+        }
+
+        $(document).ready(function(){
+            
+
+            $("INPUT[type='checkbox'][name='selectedLearner']").click(function(){
+                $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+                $("#"+$("#"+this.id).attr("hiddenid")).val($("#"+this.id).is(':checked'));
+            });
+
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='selectedLearner']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='selectedLearner']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+                  $("INPUT[type='checkbox'][name='selectedLearner']").parent().find("INPUT[type='hidden']").val($('#chkAll').is(':checked'));
+               }
+            )
+        });
+
+#set($ssn=$!{request.getSession(true)})
+#set($sDirection = $ssn.getAttribute("sortDirection"))
+#set($sColumnIndex = $ssn.getAttribute("sortColumnIndex"))
+#set($sAll = $ssn.getAttribute("showAll"))
+    </script>
+</head>
+
+<body>
+<form name="learnerGroupMailForm" action="mgr_sendMailToLearners.do" method="POST"> 
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- header -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- header-end -->
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+                <div>
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.sendEmailWizard") <br/>showing 2 of 4</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.selectGroupsLearners")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.selectRecipients")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.sendEmail")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.confirmation")</div>
+                    </div>
+                </div>
+                <!-- left-pannel-content-end -->
+		</table>
+	</td>
+	
+                <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+
+                #springBind("learnerEmailForm.selectedLearnerGroups")
+                #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoAnnouncements">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.assignMailLearnerGroups.caption.title2")</div>
+			</td>
+		    </tr>
+		</table>                         
+                
+                <!-- Logo+Manage-User-end -->
+
+                <div id="resultBox" class="content-Block-new"><!-- content-Block -->
+                    <div id="resultHeader" class="box_header"><!-- box_header -->
+                        <div class="result_left_side">
+                                #springBind("learnerEmailForm.learnerGroupMailItems")
+
+                                $pager.setItems(${status.value})
+                                #set($totalCount = $pager.total)
+                                #if($pager.hasItems())
+                                        #set($pageFirstIndex = $pager.firstIndex)
+                                        #set($pageLastIndex = $pager.lastIndex)
+                                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                        #set($currentPageCount = $pageLastIndex + 1)
+                                        #set($pageCurrIndex = $pager.index)
+                                #else
+                                        #set($pageFirstIndex = 0)
+                                        #set($pageLastIndex = 0)
+                                        #set($currentPageSize = 0)
+                                        #set($currentPageCount = 0)
+                                        #set($pageCurrIndex = 0)
+                                #end
+
+                                <!-- All Icon -->
+                                <div id="all" class="icon_all" onClick="return onAllPage();" value="Search" name="_target3" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" ></div>
+
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                        <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target3" onclick="return onNextPage($pager.nextIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10" /></div>
+                                #else
+                                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                        <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" value="Search" name="_target3" onclick="return onPreviousPage($pager.prevIndex);"><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10" /></div>
+                                #else
+                                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Showing Results -->
+                                #set($totalCountminus1 = $totalCount - 1)
+                                #if($pageFirstIndex == 0 && $pageLastIndex <= 9 && $pageLastIndex!=0)
+                                        #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex > 0)
+                                        #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+                                        #set($x = $pageFirstIndex+1)
+                                #else
+                                        #set($x = 0)
+                                #end
+                                #if($pageLastIndex != 0)
+                                        #set($y = $pageLastIndex+1)
+                                #elseif($totalCount == 1)
+                                        #set($y = 1)
+                                #else
+                                        #set($y = 0)
+                                #end
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $x - $y $brander.getBrandElement("lms.manager.manageTrainingPlans.caption.of") $totalCount </div>
+
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                            <input type="hidden" id="showAll" name="showAll" value="false" />
+                            <input type="hidden" id="learnerGroupSearchAction" name="learnerGroupSearchAction" value="" />
+                            <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                            <input type="hidden" id="sortDirection" name="sortDirection" value="1" />
+                            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="0" />
+                        </div>
+
+                    </div><!-- box_header -->
+
+                    <div id="searchResult_2">
+                        #set($lrnGroupsSize = $status.value.size())
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="box_subheader" width="2%">
+                                    <input type="checkbox" id="chkAll" name="selectAll"/>
+                                </td>
+                                <td class="box_subheader" style="border-right:none;"><div name="_target3" onClick=#if($sDirection == 0) "sortLearnerGrp('0','1','$sAll',$pageCurrIndex);" #else "sortLearnerGrp('0','0','$sAll',$pageCurrIndex);" #end ><div id="nameSort" #if(($sDirection == 1 )&&($sColumnIndex == 0)) class="icon_up" #elseif($sColumnIndex == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.manageUser.manageOrganizationGroup.caption.LearnerGroup")</div></td>
+                            </tr>
+                            #set($lrnGroupsSize = $lrnGroupsSize - 1)
+                            #foreach($index in [$pageFirstIndex..$pageLastIndex])
+                                #if($velocityCount%2 == 0)
+                                    #set($alternate="row_2")
+                                #else
+                                    #set($alternate="row_1")
+                                #end
+                                #springBind("learnerEmailForm.learnerGroupMailItems[$index].learnerGroupId")
+                                <input type="hidden" name="${status.expression}" value="${status.value}"/>
+                                <tr>
+                                    <td class="$alternate" width="2%">
+                                        #springBind("learnerEmailForm.learnerGroupMailItems[$index].selected")
+                                        <input type="checkbox" id="chk$index" #if(${status.value}=="true") checked #end hiddenid="hdnselectedLearner$index" name="selectedLearner"/>
+                                        <input type="hidden" id="hdnselectedLearner$index" name="${status.expression}" value="${status.value}"/>
+                                    </td>
+                                    <td class="$alternate" style="border-right:none;width:90%;">
+                                        #springBind("learnerEmailForm.learnerGroupMailItems[$index].learnerGroupName")
+                                        $!{status.value}
+                                    </td>
+                                </tr>
+                            #end
+                        </table>
+                    </div>
+
+                </div><!-- content-Block -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <div class="$brander.getBrandElement("lms.assignMailLearners.cssClass.managerBtn")">
+                    <input type="hidden" id="currentpage" name="_page" value="3" />
+                    <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					<div style="float:right; margin-top:3px;">
+					  <a onClick="return FormSubmit();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal" onClick="submitButtonForm(document.learnerGroupMailForm,'wizardSubmitter','_target4');">Next</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:3px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.learnerGroupMailForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Previous</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:3px;">
+						<a onClick="submitButtonForm(document.learnerGroupMailForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Cancel</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>	
+                  
+                </div>
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->
+
+                </div><!-- right-pannel-content-end -->
+
+        </td></tr><!-- content2-area-end -->
+
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+	</td></tr>
+</table>
+    <!-- tooltip -->
+
+    <!-- tooltip -->
+</form>
+</body>
+</html>

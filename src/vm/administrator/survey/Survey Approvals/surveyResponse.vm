@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+    
+
+    function showCommentDiv(divId) {
+        var obj = document.getElementById(divId);
+        if ($(obj).is(":hidden")) {
+            $(obj).animate({ height: "show" }, 700, "");
+          } else {
+            $(obj).animate({ height: "hide" }, 700, "");
+          }
+    }
+
+    function saveResponse() {
+        document.getElementById('actionmethod').value='saveSurveyResponse';
+        document.surveyResponseForm.submit();
+    }
+</script>
+</head>
+
+<body>
+    <form name="surveyResponseForm" method="POST" action="adm_surveyApprovals.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+
+    <div id="main-container"><!-- main-container -->
+
+        <!-- header -->
+        #parse("snippets/managerHeader.vm")
+        <!-- header-end -->
+
+        <div id="content2a">
+
+            <!-- sub-header+arrow -->
+            <div  id="content3a"></div>
+            <!-- sub-header+arrow-end -->
+
+            <!-- left-pannel-content -->
+            #parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+
+            <div id="right-pannel"><!-- right-pannel -->
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                      <td style="padding-right:10px;">
+                        <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.editSurveyCources.caption.SurveyResponse")</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.administrator.searchMember.caption.currentlypreviewing")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+                      </td>
+                </tr>
+                <tr>
+                      <td>
+                          <div style="float:right; margin-top:10px;">
+							<a class="button"><span class="button">$brander.getBrandElement("lms.Instructor.button.print")</span></a>
+                          </div>
+                          <div style="float:right; margin-top:10px;">
+							<a class="button"  href="adm_surveyApprovals.do"><span class="button">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</span>
+                            </a>
+                          </div>
+                      </td>
+                </tr>
+            </table>
+
+            <h3><div class="group-name" style="clear:both; padding-left:5px">${surveyAppForm.survey.surveyRef.name}</div></h3>
+
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")" style="width:107%;">
+
+            #set($questionCount = ${surveyAppForm.survey.questionList.size()})
+            #set($questionNumber = $!{context.questionNo})
+            #if($questionCount > 0)
+
+                #set($maxQuestionIndex = $questionCount - 1)
+                #foreach($index in [0..$maxQuestionIndex])
+
+                    #set($surveyQuestion = ${surveyAppForm.survey.questionList.get($index)})
+                    #set($prefix = "survey.questionList[$index]")
+                    #set($questionNumber = $questionNumber + 1)
+
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <!-- s -->
+                        
+                        <!-- s -->
+                        <div id="e12" style="float:left;width:100%;margin-top:10px">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                            </div>
+                            <div style="float:right;padding-right:5px;" >
+                                <img src="brands/default/en/images/icon-mini-notes.png" onClick="showCommentDiv('feedback-$questionNumber');" />
+                            </div>
+                        </div>
+                        <div style="float:left;width:100%;">
+                            $surveyQuestion.renderQuestion($prefix)
+                        </div>
+                        <div id="feedback-$questionNumber" style="display:none;float:left;width:100%;padding-bottom:10px;">
+                            <div class="User_coll_1"></div>
+                            #springBind("surveyAppForm.survey.questionList[$index].comment")
+                            <textarea rows="" cols="" class="inputfield-box-L2-in-a" name="$!{status.expression}" >$!{status.value}</textarea>
+                        </div>
+                    </div>
+                    <!-- End-User-left-right-list -->
+                #end
+            #end
+
+            </div>
+
+            <div style="float:right; margin-top:15px; margin-right:15px;">
+				  <a class="button" onClick="saveResponse();"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</span></a>
+            </div>
+            <div style="float:right; margin-top:15px; margin-right:10px;">
+				  <a class="button" href="adm_surveyApprovals.do"><span class="button">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</span></a>
+            </div>
+
+            </div><!-- right-pannel -->
+
+        </div><!-- content2a -->
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+
+    </div><!-- main-container -->
+</form>
+</body>
+</html>

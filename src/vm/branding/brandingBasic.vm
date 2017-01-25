@@ -1,0 +1,710 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<style type="text/css">
+#table-layout #row-tabs {
+    background-color: #F4F4F4;
+    height: 25px;
+    
+    border-bottom-color: #DDDDDD;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+#table-layout #blank-tab {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    width: 184px;
+    border-bottom-width: 0px;
+}
+#table-layout #hidden-blank-tab {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    display: none;
+    width: 184px;
+}
+#table-layout #tabs {
+}
+#table-tabs a, #table-tabs a:visited, #table-tabs a:link {
+    color: #666666;
+    text-decoration: none;
+}
+#table-tabs td, #table-tabs td:hover, #table-tabs #last, #table-tabs .selected {
+    border-left-color-ltr-source: physical;
+    border-left-color-rtl-source: physical;
+    border-left-color-value: #DDDDDD;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: solid;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 1px;
+    color: #666666;
+    cursor: pointer;
+    font-size: 10px;
+    height: 25px;
+    min-width: 120px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 120px;
+}
+#table-tabs td:hover, #table-tabs #last:hover {
+    background-color: #FEFEFE;
+    color: #000000;
+}
+#table-tabs #last {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+}
+#table-tabs .selected {
+    background-color: #E5E5E5;
+    border-top-color: #FCFCFC;
+    border-top-style: solid;
+    border-top-width: 1px;
+    font-weight: bold;
+}
+</style>
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<!--        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+
+
+<script type="text/javascript">
+function FormSubmit(buttonclick) {
+document.getElementById('action').value=buttonclick;
+document.manageform.submit();
+}
+
+
+$(document).ready(function(){
+   showFormOnLoad();
+   $('#selectionpanel').mouseenter(
+        function(){
+            $('#selection-edit').css('display',"");
+            $('#selection-display').css('display',"none");
+        }
+    );
+    $('#selection-edit').change(
+        function(){
+            displaySubsection(this);
+            toggleSelection(this);  
+        }
+    );
+});
+
+function showFormOnLoad(){
+   var objValue = "${formContext}";
+   
+   if( objValue.length > 0){
+       hideAllSections();
+   }
+   if(objValue=="Login Page") {
+       document.getElementById("divLoginPage").style.display = "";       
+   }
+       
+   if(objValue=="Emails")
+       document.getElementById("divEmails").style.display = "";
+   if(objValue=="About Us")
+    {
+        showAboutUsBox();
+    }
+   if(objValue=="Contact Us")
+   {
+       showContactUsBox();
+   }
+   if(objValue=="Terms of Use")
+   {
+       showTouBox();
+   }
+   if(objValue=="Privacy Policy")
+   {
+       showPrivacyBox();
+   }
+   if( objValue.length > 0){
+       $('#selection-display').html(objValue);
+   }
+}
+
+ function toggleSelection(obj){
+ 	if(document.getElementById("selection-edit").style.display == ""){	 	
+	 	document.getElementById("selection-edit").style.display = "none";
+		document.getElementById("selection-display").style.display = "";
+		changeSelectionDivHTML();
+		displaySubsection(obj);
+		if(document.getElementById("error-profile")!=null) document.getElementById("error-profile").style.display="none"; 					
+ 	}else{
+		document.getElementById("selection-edit").style.display = "";
+		document.getElementById("selection-display").style.display = "none";
+	}	
+ }
+ function changeSelectionDivHTML(){    
+        var listValue = $("#selection-edit").val();                                                
+        var previousInnerHTML = new String();
+        previousInnerHTML = previousInnerHTML.concat(listValue);                              
+        document.getElementById("selection-display").innerHTML = previousInnerHTML;
+ }
+    
+
+ 
+ function saveCertificate(){     
+     document.getElementById('actionmethod').value='saveCertificate';	 
+	 document.brandingForm.submit(); 
+ }
+
+function saveLmsLogo(){     
+     document.getElementById('actionmethod').value='saveLmsLogo';	 
+     document.brandingForm.submit(); 
+ }
+function saveCoursePlayerLogo(){     
+     document.getElementById('actionmethod').value='saveCoursePlayerLogo';	 
+	 document.brandingForm.submit(); 
+}
+
+function removeLmsLogo(){     
+     document.getElementById('actionmethod').value='removeLmsLogo';	 
+	 document.brandingForm.submit(); 
+}
+
+function removeCoursePlayerLogo(){     
+     document.getElementById('actionmethod').value='removeCoursePlayerLogo';	 
+	 document.brandingForm.submit(); 
+}
+ 
+ 
+function toggleBrandName(brandNameCell,action){
+	if(action == "cancel"){
+		  $("#brandName").val("");
+		  $('#brandName').focus();
+		  return;
+		}
+ 	if(document.getElementById(brandNameCell+"-edit").style.display == ""){
+	 	document.getElementById(brandNameCell+"-edit").style.display = "none";
+		document.getElementById(brandNameCell).style.display = "";
+		if(action != "cancel"){
+		  updateBrandNameDivHTML();
+		}		
+ 	}else{ 	
+		document.getElementById(brandNameCell+"-edit").style.display = "";
+		document.getElementById(brandNameCell).style.display = "none";		
+	}	
+ } 
+
+ function loadBrand(brandNameCell){	
+  	var bname = document.getElementById('brandName');
+	if(bname==null || bname.value.length==0){
+	   $('#brandEmptyNameBox').modal({close:false,position: ["40%",]});
+	   return false;
+	}
+	if (isValidChar(bname.value)){
+		$('#brandBox').modal({close:false,position: ["40%",]});
+	 	return false;
+	}
+	
+	document.getElementById('actionmethod').value='basicBranding';	 
+	document.brandingForm.submit(); 
+	   
+	 //updateBrandNameDivHTML();
+	 //toggleBrandName(brandNameCell);
+ }
+ 
+  function createBrandDirectoryStructure(brandNameCell){
+  	
+  	var bname = document.getElementById('brandName');
+	if(bname==null || bname.value.length==0){
+	   $('#brandEmptyNameBox').modal({close:false,position: ["40%",]});
+	   return false;
+	}
+	if (isValidChar(bname.value)){
+		$('#brandBox').modal({close:false,position: ["40%",]});
+	 	return false;
+	}
+
+	loadBrandFields();
+	##document.getElementById('actionmethod').value='createBrandDirectoryStructure';	 
+	##document.brandingForm.submit();
+ }
+ 
+ function isValidChar(val){
+ 	var expression = /^[a-zA-Z0-9]*$/;
+	var regex = new RegExp(expression);
+	return !regex.test(val);
+ }
+ 
+ function confirm(message, callback) {
+    $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.alert_message_box_text').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+
+    function loadBrandFields(){
+        if ($("#brandName").val().length > 0) {
+            confirm("Are you sure you want to create new brand directory?", function () {
+				document.getElementById('actionmethod').value='createBrandDirectoryStructure';	 
+				document.brandingForm.submit();
+            });
+        }else {
+            $('#messageAlert').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+        }
+    }
+
+
+ function updateBrandNameDivHTML(){    
+        var previousInnerHTML = new String();
+        previousInnerHTML="<u>"                             
+        previousInnerHTML = previousInnerHTML.concat(document.getElementById("brandName").value);
+        previousInnerHTML=previousInnerHTML.concat("</u>")                      
+        document.getElementById("brandNameDiv").innerHTML = previousInnerHTML;
+ }
+ 
+ function saveBrands(){	 
+	 updateTextArea("about1");
+	 updateTextArea("contact1");
+	 updateTextArea("tou1");
+	 updateTextArea("privacy1");
+	 document.getElementById('actionmethod').value='saveBranding';	 
+	 document.brandingForm.submit();
+ }
+ 
+ function cancel(){	 
+	 document.getElementById('actionmethod').value='basicBranding';	 	 
+	 document.brandingForm.submit();
+ }
+ 
+function saveLoginPageBrands(){
+    document.getElementById('actionmethod').value='saveLoginPageBrands';	 
+    document.brandingForm.submit();
+}
+function showDefaultValue(templateType){
+  document.getElementById('actionmethod').value='basicBranding';  
+  document.getElementById('showDefaultValue').value='showDefaultValue';  	 
+  document.getElementById('templateType').value='templateType';
+  document.brandingForm.submit();
+}   
+ function displaySubsection(obj){ 
+   hideAllSections();  
+   var objValue = $("#selection-edit").val();       
+   if(objValue=="Logos")document.getElementById("divLogo").style.display = "";
+   if(objValue=="Login Page")document.getElementById("divLoginPage").style.display = "";
+   if(objValue=="Emails")document.getElementById("divEmails").style.display = "";
+   if(objValue=="About Us"){showAboutUsBox();}
+   if(objValue=="Contact Us"){showContactUsBox()};
+   if(objValue=="Terms of Use"){showTouBox();}
+   if(objValue=="Privacy Policy"){showPrivacyBox();}
+   //if(objValue=="Certificates")document.getElementById("divCertificates").style.display = "";
+       
+  } 
+ 
+ function showAboutUsBox(){ 
+   document.getElementById("divAboutus").style.display = "";      
+   if(document.getElementById("aboutUsSelectionOption").value=="1") document.getElementById("trLmsTemplate-about").style.display="";
+   if(document.getElementById("aboutUsSelectionOption").value=="2") document.getElementById("trExternalUrl-about").style.display="";
+   if(document.getElementById("aboutUsSelectionOption").value=="3") document.getElementById("trEmailAddress-about").style.display="";
+   if( $('#savecontext').length >0 ){
+       $('#savecontext').val("aboutUs");
+   }else{
+       $('#brandingForm').append('<input type="hidden" id="savecontext" name="savecontext" value="aboutUs" />');
+   }   
+ }
+ 
+ function showContactUsBox(){ 
+   document.getElementById("divContactus").style.display = "";      
+   if(document.getElementById("contactUsSelectionOption").value=="1") document.getElementById("trLmsTemplate-contact").style.display="";
+   if(document.getElementById("contactUsSelectionOption").value=="2") document.getElementById("trExternalUrl-contact").style.display="";
+   if(document.getElementById("contactUsSelectionOption").value=="3") document.getElementById("trEmailAddress-contact").style.display="";
+   if( $('#savecontext').length >0 ){
+       $('#savecontext').val("contactUs");
+   }else{
+       $('#brandingForm').append('<input type="hidden" id="savecontext" name="savecontext" value="contactUs" />');
+   }
+ }
+ 
+ function showTouBox(){ 
+   document.getElementById("divtou").style.display = "";      
+   if(document.getElementById("touSelectionOption").value=="1") document.getElementById("trLmsTemplate-tou").style.display="";
+   if(document.getElementById("touSelectionOption").value=="2") document.getElementById("trExternalUrl-tou").style.display="";
+   if(document.getElementById("touSelectionOption").value=="3") document.getElementById("trEmailAddress-tou").style.display="";
+   if( $('#savecontext').length >0 ){
+       $('#savecontext').val("TOU");
+   }else{
+       $('#brandingForm').append('<input type="hidden" id="savecontext" name="savecontext" value="TOU" />');
+   }
+ }
+ 
+ function showPrivacyBox(){ 
+   document.getElementById("divPrivacy").style.display = "";      
+   if(document.getElementById("privacySelectionOption").value=="1") document.getElementById("trLmsTemplate-privacy").style.display="";
+   if(document.getElementById("privacySelectionOption").value=="2") document.getElementById("trExternalUrl-privacy").style.display="";
+   if(document.getElementById("privacySelectionOption").value=="3") document.getElementById("trEmailAddress-privacy").style.display="";
+   if( $('#savecontext').length >0 ){
+       $('#savecontext').val("privacy");
+   }else{
+       $('#brandingForm').append('<input type="hidden" id="savecontext" name="savecontext" value="privacy" />');
+   }
+ }
+ 
+ function hideAllSections(){
+  document.getElementById("divLogo").style.display = "none";
+  document.getElementById("divLoginPage").style.display = "none";
+  document.getElementById("divEmails").style.display = "none";
+  document.getElementById("divAboutus").style.display = "none";
+  document.getElementById("divContactus").style.display = "none";
+  document.getElementById("divtou").style.display = "none";
+  document.getElementById("divPrivacy").style.display = "none";
+  //document.getElementById("divCertificates").style.display = "none";
+ } 
+
+function templateOption(index, dropDownName){
+   
+  hideAllTemplateOptions(dropDownName);
+  if(dropDownName=="about"){
+      if(index==0)
+        document.getElementById("trLmsTemplate-about").style.display=""
+      if(index==1)
+        document.getElementById("trExternalUrl-about").style.display="";
+      if(index==2)
+        document.getElementById("trEmailAddress-about").style.display="";
+  }
+  if(dropDownName=="contact"){
+      if(index==0) 
+        document.getElementById("trLmsTemplate-contact").style.display=""
+      if(index==1)
+        document.getElementById("trExternalUrl-contact").style.display="";
+      if(index==2)
+        document.getElementById("trEmailAddress-contact").style.display="";
+  }
+  if(dropDownName=="privacy"){
+      if(index==0)
+        document.getElementById("trLmsTemplate-privacy").style.display=""
+      if(index==1)
+        document.getElementById("trExternalUrl-privacy").style.display="";
+      if(index==2)
+        document.getElementById("trEmailAddress-privacy").style.display="";
+  }
+  if(dropDownName=="tou"){
+      if(index==0)
+        document.getElementById("trLmsTemplate-tou").style.display=""
+      if(index==1)
+        document.getElementById("trExternalUrl-tou").style.display="";
+      if(index==2)
+        document.getElementById("trEmailAddress-tou").style.display="";
+  }
+  
+ }	
+
+ function hideAllTemplateOptions(dropDownName){
+  if(dropDownName=="about"){
+  	document.getElementById("trExternalUrl-about").style.display="none";
+  	document.getElementById("trEmailAddress-about").style.display="none";
+  	document.getElementById("trLmsTemplate-about").style.display="none";
+  }
+  if(dropDownName=="contact"){	
+  	document.getElementById("trExternalUrl-contact").style.display="none";
+  	document.getElementById("trEmailAddress-contact").style.display="none";
+  	document.getElementById("trLmsTemplate-contact").style.display="none";
+  }	
+  if(dropDownName=="tou"){	
+  	document.getElementById("trExternalUrl-tou").style.display="none";
+  	document.getElementById("trEmailAddress-tou").style.display="none";
+  	document.getElementById("trLmsTemplate-tou").style.display="none";
+  }	
+  if(dropDownName=="privacy"){	
+  	document.getElementById("trExternalUrl-privacy").style.display="none";
+  	document.getElementById("trEmailAddress-privacy").style.display="none";
+  	document.getElementById("trLmsTemplate-privacy").style.display="none";
+  }  
+  }  
+</script>
+<head>
+     <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+            <td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+                  #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/managerHeader.vm")
+			#end
+            <!-- header-end -->
+            </td>
+			</tr>
+        <!-- Tabs Start -->
+            <td  id="row-tabs" colspan="2">
+                <table id="table-tabs" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td id="blank-tab"></td>
+                        <td id="blank-tab" style="width :275px"></td>
+                        <td class="selected"><a href="#" ><span style="font-size: 10px;">$brander.getBrandElement("lms.admin.branding.basic")</span></a></td>
+                        #if(${displayPage}==true)<td id="last"><a href="branding.do?method=advancedBranding" ><span style="font-size: 10px;">$brander.getBrandElement("lms.admin.branding.advanced")</span></a></td>#end
+                       
+                    </tr>
+                </table>
+            </td>
+            <!-- Tabs End -->
+         <tr id="main">
+           <!-- <LEFT NAGIVATION> -->
+           <td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+					 #parse("snippets/compliance/complianceLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+         <!-- </LEFT NAGIVATION> -->
+                <!-- </LEFT NAGIVATION> -->
+                <td id="content">
+                    <div id="scrollable">                    	
+                    #springBind("brandingForm.*")
+                        #if($status.error)
+                            <!-- error-box -->
+                           <table cellspacing="0" cellpadding="0" border="0" class="table-error" id="error-profile" style="display: table;">
+                                <tbody>
+                                 <tr>
+                                  <td><div id="errorDiv" class="error">Invalid data entered for highlighted fields. Please try again.</div></td>
+                                 </tr>
+                                </tbody>
+                           </table>
+                            <!-- error-box -->
+                        #end
+                        <!-- <PAGE DESCRIPTION> -->
+                        <table id="table-description" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <table id="table-page-description" border="0" cellpadding="0" cellspacing="0">
+									    <tr>
+										        <td id="page-icon" class="icon_surveys">
+												            &nbsp;
+										        </td>
+												<td id="page-description">
+            									<div id="page-heading">$brander.getBrandElement("lms.admin.branding.title")</div>
+												<div id="page-help">$brander.getBrandElement("lms.admin.branding.subtitle")</div>
+        										</td>
+    											</tr>
+									</table>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- </PAGE DESCRIPTION> -->
+					    <!-- Creation confirm Message Box -->
+						<div id='deleteConfirmation' style='display:none'>
+							<div class='header'><span>$brander.getBrandElement("lms.admin.branding.caption.Please-Confirm")</span></div>
+							<div class="alert_message_box_icon"></div>
+							<div class="alert_message_box_text"></div>
+							<br style="clear:both" />
+							
+							<div style="margin-left: auto; margin-right: auto; width: 180px;">
+								<div class='simplemodal-close' style="width:220px">
+									<div style="float: center; margin-top: 3px; margin-left: 20px;">
+										<div>
+											<a onClick=""><span class="no button">
+												<div class="btn_start"></div>
+												<div class="btn_normal">$brander.getBrandElement("lms.admin.branding.caption.No")</div>
+												<div class="btn_end"></div>
+											</span></a>
+										</div>
+									</div>
+									   
+									<div style="float: center; margin-top: 0px; margin-left: 20px;">
+										<div>
+											<a class="" onClick=""><span class="yes button">
+												<div class="btn_start"></div>
+												<div class="btn_normal">$brander.getBrandElement("lms.admin.branding.caption.Yes")</div>
+												<div class="btn_end"></div>
+											</span>	</a>
+										</div>
+									</div>							   
+								</div>
+							</div>
+						</div>				
+						<!--  Creation confirm Message Box end -->                         
+					                        
+                        <!-- <TOP CONTROLS> -->
+
+                        <!-- </TOP CONTROLS> -->
+           <form name="brandingForm" id="brandingForm" method="post" action="branding.do" ENCTYPE="multipart/form-data">
+             <input type="hidden" id="actionmethod" name="method" value=""/>                        
+             <input type="hidden" id="showDefaultValue" name="showDefaultValue" value=""/>
+             <input type="hidden" id="templateType" name="templateType" value=""/>
+             		#if(${displayPage}==true)
+             			<table id="table-bread-crumb" border="0" cellpadding="0" cellspacing="0" style="width: 99%;">
+                            <tr id="selectionpanel">
+                                <td class="start">
+                                    &nbsp;
+                                </td>
+                                <td class="stem" width="105">
+                                    <div class="bread-crumb-text" style="float:left;">Make Your Selection: </div>
+                                </td>
+                                <td class="stem">
+                                    <div id="branding-breadcrumb" class="bread-crumb-text" style="float:left;" >
+                                      <div >
+                                    	<select id="selection-edit" name="selection-edit" class="select-breadcrumb" style="display:none">
+	                                     <option #if($formContext=="Logos") selected #end>Logos</option>
+	                                     <option #if($formContext=="Login Page") selected #end>Login Page</option>
+	                                     <option #if($!{context.pageTarget}) selected #end>Emails</option>
+	                                     <option #if($formContext=="About Us") selected #end>About Us</option>
+	                                     <option #if($formContext=="Contact Us") selected #end>Contact Us</option>
+	                                     <option #if($formContext=="Terms of Use") selected #end>Terms of Use</option>
+	                                     <option #if($formContext=="Privacy Policy") selected #end>Privacy Policy</option>
+	                                     <!--<option #if($formContext=="Certificates") selected #end>Certificates</option>-->
+	                                    </select>                                    	
+                                      </div>
+                                    <div id="selection-display" name="selection-display" onclick="toggleSelection();" >	                                    	
+                                    	<a href="#">Logos</a>
+                                    </div>
+                                  	</div>                                    	
+                                </td>
+                                <td class="end">
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                        <script language="javascript" type="text/javascript">                                
+							changeSelectionDivHTML();																								                                                                                                                                                          
+                        </script>
+             		#end
+             		    <table width="99%" cellspacing="0" cellpadding="0" border="0" class="content-table" id="branding-code-table">
+						    <tr>
+						        <td colspan="3" class="content-table-header">
+						            <div onclick="restoreTable(this, 'brandingContentRow');" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+						            <div class="content-table-heading">Branding Code</div>
+						        </td>
+						    </tr>	
+
+						    <tr id="brandingContentRow" name="brandingContentRow">
+							   <td id="brandNameTD">
+							   #springBind("brandingForm.brandName")
+							   <div id="brandNameDiv" onclick="toggleBrandName('brandNameTD');"><u> $!{status.value}</u></div>
+							   </td>
+							   <td width="100%" id="brandNameTD-edit"  class="unsaved-column" style="display:none;">
+								   <div style="margin-left: 3px; float: left">
+								   		#springBind("brandingForm.brandName")
+								   		<input type="text" #if($status.error) class="text-input-med-error-field" #end id="${status.expression}" name="${status.expression}" value="$!{status.value}" maxlength="50" style="width: 300px" onKeyPress="if(event.keyCode==13){loadBrand('brandNameTD');}" />
+								   </div>
+								   <div>
+								   		<div onclick="toggleBrandName('brandNameTD','cancel');" class="icon-cancel" title="clear text"></div>
+								   		<div onclick="loadBrand('brandNameTD');" class="icon-save" title="select existing brand"></div>
+								   		<div onclick="createBrandDirectoryStructure('brandNameTD');" class="icon-folder" title="create new brand directory"></div>
+								   </div>							        
+							   </td>
+							</tr>	
+						</table> 
+					<!-- Displays page if a valid brand name is selected-->
+					#if(${displayPage}==true)	
+                        
+                          
+  <div id="divLogo" > #parse("branding/brandingLogo.vm")</div>
+  <div id="divLoginPage" style="display:none">#parse("branding/brandingLoginPage.vm")</div>
+  <div id="divEmails" style="display:none">#parse("branding/brandingListEmail.vm")</div>
+  <div id="divAboutus" style="display:none">#parse("branding/brandingAboutus.vm")</div>
+  <div id="divContactus" style="display:none">#parse("branding/brandingContactus.vm")</div>
+  <div id="divtou" style="display:none">#parse("branding/brandingTermsOfUse.vm")</div>
+  <div id="divPrivacy" style="display:none">#parse("branding/brandingPrivacyPolicy.vm")</div>
+  <!--<div id="divCertificates" style="display:none">#parse("branding/brandingCertificates.vm")</div>-->
+ 
+ 
+  #if($!{context.pageTarget})
+	<script type="text/javascript">
+	  document.getElementById("divLogo").style.display = "none";
+	  document.getElementById("divLoginPage").style.display = "none";
+	  document.getElementById("divEmails").style.display = "";
+	  document.getElementById("divAboutus").style.display = "none";
+	  document.getElementById("divContactus").style.display = "none";
+	  document.getElementById("divtou").style.display = "none";
+	  document.getElementById("divPrivacy").style.display = "none";
+	</script>              							
+  #end        
+#end    
+
+</form>
+                       <!-- <BOTTOM CONTROLS> -->
+                           
+                        <!-- </BOTTOM CONTROLS> -->
+                    </div>
+                </td>
+            </tr>
+			   <tr> <!-- Footer BLOCK -->
+         <td id="footer" colspan="2">
+         <!-- footer -->
+         #parse("snippets/managerFooter.vm")
+         <!-- footer-end -->
+         </td>
+         </tr>
+        </table>
+        
+<div id="brandBox" style="display:none;">
+	<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.admin.branding.message.invalid.brand.name.error")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+           <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+           <div class="btn_end">&nbsp;</div>-->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+<div id="brandEmptyNameBox" style="display:none;">
+	<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.admin.branding.message.empty.brand.name.error")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+           <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+           <div class="btn_end">&nbsp;</div>-->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+        
+    </body>
+</html>

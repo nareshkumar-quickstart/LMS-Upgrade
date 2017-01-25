@@ -1,0 +1,254 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructor/instructorHead.vm")
+
+<head>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+
+
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelEditCourse';
+        document.editCourseExamOverviewForm.submit();
+}
+
+function saveInformation(){
+		updateTextArea("objectives1");
+		updateTextArea("quiz1");
+		updateTextArea("final1");
+		updateTextArea("eoci1");		
+        document.getElementById('actionmethod').value='saveAllInfo';
+        document.editCourseExamOverviewForm.submit();
+}
+function FormSubmit(methodName){
+
+		updateTextArea("objectives1");
+		updateTextArea("quiz1");
+		updateTextArea("final1");
+		updateTextArea("eoci1");		
+       	 document.getElementById('actionmethod').value=methodName;
+       	 document.editCourseExamOverviewForm.submit();
+
+}
+$(document).ready(function()
+{
+    $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height() +$('#tabBar').height()));
+    if ($('#right-pannel').height()<$('#frame_body').height()) {
+        $('#right-pannel').height($('#frame_body').height());
+    }
+    if ($('#right-pannel').height()>$('#frame_body').height()) {
+        $('#frame_body').height($('#right-pannel').height());
+    }
+	$('#sideBar').height($('#right-pannel').height());
+
+        $('#frame_body').scroll(function()
+        {
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<form name="editCourseExamOverviewForm" method="POST" action="mgr_viewCourse.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+			<!-- header -->
+	#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+   
+<td  id="row-tabs" class="tab_bar" colspan="2">
+     <table width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody><tr>
+                <td width="194"><div class="tab_blank"></div></td>
+                <td>&nbsp;</td>
+                <td width="697">
+					#springBind("courseForm.id")
+					<a onclick="FormSubmit('viewCourseSummary');"><div class="tab">$brander.getBrandElement("lms.manager.tabBar.summary")</div></a>
+					<a onclick="FormSubmit('viewCourseOverView');"><div style="width: 120px;" class="tab">$brander.getBrandElement("lms.manager.tabBar.courseOverview")</div></a>
+					<a onclick="FormSubmit('viewCourseExamOverView');"><div style="width: 120px;" class="tab_selected">$brander.getBrandElement("lms.manager.tabBar.examOverview")</div></a>
+					<a onclick="FormSubmit('viewCourseAdditionalDetails');"><div style="width: 140px;" class="tab">$brander.getBrandElement("lms.manager.tabBar.additionalDetails")</div></a>
+					#if($courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| $courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) 
+					<a href="mgr_manageSynchronousClass.do?id=$status.value"><div class="tab">$brander.getBrandElement("lms.manager.tabBar.schedule")</div></a>
+					#elseif($courseForm.courseType == "DFC") 					
+					<a href="mgr_searchCourseInstructor.do?id=$status.value"><div class="tab">$brander.getBrandElement("lms.manager.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#end
+					<a href="mgr_manageCourseCourseGroups.do?id=$status.value"><div style="border-right-style: solid; " class="tab">$brander.getBrandElement("lms.manager.tabBar.courseGroups")</div></a>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+    </tbody></table>
+
+</td>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- content-area -->
+         #springBind("courseForm.*")
+	
+	<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+			</table></td>
+						
+<TD id="content" >
+	<div id="scrollable">
+		 <table width="600" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 10px;">
+             <tbody><tr>
+                 <td style="padding-right: 10px;">
+                      <!-- Page Description -->
+                 	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                     		    <tr>
+                     			<td id="page-icon" class="page-icon-plan">
+                     			    &nbsp;
+                     			</td>
+                     			<td id="page-description">
+                     			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editExamOverview.caption.title.editExamOverview")</div>
+                     			    <div id="page-help">$brander.getBrandElement("lms.instructor.courseOverview.caption.subTitle.editExamOverview")</div>
+                     			</td>
+                     		    </tr>
+                     		</table>	
+                 </td>
+             </tr>
+         </tbody></table>
+ <!-- search Result -->
+		<div class="search_box_result">
+            <div class="box_header">
+                 <span class="box_heading">$brander.getBrandElement("lms.instructor.examOverview.caption.examOverview")</span>
+            </div>
+			 <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+					<tbody><tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.learningObjectives")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.learningObjectives")
+                               <textarea id="objectives1" name="${status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('objectives1');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.quizInformation")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.quizInformation")
+                               <textarea id="quiz1" name="${status.expression}" style="display: none;">$!{status.value}</textarea>
+							 <script language="JavaScript">
+                                   generate_wysiwyg('quiz1');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.finalExamInformation")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.finalExamInformation")
+                               <textarea id="final1" name="${status.expression}"  style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('final1');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.endOfCourseInstructions")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.endOfCourseInstructions")
+                               <textarea id="eoci1" name="${status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('eoci1');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+			 </tbody></table>
+			</div>
+			  <!-- search Result -->
+            
+             <!-- button-div -->
+						<div style="float: right; margin-top: 15px; margin-right: 15px;">
+				  <a onClick="saveInformation();">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+					  <div class="btn_end"></div>
+				  </a>
+			   </div>
+		   <div style="float: right; margin-top: 15px; margin-right: 10px;">
+              <div>
+                  <a onClick="cancelInformation();">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+               <!-- button-div -->  
+			   <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+             <!-- button-div --><!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+             <!-- button-div -->
+                <!-- right-pannel-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+		#parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>	
+
+</table>
+</form>
+</body>
+</html>

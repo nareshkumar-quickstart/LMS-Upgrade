@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+
+ 	
+    <script language="javascript" type="text/javascript">
+        function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+        }
+
+        $(document).ready(function()
+        {
+           		
+        });
+
+    </script>
+
+</head>
+
+<head>  
+
+ #macro(treeviewOrgGroup $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        
+        #set ($val=0)
+
+        $arrParent.add($node.depth,$node.value.id)
+        
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" style="height:30px;"> 
+            <div class="icon_blank" style="padding-top:3px;">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2" style="padding-top:3px;"></div>
+                #end
+            #end
+            
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${context.OrgGroupView.size()});" nodeid="${node.value.id}"></div>
+            #end
+
+            <div class="org_checkbox"><input type="radio" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected} && ${node.enabled}) checked #end #if(!${node.enabled}) disabled #end /></div>
+			<div style="text-align:justify;padding-top:3px;">${node.value.name}</div>
+        </div>
+
+    #end
+#end
+</head>
+<body>
+    <form name="manageform" method="post" action="">  
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+			<!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+			</td>
+		</tr>
+		
+		<tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                        <!-- sub-header -->
+                        <!-- left-pannel-content -->
+                        <div>
+                            <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manageUser.addLearnerGroup.wizardIndex.heading1")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manageUser.addLearnerGroup.wizardIndex.step1")</div>
+                                <div class="l-menu-back-text">$brander.getBrandElement("lms.manageUser.addLearnerGroup.wizardIndex.step2")</div>
+                            </div>
+                        </div><!-- left-pannel-content-end -->
+					</table>
+				</td>
+				
+               <TD id="content">
+			 	 <div id="scrollable">
+                        #if($!{context.validateLearnerGroupName} || $!{context.validateOrgGroupName} || $!{context.validateDuplicateGroupName})
+                            #set($errorCodes = [])  
+                            #set($temp = true)
+                            #if($!{context.validateLearnerGroupName})
+                            #set($temp = $errorCodes.add(${context.validateLearnerGroupName}))
+                            #end
+                            #if($!{context.validateOrgGroupName})
+                            #set($temp = $errorCodes.add(${context.validateOrgGroupName}))
+                            #end
+                            #if($!{context.validateDuplicateGroupName})
+                            #set($temp = $errorCodes.add(${context.validateDuplicateGroupName}))
+                            #end        
+                            <!-- error-box -->
+                            <!-- error-box -->
+                            <div id="message_box" style="width:95%;">
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            #foreach($errorCode in $errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                            #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+                        <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.addLearnerGroup.pageHeading.AddLearnerGroup")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.addLearnerGroup.pageHeading.description")</div>
+			</td>
+		    </tr>
+		</table> 
+                        <!-- Logo+Manage-User-end -->
+                        
+                        <div class="content-Block"><!-- Group-Name-->
+                            <div id="e7a" class="Block-Contain-header">
+                                <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.manageUser.addLearnerGroup.table.GroupDetails")</div>
+                            </div>
+                            <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                            <!-- 1 -->
+                                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                    <div #if($!{context.validateLearnerGroupName} || $!{context.validateDuplicateGroupName}) class="block_text_in-r-f-red" #else class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")" #end>$brander.getBrandElement("lms.manageUser.addLearnerGroup.form.GroupName")</div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if($!{context.validateLearnerGroupName}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end /></div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <input type="text" name="groupName" value="$!{context.groupName}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")" maxlength="50" onkeypress="if(event.keyCode==13){FormSubmit('next');}"/></div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+
+                                </div>
+                            </div>
+                        </div><!-- Group-Name-end -->
+
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+
+                        <div class="content-Block-new">
+                            <div class="Block-Contain-header">
+                                <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.SelectOrganizationGroup")</div>
+                            </div>
+                            #treeviewOrgGroup(${context.OrgGroupView})
+                        </div>
+
+                        <div class="buttonContainer"><!-- button-div -->                            
+							<div style="float:right; margin-top:3px;">
+							  <a onclick="FormSubmit('next');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:3px;">
+							  <a onclick="window.location.href='mgr_manageLearnerGroups.do';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>	
+                            <input type="hidden" id="action" name="action" />
+                        </div><!-- button-div -->
+
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+                    </div><!-- right-pannel-content-end -->
+
+            </td><!-- content-area-end -->
+
+		  <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            <!-- footer -->
+            <div id="footer">
+            #parse("snippets/managerFooter.vm")
+            </div>
+            <!-- footer-end -->
+			</td>
+		</tr>
+        </table>
+    </form>
+</body>
+</html>

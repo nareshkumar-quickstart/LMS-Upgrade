@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <script language="javascript" type="text/javascript">
+
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+
+        function cancelEdit() {
+            document.getElementById('actionmethod').value='searchLocation';
+            document.manageLocationForm.submit();
+        }
+
+        function saveLocation() {
+            document.getElementById('actionmethod').value='saveLocation';
+            document.manageLocationForm.submit();
+        }
+
+        var stateMap;
+        var arrState;
+        var countryMap = new Object();
+
+        #set($countryList=$brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+        #foreach ($country in $$countryList)
+            #if(${country.value}=='US')
+                #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+            #else
+                #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.${country.value}.State") )
+            #end
+            #set($i=0)
+            arrState=new Array();
+            #foreach ($StateObj in $State)
+                stateMap= new Object();
+                stateMap.key='${StateObj.value}';
+                stateMap.value='${StateObj.label}';
+                arrState[$i]=stateMap;
+                #set($i= $i + 1)
+            #end
+            countryMap.${country.value}=arrState;
+        #end
+
+        function changeStateCombo(obCountry,obState){
+            var val=obCountry.value;
+            var stateList=new Array();
+            stateList=countryMap[val];
+            clearDropDown(obState);
+            for(i=0;i<stateList.length;i++){
+                var opt = document.createElement("option");
+                opt.text = stateList[i].value;
+                opt.value = stateList[i].key;
+                obState.options.add(opt);
+            }
+            if(val=="AE"){
+                hideZip();
+            }else{
+                showZip();
+            }
+        }
+
+        function hideZip(){
+            var zipRow=document.getElementById("zipRow");
+            zipRow.style.visibility = 'hidden';
+        }
+
+        function showZip(){
+            var zipRow=document.getElementById("zipRow");
+            zipRow.style.visibility="visible";
+        }
+
+        function clearDropDown(drpdnOb) {
+            var numberOfOptions = drpdnOb.options.length;
+            for (i=0; i<numberOfOptions; i++) {
+                drpdnOb.remove(0);
+            }
+        }
+        </script>
+    </head>
+
+    <body onload="document.getElementById('field_location_name').focus();">
+        <form name="manageLocationForm" method="post" action="mgr_mngLocations.do">
+
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+            <div id="main-container">
+
+              
+					<!-- header -->
+	#parse("snippets/managerCourseHeader.vm")
+	<!-- header-end -->
+
+
+                <!-- Body Start -->
+                <div id="frame_body">
+                   <!-- left-menu-content -->
+			#parse("snippets/entitlementLeftMenu.vm")
+			<!-- left-menu-content-end -->
+			
+                    <div  id="content2a"  class="scrollable">
+
+                        #springBind("locationForm.*")
+                        #if($status.error)
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                               #end
+                            </div>
+                        #end
+
+                        <!-- Page Description -->
+                        <div id="pageDescription" class="page_description">
+                            <!-- Page Icon -->
+                            <div id="pageIcon" class="icon_resources"></div>
+                            <!-- Page Heading -->
+                            <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.PageHeading.caption.EditLocations")</div>
+                            <!-- Page Description -->
+                            <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.EditLocations")</div>
+                        </div>
+
+                        <div class="search_box_result">
+                            <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.Summary")</span></div>
+                            <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                <tr>
+                                  #springBind("locationForm.location.name")
+                                    <td width="20%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.locationName.ManageResources")</span></td>
+                                    <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                    <td width="30%"><input type="text" maxlength="50" id="field_location_name" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                    <td width="20%">&nbsp;</td>
+                                    <td width="30%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                   #springBind("locationForm.location.city")
+                                    <td><span class="row_text">$brander.getBrandElement("lms.editLocation.city")</span></td>
+                                    <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                    <td><input type="text" maxlength="50" id="field_location_city" class="input_text_field" name="${status.expression}" value="$!{status.value}"></input></td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                #springBind("locationForm.location.country")
+                                #if($!{status.value}=='US')
+                                    #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                                #else
+                                    #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.$!{status.value}.State") )
+                                #end
+                                #springBind("locationForm.location.state")
+                                    <td><span class="row_text">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorState")</span></td>
+                                    <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                    <td>
+                                        <select id="field_status" style="width:183px; font-size:11px;" name="${status.expression}">
+                                        <option value="" >Select a State</option>
+                                            #foreach ($StateObj in $State)
+                                                #if($StateObj.value==$!{status.value})
+                                                <option value="$StateObj.value" selected>$StateObj.label</option>
+                                                #else
+                                                <option value="$StateObj.value" >$StateObj.label</option>
+                                                #end
+                                            #end
+                                        </select>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                #springBind("locationForm.location.country")
+                                <tr id="zipRow" #if($!{status.value}=="AE") style="visibility:hidden;" #end>
+                                #springBind("locationForm.location.zip")
+                                    <td><span class="row_text">$brander.getBrandElement("lms.learner.registration.caption.Zip")</span></td>
+                                    <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                    <td><input type="text" id="field_location_zip" class="input_text_field" name="${status.expression}" value="$!{status.value}" ></input></td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+
+                                </tr>
+                                <tr>
+                                 #springBind("locationForm.location.country")
+                                 #set($countryList=$brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                                    <td><span class="row_text">$brander.getBrandElement("lms.editLocation.country")</span></td>
+                                    <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                    <td>
+                                        <select id="field_status" style="width:183px; font-size:11px;"  name="${status.expression}" onChange="changeStateCombo(this,document.getElementById('field_status'))">
+                                            #foreach ($country in $countryList)
+                                                #if($country.value=="$!{status.value}")
+                                                <option value="$country.value" selected>$country.label</option>
+                                                #else
+                                                <option value="$country.value" >$country.label</option>
+                                                #end
+                                            #end
+                                        </select>
+                                    </td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    #springBind("locationForm.location.phone")
+                                    <td><span class="row_text">$brander.getBrandElement("lms.manageUser.learnerProfile.caption.phone")</span></td>
+                                    <td style="width:15px;"></td>
+                                    <td><input type="text" maxlength="50" id="field_location_phone" class="input_text_field"name="${status.expression}" value="$!{status.value}" ></input></td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div style="float:right; margin-top:25px; margin-right:15px;">
+                            <div class="btn_start"></div>
+                            <a onClick="saveLocation();">
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Save")</div>
+                            </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                        <div style="float:right; margin-top:25px; margin-left:25px;">
+                            <div class="btn_start"></div>
+                            <a onclick="cancelEdit();">
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                            </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- Body End -->
+
+                <!-- Footer Start -->
+                #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+
+                
+            </div>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,134 @@
+<style>
+.menu{
+height:20px;float:left;margin:0px 20px 0px 20px;border-left:1px solid silver;border-right:1px solid silver;padding:0px 20px 0px 20px;
+
+}
+</style>
+
+
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+
+<div>
+
+#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+
+<!-- 
+     LMS-10743: Rehan Rana :::  Date: 22nd June 2011.
+     Description: Manage Alerts option is appearing twice. Condition $!adminCurrentMode added. 
+-->
+	#if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0005", $userData, $ssn) && $!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+	    <tr>
+		<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+		<td id="assignSurveys" onclick="submitForm('Tools','LMS-ADM-0005','mgr_alertCourse.do')" #if($menu == "LMS-ADM-0005") class="selected" #end>
+	    <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.ManageAlert")</div>
+	 	</td>
+	    </tr>
+	#end
+<!-- 
+     LMS-10743: Rehan Rana :::  Date: 22nd June 2011.
+     Description: Manage Alerts option is appearing twice. Condition $!adminCurrentMode added. 
+-->
+	#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0017", $userData, $ssn) && $!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+                    <tr>
+                        <!-- 
+                            LMS-10532: Faisal Abdul Aziz :::  Date: 27 May 2011 
+                            Description: Menu item Manage Alert was missing form TOOLS for user type manager.
+                        -->
+                        <td id="assignSurveys" onclick="submitForm('Tools','LMS-MGR-0017','mgr_alertCourse.do')" #if($menu == "LMS-MGR-0017") class="selected" #end>
+                                <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.ManageAlert")</div>
+                        </td>
+                    </tr>
+	#end
+		
+	<!-- LMS-10740 | S M Humayun | 30 Jun 2011 -->
+	#if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0006", $userData, $ssn) && $!adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+		<tr>
+	    <td id="surveyAnnouncements" onclick="submitForm('Tools','LMS-ADM-0006','mgr_sendMailToLearners.do')" #if($menu == "LMS-ADM-0006") class="selected" #end>
+	    <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Announcements")</div>
+	    </td>
+		</tr>
+	#end
+
+	<!-- LMS-10740 | S M Humayun | 30 Jun 2011 -->
+	#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0018", $userData, $ssn) && $!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')
+		<tr>
+	    <td id="surveyAnnouncements" onclick="submitForm('Tools','LMS-MGR-0018','mgr_sendMailToLearners.do')" #if($menu == "LMS-MGR-0018") class="selected" #end>
+	    <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Announcements")</div>
+	    </td>
+		</tr>
+	#end
+	
+	#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+
+		#if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0007", $userData, $ssn))
+			<tr>
+			<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+			<td id="assignSurveys" onclick="submitForm('Tools','LMS-ADM-0007','mgr_viewAssignSurveyMain.do')" #if($menu == "LMS-ADM-0007") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.assignSurvey.step1.caption.title")</div>
+			</td>
+			</tr>
+		#end
+	
+        #if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0008", $userData, $ssn))
+		<tr>
+			<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+            <td id="manageSurveys" onclick="submitForm('Tools','LMS-ADM-0008','adm_manageSyrvey.do')" #if($menu == "LMS-ADM-0008") class="selected" #end>
+            <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Manage")</div>
+			</td>
+         </tr>
+        #end
+        
+        #if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0031", $userData, $ssn))
+		<tr>	
+            <td id="branding" onclick="submitForm('Tools','LMS-ADM-0031','branding.do?method=basicBranding')" #if($menu == "LMS-ADM-0031") class="selected" #end>
+            <div class="band_text">$brander.getBrandElement("lms.admin.leftMenu.branding")</div>
+			</td>
+            </tr>
+        #end
+	#else
+
+		
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0019", $userData, $ssn))
+			<tr>
+			<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+			<td id="assignSurveys" onclick="submitForm('Tools','LMS-MGR-0019','mgr_viewAssignSurveyMain.do')" #if($menu == "LMS-MGR-0019") class="selected" #end>
+			<div class="band_text">$brander.getBrandElement("lms.assignSurvey.step1.caption.title")</div>
+			</td>
+			</tr>
+		#end
+		
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0020", $userData, $ssn))
+		<tr>
+			<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+            <td id="manageSurveys" onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" #if($menu == "LMS-MGR-0020") class="selected" #end>
+            <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Manage")</div>
+			</td>
+            </tr>
+        #end
+	#end
+	
+	
+	##if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+	    ##if($userPermissionChecker.hasAccessToFeature("LMS-ADM-0009", $userData, $ssn))
+	##        <tr>
+	##        <!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+	##		<td id="surveyApprovals" onclick="submitForm('Tools','LMS-ADM-0009','adm_surveyApprovals.do')" #if($menu == "LMS-ADM-0009") class="selected" #end>
+	##        <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Survey")</div>
+	##		</td>
+	##        </tr>
+	##    #end
+	##else
+	    ##if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0021", $userData, $ssn))
+	##		<tr>
+	##		<!-- LMS-9512 | S M Humayun | 28 Mar 2011 -->
+	##        <td id="surveyApprovals" onclick="submitForm('Tools','LMS-MGR-0021','mgr_surveyApprovals.do')" #if($menu == "LMS-MGR-0021") class="selected" #end>
+	##        <div class="band_text">$brander.getBrandElement("lms.assignSurvey.caption.Survey")</div>
+	##		</td>
+	##        </tr>
+	##    #end
+	##end
+
+#end
+
+</div>

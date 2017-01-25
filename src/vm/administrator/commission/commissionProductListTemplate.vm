@@ -1,0 +1,400 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+
+
+
+<script type="text/javascript" language="javascript">
+ document.title="$brander.getBrandElement("lms.administrator.resellerCommission.Product.title")";
+ 
+    function selectChildren(eventSourceCheckbox, contractType, setChecked) {
+            		
+            		var parentCourseGroupId = eventSourceCheckbox.value.split(":")[1];
+            		
+				    var childCourseGroupCheckboxes =  document.getElementsByTagName("input");
+				    
+					for (var i=0; i<childCourseGroupCheckboxes.length; i++) {
+						if(childCourseGroupCheckboxes[i].type=="checkbox" && childCourseGroupCheckboxes[i].name=="chkProduct")
+						{
+							var childCourseGroupId = childCourseGroupCheckboxes[i].value.split(":")[0];
+							if(parentCourseGroupId==childCourseGroupId)
+							{
+								childCourseGroupCheckboxes[i].checked = setChecked;
+								//parentCourseGroupId = childCourseGroupCheckboxes[i].value.split(":")[1];
+								selectChildren(childCourseGroupCheckboxes[i], contractType, setChecked);
+							}
+							
+						}
+					}
+					
+			}
+
+
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.alert_message_box_text_3').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    
+  function deleteEntity(){
+           if ($("INPUT[type='checkbox'][name='chkCategory']:checked").length>0) {                                            
+                confirm("Are you sure you want to delete the Product Category(s)?", function () { 
+                    document.commissionProductform.submit();
+                });
+            } else if ($("INPUT[type='checkbox'][name='chkProduct']:checked").length>0) {                                            
+                confirm("Are you sure you want to delete the Product(s)?", function () { 
+                    document.commissionProductform.submit();
+                });
+            }
+            else {
+                $('#selectCommissionableParty').modal({close:false,position: ["40%",]});
+            }
+       }
+	
+		
+
+ $(document).ready(function()
+    {
+        $('#right-pannel-report').scroll(function()
+        {
+            $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function()
+        {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+	
+</script>
+</head>
+
+
+<body>
+    <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<!-- <div id="main-container"> --><!-- main-container -->
+        
+		<tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+     		   #parse("snippets/adminHeader.vm")
+      		   <!-- header-end -->
+        	</td>
+		</tr>
+<tr>
+	<td class="tab_bar" colspan="2">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+			        <td width="192"><div class="tab_blank"></div></td>
+			        <td>&nbsp;</td>
+			        <td width="483">
+			        
+			        #set($ssn=$!{request.getSession(true)})
+					#set($commissionType = $ssn.getAttribute("commissionType"))
+					
+			            <a href="adm_manageCommission.do?method=editResellerCommission&entity=reseller"><div class="tab">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.summary")</div></a>
+			            
+						#if(${commissionType}=="product")
+			            	<a href="adm_manageCommissionProduct.do?method=searchCommissionProduct&entity=reseller"><div style="border-right-style: solid; width: 140px;" class="tab_selected">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.products")</div></a>
+			            #else
+			            	<a href="adm_manageCommissionProductCategory.do?method=searchCommissionProduct&entity=reseller"><div style="border-right-style: solid; width: 140px;" class="tab_selected">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.productCategories")</div></a>			        
+						#end
+						
+			            
+			        </td>
+			        <td>&nbsp;</td>
+			    </tr>
+			</table>
+	</td>
+</tr>	
+		<!-- <div id="content2a"> --><!-- content-area -->
+          <!-- left-menu-content -->
+		  <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td  id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            		   #parse("snippets/adminDistributorLeftMenu.vm")
+            <!-- left-menu-content-end -->
+			
+				 </table>
+		    </td>
+			
+           <!-- <div id="right-pannel"> --><!-- right-pannel-content -->
+		   <TD id="content">
+		      <div id="scrollable">
+		      
+		      
+		       #if($status.error)
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                </div>
+                #end
+                
+                
+                #set($validateCommParCat=$!{request.getSession(false).getAttribute("validateCommParCatErr")})
+                    #if( "$!validateCommParCat" != "" )
+                    <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement('lms.errorMessage.pixel.12-em-cross.png')" />
+	                        <div class="width40pct">
+	                            <div class="message_box_align"><img src="$brander.getBrandElement('lms.errorMessage.pixel.addLearner_06.gif')" width="14" height="14" alt="" /></div>
+	                            <div class="message_box_align">$validateCommParCat</div>
+	                        </div>
+	                </div><!-- error-box -->
+                    #end
+                    $!{request.getSession(true).setAttribute("validateCommParCatErr", null)}
+                
+                    
+                    
+		       <form name="commissionProductform" method="post" action="adm_manageCommissionProduct.do?method=deleteCommissionableProduct&entity=reseller">
+               
+                <div id="message_box" style="display:none;"><!-- message_box -->
+                                                                                                      
+                    <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+
+                    ##set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$brander.getBrandElement("lms.manageUser.manageLearnerGroup.caption.deleteLearnerGroupErrorText")</div>
+                    </div>
+                </div><!-- message_box -->
+				<!-- Logo+Manage-User -->
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top: 15px; margin-bottom: 15px; margin-left: 10px;">
+						    <tr>
+						        <td id="page-icon" class="courseLogoDistributor">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+   									 <div id="page-heading">$brander.getBrandElement("lms.administrator.resellerCommission.Product.title")</div>
+			    					 <div id="page-help">$brander.getBrandElement("lms.administrator.resellerCommission.Product.subtitle")</div>
+								</td>
+						    </tr>
+						</table>
+
+				<!-- Logo+Manage-User-end -->
+
+                #if ($!{context.commissionProductList})
+                #set($totCount=$!{context.commissionProductList.size()})
+                #else
+                #set($totCount=0)
+                #end
+                <div id="searchResult" class="search_box_result" >
+
+                
+                    <div id="resultHeader" class="box_header">
+                       <div style="float:left; height:23px;border:0px solid red;">
+						<div style="float: left; margin-top: 3px;">
+						  <div>
+							  <a onClick="window.location.href='adm_ManageCommissionAddProduct.do?method=ManageProduct&entity=reseller';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.administrator.resellerCommission.Product.Add.Title")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+					   </div>
+
+					   <div style="float: left; margin-top: 3px;">
+						  <div>
+							  <a style="text-decoration:none;" onClick="deleteEntity()">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.administrator.resellerCommission.Product.delete.Title")</div>
+								  <div class="btn_end"></div>
+							  </a>
+						  </div>
+					   </div>
+                   	 </div>
+                  </div>
+                   
+
+                   
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+
+					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						<tr bgcolor="#efefef">
+							
+							<td  class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:100%;" >Product Hierarchy</td>							
+						</tr>
+						 
+						#if($context.treeList.size()>0)
+							<tr>
+								<td colspan="2" width="100%">
+									
+
+
+
+
+
+
+						<!-- Tree builder - START - -->
+
+						<table width="100%" align="left" border="0">
+							#foreach($nodeInfo in $context.treeList)
+								#if ($rowColor == "tree_node1")
+						            #set ($rowColor="tree_node2")
+						        #else 
+						            #set ($rowColor="tree_node1")
+						        #end
+								<tr>
+									<td width="100%" height="24" align="left" >
+										<div class="$rowColor">
+											#if(${nodeInfo.level} > 0)
+												#foreach($i in [1..${nodeInfo.level}])
+													<div class="icon_blank2"></div>
+												#end	
+											#end
+											#if($nodeInfo.leaf)
+												<div class="icon_collapse_list"></div>
+											#else
+												<div class="icon_collapse"></div>
+											#end	
+											<div class="org_checkbox">
+											#if($nodeInfo.product)
+												<input type="checkbox" id="pid_${nodeInfo.id}" name="chkProduct" value="${nodeInfo.parentId}:${nodeInfo.id}:${nodeInfo.name}" />
+											#else
+												<input type="checkbox" id="pcid_${nodeInfo.id}" name="chkCategory" value="${nodeInfo.parentId}:${nodeInfo.id}:${nodeInfo.name}" onclick="selectChildren(this, 'Product', this.checked)"  />
+											#end
+											</div>	
+												
+											
+											
+											<div class="row_title">
+								            	#if($nodeInfo.product)
+								            		<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.course.iconCourse.png")" />&nbsp;
+								            	#else            	
+									        		<img src="$brander.getBrandElement("lms.administrator.manageEntitlementGroup.courseGroup.iconCourseGroup.png")" />&nbsp;
+									        	#end
+								            </div>		
+		            	
+											<div class="row_title_inst">$nodeInfo.name</div>	
+										</div>	
+									</td>
+								</tr>
+							#end
+						</table>
+
+						<!-- Tree builder - END - -->
+
+
+
+
+
+
+														</td>
+													</tr>
+												#else
+													<tr>
+							                            <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+							                                <div class="result_blank">$brander.getBrandElement("lms.administrator.viewdistributorentitlement.caption.noRecordFound")</div>
+							                            </td>
+							                        </tr>
+						                       #end  
+											</table>
+						                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                    
+                </div></form>
+				 <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+             </div>
+			</td>
+      <!--  </div> --><!-- content-area-end -->
+	  	</tr>
+		
+        
+
+        <!-- tooltip -->
+        
+        <!-- tooltip -->
+
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+        	<!-- footer -->
+        	#parse("snippets/adminFooter.vm")
+        	<!-- footer-end -->
+			</td>
+		</tr>
+		</table>
+   <!-- </div> --><!-- main-container -->
+
+
+<div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">Are you sure you want to delete the selected Product(s)?</div>
+    <br style="clear:both" />
+
+<div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+</div>
+</div>
+
+<div id="selectCommissionableParty" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+            <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+<div id="tooltipForPageList" class="tool_tip"></div> 
+</body>
+</html>

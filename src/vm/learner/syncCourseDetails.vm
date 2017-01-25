@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script language="javascript" type="text/javascript">
+    /*this script converts from seconds to <Hours:Minute> format*/
+    var launchWindow;
+    
+    function launchCourse(courseId, enrollmentId) {
+    
+    	stopBothTimers();
+        	
+    	IS_LS360_SCORM = false;
+    	IS_LS360_SCORM = ('${context.courseType}' == "Scorm Course") ? true:false;
+    	
+        var url = "#springUrl("/lrn_launchCourse.do")";
+        var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=no,menubar=no,status=yes,width=900,height=700,left=0,top=0');
+        launchWindow.focus();
+    }
+    
+    function launchCourse(courseId, enrollmentId, courseType) {
+        	stopBothTimers();
+        	
+        	IS_LS360_SCORM = false;        	
+        	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+        	        	
+        	        	
+            var url = "#springUrl("/lrn_launchCourse.do")";
+            var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            
+            launchWindow.focus();
+            launchWindow.opener=this.window;            
+        }
+    
+    function showDescription(){
+        document.location="#springUrl("/lrn_courseDescription.do?courseId=$!{context.course.id}")";
+    }
+
+    function backToCourses() {
+        document.location="#springUrl("/lrn_myCourses.do")";
+    }
+
+    function courseCompletionReport() {
+        document.location="#springUrl("/lrn_courseCompletionReport.do?courseId=$!{context.course.courseGUID}&learnerEnrollmentId=$!{context.learnerEnrollment.id}")";
+    }
+    $(document).ready(function(){
+        
+    });
+</script>
+</head>
+<body>
+<div id="main-container">
+<!-- Header -->
+#parse("snippets/learnerNewHeader.vm")
+<!-- header-end -->
+<div id="content2a">
+  
+  <div id="right-pannel" style="margin-left:20px">
+
+    <!-- Logo+Manage-User -->
+    <div class="logoContainer" id="logomainContainer">
+      <div id="logoHolder" class="courseLogoCourses">&nbsp;</div>
+      <div id="titleHolder" class="courseTitle1">Statistics for $context.userName</div>
+      <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.coursedetails.header.description")</div>
+      </div>
+    <!-- Logo+Manage-User-end -->
+
+    <table width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td colspan="2">
+                <div class="managerBtn1">
+<div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return window.print();" ><span class="button">Print Page</span></a></div>
+#if($context.courseType == "Self Paced Course")
+
+<div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return courseCompletionReport();" ><span class="button">Completion Report</span></a></div>
+
+#end
+<div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return showDescription();" ><span class="button">Course Description</span></a></div>
+                    <div class="btn-right_n" style="padding-left:4px"><a class="button" onclick="return backToCourses();" ><span class="button">Back To Courses</span></a></div>
+                    
+
+
+
+                    
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table id="courseDetails" width="98%" border="0" cellpadding="0" cellspacing="0">
+        <tr>
+            <td valign="middle" style="width:40px"><img src="$brander.getBrandElement("lms.pixel.iconOnlineGif")" width="31" height="31" alt="" /></td>
+            <td valign="middle" nowrap>
+                <a class="courseName" href="javascript:launchCourse('$!{context.course.courseGUID}','$!{context.learnerEnrollment.id}','$!{context.courseType}')">$context.course.courseTitle</a>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <table id="courseDetails" width="98%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">
+        <tr class="borderRow"><td><span class="headerRow">Summary Statistics</span></td><td>&nbsp;</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Status</td><td>#if($context.courseStatistics.status=="inprogress") In-progress #elseif ($context.courseStatistics.status=='completed') Completed #elseif ($context.courseStatistics.status=='notstarted') Not Started  #else $context.courseStatistics.status #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Course Progress</td><td>$formUtil.percent($context.courseStatistics.percentComplete, 1)%</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Pre Assessment Score</td><td>#if($context.courseStatistics.preTestDate  &&(!$context.courseStatistics.pretestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.pretestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Average Quiz Score</td><td>#if($context.courseStatistics.lastQuizDate)  $formUtil.roundVal($context.courseStatistics.averageQuizScore,2)% #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Highest Post Test Score</td><td>#if($context.courseStatistics.lastPostTestDate) $formUtil.roundVal($context.courseStatistics.highestPostTestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Completion Date</td><td>#if ( $context.courseStatistics.completionDate) $formUtil.formatDateTimeMED($context.courseStatistics.completionDate, $locale) #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Total Time Spent In Course (hours:minutes)</td><td>$formUtil.formatTimeVeryShortInt($context.courseStatistics.totalTimeInSeconds)</td></tr>
+    </table>
+    <br/>
+    <table id="courseDetails" width="98%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">
+        <tr class="borderRow"><td><span class="headerRow">Detailed Statistics</span></td><td>&nbsp;</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Status</td><td>#if($context.courseStatistics.status=="inprogress") In-progress #elseif ($context.courseStatistics.status=='completed') Completed #elseif ($context.courseStatistics.status=='notstarted') Not Started #else $context.courseStatistics.status #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Course Progress</td><td>$formUtil.percent($context.courseStatistics.percentComplete, 1)%</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">First Access Date</td><td nowrap>#if ( $context.courseStatistics.firstAccessDate )$formUtil.formatDateTimeMED($context.courseStatistics.firstAccessDate, $locale) #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Last Access Date</td><td nowrap>#if ( $context.courseStatistics.lastAccessDate )$formUtil.formatDateTimeMED($context.courseStatistics.lastAccessDate, $locale) #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Total Number of Accesses</td><td>#if ($context.courseStatistics.launchesAccrued > 0 ) $context.courseStatistics.launchesAccrued #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Pre Assessment Score</td><td>#if($context.courseStatistics.preTestDate &&(!$context.courseStatistics.pretestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.pretestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Average Quiz Score</td><td>#if($context.courseStatistics.lastQuizDate) $formUtil.roundVal($context.courseStatistics.averageQuizScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Lowest Quiz Score</td><td>#if($context.courseStatistics.lastQuizDate &&(!$context.courseStatistics.lowestQuizScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.lowestQuizScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Highest Quiz Score</td><td>#if($context.courseStatistics.lastQuizDate) $formUtil.roundVal($context.courseStatistics.highestQuizScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Total Number of Quizzes Attempted</td><td>#if ($context.courseStatistics.numberQuizesTaken > 0 ) $context.courseStatistics.numberQuizesTaken #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Average Post Test Score</td><td>#if($context.courseStatistics.lastPostTestDate) $formUtil.roundVal($context.courseStatistics.averagePostTestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Lowest Post Test Score</td><td>#if($context.courseStatistics.lastPostTestDate &&(!$context.courseStatistics.lowestPostTestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.lowestPostTestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Highest Post Test Score</td><td>#if($context.courseStatistics.lastPostTestDate)$formUtil.roundVal($context.courseStatistics.highestPostTestScore, 2)% #else -- #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Total Number of Post Tests Attempted</td><td>#if ($context.courseStatistics.numberPostTestsTaken > 0 ) $context.courseStatistics.numberPostTestsTaken #else -- #end</td></tr>
+        <tr class="borderRow-alt"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Completion Date</td><td>#if ( $context.courseStatistics.completionDate )$formUtil.formatDateTimeMED($context.courseStatistics.completionDate, $locale) #else Incomplete #end</td></tr>
+        <tr class="borderRow"><td width="80%"><img width="10" src="$brander.getBrandElement("lms.pixel.gif")">Total Time Spent In Course (hours:minutes)</td><td>#if($context.courseStatistics.totalTimeInSeconds) $formUtil.formatTimeVeryShortInt($context.courseStatistics.totalTimeInSeconds) #else 00:00 #end</td></tr>
+    </table>
+    <br/>
+  </div>
+</div>
+
+<!-- Footer -->
+#parse("snippets/learnerNewFooter.vm")
+</div>
+</body>
+</html>

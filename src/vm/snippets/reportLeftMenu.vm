@@ -1,0 +1,287 @@
+        <style>
+			.container{
+				overflow:hidden;
+			}
+			
+			.selected-container{
+				overflow:auto;
+			}
+		</style>
+		
+		<script type="text/javascript">
+             
+			
+			 
+			// Collapse All Bands
+            function collapseBand(){
+				// Reset Band Icons
+				$('[id^="table-bands"]').find("img").attr("src", "brands/default/en/images/icon_right.png");
+				$('[id^="band_"]').removeClass('selected');
+				// Reset Container Height
+				$('.selected-container').removeClass('selected-container').addClass('container');
+            }
+				
+			// Expand Specific Band
+            function expandBand(bandId){
+			
+				// Container Element Id
+				var containerId = 'div#container_' + bandId;
+				$('td#band_' + bandId).addClass('selected');
+				
+				$(containerId).addClass('selected-container');
+				$(containerId).removeClass('container');
+				
+				
+			   	var availableSidebarHeight = $('#sidebar-scroller').height();
+				var availableBandContentHeight  = 120;
+				$(containerId).animate({"height" : availableBandContentHeight});
+            	
+				// Mark Band Selected
+									
+			} 
+			
+			function tableBandClick(bandId){
+	 
+				// Collapse Bands
+				$('.selected-container').height(0);
+				if($('#container_'+bandId).attr('class') != 'selected-container'){
+					
+    				$('#container_'+bandId).attr('class', 'selected-container');
+    				
+    				collapseBand();
+    		
+    				// Determine Panel Height
+    				var expandHeight =  $('#'+bandId).find('tr').length * 40;
+    				
+    				// Expand Bands
+    				$('td#band_' + bandId).find("img").attr("src", "brands/default/en/images/icon_down.png");
+    				expandBand(bandId, expandHeight);
+    			}else{
+					collapseBand();
+				}
+	 		}
+			
+			function calculateAvailableBandDetailHeight(){
+			
+				var bandsHeight = $('[id^="table-bands"]').length * 36;
+				var availableHeight = $('#sidebar-scroller').height();
+				//console.log(availableHeight);
+				//console.log(bandsHeight);
+				
+				var calculatedHeight =  bandsHeight - availableHeight;
+				
+				var bandDetailHeight = "";
+				var bandDefaultHeight = 120;
+				if(calculatedHeight < bandDefaultHeight){
+					bandDetailHeight = bandDefaultHeight;
+				}else{
+					bandDetailHeight = calculatedHeight;
+				}
+				//console.log("returning bandDetailHeight " + bandDetailHeight);
+				return bandDetailHeight;
+			
+			}
+				
+			
+			function isFavortieReport(reportId){			
+				var isFav = false;
+                jQuery.each($('div#container_Favorites').find('div[id^="band-report-"]'), function(index, value){
+                   var elementValue = value.id;
+                   var favoriteReportId = elementValue.split('-')[2];
+                   if(reportId == favoriteReportId){
+					isFav = true;
+				   }  
+                });
+				return isFav;
+			}
+				
+			$(function(){
+				
+				// Define Current Report Variables.
+				//var currentReportTitle = '${currentReport.title}';
+				var currentReportId = '${currentReport.id}';
+				
+				//LMS-15485
+				#set( $x = !$currentReport.category )
+				#set( $currentReportCategory = $!{lockedCourseLockTypeFormatter.escapeSpecialCharacters($!x)} )
+				var currentReportCategory = "${currentReportCategory}";
+				
+				$('[id^="table-bands"]').find("img").attr("src", "brands/default/en/images/icon_right.png");
+				
+				if(isFavortieReport(currentReportId)){
+    				// Add selected css class to selected category.
+    				$('div#container_Favorites').attr('class', 'selected-container');
+					$('[id^="band_"]').attr('class', '');
+					$('td#band_Favorites').attr('class', 'selected');
+					$('td#band_Favorites').find("img").attr("src", "brands/default/en/images/icon_down.png");
+					
+				}else{
+				
+    				// Add selected css class to selected category.
+    				$('div#container_'+currentReportCategory).attr('class', 'selected-container');
+				}
+				
+				// Set css class for non-selected band details.
+				$(".container").height(0);
+				
+				// Set Band Detail Height
+				var bandDetailHeight = 120;
+				$(".selected-container").height(bandDetailHeight);
+
+				// Add Click Event to Table Bands
+                $('[id^="table-bands"]').find('td').click(function(){	
+    				// Expand Values.
+    				var bandId = $(this).attr('id').split('_')[1];
+    				tableBandClick(bandId);
+        		});				
+             });
+        </script>
+        
+        <table id="table-bands"  border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                #if( $favSession.getAttribute("fav"))
+                <td class="selected" id="band_Favorites">
+                    <img alt="" src="brands/default/en/images/icon_down.png" style="margin-right:10px;"/>
+                #else
+                <td id="band_Favorites">
+                    <img alt="" src="brands/default/en/images/icon_right.png" style="margin-right:10px;"/>
+                #end
+                    Favorites
+                </td>
+            </tr>
+        </table>
+        <div id="container_Favorites" class="container" style="width:195px; overflow:auto; background-color:#ffffff;">
+		
+		
+		
+    		<table width="178px" cellspacing="0" cellpadding="5" border="0" style="float:left;">		
+    		
+        		#set($currentReport=$reportForm.getCurrentReport())
+        		#set($favourites=$reportForm.getFavouriteReports())
+        		#foreach($value in $favourites)
+            		<tr>
+                        
+    					#if($currentReport.id==$value.id)
+    						<td id="selected" width="178px">
+                                <img height="10" width="10" style="float:left; padding-top:3px;" src="brands/default/en/images/icon_all.gif"/>
+    							<div id="band-report-${value.id}"  class="row_white" style="width:148;font-weight:bold;margin-rigth:4px;padding-left:15px; padding-right:13px;">$value.title </div>
+                            </td>
+                        #else
+    						<td width="178px" onclick="formSubmit('${value.id}&fav=false');">
+                                <img height="10" width="10" style="float:left; padding-top:3px;" src="brands/default/en/images/icon_all.gif"/>
+    							<div id="band-report-${value.id}"  class="row_white" style="margin-right:4px; padding-right:13px; padding-left:15px; ">$value.title &nbsp;</div>
+                            </td>
+                        #end
+    					
+            		</tr>
+    			#end
+					<tr>
+						<td class="row_white" colspan="2" style="padding-left: 20px;"><br>
+							<a href="#" onclick="executeFavouriteReports();" style="float:none;">
+								<div class="btn_start" style="margin-left:0px;"></div>
+								<div class="btn_normal">$brander.getBrandElement("lms.reports.reportLeftMenu.caption.runAll") $brander.getBrandElement("lms.reports.reportLeftMenu.caption.favourites")</div>
+								<div class="btn_end"></div>							
+							</a>
+                        </td>
+					</tr>    					
+    		</table>
+		
+		
+		</div>
+        #set($category=$reportForm.getReportsByCategory())
+        #foreach( $bandCategory in $category.keySet())
+            <table id="table-bands"  border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    #set( $band_id = "band_${bandCategory}" )
+                    #set( $band_id = $band_id.replace(" ","") )
+                    #set( $band_id = $!{lockedCourseLockTypeFormatter.escapeSpecialCharacters($band_id)} )
+                    
+                    #set( $container_id = "container_${bandCategory}"  )
+                    #set( $container_id = $container_id.replace(" " , "") )
+                    #set( $container_id = $!{lockedCourseLockTypeFormatter.escapeSpecialCharacters($container_id)} )
+                    
+                    #set($isActive=0)
+        
+                    #foreach($value in $category.get($bandCategory))
+                        #if(($currentReport.id==$value.id)  && ! $favSession.getAttribute("fav") )
+                            #set($isActive = 1)
+                        #end
+                    #end
+        
+                    #set( $reportCount = 0 )
+                    #foreach($value in $category.get($bandCategory))
+                        #set($valve=true)
+                        #foreach($item in $favourites)
+                            #if($value.id==$item.derivedFrom.id  && $value.systemOwned)
+                                #set($valve = false )
+                            #end
+                        #end
+                            #if($valve)
+                                #set( $reportCount = $reportCount + 1  )
+                            #end
+                    #end
+        
+        
+                    #if( $reportCount > 0 && $!{bandCategory} != 'PROCTOR')
+                        #if($isActive == 1)
+                            <td id="$band_id" class="selected">
+                                <img alt="" src="brands/default/en/images/icon_down.png" style="margin-right:10px;"/>
+                        #else
+                            <td id="$band_id">
+                                <img alt="" src="brands/default/en/images/icon_right.png" style="margin-right:10px;"/>
+                        #end
+                            #set($str = $!{bandCategory})
+                            #if($str.length() < 35)
+                                $str
+                            #else
+                                #simpleDotPadding($str , 24)
+                            #end
+                            </td>
+                            
+                     #elseif( $reportCount > 0)
+                        #if($isActive == 1)
+                            <td id="$band_id" class="selected">
+                                <img alt="" src="brands/default/en/images/icon_down.png" style="margin-right:10px;"/>
+                        #else
+                            <td id="$band_id">
+                                <img alt="" src="brands/default/en/images/icon_right.png" style="margin-right:10px;"/>
+                        #end
+                            #set($str = $!{bandCategory})
+                            #if($str.length() < 35)
+                                $str
+                            #else
+                                #simpleDotPadding($str , 24)
+                            #end
+                       </td>        
+                    #end
+                </tr>
+            </table>
+            <div id="$container_id" class="container" style="width:195px;  background-color:#FFFFFF;">
+                <table width="178px" cellspacing="0" cellpadding="5" border="0" style="float:left;">
+                    <tbody>
+                      <!-- [LMS-11907] - [Mohammed Rehan Rana] - [Dec 29, 2011]
+                               		Fixed this issue in a way that all reports will must show in their 
+									actual tabs either they exists in favorite tab or not.
+                       -->
+                        #foreach($value in $category.get($bandCategory))                            	
+                                <tr>
+                                   
+                                        #if($currentReport.id==$value.id)
+	                                        <td id="selected" width="178px">
+	                                            <img height="10" width="10" style="float:left; padding-top:3px;" src="brands/default/en/images/icon_all.gif"/>
+												<div id="band-report-${value.id}"  class="row_white" style="width:148;font-weight:bold;margin-rigth:4px;padding-left:15px; padding-right:13px;">$value.title </div>
+	                                        </td>
+	                                    #else
+	                                        <td width="178px" onclick="formSubmit('${value.id}&fav=false')">
+	                                            <img height="10" width="10" style="float:left; padding-top:3px;" src="brands/default/en/images/icon_all.gif"/>
+												<div id="band-report-${value.id}"  class="row_white" style="  margin-right:4px; padding-right:13px; padding-left:15px; ">$value.title &nbsp;</div>
+	                                        </td>
+	                                    #end
+                                   
+                                </tr>
+                            #end
+                        
+                    </tbody>
+                </table>
+            </div>
+        #end

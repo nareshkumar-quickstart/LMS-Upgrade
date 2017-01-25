@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+360-TechnologyStack-Migration:
+Replace: 
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       	http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-4.1.xsd
+       	http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd" 
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:oxm="http://www.springframework.org/schema/oxm"
+       xmlns:sws="http://www.springframework.org/schema/web-services"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       						http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+       						http://www.springframework.org/schema/oxm 
+       						http://www.springframework.org/schema/oxm/spring-oxm-4.1.xsd
+       						http://www.springframework.org/schema/web-services 
+       						http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+       						http://www.springframework.org/schema/context 
+            			    http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+       
+       
+    <context:component-scan base-package="com.softech.vu360.lms.webservice.endpoint" />
+      
+    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+
+    <bean id="messageReceiver" class="org.springframework.ws.soap.server.SoapMessageDispatcher"/>
+	
+	<!-- ===================== WSDL DEFINITION    ============================== -->
+<bean id="surveyImports" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+  <property name="schema" ref="surveyImportSchema"/>
+  <property name="portTypeName" value="surveyImports"/>
+  <property name="locationUri" value="/service/survey-imports/"/>
+</bean>
+
+
+<bean id="survey" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+  <property name="schema" ref="surveySchema"/>
+  <property name="portTypeName" value="survey"/>
+  <property name="locationUri" value="/service/survey/"/>
+</bean>
+
+
+<bean id="trainingPlans" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+  <property name="schema" ref="trainingPlanSchema"/>
+  <property name="portTypeName" value="trainingPlans"/>
+  <property name="locationUri" value="/service/training-plan/"/>
+</bean>
+
+<bean id="surveySchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+    <property name="xsd" value="/WEB-INF/xsd/Survey.xsd"/>
+</bean>
+
+<bean id="surveyImportSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+    <property name="xsd" value="/WEB-INF/xsd/SurveyImports.xsd"/>
+</bean>
+
+<bean id="trainingPlanSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+    <property name="xsd" value="/WEB-INF/xsd/TrainingPlans.xsd"/>
+</bean>
+
+	
+	<bean id="lmsStorefront" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+	  <property name="schema" ref="lmsSfSchema"/>
+	  <property name="portTypeName" value="lmsStorefront"/>
+	  <property name="locationUri" value="/service/lms-sf/"/>
+	</bean>
+	
+	<bean id="lmsIntegration" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+	  <property name="schema" ref="lmsIntegrationSchema"/>
+	  <property name="portTypeName" value="lmsIntegration"/>
+	  <property name="locationUri" value="/service/lms-int/"/>
+	</bean>
+    
+
+    <bean id="lmsLcms" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+	  <property name="schema" ref="lmsLcmsSchema"/>
+	  <property name="portTypeName" value="lmsLcms"/>
+	  <property name="locationUri" value="/service/lms-lcms/"/>
+	</bean>
+	
+	<bean id="selfservice" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+	  <property name="schema" ref="selfserviceSchema"/>
+	  <property name="portTypeName" value="lmsSelfservice"/>
+	  <property name="locationUri" value="/service/lms-selfservice/"/>
+	</bean>
+	
+    <!-- url to open for WSDL ___ http://localhost:8080/lms//service/lms-api/lmsApi.wsdl -->
+	<bean id="lmsApi" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition" lazy-init="true">  
+      	<property name="schemaCollection">  
+        	<bean class="org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection">  
+          		<property name="inline" value="true" />  
+          		<property name="xsds">  
+            		<list>  
+              			<value>/WEB-INF/xsd/lmsapi/serviceoperations/LmsApiServiceOperations.xsd</value>  
+            		</list>  
+          		</property>  
+        	</bean>  
+      	</property>  
+      	<property name="portTypeName" value="lmsApi"/>
+      	<!--   
+      	<property name="serviceName" value="AccountDetailsServices" />  -->
+      	<property name="locationUri" value="/service/lms-api/"/>  
+    </bean> 
+    
+	<!-- ONE -->
+	<bean id="webBasedCourseCreation" class="org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition">
+	  <property name="schema" ref="webBasedCourseCreationSchema"/>
+	  <property name="portTypeName" value="webBasedCourseCreation"/>
+	  <property name="locationUri" value="/service/lms-webBasedCourseCreation/"/>
+	</bean>
+	
+	<bean id="lmsIntegrationSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+		<property name="xsd" value="/WEB-INF/xsd/BatchImportLearner.xsd"/>
+	</bean>
+
+	<bean id="lmsSfSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+		<property name="xsd" value="/WEB-INF/xsd/lmsSfMessages.xsd"/>
+	</bean>
+
+	<bean id="lmsLcmsSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+		<property name="xsd" value="/WEB-INF/xsd/lmsLcmsMessages.xsd"/>
+	</bean>
+	
+	<bean id="selfserviceSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+		<property name="xsd" value="/WEB-INF/xsd/Order.xsd"/>
+	</bean>
+	
+	<!-- Two -->
+	<bean id="webBasedCourseCreationSchema" class="org.springframework.xml.xsd.SimpleXsdSchema">
+		<property name="xsd" value="/WEB-INF/xsd/WebBasedCourseCreation.xsd"/>
+	</bean>
+	
+	<bean id="schemaCollection" class="org.springframework.xml.xsd.commons.CommonsXsdSchemaCollection">
+		<description>
+			This bean wrap the messages.xsd (which imports types.xsd), and inlines them as a one.
+		</description>
+		<property name="xsds">
+			<list>
+				<value>/WEB-INF/xsd/lmsLcmsMessages.xsd</value>
+				<value>/WEB-INF/xsd/lmsSfMessages.xsd</value>
+				<value>/WEB-INF/xsd/BatchImportLearner.xsd</value>
+				<value>/WEB-INF/xsd/SurveyImports.xsd</value>
+				<value>/WEB-INF/xsd/TrainingPlans.xsd</value>
+				<value>/WEB-INF/xsd/Order.xsd</value> <!-- Selfservice xsd -->
+				<value>/WEB-INF/xsd/WebBasedCourseCreation.xsd</value> <!-- TPMO-931 - Web-based course builder for 3rd party Webinar and Classroom courses xsd -->
+				<value>/WEB-INF/xsd/Survey.xsd</value>				
+			</list>
+		</property>
+		<property name="inline" value="true"/>
+	</bean>
+
+	<!-- ===================== ENDPOINTS  ===================================== -->
+    <bean id="lmsIntegrationService" class="com.softech.vu360.lms.webservice.impl.LMSIntegrationWSImpl">
+        <description>
+            This end-point handles the lms-integration messages using JAXB2 marshalling.
+        </description>
+        <property name="batchImportLearnersService" ref="batchImportLearnersService"/>
+        <property name="customerService" ref="customerService"/>
+        <property name="userDetailsService" ref="userDetailsService"/>
+        <property name="velocityEngine" ref="velocityEngine"/>
+    </bean>
+
+    <bean id="surveyImportService" class="com.softech.vu360.lms.webservice.impl.SurveyImportWSImpl">
+        <description>
+            This end-point handles the SurveyImport messages using JAXB2 marshalling.
+        </description>
+        <property name="surveyService" ref="surveyService" />
+        <property name="vu360UserService" ref="userDetailsService" />
+    </bean>
+    
+    <bean id="trainingPlanWService" class="com.softech.vu360.lms.webservice.impl.TrainingPlanWSImpl">
+        <description>
+            This end-point handles the Training plan messages using JAXB2 marshalling.
+        </description>
+        <property name="trainingPlanService" ref="trainingPlanService" />
+        <property name="customerService" ref="customerService" />
+        <property name="enrollmentService" ref="enrollmentService" />
+        <property name="vu360UserService" ref="userDetailsService" />
+    </bean>
+    
+    <bean id="predictSurveyService" class="com.softech.vu360.lms.webservice.impl.SurveyWSImpl">
+        <description>
+            This end-point handles the Training plan messages using JAXB2 marshalling.
+        </description>
+        <property name="surveyService" ref="surveyService" />
+        <property name="vu360UserService" ref="userDetailsService" />
+    </bean>
+
+    <bean id="lmsStorefrontService" class="com.softech.vu360.lms.webservice.impl.StorefrontWSImpl">
+        <description>
+            This endpoint handles the lms-storefront messages using JAXB2 marshalling.
+        </description>
+        <property name="orderCreatedEventService" ref="orderCreatedEventService"/>
+        <property name="synchronousClassService" ref="synchronousClassService"/>
+        <property name="accreditationService" ref="accreditationService"/>
+    </bean>
+    
+    <bean id="lmsLcmsService" class="com.softech.vu360.lms.webservice.impl.LcmsWSImpl">
+        <description>
+            This endpoint handles the lms-lcms messages using JAXB2 marshalling.
+        </description>
+        <property name="learningSessionService" ref="learningSessionService"/>
+        <property name="updateProfileService" ref="updateProfileService"/>
+		<property name="learnerService" ref="learnerService"/>
+		<property name="certificateService" ref="certificateService"/>
+		<property name="entitlementService" ref="entitlementService"/>		
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService"/>
+    </bean>
+    <!-- LMS API Service -->
+    <bean id="lmsApiService" class="com.softech.vu360.lms.webservice.impl.LMSAPIWSImpl">
+        <description>
+            This endpoint handles the LMS API messages using JAXB2 marshalling.
+        </description>
+        <property name="customerService" ref="customerService"/>
+        <property name="trainingPlanService" ref="trainingPlanService"/>
+        <property name="courseCourseGrpService" ref="courseAndCourseGroupService"/>
+        <property name="entitlementService" ref="entitlementService"/>
+        <property name="synchronousClassService" ref="synchronousClassService"/>
+        <property name="orgGroupLearnerGroupService" ref="orgGroupLearnerGroupService" />
+        <property name="securityService" ref="securityAndRolesService"/>
+        <property name="learnerService" ref="learnerService"/>
+        <property name="userService" ref="userDetailsService" />
+        <property name="vu360UserService" ref="userDetailsService" />
+        <property name="enrollmentService" ref="enrollmentService" />
+        <property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
+        <property name="asyncTaskExecutorWrapper" ref="asyncTaskExecutorWrapper" />
+        <property name="statsService" ref="statisticsService" />
+        <!--<property name="lmsApiService" ref="lmsApi_Service" />    defined in applicationContext.xml  -->
+        <!-- <property name="distributorService" ref="distributorService" /> -->
+        <property name="activeDirectoryService" ref="activeDirectoryService" />
+        <property name="brandService" ref="brandService" />
+        <property name="lmsApiDistributorService" ref="lmsApiDistributorService" />
+        <property name="lmsApiCustomerService" ref="lmsApiCustomerService" />
+        <property name="securityAndRolesServiceLmsApi" ref="securityAndRolesServiceLmsApi" />  <!-- defined in lms-api-application-context.xml -->
+        <property name="orgGroupServiceLmsApi" ref="orgGroupServiceLmsApi" />
+        <property name="userGroupServiceLmsApi" ref="userGroupServiceLmsApi" />
+    </bean>
+    <bean id="selfserviceService" class="com.softech.vu360.lms.webservice.impl.SelfServiceWSImpl">
+        <description>
+            This endpoint handles the lms-storefront messages using JAXB2 marshalling.
+        </description>
+        <property name="orderService" ref="orderService" />
+    </bean>
+    
+    <!-- three -->
+    <bean id="webBasedCourseCreationService" class="com.softech.vu360.lms.webservice.impl.WebBasedCourseCreationImpl">
+        <description>
+            This endpoint handles the lms-storefront messages using JAXB2 marshalling.
+        </description>
+        <property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+    </bean>
+    
+    <bean class="org.springframework.ws.server.endpoint.adapter.GenericMarshallingMethodEndpointAdapter">
+        <constructor-arg ref="marshaller"/>
+    </bean>
+
+ 
+    <bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="classesToBeBound">
+            <list>
+            	<value>com.softech.vu360.lms.webservice.message.lcms.LearnerStatsTransferRequest</value>
+            	<value>com.softech.vu360.lms.webservice.message.lcms.LearnerStatsTransferResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.LearnerCourseProgressRequest</value>
+            	<value>com.softech.vu360.lms.webservice.message.lcms.LearnerCourseProgressResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.OrderCreatedRequest</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.OrderCreatedResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.UpdateProfileRequest</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.UpdateProfileResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.RefundRequest</value>
+                <value>com.softech.vu360.lms.webservice.message.storefront.RefundResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.LearningSessionCompleteRequest</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.LearningSessionCompleteResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.TransactionResultType</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.UpdateProfileRequest</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.UpdateProfileResponse</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.ContentOwnerVO</value>
+                <value>com.softech.vu360.lms.webservice.message.lcms.CourseVO</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.LearnerSetupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.LearnerSetupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.PublishCourseRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.PublishCourseResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.Address</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.LearnerProfile</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.VU360User</value>
+
+				<value>com.softech.vu360.lms.webservice.message.storefront.CourseDetailsRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.CourseDetailsResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.CourseDetails</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.InstructorInfo</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.SectionInfo</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.SessionInfo</value>
+				<value>com.softech.vu360.lms.webservice.message.integration.BatchImportLearnerRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.integration.BatchImportLearnerResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.integration.TransactionResultType</value>
+
+				<value>com.softech.vu360.lms.webservice.message.lcms.ArrayOfLong</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.ArrayOfString</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.ArrayOfUnsignedByte</value>
+
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.SaveAsset</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.SaveAssetResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.UploadAssetInChunk</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.UploadAssetInChunkResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.UpdateAssetStatus</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.UpdateAssetStatusResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.UpdateAssetStatusResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.GetAssetFileInfo</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.client.GetAssetFileInfoResponse</value>
+
+				<value>com.softech.vu360.lms.webservice.message.lcms.player.InvalidateCourseApprovalCache</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.player.InvalidateCourseApprovalCacheResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.player.InvalidateCourseConfigurationCache</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.player.InvalidateCourseConfigurationCacheResponse</value>
+
+				
+				<value>com.softech.vu360.lms.webservice.message.lcms.GenerateCertificateRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lcms.GenerateCertificateResponse</value>
+				
+				
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.CourseApprovalRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.CourseApprovalResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.CredentialCategoryRequirement</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.CredentialCategory</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.Credential</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.RegulatoryCategory</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.CourseApproval</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.Course</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.RegulatoryApproval</value>
+				<value>com.softech.vu360.lms.webservice.message.storefront.courseapproval.Regulator</value>
+				
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveyImportPredictRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveyImportPredictResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveySectionSoapVO</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveyQuestionAnswerSoapVO</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveyFrameworkSoapVO</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.SurveyQuestionSoapVO</value>
+				
+				<value>com.softech.vu360.lms.webservice.message.predict360.survey.UserAssignedSurveysStatisticsRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.survey.UserAssignedSurveysStatisticsResponse</value>
+	
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanPredictRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanPredictResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetAllTraingPlansByIdsRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetAllTraingPlansByIdsResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanAssignmentsByDateRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanAssignmentsByDateResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanCoursesByDueDateRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetTrainingPlanCoursesByDueDateResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetEmployeeCoursesStatusRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.GetEmployeeCoursesStatusResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TestRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TestResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanSoapVO</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanCourseStatusSoapVO</value>
+				<value>com.softech.vu360.lms.webservice.message.predict360.trainingplan.TrainingPlanAssignmentSoapVO</value>				
+				
+				<!-- Self Service messages -->
+				<value>com.softech.vu360.lms.webservice.message.selfservice.Address</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.AuthenticationCredential</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.Contact</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.Customer</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.OrderStatusType</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.Product</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.OrderCreatedRequest</value>
+			    <value>com.softech.vu360.lms.webservice.message.selfservice.Order</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.OrderLineItem</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.TransactionResultType</value>
+				<value>com.softech.vu360.lms.webservice.message.selfservice.OrderCreatedResponse</value>
+				  
+				<!-- LMS API Service operations -->
+				
+				<!--  Training Plan -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.CreateTrainingPlanRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.CreateTrainingPlanResponse</value> 
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.AssignTrainingPlanToLearnerRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.AssignTrainingPlanToLearnerResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.AssignTrainingPlanToUserGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.trainingplan.AssignTrainingPlanToUserGroupResponse</value>
+				
+				<!--  Customer -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.customer.AddCustomerRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.customer.AddCustomerResponse</value>
+				
+				<!-- User -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.AddUserRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.AddUserResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.AddUserLmsOnlyRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.AddUserLmsOnlyResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.UpdateUserRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.user.UpdateUserResponse</value>
+				
+				<!-- Enroll Courses -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.enrollment.BulkEnrollmentRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.enrollment.BulkEnrollmentResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.enrollment.LearnerCoursesEnrollRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.enrollment.LearnerCoursesEnrollResponse</value>
+				
+				<!-- Security Roles -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.securityroles.AssignSecurityRoleToUsersRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.securityroles.AssignSecurityRoleToUsersResponse</value>
+				
+				<!-- Organization Group -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.AddOrgGroupByHierarchyRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.AddOrgGroupByHierarchyResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.AddOrgGroupByParentIdRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.AddOrgGroupByParentIdResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.UpdateOrganizationGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.UpdateOrganizationGroupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.DeleteOrganizationGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.DeleteOrganizationGroupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.GetOrgGroupByIdRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.GetOrgGroupByIdResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.GetOrgGroupIdByNameRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.orggroup.GetOrgGroupIdByNameResponse</value>
+				
+				<!-- User Group -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.AddUserGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.AddUserGroupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.UpdateUserGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.UpdateUserGroupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.DeleteUserGroupRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.DeleteUserGroupResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.GetUserGroupByIdRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.GetUserGroupByIdResponse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.GetUserGroupIdByNameRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.serviceoperations.usergroup.GetUserGroupIdByNameResponse</value>
+				 
+                <!-- LMS API Types -->
+               
+				<!-- Assign Training To Learners and usergroup shared types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanResponseCourse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanToLearner</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanAssignResponsed</value>
+				
+				<!-- Create Training Plan -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlans</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlan</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.Courses</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.Course</value>
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.ResponseTrainingPlan</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.ResponseTrainingPlans</value>
+				
+				
+				<!-- AssignTrainingPlanToUsergroup -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanLearner</value>
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanAssignResp</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.trainingplan.TrainingPlanResponseCourses</value>
+				
+				<!-- AddCustomer -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.Customers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.Customer</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.Company</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.AccountStatus</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.Manager</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.CustomerType</value>
+	
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.RegisterCustomers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.customer.RegisterCustomer</value>
+				
+				<!-- AddUser -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.Users</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.User</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.UpdateableUsers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.UpdateableUser</value>
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.RegisterUsers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.user.RegisterUser</value>
+				
+				<!-- Shared between  LearnerCoursesEnroll and bulkEnrollment-->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.LearnerEnrollCourses</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.EnrolledCourses</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.EnrolledCourse</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.LearnerEnrolledCourses</value>
+				
+				<!-- LearnerCoursesEnroll -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.LearnerCourses</value>
+				
+				<!-- BulkEnrollment -->
+				<!-- Request Type -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.Learners</value>
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.enrollment.FailedCourses</value>
+				
+				<!-- AssignSecurityRolesToLearners  -->
+				<!-- Request Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.UserSecurityRoles</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.UserSecurityRole</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.Vu360Users</value> 
+				<!-- Response Types -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.ResponseUserSecurityRoles</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.ResponseUserSecurityRole</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.AssignedSecurityRoleUsers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.UnassignedSecurityRoleUsers</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.ValueWithError</value>
+				
+				<!-- Org Group -->
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.RegisterOrganizationalGroups</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.RegisterOrganizationalGroup</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.ValueWithError</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.AssignedOrganizationalGroups</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.UnassignedOrganizationalGroups</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.OrganizationalGroups</value>
+				
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.transactionresult.TransactionResultType</value>
+				<value>com.softech.vu360.lms.webservice.message.lmsapi.types.address.Address</value>
+				
+				<!-- WebBased Course Creation Service messages -->
+				<value>com.softech.vu360.lms.webservice.message.webBasedCourseCreation.WebBasedCourseCreationRequest</value>
+				<value>com.softech.vu360.lms.webservice.message.webBasedCourseCreation.CourseCreationResponse</value>
+				
+            </list>
+        </property>
+		<property name="schemas">
+            <list>
+                <value>/WEB-INF/xsd/lmsSfMessages.xsd</value>
+                <value>/WEB-INF/xsd/lmsLcmsMessages.xsd</value>
+                <value>/WEB-INF/xsd/BatchImportLearner.xsd</value>
+                <value>/WEB-INF/xsd/LCMSMessages.xsd</value>
+                <value>/WEB-INF/xsd/SurveyImports.xsd</value>
+                <value>/WEB-INF/xsd/TrainingPlans.xsd</value>
+                <value>/WEB-INF/xsd/Order.xsd</value>
+                <value>/WEB-INF/xsd/WebBasedCourseCreation.xsd</value>
+                <value>/WEB-INF/xsd/lmsapi/serviceoperations/LmsApiServiceOperations.xsd</value>
+                <value>/WEB-INF/xsd/Survey.xsd</value>
+            </list>
+        </property>
+    </bean>
+    
+    
+    <bean id="webServiceTemplateCatalogServiceWS" class="org.springframework.ws.client.core.WebServiceTemplate">
+	    <property name="marshaller" ref="marshaller" />
+	    <property name="unmarshaller" ref="marshaller" />
+	    <property name="defaultUri"
+	        value="http://qa-ws1.austin.360training.com/webapp/wcs/services/CatalogServices" />
+	    <property name="interceptors">
+	        <list>
+	            <ref bean="wsSecurityInterceptor" />
+	        </list>
+	    </property>
+	</bean>
+	
+	<bean id="wsSecurityInterceptor" class="org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor">
+	    <property name="securementActions" value="UsernameToken"/>
+	    <property name="securementUsername" value="lcmsadmin"/>
+	    <property name="securementPassword" value="lcmsadmin"/>
+	    <property name="securementMustUnderstand" value="false"/>
+	    <property name="securementPasswordType" value="PasswordText"/>
+	</bean>
+	
+    
+    <!-- ===================== ENDPOINT MAPPINGS  ============================== -->
+    <bean class="org.springframework.ws.server.endpoint.mapping.PayloadRootAnnotationMethodEndpointMapping">
+        <description>
+            Detects @PayloadRoot annotations on @Endpoint bean methods. The lmsStorefrontService
+            has such annotations. It uses two interceptors: one that logs the message payload, and the other validates
+            it according to the 'lms-sf.xsd' schema file.
+        </description>
+            <property name="interceptors">
+            <list>
+                <bean class="org.springframework.ws.server.endpoint.interceptor.PayloadLoggingInterceptor"/>
+            
+				<bean class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor">
+                    <property name="xsdSchemaCollection" ref="schemaCollection"/>
+                    <property name="validateRequest" value="false"/>
+                    <property name="validateResponse" value="true"/>
+                </bean>
+			
+            </list>
+        </property>
+		<property name="order" value="1"/>
+
+	</bean>
+    
+    <!-- ===================== ENDPOINT ADAPTERS  ============================== -->
+    <!-- 360-TechnologyStack-Migration: Comment out the following <sws:marshalling-endpoints/> -->    
+    
+    <!-- ===================== ENDPOINT EXCEPTION RESOLVER ===================== -->
+    <bean class="org.springframework.ws.soap.server.endpoint.SoapFaultAnnotationExceptionResolver">
+        <description>
+            This exception resolver maps exceptions with the @SoapFault annotation to SOAP Faults. The business logic
+            exceptions NoSeatAvailableException and NoSuchFlightException have these.
+        </description>
+        <property name="order" value="1"/>
+    </bean>
+    <bean class="org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver">
+        <description>
+            This exception resolver maps other exceptions to SOAP Faults. Both UnmarshallingException and
+            ValidationFailureException are mapped to a SOAP Fault with a "Client" fault code.
+            All other exceptions are mapped to a "Server" error code, the default.
+        </description>
+        <property name="defaultFault" value="SERVER"/>
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.springframework.oxm.UnmarshallingFailureException">CLIENT,Invalid request[UnmarshallingFailureException]</prop>
+                <prop key="org.springframework.oxm.ValidationFailureException">CLIENT,Invalid request [ValidationFailureException]</prop>
+            </props>
+        </property>
+        <property name="order" value="2"/>
+    </bean> 
+</beans>

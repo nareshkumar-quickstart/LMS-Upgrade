@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHeadPopup.vm")
+<script type="text/javascript" language="javascript">
+    $(document).ready(function()
+    {
+            
+            document.surveyForm.questionArea.focus();
+    });
+    
+    function cancelform(){
+        document.getElementById("action").value="cancelquestion";
+    }
+    function saveform(){
+        document.getElementById("action").value="savequestion";
+    }
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+<body>
+
+<form name="surveyForm" action="mgr_add-New-Survey-Information.do" method="POST">
+#macro( customShowErrors $separator $classOrStyle )
+        #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                #if($classOrStyle == "")
+                        <b>${error}</b>
+                #else
+                        #if($classOrStyle.indexOf(":") == -1)
+                                #set($attr="class")
+                        #else
+                                #set($attr="style")
+                        #end
+                        <span ${attr}="${classOrStyle}">${error}</span>
+                #end
+                ${separator}
+        #end
+#end            
+#set ($quoteStr = '"')
+#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+#set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+#set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+#set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+
+<div id="main-container">
+        <!-- header -->
+        #springBind("manageSurveyForm.*")
+        #if($status.error)
+        <!-- error-box -->
+         <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+        #set ($error = $brander.getBrandElement($errorCode))
+        <div class="width40pct">
+                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                <div class="message_box_align">$error</div>
+                </div>
+                #end
+        </div>
+        <!-- error-box -->
+        #end
+        <!-- header-end -->
+        <div id="main-container-popup">
+                        <!--Group-Name-div -->
+                        <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.group-name3")">
+                                <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.popup-headerleft")">$brander.getBrandElement("lms.add-New-Survey-Question_Container.caption.AddNewQuestion")</div>
+                        </div>
+                        <!-- Group-Name-div -->
+                        <input type="hidden" id="action" name="action" value="changequestiontype"/>
+                        <input type="hidden" id="currentpage" name="_page" value="2"/>
+                        <input type="hidden" id="targetpage" name="_target2.x" value="1"/>
+                        <input type="hidden" id="targetpage" name="_target2.y" value="1"/>
+                        <!-- button-div -->
+                        <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.managerBtn-popup")" >
+                                <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.input_field_area-user-f3")" style="width:40%">
+                                #springBind("manageSurveyForm.surveyQuestionType")
+                                        <select name="${status.expression}"  onChange="document.surveyForm.submit();" id="show" >
+                                                #foreach($questionType in $surveyQuestionTypes)
+                                                        <option value="$questionType" #if($questionType == $!{status.value}) selected #end>$brander.getBrandElement("$questionType")</option>
+                                                #end
+                                        </select>
+                                </div>
+                                ##<div><input type="button" value="Preview" class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.btn-66w")" onclick="popup('#')" /></div>
+                        </div>
+                        <!-- scrollable-div -->
+
+                        <!-- 1 -->
+                        #if(${status.value} == "survey.question.multiplechoice.multipleselect" )
+                                #parse("manager/userGroups/survey/multipleChoiceMultipleSelect.vm")
+                        #elseif(${status.value} == "survey.question.multiplechoice.singleselect")
+                                #parse("manager/userGroups/survey/multipleChoiceSingleSelect.vm")
+                        #elseif(${status.value} == "survey.question.dropdown.singleselect")
+                                #parse("manager/userGroups/survey/dropDownSingleSelect.vm") <!-- For 1st, 2nd, 3rd popup -->
+                        #elseif(${status.value} == "survey.question.textbox.256characters") 
+                                #parse("manager/userGroups/survey/textbox256Characters.vm")
+                        #elseif(${status.value} == "survey.question.textbox.unlimited")
+                                #parse("manager/userGroups/survey/textboxUnlimited.vm") <!-- For 4th, 5th popup -->
+                        #elseif(${status.value} == "survey.question.multiplechoice.ratingselect" )
+                                #parse("manager/userGroups/survey/multipleChoiceRatingSelect.vm") <!-- For 6th popup -->
+                        #else
+                        
+                        #end
+                        <!-- 6 -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- button-div -->
+                        <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.managerBtn-popup")">
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                                <div class="btn-right1">
+                                     <a class="button" onClick="saveform();submitButtonForm(document.surveyForm,'wizardSubmitter','_target2');"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</span></a>                                     
+                                </div>
+                                <div class="btn-right1">
+                                     <a class="button" onClick="cancelform();submitButtonForm(document.surveyForm,'wizardSubmitter','_target2');"><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                                </div>
+                        </div>
+                        <!-- scrollable-div -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+        </div>
+</div>
+</form>
+</body>
+</html>

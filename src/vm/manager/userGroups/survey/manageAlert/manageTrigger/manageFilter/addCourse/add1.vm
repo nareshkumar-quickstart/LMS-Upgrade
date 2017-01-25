@@ -1,0 +1,408 @@
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+			<html xmlns="http://www.w3.org/1999/xhtml">
+				<head>
+				#parse("snippets/compliance/complianceHead.vm")
+					
+				   
+
+
+
+					<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+					<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+					<script type='text/javascript' src='javascript/js_survey.js' ></script>
+					<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+			<script type='text/javascript'>
+				
+				function doSearch()
+						{
+											 document.getElementById('searchid').value="doSearch";
+											 document.getElementById('searchAction').value = "search";
+											 document.addCourseForm.submit();
+
+							 }
+
+				$(document).ready(function() {
+        $('#chkAll').click(
+           function(){
+
+              $("INPUT[type='checkbox'][name='courses']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='courses']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+		$('#sideBar').height($('.scrollable').height());
+		$('#close_message').click(function(){
+			  $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+			  });
+    });
+    
+    									#springBind("addFilterCourseForm.courseListFromDB")
+										$pager.setItems($!{status.value})
+										#set($totalCount = $pager.total)
+										#if($pager.hasItems())
+												#set($pageFirstIndex = $pager.firstIndex)
+												#set($pageLastIndex = $pager.lastIndex)
+												#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+												#set($currentPageCount = $pageLastIndex + 1)
+												#set($pageCurrIndex = $pager.index)
+										#else
+												#set($pageFirstIndex = 0)
+												#set($pageLastIndex = 0)
+												#set($currentPageSize = 0)
+												#set($currentPageCount = 0)
+												#set($pageCurrIndex = 0)
+										#end
+	function onPreviousPage(previousIndex){
+					var itemNo= document.getElementById('pageCurrIndex').value
+					var items=$pager.itemsPerPage;
+					var pn = parseInt(itemNo) - parseInt(items) ;
+					return pn;
+				 }			
+
+				 function onNextPage(nextIndex){
+					var itemNo= document.getElementById('pageCurrIndex').value
+					var items=$pager.itemsPerPage;
+					var pn = parseInt(items) +  parseInt(itemNo);
+					return pn;
+				    }
+
+
+				function pagenateNext(){
+					document.getElementById('searchAction').value="Next";
+					document.getElementById('searchid').value="doSearch";
+					document.getElementById('paging').value="paging";
+					document.getElementById('pageCurrIndex').value="onNextPage($pager.nextIndex)";	
+					document.getElementById('pageIndex').value="$pager.nextIndex";
+					document.addCourseForm.submit();
+				}
+				function pagenatePrevious(){
+					document.getElementById('searchAction').value="Previous";
+					document.getElementById('searchid').value="doSearch";
+					document.getElementById('paging').value="paging";
+					document.getElementById('pageCurrIndex').value="onPreviousPage($pager.prevIndex)";	
+					document.getElementById('pageIndex').value="$pager.prevIndex";
+					
+					document.addCourseForm.submit();
+				}
+				function showAllNew()
+				{
+					document.getElementById('searchAction').value="ShowAll";
+					document.getElementById('searchid').value="doSearch";
+					document.getElementById('showAll').value="true";
+					document.addCourseForm.submit();
+				}
+
+				function changeRowColor(checkbox) {
+				var tr=checkbox.parentNode.parentNode;
+				var tdarr=$(tr).find("td");
+					  if (checkbox.checked) {
+						  for(i=0;i<tdarr.size();i++){
+							tdarr[i].style.background="#E9F9FE";
+						  }
+					  } else {
+						  for(i=0;i<tdarr.size();i++){
+							tdarr[i].removeAttribute("style");
+						  }
+					  }
+				}
+			
+
+			</script>
+				</head>
+				<body><div id="tooltipForPageList" class="tool_tip"></div> 
+					  <form name="addCourseForm" method="post" action="mgr_addFilterCourse.do?filterId=$request.getParameter('filterId')">
+					<input type="hidden" id="action" name="method" value=""/>
+
+					   <input type="hidden" id="showAll" name="showAll" value=""/>
+						
+						<input type="hidden" id="pageIndex" name="pageIndex" value= />
+						<input type="hidden" id="paging" name="paging" value=""/>
+						<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="" />
+					<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+		 #parse("snippets/managerWizardHeader.vm")
+	 	</td>
+	   </tr>
+	   <tr id="main"> <!-- SECOND BLOCK -->
+	   <td id="left-navigation" valign="top" style="width:195px;">
+		    <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 --> 
+                <div style="height:421px;"> 
+					<div id="l-menu-back"> 
+					<div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addCourse")<br/> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.showing")</div> 										 
+					<div class="l-menu-back-text-act"> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectCourse")</div> 							
+					</div> 
+				</div> 
+			</table>
+		</td>
+		
+		                     <TD id="content" >
+	                           <div id="scrollable">
+								#springBind("addFilterCourseForm.*")
+                         #if($status.error)
+                             <div id="message_box">
+                             <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                             #foreach($errorCode in $status.errorCodes)
+                             #set ($error = $brander.getBrandElement($errorCode))
+                             <div class="width40pct">
+                                 <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                 <div class="message_box_align">${error}</div>
+                             </div>
+                             #end
+                             </div>
+                        #end
+								
+									<div id="page-Icon" class="page-icon-tools"></div>
+									<div id="pageHeading" class="page_heading" style="margin-top:-50px;margin-left:75px;">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+									<div id="pageDescriptionText" style="margin-left:75px;">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+								
+
+							   <form name="triggerSearchForm" method="post" action="mgr_addFilterCourse.do?filterId=$request.getParameter('filterId')" >
+							  <input type="hidden" id="actionmethod" name="method" value=""/>
+							  <input type="hidden" id="searchid" name="search" value=""/>
+							  <input type="hidden" id="searchAction" name="searchAction" value="" />
+								<div id="table-frame" class="table-frame" style="margin-top:10px;margin-left:5px;">
+									<div id="table-header" class="table-header">
+										<div id="searchBox" style="float:left; height:200px; width:280px; left:47%;" class="visible">
+											<div class="search-box-text" >$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.searchCourses")</div><br/><br/> 
+                                #springBind("addFilterCourseForm.courseName")
+                                <div class="search-box-text" style="width: 75px; float: left;">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseName")</div> 
+                                <input type="text" name="${status.expression}" value="${status.value}" class="search-box-input-field"style="float:right; font-size:10px; width: 176px; height: 15px; margin-right:15px;"/><br/><br/> 
+                                #springBind("addFilterCourseForm.courseType")
+                                <div class="search-box-text" style="width: 70px; float: left;">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseType")</div> 
+                                <select id="course-type-search" name="courseType" style="float:right; font-size:10px; width: 176px; height: 20px; margin-right:15px;"> 
+                                    #foreach($courseType in $courseUtil.courseTypes())	
+                                    	<option #if($!{status.value}==${courseType}) selected #end value="$courseType">$courseType</option>										
+									#end 
+                                </select><br/><br/></br><br/></br>
+											<div class="search-box-cancel-button">
+												<a class="button" onclick="doSearch();" style="float: right; margin-top: 2px; margin-right: 27px;"><span class="button">Search</span></a>
+											</div>
+											<div class="search-box-search-button">
+
+												<a class="button" onmousedown="showSearchBox();" style="float: right; margin-top: 2px;"><span class="button">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</span></a>
+											</div>
+										</div>
+										
+										<div class="result_left_side" >
+										
+										<div  id="search-survey"style="clear:left; margin-top:0px;" onClick="showSearchBox(document.getElementById('srch'));">
+											<a class="button" ><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.search")</span></a>
+										</div >
+
+										<input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+										<input type="hidden" id="paging" name="paging" value="" />
+										<input type="hidden" id="sortDirection" name="sortDirection" value="" />
+										<input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+										<input type="hidden" id="showAll" name="showAll" value="false" />
+										<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+										#if($!{context.showAll})
+											#set($showAll=$!{context.showAll})
+										#else
+											#set($showAll=false)
+										#end
+
+										
+										<!-- All Icon -->
+										#if($!{status.value})
+											#if($totalCount > 10)
+												<div id="showEach" class="icon_all" onClick="showAllNew();" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+											#end
+										#end
+										<!-- Next Icon -->
+										#if($pager.nextIndex)
+												<div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target2" onclick="pagenateNext();" ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+										#else
+												<div id="goNext" class="icon_disabled"></div>
+										#end
+										<!-- Back Icon -->
+										#if ($pager.prevIndex)
+												<div id="goBack" class="icon_back"  onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target2" onclick="pagenatePrevious();" ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+										#else
+												<div id="goBack" class="icon_disabled"></div>
+										#end
+										<!-- Showing Results -->
+										<div id="resultDescription" class="box_description" style="margin-right:-0px;">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing")$!pager.pageDescription </div>
+											</div>
+
+										</div>
+										
+
+									<!-- search-result-1 -->
+									#if($totalCount != 0)
+									<table id="search-result-1" border="0" cellpadding="0" cellspacing="0" width="103%">
+										 <tr bgcolor="#efefef"> 
+                                    <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="course"/></td>
+                                    <td class="table-column-heading"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseName")
+                                    </td> 
+                                    <td class="table-column-heading" width="170"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseType")
+                                    </td> 
+                                </tr> 
+											#springBind("addFilterCourseForm.courseListFromDB")
+									$pager.setItems($!{status.value})
+									#set($totalCount = $pager.total)
+									#if($pager.hasItems())
+											#set($pageFirstIndex = $pager.firstIndex)
+											#set($pageLastIndex = $pager.lastIndex)
+											#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+											#set($currentPageCount = $pageLastIndex + 1)
+											#set($pageCurrIndex = $pager.index)
+									#else
+											#set($pageFirstIndex = 0)
+											#set($pageLastIndex = 0)
+											#set($currentPageSize = 0)
+											#set($currentPageCount = 0)
+											#set($pageCurrIndex = 0)
+									#end
+
+									<input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+								<input type="hidden" id="paging" name="paging" value="" />
+								<input type="hidden" id="sortDirection" name="sortDirection" value="" />
+								<input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+								<input type="hidden" id="showAll" name="showAll" value="false" />
+								<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+								 #if($!{context.showAll})
+									#set($showAll=$!{context.showAll})
+								#else
+									#set($showAll=false)
+								#end
+								#set($i=0)
+								 #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+								 	#set($i=$i+1)
+									#springBind("addFilterCourseForm.courseListFromDB[$loopIndex]")
+									   #set($course = $!{status.value})
+										#if($loopIndex%2 == 0)
+										#set($alternate="row_1")
+										#else
+										#set($alternate="row_2")
+										#end
+									<tr>
+										<td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none" #end>
+                                                    #springBind("addFilterCourseForm.courses")
+                                                    #set($isChecked = "false")
+                                                    #foreach($corsId in $!{status.value})
+                                                        #if($$course.id == $corsId)
+                                                            #set($isChecked = "true")
+                                                        #end
+                                                    #end
+                                                    #if($isChecked == "true")
+                                                        <input type="checkbox" name="courses" checked value='$course.id' id="chk$i" onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+                                                        <script type='text/javascript'>
+                                                            $(document).ready(function() {
+                                                                $("#chk$i").parent().parent().children().css("background-color","#E9F9FE");
+                                                            });
+                                                        </script>
+                                                    #else
+                                                        <input type="checkbox" name="courses" value='$course.id' id="chk$i" onclick="changeRowColor(this);" style="margin-left:-2px" /></td>
+                                                    #end
+                                                    
+									<!-- <td class="$alternate" width="17px" #if($currentPageCount==$pageLastIndex) style="border-bottom:none;" #end><input type="checkbox" name="courses" value='$course.id'  onclick="changeRowColor(this);" style="margin-left:-2px"/></td> -->
+									<td class="$alternate">$!course.courseTitle      </td>
+									<td class="$alternate">$!course.courseType     </td>
+									
+									
+									</tr>
+								#end
+								</table>
+								#else
+										<table id="search-result-1" border="0" cellpadding="0" cellspacing="0"  width="100%">
+                                            <tr bgcolor="#efefef">
+                                                <td class="check_box_top" style="width:17px; float:left;"><input type="checkbox" id="chkAll"  style="margin-left:-1px;" name="course"/></td>
+                                                <td class="box_subheader" width="75%">
+                                                    $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseName")
+                                                </td>
+                                                <td class="box_subheader" width="25%">
+                                                    $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseType")
+                                                </td>
+                                            </tr>
+										 <tr>
+                                               <td colspan="7" style="border-bottom:none">
+						    <div class="result_blank"> $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") </div>
+												</td>
+                                                
+                                            </tr>
+										</table>
+									#end
+								
+									
+
+
+									<!-- search-result-2 -->
+									<table id="search-result-2" border="0" cellpadding="0" cellspacing="0" width="100%" class="visible"> 
+                           
+                                <tr bgcolor="#efefef"> 
+                                    <td class="table-first-column-heading"> 
+                                        <input type="checkbox" name="selectAll" onclick="checkAll(document.myform2.courses, this);"/> 
+                                    </td> 
+                                    <td class="table-column-heading"> 
+                                        <div id="list-order" class="icon-asc"></div>$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseName")
+                                    </td> 
+                                    <td class="table-last-column-heading" > 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courseType")
+                                    </td> 
+                                </tr> 
+                                <tr bgcolor="#FFFFFF"> 
+                                    <td class="table-first-column-text"> 
+                                        <input type="checkbox" name="row"/> 
+                                    </td> 
+                                    <td class="table-column-text"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.mortgageLendings")
+                                    </td> 
+                                    <td class="table-last-column-text"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.synchronousOnline")
+                                    </td> 
+                                </tr> 
+                                <tr bgcolor="#F4F4F4"> 
+                                    <td class="table-first-column-text"> 
+                                        <input type="checkbox" name="row"/> 
+                                    </td> 
+                                    <td class="table-column-text"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.bloodbornePathogens")
+                                    </td> 
+                                    <td class="table-last-column-text"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.discussionForum")
+                                    </td> 
+                                </tr> 
+                                <tr bgcolor="#FFFFFF"> 
+                                    <td class="table-first-column-text-last-row"> 
+                                        <input type="checkbox" name="row"/> 
+                                    </td> 
+                                    <td class="table-column-text-last-row"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.oSHA")
+                                    </td> 
+                                    <td class="table-last-column-text-last-row"> 
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.synchronousOnline")
+                                    </td> 
+                                </tr> 
+                           
+                        </table> 
+
+								</div>
+								<input type="hidden" id="currentpage" name="_page" value="0" />
+								<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+								<div class="managerBtn">
+										
+									 <div style="float:left; margin-top:1px;margin-left:5px;" >
+										 <a class="button" onClick="submitButtonForm(document.addCourseForm,'wizardSubmitter','_cancel');"><span class="button">$brander.getBrandElement("lms.Instructor.button.Cancel")</span></a>
+									 </div>
+								
+									<div style="float:right; margin-top:1px; margin-right:-20px;" >
+										<a class="button" onClick="submitButtonForm(document.addCourseForm,'wizardSubmitter','_finish');"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</span></a>
+									 </div></form>
+								</div>
+
+							</div>
+						  </td></tr>
+                <tr> <!-- Footer BLOCK -->
+	              <td id="footer" colspan="2">
+					#parse("snippets/managerFooter.vm")
+				 </td>
+		        </tr>
+        </table>
+					</form>
+				</body>
+
+			</html>

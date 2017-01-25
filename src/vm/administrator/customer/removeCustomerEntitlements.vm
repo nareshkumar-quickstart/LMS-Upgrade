@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_button_new.css"/>
+<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+	function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function formSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.removeCustomerEntitlementForm.submit();
+    } 
+    
+	function deleteEntitlements(buttonclick){
+		confirm("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")", function () {			
+			document.getElementById('action').value=buttonclick					
+			document.removeCustomerEntitlementForm.submit();						
+		});
+    }
+
+	$(document).ready(function(){
+		$('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$(window).height()) {
+            $('#right-pannel').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        }        
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+	
+</script>
+</head>
+
+<body>
+<div id="main-container">
+
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+    
+	<!-- content-area -->
+        <div id="content2a">
+        	<!-- sidebar -->
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.administrator.removeContract.wizard.title")</div>
+                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.administrator.removeContract.wizard.step1")</div>
+                </div>
+            </div>
+            <!-- sidebar end -->
+            
+            <div id="right-pannel" >
+				
+					<div id="pageDescription" class="page_description">
+						<div id="logoHolder" class="courseLogoCustomer"></div>
+						<div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.administrator.removeContract.page.title")</div>
+						<div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.removeContract.page.subTitle")</div>
+					</div>
+					
+					<form name="removeCustomerEntitlementForm" method="get" action="adm_removeEntitlements.do">
+						<input type="hidden" name="action" id="action" value="" />
+						<input type="hidden" name="entitlementIds" value="$!{context.contractId}" />
+						
+						<div class="search_box_result">
+							<div class="box_header"><span class="box_heading">
+								#if($context.selectedContract.getEnrollmentType() == 'Course') $brander.getBrandElement("lms.customercontract.contracttype.course")
+								#else $brander.getBrandElement("lms.customercontract.contracttype.coursegroup") #end</span></div>
+							<table border="0" width="100%" cellpadding="0" cellspacing="5">								
+								<tr>
+									<td height="5" colspan="3"></td>
+								</tr>
+								<tr>
+									<td height="25" colspan="3"><div class="row-text">$brander.getBrandElement("lms.administrator.removeContract.section.title")</div></td>
+								</tr>
+								<tr>
+									<td width="25">&nbsp;</td>
+									<td width="220">
+										<div class="row-text">$context.selectedContract.name</div>
+									</td>
+									<td>
+										<div class="row-text" style="margin-left: 25px;">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.ExpirationDate"): $!{context.selectedContract.endDate}</div>
+									</td>
+								</tr>
+								<tr>
+									<td height="5" colspan="3"></td>
+								</tr>
+								<tr>
+									<td><input type="radio" name="removeContract" checked="true" value="dropEnrollments"/></td>
+									<td colspan="2"><div style="margin-top:3px;">$brander.getBrandElement("lms.administrator.removeContract.option.dropEnrollment")</div></td>
+								</tr>
+								#if ( $context.similarContractList.size() > 0)
+								<tr>
+									<td height="25"><input type="radio" name="removeContract" value="moveEnrollments"/></td>
+									<td colspan="2"><div style="float:left; margin-top:3px;">$brander.getBrandElement("lms.administrator.removeContract.option.moveEnrollment")</div>
+										<select name="courseEntitlementForCourses" style="float:left; margin-left:10px;">
+											#foreach($ce in $context.similarContractList)
+												<option value="$ce.id" >$!{ce.name}</option>
+											#end
+										</select>
+									</td>
+								</tr>
+								#end
+								<tr>
+									<td height="5" colspan="3"></td>
+								</tr>
+							</table>
+						</div>
+						
+						
+						<div style="float:right; margin-top:15px;">
+							<a>
+								<div class="btn_start"></div>
+								<div class="btn_normal" onclick="javascript:deleteEntitlements('removeEntitlement')" >$brander.getBrandElement("lms.administrator.removeContract.button.finish")</div>
+								<div class="btn_end"></div>
+
+							</a>
+						</div>
+						<div style="float:left; margin-top:15px; margin-left:10px;">
+							<div>
+								<a href="adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement">
+									<div class="btn_start"></div>
+									<div class="btn_normal" >$brander.getBrandElement("lms.administrator.removeContract.button.cancel")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+					</form>
+			</div>
+        </div>
+	
+    
+    
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+</div>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.administrator.removeContract.confirmDelete")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.administrator.removeContract.button.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.administrator.removeContract.button.ok")</span></a>
+            </div>
+</div>
+
+</body>
+</html>	

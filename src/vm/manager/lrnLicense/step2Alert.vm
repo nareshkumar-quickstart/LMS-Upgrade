@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+<head>
+
+<script type="text/javascript" src="javascript/js_manager.js" language="javascript"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script type="text/javascript" src="javascript/360js.js" language="javascript" ></script>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<!-- Include the Free Rich Text Editor Variables Page -->
+<script src="javascript/wisiwig/config.js" type="text/javascript" language="javascript"></script>
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+<script type="text/javascript">
+function addMessage(){
+	try{
+        if (document.getElementById(rteFormName).style.display == ""){ 
+            var newHTML = getXHTML(trim(document.getElementById(rteFormName).value));}
+        else { 
+            var newHTML = getXHTML(trim(document.getElementById(rteName).contentWindow.document.body.innerHTML));
+        }
+        document.getElementById("field_message").value=newHTML;
+       }catch(e){}
+}
+
+function openEmail() {
+   jquery("#emailDialog").dialog({
+       modal: true,
+       width: 550          
+    });
+  }
+</script>
+
+</head>
+<body>
+   <form name="addlrnLicenseAlertForm" method="post" action="lrn_myLicenseAlert.do">
+    
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                 <!--Header Start -->
+        		 #parse("snippets/learnerNewHeader.vm")
+        		 <!-- Header End -->
+			</td>
+		</tr>
+	
+         <!-- Body Start -->
+        <tr id="main"> 
+        	<td id="left-navigation" valign="top" style="width:195px;">
+        		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                    <tr>
+						<td>
+    						
+                                <div id="l-menu-back">
+                                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.mylicense.newLicensealert.showingWizard.text")</div>
+                                    <div class="l-menu-back-text">$brander.getBrandElement("lms.mylicense.newLicensealert.step1.text")</div>
+                                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.mylicense.newLicensealert.step2.text")</div>
+                                    <div class="l-menu-back-text">$brander.getBrandElement("lms.mylicense.newLicensealert.step3.text")</div>
+                                </div>
+                           
+						</td>
+					</tr>
+        		</table>
+			</td>		
+            <td id="content" >
+            	<div id="scrollable">
+                        
+                      <div id="error-message-box" style="display:none;">
+                            <div class="error_box">
+                                <div id="errors"></div>
+                                <div id="close-errors" class="close_icon"></div>
+                            </div>
+                        </div>
+                        
+                        #springBind("learnerLicenseAlertForm.*")
+                        #if($status.error)
+                            <div id="error-message-box">
+                                <div id="message_box"><!-- error-box -->
+                                    <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                    #foreach($errorCode in $status.errorCodes)
+                                        #set ($error = $brander.getBrandElement($errorCode))
+                                        <div class="width40pct">
+                                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                            <div class="message_box_align">$error</div>
+                                        </div>
+                                    #end
+                                </div>
+                            </div>
+                            <!-- error-box -->
+                        #end   
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+            		    <tr>
+            			<td id="page-icon" class="courseLogoProfile">
+            			    &nbsp;
+            			</td>
+            			<td id="page-description">
+            			    <div id="page-heading">$brander.getBrandElement("lms.mylicense.newLicensealert.pageHeading.text")</div>
+            			    <div id="page-help">$brander.getBrandElement("lms.mylicense.newLicensealert.step2.pageSubHeading.text")</div>
+            			</td>
+            		    </tr>
+            		</table>
+                    <!-- Search Result Start -->
+
+                
+                    <div class="search_box_result">
+
+                        <div class="box_header">
+							<span class="box_heading">
+								$brander.getBrandElement("lms.mylicense.newLicensealert.step2.heading.caption")
+							</span>
+						</div>
+                        
+						<table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+                                <td width="90%" align="left">
+								 <table  width="80%">
+								   <tr>
+								     <td width="30%">
+									
+								       <span class="row_text">$brander.getBrandElement("lms.mylicense.newLicensealert.step2.field1.caption")</span>
+								     </td>
+								     <td>
+								     #springBind("learnerLicenseAlertForm.expirationDate")
+								     $!{status.value}
+								     </td>
+								   </tr>
+								   <tr>
+								     <td width="40%">
+								       <span class="row_text">$brander.getBrandElement("lms.mylicense.newLicensealert.step2.field2.caption")</span>
+								     </td>
+								     <td>
+								     Remind  &nbsp;
+                              <!-- Remind <input maxlength="3" size="3"  type="text" name="noofDays" /> &nbsp;days &nbsp;&nbsp;<input type="checkbox" name="daysbefore"> befor event <input type="checkbox" name="daysafter"> afterr event -->
+								
+								#springBind("learnerLicenseAlertForm.days")
+								<input maxlength="3" size="3" type="text" name="${status.expression}" value="$!{status.value}" tabIndex="1" />&nbsp;days &nbsp;&nbsp;
+								#springBind("learnerLicenseAlertForm.before")
+                                <input type="checkbox" style="margin-left:10px;" name="$!{status.expression}" #if($!{status.value}=='true') checked #end />$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.beforeEvent")
+                                #springBind("learnerLicenseAlertForm.after")
+                                    <input type="checkbox" style="margin-left:10px;" name="$!{status.expression}" #if($!{status.value}=='true') checked #end />$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.afterEvent")
+								     </td>
+								   </tr>
+								 </table>
+								</td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                            <tr>
+                                <td width="100%" align="center">
+								</td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                        <!-- Search Result Start -->
+
+                           <input type="hidden" id="currentpage" name="_page" value="1"/>
+							<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+							<div style="float:left; margin-top:15px;margin-left:10px;">
+								<a onClick="submitButtonForm(document.addlrnLicenseAlertForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+									  <div class="btn_end"></div>
+								</a>
+							</div>
+
+							<!-- if no license type is defined NEXT button should be change to FINISH button -->
+							<div style="float:right; margin-top:15px;">
+							  <a onClick="addMessage();submitButtonForm(document.addlrnLicenseAlertForm,'wizardSubmitter','_target2');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							
+							
+							<div style="float:right; margin-top:15px;margin-left:10px;">
+			                    <div class="btn_start"></div>
+			                    <div class="btn_normal" onClick="submitButtonForm(document.addlrnLicenseAlertForm,'wizardSubmitter','_target0');"><span class="button_wizard">$brander.getBrandElement("lms.cePlanner.wizard.btn.previous")</span></div>
+			                    <div class="btn_end"></div>
+			                </div>
+				</div>
+				<!-- scrollable dive -->
+            </td>
+		</tr>
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+	</table>
+    </form>
+	</body>
+</html>

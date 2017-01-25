@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+             	$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+				if ($('#right-pannel').height()<$('#frame_body').height()) {
+					$('#right-pannel').height($('#frame_body').height());
+				}
+				$('#sideBar').height($('#right-pannel').height());
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                       opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+            });
+
+            function saveResourceType() {
+                document.getElementById('actionmethod').value='saveResourceType';
+                document.editResourceTypeForm.submit();
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="editResourceTypeForm" method="post" action="ins_manageResourceType.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+				
+                <!-- Body Start -->
+   </td></tr>
+			
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                   #parse("snippets/instructorResourcesLeftMenu.vm")
+		</table></td>
+		
+   <TD id="content" >
+	<div id="scrollable">
+                        #springBind("resourceTypeForm.*")
+                        #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set ($error = $brander.getBrandElement($errorCode))
+                                    <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$!error</div>
+                                    </div>
+                                #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+
+                        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="page-icon-tools">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.Instructor.PageHeading.caption.EditResourceType")</div>
+		<div id="page-help">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.EditResourceType")</div>
+		</td>
+	</tr>
+</table>						
+
+                        <div class="search_box_result">
+                             <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.Summary")</span></div>
+                             <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td width="20%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.ResourceTypeName")</span></td>
+                                        #springBind("resourceTypeForm.resourceType.name")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td width="50%">
+                                            <input type="text" id="field_resource_name" class="input_text_field" name="${status.expression}" value="$!{status.value}" maxlength=255 tabIndex="1" />
+                                        </td>
+                                        <td width="30%"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                     #springBind("resourceTypeForm.resourceType.description")
+                                        <td valign="top" width="20%"><span class="row_text">$brander.getBrandElement("lms.Instructor.caption.AddResourcesType.Description")</span></td>
+                                        <td style="width:15px;"></td>
+                                        <td width="50%">
+                                            <textarea class="input_text_area" name="${status.expression}" tabIndex="2" >$!{status.value}</textarea>
+                                        </td>
+                                        <td width="30%"></td>
+                                        <td></td>
+                                    </tr>
+                             </table>
+                         </div>
+
+                        <div style="float:right; margin-top:15px;  tabIndex="4" >
+                            <div class="btn_start"></div>
+                                <a onClick="saveResourceType();">
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Save")</div>
+                                </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                        <div style="float:right; margin-top:15px;margin-right:5px;" tabIndex="3" >
+                            <div class="btn_start"></div>
+                                <a  onclick="location.href='ins_manageResourceType.do';">
+                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                </a>
+                            <div class="btn_end"></div>
+                        </div>
+
+                    </div>
+         </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    #parse("snippets/managerFooter.vm")
+	</td></tr>
+    </table>
+        </form>
+    </body>
+</html>

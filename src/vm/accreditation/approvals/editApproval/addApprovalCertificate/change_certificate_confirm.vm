@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" language="javascript">
+            $(document).ready(function(){
+                $('#cancel').click(function(){
+                    if( 'addCourseConfiguration' == '$!{certificateForm.returnURL}'){
+                        $('#addCertificate').attr('action','acc_addCourseConfig.do?_target1&_page=0').
+                            submit();
+                    }else if('editCourseConfiguration' == '$!{certificateForm.returnURL}'){
+                        $('#addCertificate').attr('action','acc_manageCourseConfig.do?templateId=$!{certificateForm.templateId}&method=editCourseConfig').
+                            submit();
+                    }else{
+                        submitButtonForm(document.addCertificate,'wizardSubmitter','_cancel');
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <form id="addCertificate" name="addCertificate" method="post" action="acc_addApprovalCertificate.do" >
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+                        #parse("snippets/accreditation/accreditationWizardHeader.vm")
+                        <!-- Header End -->
+                    </td</tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-sidebar" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <div>
+                                <div id="l-menu-back">
+                                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.ChangeCertificateWizard")<br>$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.showing-2-of-2")</div>
+                                    <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.SelectCertificateLHead")</div>
+                                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.ConfirmationLHead")</div>
+                                </div>
+                            </div>
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable">
+
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.title")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.editApproval.changeCertificate.caption.titlesubtitleS2")</div>
+                                    </td>
+                                </tr>
+                            </table>					  
+
+                            <div class="search_box_result">
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.Certificate")</span></div>
+                                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accraditation.editApproval.addCertificate.caption.CertificateName")</b></div></td>
+                                        #springBind("certificateForm.certificate.name")
+                                        <td><div class="row_text">$!{status.value}</div></td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <!-- *********************************************** -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onClick="submitButtonForm(document.addCertificate,'wizardSubmitter','_finish');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextFinish")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:right; margin-top:15px;margin-right:5px;">
+                                    <a onClick="submitButtonForm(document.addCertificate,'wizardSubmitter','_target0');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+
+                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                    <a id="cancel">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->
+
+                            <input type="hidden" id="currentpage" name="_page" value="1"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                        </div>
+                    </td></tr>
+                <!-- Body End -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- Footer Start -->
+                        #parse("snippets/managerFooter.vm")
+                        <!-- Footer End -->
+                    </td></tr>
+            </table>
+        </form>
+    </body>
+</html>

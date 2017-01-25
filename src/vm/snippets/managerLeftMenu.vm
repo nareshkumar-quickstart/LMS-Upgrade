@@ -1,0 +1,122 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("feature"))
+
+<body>
+      
+		<!-- <LEFT NAGIVATION> -->
+			
+	#if($userPermissionChecker.hasAccessToFeatureGroup("Users & Groups", $userData, $ssn) )
+
+		#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0001", $userData, $ssn) || $userData.isLMSAdministrator())
+			<!-- Manage Users Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="manageUsers" onclick="submitForm('Users%20%26%20Groups','ManageLearner','mgr_manageLearners.do')" #if($menu == "LMS-MGR-0001") class="selected" #end>
+					<div class="band_text">$brander.getBrandElement("lms.manager.left.menu.manageusers")</div>
+				</td>
+			</tr>
+			<!-- Manage Users End -->
+			#end
+
+		#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0029", $userData, $ssn)  )
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="manageUsers" onclick="submitForm('Entitlements','LMS-MGR-0029','adm_learnerEnrollments.do?method=showSearchLearnerPage')" #if($menu == "LMS-MGR-0029") class="selected" #end>
+					<div class="band_text">$brander.getBrandElement("lms.manager.left.menu.manageenrollments")</div>
+			 	</td>
+			 </tr>
+		#end
+		<!-- adding new temporary admin tools link -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="manageUsers" onclick="window.open('https://admintools.360training.com/admin/vums/dsp_loginPage.cfm','VUMSAdminTools','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=950,height=700,left=30,top=10');">				
+					<div class="band_text">$brander.getBrandElement("lms.manager.left.menu.legacyadmintool")</div>
+				</td>
+			</tr>
+
+		#else
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0001", $userData, $ssn))
+			<!-- Manage Users Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="manageUsers" onclick="submitForm('Users%20%26%20Groups','ManageLearner','mgr_manageLearners.do')"  #if($menu == "LMS-MGR-0001") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.manageusers")</div>
+				</td>
+			 </tr>
+			<!-- Manage Users End -->
+			#end
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0002", $userData, $ssn) )
+				<!-- Batch Import Users Start -->
+			<tr>	
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="batchImport" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0002','mgr_batchImportLearners.do')" #if($menu == "LMS-MGR-0002") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.batchimport")</div>
+				</td>
+			</tr>
+				<!-- Batch Import Users End -->
+			#end
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0003", $userData, $ssn) )
+				<!-- Registration Information Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->			 
+				 <td id="registerationInformation" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0003','mgr_regInvitation-1.do')" #if($menu == "LMS-MGR-0003") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.registrationinvitation")</div>
+				</td>
+			 </tr>
+				<!-- Registration Information End -->
+			#end
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0004", $userData, $ssn) )
+				<!-- Manage Org Groups Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				 <td id="manageGroups" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0004','mgr_manageOrganizationGroup.do')" #if($menu == "LMS-MGR-0004") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.manageorganizationgroups")</div>
+				 </td>
+			</tr>
+				<!-- Manage Org Groups End -->
+			#end
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0005", $userData, $ssn) )
+				<!-- Manage Learner Groups Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				 <td id="manageGroups" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0005','mgr_manageLearnerGroups.do')" #if($menu == "LMS-MGR-0005") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.manageorggroups")</div>
+				</td>
+			</tr>
+				## TODO:  Add Learner Group Controller "manageLearnerGroup.do" 
+				<!-- Manage Learner Groups End -->
+			#end
+			
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0006", $userData, $ssn) )
+				<!-- Manage Security Roles Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				 <td id="manageSecurityRoles" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0006','mgr_manageSecurityRoles.do?method=showSecurityRoles')" #if($menu == "LMS-MGR-0006") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.managesecurityroles")</div>
+				</td>
+			 </tr>
+				<!-- Manage Security Roles End -->
+			#end 
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0007", $userData, $ssn))
+				<!-- Assign Security Roles Start -->
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->			 
+				 <td id="assignSecurityRoles" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0007','mgr_viewAssignSecurityRoleMain.do')" #if($menu == "LMS-MGR-0007") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.assignsecurityroles")</div>
+				</td>
+			 </tr>
+				<!-- Assign Security Roles End -->
+			#end
+			#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0029", $userData, $ssn)  )
+			<tr>
+				<!-- LMS-9512 | S M Humayun | 29 Mar 2011 -->
+				<td id="manageEnrollments" onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0029','mgr_learnerEnrollments.do?method=showSearchLearnerPage')" #if($menu == "LMS-MGR-0029") class="selected" #end>
+					<div>$brander.getBrandElement("lms.manager.left.menu.manageenrollments")</div>
+			 	</td>
+			 </tr>
+		#end
+		#end  
+	#end
+
+</body>

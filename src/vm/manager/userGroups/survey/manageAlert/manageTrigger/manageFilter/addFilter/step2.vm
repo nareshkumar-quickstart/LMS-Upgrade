@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/compliance/complianceHead.vm")
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/js_survey.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type='text/javascript'>
+            $(document).ready(function() {
+                $('#sideBar').height($('.scrollable').height());
+            });
+        </script>
+    </head>
+    <body>
+        <form name="addTriggerForm" method="post" action="mgr_addTriggerFilter.do?triggerId=$addTriggerFilterForm.triggerId">
+        <input type="hidden" id="action" name="method" value=""/>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <tr>
+                <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                    #parse("snippets/managerWizardHeader.vm")
+                </td>
+            </tr>
+            <tr id="main">
+                <td id="left-navigation" valign="top">
+                    <div>
+                        <div id="l-menu-back">
+                            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilterWizard")<br/> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.ShowingOf")</div>
+                            <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.filterSummary")</div>
+                            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectFilterType")</div>
+                            <div class="l-menu-back-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectFilters")</div>
+                            <div class="l-menu-back-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.confirmation")</div>
+                        </div>
+                    </div>
+                </td>
+                <td id="content">
+                    <div id="scrollable">
+                        <div id="error-message-box" style="display:none;">
+                            <div class="error_box">
+                                <div id="errors"></div>
+                                <div id="close-errors" class="close_icon"></div>
+                            </div>
+                        </div>
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr>
+                                <td id="page-icon" class="icon_surveys">
+                                    &nbsp;
+                                </td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+                                    <div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="table-frame" class="table-frame" style="padding-bottom:10px;">
+                            <div class="table-header">
+                                <div class="table-heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.SelectFilterType")</div>
+                            </div>
+                            #springBind("addTriggerFilterForm.licenseExpirationdate")
+                            
+                            #set($licenseExpirationdate = $status.value)
+                           
+                            #springBind("addTriggerFilterForm.filterType")
+
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td height="35">
+                                        <span class="table-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.triggerSearching")</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td width="70" align="right" height="25">
+                                                    <input type="radio" value="learners" name="${status.expression}" id="learners" checked="true"/>
+                                                </td>
+                                                <td>
+                                                    <span class="table-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.learners")</span>
+                                                </td>
+                                            </tr>
+                                            #if($licenseExpirationdate == "")
+                                            <tr>
+                                                <td align="right" height="25">
+                                                    <input type="radio" value="learnergroups" name="${status.expression}" id="learnerGroups"/>
+                                                </td>
+                                                <td>
+                                                    <span class="table-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.learnerGroups")</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right" height="25">
+                                                    <input type="radio" value="organizationgroups" name="${status.expression}" id="organizationGroups"/>
+                                                </td>
+                                                <td>
+                                                    <span class="table-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.organizationGroups")</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="right" height="25">
+                                                    <input type="radio" value="courses" name="${status.expression}" id="courses"/>
+                                                </td>
+                                                <td>
+                                                    <span class="table-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.courses")</span>
+                                                </td>
+                                            </tr>
+                                            #end
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    <input type="hidden" id="currentpage" name="_page" value="1" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_target2');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>		
+				</div>
+
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+           #parse("snippets/managerFooter.vm")
+	</td></tr>
+        </table>
+        </form>
+    </body>
+
+</html>

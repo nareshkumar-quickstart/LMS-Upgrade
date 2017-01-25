@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript">
+
+        function doSearch(buttonclick) {
+               document.getElementById('action').value=buttonclick;
+               document.searchCustomCoursesForm.submit();
+        }
+
+        function changeRowColor(checkbox) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+        function selectAllCheckBoxes(countCheckBoxes) {
+                var objCheckAll=document.getElementById("chkAll");
+                if (objCheckAll.checked) {
+                        for(var i = 1; i <= countCheckBoxes; i++){
+                                var objCheckBox=document.getElementById("chk"+i);
+                                objCheckBox.checked=true;
+                                changeRowColor(objCheckBox);
+                        }
+                }else{
+                        for(var i = 1; i <= countCheckBoxes; i++){
+                                var objCheckBox=document.getElementById("chk"+i);
+                                objCheckBox.checked=false;
+                                changeRowColor(objCheckBox);
+                        }
+                }
+        }
+
+        function sortLearner(sortColumnIndex, sortDirection, showAll, searchCriteria){
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.getElementById('simpleSearchCriteria').value=searchCriteria;
+                document.searchCustomCoursesForm.submit();
+        }
+
+        function onAllPage(){
+                document.getElementById('pageIndex').value=0;
+                document.getElementById('action').value="allsearch";
+                document.getElementById('showAll').value="true";
+                document.searchCustomCoursesForm.submit();
+        }
+
+        function onNextPage(nextIndex){
+                document.getElementById('pageIndex').value=nextIndex;
+                document.getElementById('action').value="Search";
+                document.getElementById('showAll').value="false";
+                var itemNo= document.getElementById('pageCurrIndex').value;
+                var items=$pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value=parseInt(items) + parseInt(itemNo);
+                //alert(document.getElementById('pageCurrIndex').value);
+                document.searchCustomCoursesForm.submit();
+        }
+
+        function onPreviousPage(previousIndex){
+                document.getElementById('pageIndex').value=previousIndex;
+                document.getElementById('action').value="Search";
+                document.getElementById('showAll').value="false";
+                var itemNo= document.getElementById('pageCurrIndex').value
+                var items=$pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+                document.searchCustomCoursesForm.submit();
+        }
+
+       function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message').append(message);
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteCustomCourses(buttonclick){
+            if ($("INPUT[type='checkbox'][name='selectCustomCourse']:checked").length>0) {
+                confirm("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")", function () {
+                    document.getElementById('action').value=buttonclick;
+                    document.searchCustomCoursesForm.submit();
+                });
+            } else {
+                $('#selectLearner').modal({close:false,position: ["40%",]});
+            }
+        }
+
+        function setButton(countCheckBoxes) {
+                var stat=0;
+                for(var i = 1; i <= countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        if(objCheckBox.checked){
+                                stat=1;
+                                break;
+                        }
+                }
+                if(stat==1){
+                        // do nothing
+                }else{
+                        var txtObj=document.getElementById('message_box');
+                        txtObj.style.display="block";
+                        return false;
+                }
+                return true;
+        }
+
+        $(document).ready(function()
+        {
+                
+        });
+
+    </script>
+</head>
+
+<body>
+
+
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+			#parse("snippets/managerHeader.vm")
+			</td></tr>
+			
+        <!-- header-end -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content -->
+        #parse("snippets/planEnrollLeftMenu.vm")
+        <!-- left-menu-content-end -->
+		</table></td>
+		
+        <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+                <div id="message_box" style="display:none;">
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        ##set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$brander.getBrandElement("lms.manager.manageCustomCourses.deleteError")</div>
+                        </div>
+                </div>
+
+                <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manager.manageCustomCourses.caption.manageCustomCourses")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manager.manageCustomCourses.caption.text")</div>
+			</td>
+		    </tr>
+		</table>
+                <!-- Logo+Manage-User-end -->
+
+                $pager.setItems($context.listOfCustomCourse)
+                #set($CourseNumber = $pager.total)
+
+                <!-- Search Result Start -->
+								                <!-- Summary-Information -->
+                <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+                    <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.batchImportUsersResult.summaryInformation")</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                     
+                        <!-- 1 -->
+                         
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">Number Of Courses Attempted to Delete</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">$!{context.totalAttempted}</div>
+                        </div>
+                        <!-- 2 -->
+                         
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">Number Of courses deleted successfully</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">$!{context.totalDeleted}</div>
+                        </div>
+                        <!-- 3 -->
+                       
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">Number of courses not deleted</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">${context.totalCoursesUnableToDelete}</div>
+                        </div>
+						
+  <!-- End-Summary-Information -->
+                    
+                  
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+				
+
+ 
+ 
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- others-Information -->
+                <div class="content-Block-new" style="width:765px;overflow:auto;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                            <tr bgcolor="#efefef">
+                                <td class="box_subheader">S. No.</td>
+                                <td class="box_subheader">Course Name</td>
+                                <td class="box_subheader">Status</td>
+                                <td class="box_subheader">Comments</td>
+
+                            </tr>
+							#set( $velocityCounter = 0)
+                            #foreach($cd in $context.courseDetails)
+                                #if($velocityCounter%2==0)
+                                        #set($alternate="row_1")
+                                #else                                        
+										#set($alternate="row_2")
+                                #end
+								#set( $velocityCounter = $velocityCounter + 1 )
+                                <tr>
+									<td class="$alternate">$velocityCounter</td>
+									<td class="$alternate"> $!{cd.get("course" ).courseTitle}</td>
+									 <td class="$alternate">#dotPadding($!cd.get("status") 30)</td>
+								
+									<td class="$alternate">#dotPadding($!cd.get("message") 30)</td>
+								</tr>
+							#end	
+                        </table>
+                </div>				
+				
+				
+				
+				
+				
+            <!-- Search Result End -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- button-div -->
+                <div class="button">
+                    <div class="btn-right1">
+                        <!--<input type="image" src="brands/default/en/images/btn-finish_n.gif" onclick="window.location.href='mgr_batchImportLearners.do'" width="71" height="19" alt=""  align="top"/>-->
+                        <a class="button" onClick="window.location.href='mgr_manageCustomCourses.do'"><span class="button">OK</span></a>
+                    </div>
+                </div>
+                <!-- scrollable-div -->
+
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+        <!-- right-pannel-content-end -->
+        </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+</table>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">Are you sure you want to delete the selected course(s)?</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+</body>
+</html>

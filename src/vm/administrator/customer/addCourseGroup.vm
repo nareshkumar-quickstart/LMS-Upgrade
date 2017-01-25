@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+## this must be included on every page for all head items
+#parse("snippets/learnerHead.vm")
+
+<body onLoad="document.courseSearchForm.simpleSearchCriteria.focus();">
+  <script type="text/javascript">
+	function doSearch(buttonclick) {
+		document.getElementById('searchType').value=buttonclick;
+		document.courseSearchForm.submit();
+	} 
+
+	function toggleSearch(searchType){
+		var title=document.getElementById("e9");
+		if(searchType == 'simpleSearch'){
+			document.getElementById("e7b").style.display = "none";
+			document.getElementById("e7c").style.display = "block";
+			title.firstChild.data="Simple Search";
+			document.getElementById('searchType').value = 'simpleSearch';
+		}else{
+			document.getElementById("e7b").style.display = "block";
+			document.getElementById("e7c").style.display = "none";
+			title.firstChild.data="Advanced Search";
+			document.getElementById('searchType').value = 'advancedSearch';
+		}
+	}
+
+	function addCourseInEntitlementAction(){
+	//alert("Update");
+		document.getElementById('courseAction').value = 'addCourseInEntitlement';
+		document.courseSearchForm.submit();
+	}
+
+	function reset() {
+		var searchType = document.getElementById('searchType').value;
+		if(searchType == 'simpleSearch'){
+			document.getElementById('simpleSearchCriteria').value = '';
+		}else{
+			document.getElementById('searchCourseName').value = '';
+			document.getElementById('searchCourseId').value = '';
+			document.getElementById('searchKeyword').value = '';
+		}
+	}
+</script>
+<div id="main-container">
+		<!-- right-pannel-content -->
+		<div id="main-container-popup">
+		
+		
+		#if($!{context.typeOfSearch})
+			#if($!{context.typeOfSearch} == "simplesearch")
+				#set($searchType = "simpleSearch")
+			#elseif($!{context.typeOfSearch} == "advancedsearch")
+				#set($searchType = "advancedSearch")
+			#end
+		#else
+			#set($searchType = "simpleSearch")
+	  #end
+			<!-- Search-Learners -->
+			
+			<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+				<form name="courseSearchForm" action="adm_SearchCourseGroup.do" method="POST">
+				<input type="hidden" name="method" value="searchCourses"/>
+				<div id="e7a" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.Block-Contain-header")">
+					<div id="e8" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.SearchCourseAndGroup")</div>
+					<div id="e9" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-ContainerheaderRight")">#if($searchType=='advancedSearch') $brander.getBrandElement("lms.manageUser.searchLearner.caption.AdvancedSearch") #else $brander.getBrandElement("lms.manageUser.searchLearner.caption.SimpleSearch") #end</div>
+				</div>
+				<!-- User-left-right-list -->
+				
+				<div id="e7c" style=#if($searchType =='simpleSearch') "display:block" #else "display:none" #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+					<!-- s -->
+					<div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1a")"><!-- using for space --></div>
+					<!-- 1 -->
+					<div id="e10" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"></div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field_area")"><input id="simpleSearchCriteria" type="text" id="" name="simpleSearchCriteria" value="" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")"/></div>
+					</div>
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-btn-row")">
+						##<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onclick="toggleSearch('advancedSearch')">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AdvancedSearch")</a>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r")"><a href="#" onClick="reset();" >$brander.getBrandElement("lms.survey.caption.resetSearch")</a></div>
+						<div class="$brander.getBrandElement("lms.css.btn-right")"><input type="image" value="Search" name="searchbutton" onclick="return doSearch('simpleSearch');" src="$brander.getBrandElement("lms.surveyInformation.pixel.search.gif")" /></div>
+					</div>
+				</div>
+				<!-- End-User-left-right-list -->
+			<input id="searchType" type="hidden" name="searchType" value="${searchType}" />
+		
+			</div>
+			<!-- Search-Learners-end -->
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			#macro( customShowErrors $separator $classOrStyle )
+			    #foreach($errorCode in $status.errorCodes)
+				#set ($error = $brander.getBrandElement($errorCode))
+				#if($classOrStyle == "")
+				    <b>${error}</b>
+				#else
+				    #if($classOrStyle.indexOf(":") == -1)
+					#set($attr="class")
+				    #else
+					#set($attr="style")
+				    #end
+				    <span ${attr}="${classOrStyle}">${error}</span>
+				#end
+				${separator}
+			    #end
+			#end		
+			#set ($quoteStr = '"')
+			#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+			#set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+			#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+			#set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+			#set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+			#set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+			<!-- tree -->
+			<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+				<!-- 1 -->
+				<div id="e7c" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.User-checkbox-box")">
+					<div id="e12" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.survey.caption.Browse") &nbsp;#customShowErrors("&nbsp;" $errorCSS)</div>
+					</div>
+					#if($!{context.courseList.size()} )
+						#set($courseListSize = ${context.courseList.size()} - 1)
+					#else
+						#set($courseListSize = 0)
+					#end
+					#if($courseListSize > 0)
+						#foreach($index in [0..$courseListSize])
+							#if($index%2 == 0)
+								<div id="e15" class="$brander.getBrandElement("lms.batchImportUsersResult.change-group-tree-l")">
+							#else
+								<div id="e16" class="$brander.getBrandElement("lms.survey.cssClass.change-group-tree-d")">
+							#end
+							<input type="checkbox" onclick="" name="selectedCourse" value="$!{context.courseList.get($index).Id}"/>
+							$!{context.courseList.get($index).name}</div>
+						#end
+					#end
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- tree-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.managerBtn")">
+				<div><input type="button" value="Close" onclick="self.close();" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.btn-66w-l")" /></div>
+				<div><input type="button" value="Update" onclick="return addCourseInEntitlementAction();" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn-66w")" /></div>
+							<input type="hidden" id="courseAction" name="courseAction" value=""/>
+				
+			</div>
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			<!-- tree -->
+			<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+				<!-- 1 -->
+				<div id="e7c" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.User-checkbox-box")">
+					<div id="e12" class="$brander.getBrandElement("lms.editSurveyCources.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Selected Courses &nbsp;#customShowErrors("&nbsp;" $errorCSS)</div>
+					</div>
+					#if($!{context.selectedItems.size()})
+						#set($courseListSize1 = $!{context.selectedItems.size()} - 1)
+					#else
+					  #set($courseListSize1 =0)
+					#end
+					#if($courseListSize1 > 0)
+						#foreach($index in [0..$courseListSize1])
+							#if($index%2 == 0)
+								<div id="e15" class="$brander.getBrandElement("lms.batchImportUsersResult.change-group-tree-l")">
+							#else
+								<div id="e16" class="$brander.getBrandElement("lms.survey.cssClass.change-group-tree-d")">
+							#end
+							
+							$!{context.selectedItems.get($index).CourseTitle}</div>
+						#end
+					#end
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- tree-end -->
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content-area-end -->
+	</div>
+	
+</div>
+			</form>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<script type="text/javascript">
+   $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }		 
+        $('#sideBar').height($('#right-pannel').height());
+        $('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript"></script>
+
+</head>
+<body>
+<form name="addCourseGroup" action="ins_addCourseGroup.do" method="POST" >
+<!-- main-container -->
+<div id="main-container">
+
+	<!-- header -->
+	#parse("snippets/instructor/instructorWizardHeader.vm")
+	<!-- header-end -->
+	
+	<!-- content-area -->
+	<div id="frame_body">
+	
+		<!-- left-pannel-content -->
+        <div id="sideBar" class="side_bar">
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.leftPanel.step2.title")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-acted")">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.leftPanel.caption.step1")</div>                
+				<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.leftPanel.caption.step2")</div>
+            </div>
+        </div>
+        <!-- left-pannel-content - end -->
+		
+		<!-- right-pannel -->
+		<div id="right-pannel" class="scrollable">	
+		
+			<!-- Logo+Manage-User -->
+	        <div class="page_description" id="pageDescription">
+				<!-- Page Icon -->
+				<div id="logoHolder" class="courseLogoCourses">&nbsp;</div>				
+				<!-- Page Heading -->
+				<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.title")</div>
+				<!-- Page Description -->
+				<div id="pageDescriptionText">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.subtitleConfirmation")</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Search Box 1 -->
+			<div class="search_box_result">
+			
+				<!-- Result Header Start -->
+				<div id="resultHeader" class="box_header">
+					<!-- Button panel -->
+					<div style="float:left; height:23px;">	
+						<div class="table-heading">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.confirmation")</div>
+					</div>
+					<!-- Button panel - end -->
+				</div>                
+	           	<!-- Result Header End -->
+				
+				<!-- Search Result Start -->
+				<div id="searchResult">				
+					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">												
+						<tr><td height="5" colspan="2">&nbsp;</td></tr>
+						<tr>
+							<td height="30" width="200">								
+								<div class="row_text" ><b>$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.courseGroupName")</b></div>
+							</td>
+							<td>								
+								#springBind("addCourseGroupForm.newGroupName")
+								<div class="row_text" >${status.value}</div>
+							</td>
+						</tr>
+						
+						<tr>
+							<td height="30" width="200">								
+								<div class="row_text" ><b>$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.parentGroupName")</b></div>
+							</td>
+							<td>								
+								#springBind("addCourseGroupForm.parentGroupName")
+								<div class="row_text" >${status.value}</div>
+							</td>
+						</tr>
+
+						<tr><td height="5" colspan="2">&nbsp;</td></tr>
+					</table>
+				</div>		
+				<!-- Search Result End -->				
+			</div>
+	    	<!-- Search Box 1- end-->
+			
+			<!-- Wizard Footer button-div -->
+         
+				<input type="hidden" id="currentpage" name="_page" value="1" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				
+				<div style="float: right; margin-top:15px; margin-right:0px;">
+					<div>
+						<a onClick="submitButtonForm(document.addCourseGroup,'wizardSubmitter','_finish');">
+							<div class="btn_start"></div>
+							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnFinish")</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+				</div> 
+				<div style="float: right; margin-top:15px; margin-right:5px;">
+					<div>
+						<a onClick="submitButtonForm(document.addCourseGroup,'wizardSubmitter','_target0');">
+							<div class="btn_start"></div>
+							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnPrevious")</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+				</div> 
+				<div style="float: left; margin-top:15px; margin-left:10px;">
+					<div>
+						<a onClick="submitButtonForm(document.addCourseGroup,'wizardSubmitter','_cancel');">
+							<div class="btn_start"></div>
+							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnCancel")</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>
+				</div>
+			
+			<!-- Wizard Footer button-div - end -->
+			
+			<!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+			
+		</div>		
+		<!-- right-pannel end -->		
+    </div>
+    <!-- content-area end -->
+
+	<!-- footer -->
+	#parse("snippets/instructor/instructorFooter.vm")
+	<!-- footer-end -->
+</div><!-- main-container -->
+</form>
+</body>
+</html>

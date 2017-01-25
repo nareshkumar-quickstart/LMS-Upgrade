@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans>
+
+	<!-- ========================= SERVICE/BUSINESS LOGIC DEFINITIONS ========================= -->
+
+	<bean id="storefrontClientWS"
+		class="com.softech.vu360.lms.webservice.client.impl.StorefrontClientWSImpl" />
+
+	<!-- [10/27/2010] LMS-6389 :: Business Object Sequencing for OSHA Certificates -->
+	<bean id="businessObjectSequenceService" class="com.softech.vu360.lms.service.impl.BusinessObjectSequenceServiceImpl"/>
+
+	<bean name="userDetailsService" class="com.softech.vu360.lms.service.impl.VU360UserServiceImpl">
+		<property name="passwordEncoder" ref="passwordEncoder" />
+		<property name="saltSource" ref="saltSource" />
+	</bean>
+
+	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder" />
+
+	<bean id="saltSource" class="org.springframework.security.providers.dao.salt.ReflectionSaltSource">
+		<property name="userPropertyToUse" value="userGUID" />
+	</bean>
+
+	<bean id="resourceService" class="com.softech.vu360.lms.service.impl.ResourceServiceImpl"/>
+
+	<bean id="entitlementService" class="com.softech.vu360.lms.service.impl.EntitlementServiceImpl">
+		<property name="customerService" ref="customerService" />
+		<property name="orgGroupLearnerGroupService" ref="orgGroupLearnerGroupService" />
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+		<property name="synchronousClassService" ref="synchronousClassService" />
+		<property name="enrollmentService" ref="enrollmentService" />
+	</bean>
+
+	<bean id="learnerHomeworkAssignmentSubmissionService" class="com.softech.vu360.lms.service.impl.LearnerHomeworkAssignmentSubmissionServiceImpl"/>
+
+	<bean id="courseAndCourseGroupService" class="com.softech.vu360.lms.service.impl.CourseAndCourseGroupServiceImpl">
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="authorService" ref="authorService" />
+		<property name="customerService" ref="customerService" />
+	</bean>
+
+	<bean id="statisticsService" class="com.softech.vu360.lms.service.impl.StatisticsServiceImpl">
+		<property name="surveyService" ref="surveyService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
+	</bean>
+
+	<bean id="launchCourseService" class="com.softech.vu360.lms.service.impl.LaunchCourseServiceImpl">
+		<property name="statsService" ref="statisticsService" />
+		<property name="surveyService" ref="surveyService" />
+	</bean>
+
+	<bean id="learnerService" class="com.softech.vu360.lms.service.impl.LearnerServiceImpl">
+		<property name="passwordEncoder" ref="passwordEncoder" />
+		<property name="saltSource" ref="saltSource" />
+		<property name="accreditationService" ref="accreditationService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="authorService" ref="authorService" />
+		<property name="customerService" ref="customerService"/>
+	</bean>
+
+	<bean id="orgGroupLearnerGroupService" class="com.softech.vu360.lms.service.impl.OrgGroupLearnerGroupServiceImpl">
+		<property name="learnerService" ref="learnerService" />
+	</bean>
+
+	<bean id="surveyService" class="com.softech.vu360.lms.service.impl.SurveyServiceImpl">
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="statisticsService" ref="statisticsService" />
+		<property name="learnerService" ref="learnerService" />
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+	</bean>
+
+	<bean id="learneralertService" class="com.softech.vu360.lms.service.impl.LearnerLicenseAlertServiceImpl"/>
+
+    <bean id="learnerLicenseService" class="com.softech.vu360.lms.service.impl.LearnerLicenseServiceImpl"/>
+	
+	<bean id="enrollmentService" class="com.softech.vu360.lms.service.impl.EnrollmentServiceImpl">
+		<property name="learnerService" ref="learnerService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="synchronousClassService" ref="synchronousClassService" />
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+		<property name="trainingPlanService" ref="trainingPlanService" />
+		<property name="velocityEngine" ref="velocityEngine" />
+		<property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
+		<property name="asyncTaskExecutorWrapper" ref="asyncTaskExecutorWrapper" />
+		<property name="statsService" ref="statisticsService" />
+		<property name="accreditationService" ref="accreditationService" />
+	</bean>
+
+	<bean id="distributorService" class="com.softech.vu360.lms.service.impl.DistributorServiceImpl">
+		<property name="customerService" ref="customerService" />
+		<property name="authorService" ref="authorService" />
+		<property name="brandService" ref="brandService" />
+	</bean>
+
+	<bean id="trainingPlanService" class="com.softech.vu360.lms.service.impl.TrainingPlanServiceImpl"/>
+
+	<bean id="orderService" class="com.softech.vu360.lms.service.impl.OrderServiceImpl">
+		<property name="customerService" ref="customerService" />
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+		<property name="learnerService" ref="learnerService" />
+		<property name="enrollmentService" ref="enrollmentService" />
+		<property name="entitlementService" ref="entitlementService" />
+	</bean>
+
+	<bean id="authorService" class="com.softech.vu360.lms.service.impl.AuthorServiceImpl"/>
+
+	<bean id="customerService" class="com.softech.vu360.lms.service.impl.CustomerServiceImpl">
+		<property name="vu360UserService" ref="userDetailsService" />
+		<property name="learnerService" ref="learnerService" />
+		<property name="groupService" ref="orgGroupLearnerGroupService" />
+		<property name="distributorService" ref="distributorService" />
+		<property name="storefrontClientWS" ref="storefrontClientWS" />
+		<property name="authorService" ref="authorService" />
+        <property name="brandService" ref="brandService" />
+    	<!--  LMS-10055 | S M Humayun | 25 April 2011 -->
+    	<property name="securityAndRolesService" ref="securityAndRolesService"/>
+	</bean>
+
+	<bean id="reportingConfigurationService" class="com.softech.vu360.lms.service.impl.ReportingConfigurationServiceImpl"/>
+
+	<bean id="reportExecutionService" class="com.softech.vu360.lms.service.impl.ReportExecutionServiceImpl">
+		<property name="reportConfigService" ref="reportingConfigurationService" />
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<bean id="updateProfileService" class="com.softech.vu360.lms.service.impl.UpdateProfileServiceImpl">
+		<property name="vu360UserService" ref="userDetailsService" />
+	</bean>
+
+	<bean id="brandService" class="com.softech.vu360.lms.service.impl.BrandServiceImpl"/>
+
+    <bean id="brandingService" class="com.softech.vu360.lms.service.impl.BrandingServiceImpl"/>	
+
+	<bean id="learningSessionService" class="com.softech.vu360.lms.service.impl.LearningSessionServiceImpl">
+		<property name="statisticsService" ref="statisticsService" />
+		<property name="aiccHandler" ref="aiccStatisticsHandler" />
+		<property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
+		<property name="entitlementService" ref="entitlementService" />
+
+	</bean>
+
+	<bean id="aiccStatisticsHandler" class="com.softech.vu360.lms.service.impl.AICCStatisticsServiceImpl">
+		<property name="statsService" ref="statisticsService" />
+		<property name="courseService" ref="courseAndCourseGroupService"/>
+	</bean>
+
+	<bean id="accreditationService" class="com.softech.vu360.lms.service.impl.AccreditationServiceImpl">
+		<property name="vu360UserService" ref="userDetailsService" />
+	</bean>
+
+	<bean name="brandDomainService" class="com.softech.vu360.lms.service.impl.BrandDomainServiceImpl"/>
+
+	<bean id="synchronousClassService" class="com.softech.vu360.lms.service.impl.SynchronousClassServiceImpl">
+		<property name="timeZoneService" ref="timeZoneService" />
+		<property name="resourceService" ref="resourceService" />
+	</bean>
+
+	<bean id="commissionService" class="com.softech.vu360.lms.service.impl.CommissionServiceImpl">
+		<property name="distributorService" ref="distributorService" />
+		<property name="storefrontClientWS" ref="storefrontClientWS" />
+	</bean>
+
+	<bean id="customFieldService" class="com.softech.vu360.lms.service.impl.CustomFieldServiceImpl">
+		<property name="distributorService" ref="distributorService" />
+		<property name="customerService" ref="customerService" />
+		<property name="learnerService" ref="learnerService" />
+	</bean>
+
+	<bean id="securityAndRolesService" class="com.softech.vu360.lms.service.impl.SecurityAndRolesServiceImpl"/>
+
+	<bean id="batchImportLearnersService" class="com.softech.vu360.lms.service.impl.OptimizedBatchImportLearnersServiceImpl">
+		<property name="learnerService" ref="learnerService" />
+		<property name="vu360UserService" ref="userDetailsService" />
+		<property name="orgGroupService" ref="orgGroupLearnerGroupService" />
+		<property name="customFieldService" ref="customFieldService" />
+		<property name="asyncTaskExecutorWrapper" ref="asyncTaskExecutorWrapper" />
+		<property name="enrollmentService" ref="enrollmentService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
+		<property name="accreditationService" ref="accreditationService" />
+	</bean>
+
+	<bean id="asyncTaskExecutorWrapper" class="com.softech.vu360.util.AsyncTaskExecutorWrapper">
+		<constructor-arg>
+			<bean class="org.springframework.core.task.SimpleAsyncTaskExecutor" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="enrollLearnerAsyncTask" class="com.softech.vu360.util.EnrollLearnerAsyncTask">
+		<property name="enrollmentService" ref="enrollmentService" />
+		<property name="trainingPlanService" ref="trainingPlanService" />
+	</bean>
+
+	<bean name="timeZoneService" class="com.softech.vu360.lms.service.impl.TimeZoneServiceImpl"/>
+
+	<bean name="synchronousMeetingServiceFactory" class="com.softech.vu360.lms.meetingservice.SynchronousMeetingServiceFactory">
+		<property name="webExMeetingService" ref="webExMeetingService" />
+		<property name="globalScholarMeetingService" ref="globalScholarMeetingService" />
+		<property name="dimdimMeetingService" ref="dimdimMeetingService" />
+	</bean>
+
+	<bean name="globalScholarMeetingService" class="com.softech.vu360.lms.meetingservice.globalscholar.GlobalScholarMeetingServiceImpl" />
+
+	<bean name="webExMeetingService" class="com.softech.vu360.lms.meetingservice.webex.WebExMeetingServiceImpl" />
+	
+	<bean name="dimdimMeetingService" class="com.softech.vu360.lms.meetingservice.dimdim.DimDimMeetingServiceImpl" />
+
+	<bean id="instructorService" class="com.softech.vu360.lms.service.impl.InstructorServiceImpl"/>
+
+	<bean id="certificateService" class="com.softech.vu360.lms.service.impl.CertificateServiceImpl">
+		<property name="accreditationService" ref="accreditationService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="statisticsService" ref="statisticsService" />
+		<property name="businessObjectSequenceService" ref="businessObjectSequenceService" />
+		<property name="customFieldService" ref="customFieldService" />
+	</bean>
+	
+	<bean id="proctorService" class="com.softech.vu360.lms.service.impl.ProctorServiceImpl">
+		<property name="accreditationService" ref="accreditationService" />
+	</bean>
+	<!-- ========================= DAOs LOGIC DEFINITIONS ===================================== -->
+
+	<!-- [10/27/2010] LMS-6389 :: Business Object Sequencing for OSHA Certificates -->
+
+	<bean id="learnersToBeMailedService" class="com.softech.vu360.util.LearnersToBeMailedService">
+		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+		<property name="velocityEngine" ref="velocityEngine" />
+		<property name="certificateService" ref="certificateService" />
+		<property name="entitlementService" ref="entitlementService" />
+		<property name="statisticsService" ref="statisticsService" />					
+	</bean>
+
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="velocityProperties">
+			<value>
+				resource.loader=class
+				class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+         </value>
+		</property>
+	</bean>
+
+</beans>

@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/timePicker.css"/>
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript" src="javascript/jquery.timePicker.js" ></script>
+
+<script type="text/javascript" language="javascript">
+    
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+
+
+function populateEndDate(startDateVal)
+{
+	try
+	{
+		document.getElementById("endDate").value=startDateVal;
+
+	}
+	catch(exception)
+	{
+	}
+
+}
+/* remove it    
+function writeUserId(ob){
+        document.manageform.userName.value=ob.value;
+    }
+*/    
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        $("#expirationDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });      
+    });
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+<body>
+<script src="javascript/jquery.js" type="text/javascript"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script type="text/javascript" src="javascript/jquery.timePicker.js" ></script>
+
+    <div id="main-container"><!-- main-container -->
+        <!-- header -->
+        #parse("snippets/instructor/instructorWizardHeader.vm")
+        <!-- header-end -->
+        <div id="frame_body"><!-- content-area -->
+            <!-- left-pannel-content -->
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.caption.addrecurrence.defaulttext")<br>$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.showing1of2") </div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.summary")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.wizardStep2")</div>
+                </div>
+            </div>
+            <!-- left-pannel-content -->
+            <div id="right-pannel" class="scrollable"><!-- right-pannel -->
+                <form name="manageform" action='ins_addSynchronousSessionRecurrence.do?id=$request.getParameter("id")' method="post">
+                #springBind("sessionForm.*")
+                    #if($status.error)  
+                        #set($errorCodes = [])  
+                        #set($temp = true)
+
+                        #springBind("sessionForm.startDate")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+
+                        #springBind("sessionForm.endDate")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+                        
+                        #springBind("sessionForm.startTime")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+                        
+                        #springBind("sessionForm.endTime")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+
+                        #if($errorCodes.size() > 0)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $errorCodes)         
+                                #set ($error = $errorCode)
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                               #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+                    #end
+
+                <!-- Logo+Manage-User -->
+                <div class="logoContainer" id="logomainContainer">
+                   <div id="logoHolder" class="courseLogoCourses">&nbsp;</div>
+                   <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.instructor.caption.addrecurrence.defaulttext")</div>
+                   <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.instructor.caption.addingrecurrence.defaulttext") </div>
+                   </div>
+                <!-- Logo+Manage-User-end -->
+
+                    <div class="search_box_result"><!-- content-Block 1 -->
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.summary")</div>
+                        </div>
+                        <!-- Session Recurrence Profile starts -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+						<table border="0" width="100%;">
+						<tr>
+						<td width="50%;">
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+								<div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.updateEntitlements.EntitlementType.StartDate")</div>
+								<div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+								<div style="float:left">
+								#springBind("sessionForm.startDate")
+								<input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="startDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="startDate" value="$!{status.value}" style="width:140px;height:15px;position:absolue;text-align: left;float: left;left: 100px;margin: 0px 0px 0px 0px;" onchange="populateEndDate(this.value);" />
+								<script type="text/javascript">
+								jQuery.noConflict();
+								jQuery("#startDate").datepicker({ 
+								showOn: "both", 
+								buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+								buttonImageOnly: true 
+								});
+								</script>
+								</div>
+							</td>
+							
+							<td  width="50%;">                            
+                            #springBind("sessionForm.startTime")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.startTime")</div>
+                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+                           
+                                <div class="input_field_area-user-f">
+								#set($tc_value =$!{status.value})
+								#set($fieldName ="startTime")
+								#set($fieldId ="field_start_time")
+								#parse("snippets/timecontrol/timeControlDefinitionTemplate.vm")
+								#set($tc_value ="")	
+								<!--
+                                <input type="text" id="field_start_time" readOnly="true" name="startTime" class="input_text_field" style="margin-left:0px;" value="$!{status.value}"></input> -->
+                                </div>
+                                <div class="com-star-r-t"></div>
+									</td>
+							</tr>
+
+
+                            <!-- 2 -->
+							<tr>
+							<td  width="50%;">
+                          
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.MySynchronousClasses.caption.EndDate")</div>
+							<div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+							<div style="float:left">
+							#springBind("sessionForm.endDate")
+							<input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="endDate" value="$!{status.value}" style="width:140px;height:15px;position:absolue;text-align: left;float: left;left: 100px;margin: 0px 0px 0px 0px;" />
+							<script type="text/javascript">
+							jQuery.noConflict();
+							jQuery("#endDate").datepicker({ 
+							showOn: "both", 
+							buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							buttonImageOnly: true 
+							});
+							</script>
+							</div>
+							</td>
+                               
+							<td  width="50%;">							   
+                            #springBind("sessionForm.endTime")
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endTime")</div>
+                                <div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+                           
+                                <div class="input_field_area-user-f">
+								#set($tc_value =$!{status.value})
+								#set($fieldName ="endTime")
+								#set($fieldId ="field_end_time")
+								#parse("snippets/timecontrol/timeControlDefinitionTemplate.vm")
+								#set($tc_value ="")
+								<!--
+                                <input type="text" id="field_end_time" readOnly="true" name="endTime" class="input_text_field" style="margin-left:0px;" value="$!{status.value}"></input> -->
+                                </div>
+                                <div class="com-star-r-t"></div>
+                            
+								</td>
+								</tr>
+								</table>
+
+
+                            <!-- 12 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="block_text_in-r-f"></div>
+                                <div class="input_field_area-user-f"></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                        </div>
+                        <!-- Session Recurrence Profile ends -->
+                    </div><!-- content-Block 1 -->
+
+                    <!-- button-div -->
+                         <input type="hidden" id="currentpage" name="_page" value="0"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<div style="float: right; margin-top: 15px;">
+              <div>
+                  <a onClick="submitButtonForm(document.manageform,'wizardSubmitter','_target1');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.next")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+              
+			<div style="float: left; margin-top: 15px; margin-left: 10px;">
+              <div>
+                  <a onClick="location.href='ins_editSynchronousClassSchedule.do?id=$request.getParameter("id")';">
+                      <div class="btn_start"></div>
+                     <div class="btn_normal">$brander.getBrandElement("lms.instructor.searchSynchronousCourse.messageBox.cancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+                    <!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                </form>
+
+            </div><!-- right-pannel -->
+        </div><!-- content-area -->
+        <!-- footer -->
+              #parse("snippets/instructor/instructorFooter.vm")
+        <!-- footer-end -->
+    </div><!-- main-container -->
+</body>
+</html>

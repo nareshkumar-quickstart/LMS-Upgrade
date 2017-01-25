@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+
+ 
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+        
+        
+        $("INPUT[type='radio'][name='manageAll']").click(function(){
+            if(this.value=='false'){
+                $("INPUT[type='checkbox'][name='groups']").attr('disabled', false);
+            }else{
+                $("INPUT[type='checkbox'][name='groups']").attr('disabled', true);
+            }
+        });
+
+        if($("INPUT[type='radio'][name='manageAll']").value=='false'){
+            $("INPUT[type='checkbox'][name='groups']").attr('disabled', false);
+        }else{
+            $("INPUT[type='checkbox'][name='groups']").attr('disabled', true);
+        }
+        $('input:checkbox[name=groups]').each(function() 
+          {    
+            if($(this).is(':checked'))
+            {
+            	$(this).removeAttr("disabled");
+              //alert($(this).val());
+              //$("INPUT[type='checkbox'][name='groups'][value=$(this).val()]").attr('disabled', false);
+              //$(this).prop('disabled', false);
+            }  
+            
+         });
+    });
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+
+    function chkEnableCheckbox(val)
+    {
+             //alert(val);
+             $(document).ready(function(){
+
+            $("INPUT[type='checkbox'][name='groups'][checked=true]").attr('disabled', false);
+
+        });
+
+    }
+    
+    function ValidateData(){
+        var orgGroups = document.getElementsByName('groups');
+        var count=0;
+        for(var i=0; i<orgGroups.length; i++){
+            if (orgGroups[i].checked == true){
+                count++;
+            }
+        }
+        if (count==0){
+            alert('Please select atleast one Organisational Group');
+            return false;
+        }
+        var selectedLearnerGroup = document.getElementById('selectedCoursesID');
+        if(selectedLearnerGroup.options.length==0){
+            alert('Please select atleast one User Group');
+            return false;
+        }
+    }
+
+    </script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript"></script>
+</head>
+
+#macro( treeViewSelectGroups $treeNodes $selNodes)
+    #set($lastDepth = 0)
+    
+    #set($arrParent = [])
+   
+    #set($count=0)
+    
+   
+    
+    #foreach($node in $treeNodes)
+     
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" style="height:30px;">
+            <div class="icon_blank" style="padding-top:3px;">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2" style="padding-top:3px;"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+            #set($count=$count+1)
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroup$count" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #foreach($selNode in $selNodes) #if($selNode.id == $node.value.id)  checked #end #end /></div>
+            <div style="display: none;"><input type="checkbox" id="_orgGroupName$count" name="groupnames" value="${node.value.name}"/></div>
+			<div style="text-align:justify;padding-top:3px;">${node.value.name}</div>
+        </div>
+    #end
+#end
+
+<body>
+    <form name="manageform" action="mgr_addNewSecurityRole.do" method="POST" >
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+			</td>
+		</tr>
+		
+ 	<tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+              	<div><!-- left-pannel-content -->
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizard") <br> showing 3 of 4</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep1") </div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep2")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manager.editSecurityRole.caption.selectOrgGroups")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manager.editSecurityRole.caption.confirmation")</div>
+                    </div>
+                </div><!-- left-pannel-content-end -->
+				</table>
+			</td>
+			
+			 <TD id="content">
+			 	 <div id="scrollable">
+                    #springBind("addSecurityRoleForm.*")
+                    #if($status.error)
+                        <div id="message_box"><!-- error-box -->
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            #foreach($errorCode in $status.errorCodes)
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                            </div>
+                            #end
+                        </div><!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.addNewLearner.step2.heading")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.addNewLearner.step2.text")</div>                        
+			</td>
+		    </tr>
+		</table>                
+                            
+                    <!-- Logo+Manage-User-end -->
+
+                        <!-- Permissions -->
+                        <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                            <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Manage all Organizational Groups</div>
+                            </div>
+                            <!-- User-left-right-list -->
+                            #springBind("addSecurityRoleForm.manageAll")
+                            <div id="e7b" class="$brander.getBrandElement("lms.assignEnrollment.cssClass.Search-inputfield-box3")">
+
+                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                    <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.head_1a-c")"></div>
+                                    <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.btn_radio1c")"><input type="radio" id="1" name="manageAll" value="true" #if(${status.value} == "true") checked #else disabled #end/>
+                                    </div>
+                                    <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")">Yes</div>
+                                </div>
+
+                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                    <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.head_1a-c")"></div>
+                                    <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.btn_radio1c")"><input type="radio" id="2" name="manageAll" value="false" #if(${status.value} == "false") checked #end/>
+                                    </div>
+                                    <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")">No</div>
+                                </div>
+
+                                <div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1a")"><!-- using for space --></div>
+                            </div>
+                            <!-- End-User-left-right-list -->
+                        </div>
+                        <!-- End-Permissions -->
+
+                    <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.manager-bottom-space")"></div>
+
+                    <div class="content-Block-wizard-tree"><!-- content-Block -->
+                        <div class="User-checkbox-row-d22">
+                            <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.SelectOrganizationGroup")</div>
+                        </div>
+                        #springBind("addSecurityRoleForm.selectedLearnersOrgGroups")
+                        #set($selectOrgGroups = $!{status.value})
+                        #treeViewSelectGroups(${orgGroupTreeAsList} $selectOrgGroups)
+                        <!-- this is needed for total org group from JS -->
+                        <div style="display: none;" id="needForSelectDeSelect"><input type="checkbox" name="selectedLearners" value="${orgGroupTreeAsList.size()}" id="chkNeedForSelectDeSelect" /></div>
+                    </div>
+
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                    <div class="managerBtn"><!-- button-div -->
+                        <input type="hidden" id="currentpage" name="_page" value="2"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						<div style="float:right; margin-top:3px;">
+						  <a onClick="submitButtonForm(document.manageform,'wizardSubmitter','_finish');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Finish</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:3px;margin-right:5px;">
+						  <a onClick="submitButtonForm(document.manageform,'wizardSubmitter','_target1');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Previous</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+						  <a onClick="submitButtonForm(document.manageform,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Cancel</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>	
+
+                        </div><!-- button-div -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </td><!-- content-area-end -->
+			
+			<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td>
+			</tr>
+        </table><!-- main-container -->
+    </form>
+</body>
+</html>

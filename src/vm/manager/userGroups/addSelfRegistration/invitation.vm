@@ -1,0 +1,438 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+	
+ 	
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript"/></script>
+    <script src="javascript/js_manager.js" language="javascript" type="text/javascript"/></script>
+
+    <script type="text/javascript" language="javascript">
+
+        $(document).ready(function(){
+           	
+        });
+
+        function getLearnerGrpByOrgGroup(id){
+            
+            var url ="mgr_getLearnerGroupList.json";
+            var queryString="groups=";  
+             
+            var availableCourse = document.getElementById('availableLearnerGroups');
+            var selectedCourse = document.getElementById('selectedLearnerGroups');
+            for (var i=availableCourse.options.length;i>0 ; i--)
+            {
+                availableCourse.remove(availableCourse.options[0]);
+            }
+            if(document.getElementById(id).checked==false)
+                for (var i=selectedCourse.options.length;i>0 ; i--)
+                {
+                    selectedCourse.remove(selectedCourse.options[0]);
+                }
+
+            var count=document.getElementById("chkNeedForSelectDeSelect").value;
+            var selected = 0;
+            for(var index=1;index<=count;index++){
+                if(document.getElementById("_orgGroup"+index).checked){
+                    var groups = document.getElementById("_orgGroup"+index).value;
+                        
+                    queryString=queryString + groups+',';
+                selected=selected+1;
+                }
+            }
+
+            if(selected>0){
+                jQuery.post(url,queryString,handleLearnerGroups,'json'); 
+            }
+        }
+
+        function handleLearnerGroups(response) {
+            var select = document.getElementById('availableLearnerGroups');
+            for (var j=0;j<response.entries.length;j++) {
+                var opt = document.createElement("option");
+                opt.value = response.entries[j].id;
+                opt.text = response.entries[j].name;
+                if(validate(response.entries[j]) == false)
+                    select.options.add(opt);
+            }
+        }
+
+        function validate(learner) {
+            var availableCourse = document.getElementById('availableLearnerGroups');
+            var selectedCourse = document.getElementById('selectedLearnerGroups');
+            for(var j=0; j<availableCourse.options.length; j++) {
+                if(learner.name == availableCourse.options[j].text) {
+                    return true;
+                }
+            }
+            for(var j=0; j<selectedCourse.options.length; j++) {
+                if(learner.name == selectedCourse.options[j].text) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function moveAvailableToSelected()
+        {
+            var availableCourse = document.getElementById('availableLearnerGroups');
+            var selectedCourse = document.getElementById('selectedLearnerGroups');
+            var k=0;
+            for(var j=0; j<availableCourse.options.length; j++)
+            {
+                if(availableCourse.options[j].selected)
+                {
+                    var tmp = availableCourse.options[j].text;
+                    var tmp1 = availableCourse.options[j].value;
+                    availableCourse.remove(j);
+                    j--;
+                    var y=document.createElement("option");
+                    y.text=tmp;
+                    y.value=tmp1;
+                    try
+                    {
+                        selectedCourse.add(y,null);
+                    }
+                    catch(ex)
+                    {
+                        selectedCourse.add(y);
+                    }
+                    k++;
+                }
+            }
+            for(var j=0; j<selectedCourse.options.length; j++)
+            {
+                selectedCourse.options[j].selected=true; 
+            }
+        }
+
+        function moveSelectedToAvailable()
+        {
+            var availableCourse = document.getElementById('availableLearnerGroups');
+            var selectedCourse = document.getElementById('selectedLearnerGroups');
+            for(var j=0; j<selectedCourse.options.length; j++)
+            {
+                if(selectedCourse.options[j].selected)
+                {
+                    var tmp = selectedCourse.options[j].text;
+                    var tmp1 = selectedCourse.options[j].value;
+                    selectedCourse.remove(j);
+                    j--;
+                    var y=document.createElement("option");
+                    y.text=tmp;
+                    y.value=tmp1;
+                    try
+                    {
+                        availableCourse.add(y,null);
+                    }
+                    catch(ex){
+                        availableCourse.add(y); 
+                    }
+                }
+            }  
+            for(var j=0; j<selectedCourse.options.length; j++)
+            {
+                selectedCourse.options[j].selected=true;  
+            }
+        }
+
+        function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.changeOrgGroup.submit();
+        }
+
+        function selectAllOptions()
+        {
+            var availableLearnerGroup = document.getElementById('availableLearnerGroups');
+            for(i=0; i<availableLearnerGroup.options.length; i++)
+                availableLearnerGroup.options[i].selected = true;
+            var selectedLearnerGroup = document.getElementById('selectedLearnerGroups');
+            for(i=0; i<selectedLearnerGroup.options.length; i++)
+                selectedLearnerGroup.options[i].selected = true;
+        }
+
+        function ValidateData()
+        {
+            var orgGroups = document.getElementsByName('groups');
+            var count=0;
+            for(var i=0; i<orgGroups.length; i++){
+                if (orgGroups[i].checked == true)
+                {
+                    count++;
+                }
+            }
+            if (count==0){
+                alert('To proceed you must choose at least one Organizational Group.');
+                return false;
+            }
+        }
+    </script>
+</head>
+#macro( treeviewInvitationRegistration $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+        #set($count=0)
+        ## this line is required to get total org groups
+        
+    #foreach($node in $treeNodes)
+
+            #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+           #set($count=$count+1)
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroup$count" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end onClick="getLearnerGrpByOrgGroup(this.id);"/></div>
+            #set ($padLimit=100-$node.depth*5)
+            <div class="row_title">#dotPadding(${node.value.name},$padLimit)</div>
+        </div>
+    #end
+#end
+<body>
+    <form name="selfRegistration" method="post" action="mgr_addRegInvitation.do" onSubmit="selectAllOptions();">  
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<!-- <div id="main-container"> --><!-- main-container -->  
+		<tr> <!-- First Block -->
+			<td id="header" colspan="2">
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+			</td>
+		</tr>
+		
+       <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+               		<div><!-- left-pannel-content -->
+                        <div id="l-menu-back">
+                            ##$brander.getBrandElement("lms.manageUser.regInvitation.caption.Self-Registration-Wizard") <br/>showing 1 of 3
+                            <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Self-Registration-Wizard") <br> showing 1 of 3</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Invitation-Details")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Invitation-Message")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Confirmation")</div>
+                        </div>
+                    </div><!-- left-pannel-content-end -->
+				</table>
+			</td>
+					
+            <TD id="content-rightpanel">
+				<div id="scrollable">
+                #springBind("selfRegistrationForm.*")
+                #if($status.error)
+                    #set($errorCodes = [])
+                    #set($temp = true)
+
+                    #springBind("selfRegistrationForm.invitationName")
+                    #if($status.error)
+                        #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                        #end
+                    #end
+                    #springBind("selfRegistrationForm.passCode")
+                    #if($status.error)
+                        #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                        #end
+                    #end
+                    #springBind("selfRegistrationForm.maximumLimitedRegistration")
+                    #if($status.error)
+                        #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                        #end
+                    #end
+                    #springBind("selfRegistrationForm.groups")
+                    #if($status.error)
+                        #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                        #end
+                    #end
+                
+                    #if($errorCodes.size() > 0)
+                        <div id="message_box"><!-- error-box -->
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            #foreach($errorCode in $errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                            #end
+                        </div><!-- error-box -->
+                    #end
+                #end
+
+                #set ($quoteStr = '"')
+                #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+
+                <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.AddRegInvitation.invitation.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.AddRegInvitation.invitation.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>            
+                           
+                <!-- Logo+Manage-User-end -->
+
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")"><!-- Invitation-Summary -->
+                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Invitation-Summary")</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                <!-- 1 -->
+                #springBind("selfRegistrationForm.invitationName")
+                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div #if($status.error) class="block_text_in2-redbold" #else class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" #end >$brander.getBrandElement("lms.manageUser.regInvitation.caption.InvitationName")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end /></div>
+                    #set ($inputTextCSS1=$inputTextCSS+" maxlength='250'")
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">#springFormInput("selfRegistrationForm.invitationName" $inputTextCSS1)</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                </div>
+                <!-- 2 -->
+                #springBind("selfRegistrationForm.passCode")
+                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div #if($status.error) class="block_text_in2-redbold" #else class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" #end >$brander.getBrandElement("lms.learnerSelfRegistrationlogin.login")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end /></div>
+                    #set ($inputTextCSS2=$inputTextCSS+" maxlength='20'")
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">#springFormInput("selfRegistrationForm.passCode" $inputTextCSS2)</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                </div>
+                <!-- 3 -->
+                #springBind("selfRegistrationForm.maximumLimitedRegistration")
+                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div  #if($status.error) class="block_text_in2-redbold" #else class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" #end >$brander.getBrandElement("lms.manageUser.regInvitation4.caption.noOfReg")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                    #springBind( "selfRegistrationForm.registrationUnlimited" )
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" id="" name="${status.expression}" value="true" #if(${status.value} == "true") checked #end/> $brander.getBrandElement("lms.manageUser.regInvitation.caption.Unlimited") </div>
+                        <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" id="" name="${status.expression}" value="false" #if(${status.value} == "false") checked #end/> $brander.getBrandElement("lms.manageUser.regInvitation.caption.Maximum-of") </div>
+                    </div>
+                    #springBind("selfRegistrationForm.maximumLimitedRegistration")
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end /></div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-fs")">#springFormInput("selfRegistrationForm.maximumLimitedRegistration" $inputTextCSS)</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                </div>
+                <!-- 4 -->
+                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-fs")"></div>
+                </div>
+            </div>
+            <!-- End-User-left-right-list -->
+            </div>
+            <!-- End-Invitation-Summary -->
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <div class="content-Block-new"><!-- Start-Organizational-Groups -->
+                <div class="Block-Contain-header">
+                    <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.regInvitation.caption.Organizational-Group")</div>
+                </div>
+                ##this is needed for total org group from JS
+                <div style="display: none;"  id="needForSelectDeSelect"><input type="checkbox" name="selectedLearners" value="${orgGroupTreeAsList.size()}" id="chkNeedForSelectDeSelect" /></div>
+                #treeviewInvitationRegistration(${orgGroupTreeAsList})
+            </div><!-- End-Organizational-Groups -->
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+            <!-- Select-Learner-Group -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.learnerGroup")</div>
+                </div>
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.Search-inputfield-box2")">
+                    <!-- left-box -->
+                    <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.inputfield-box-L2")">
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.CG-content-row")">$brander.getBrandElement("lms.changeGroups.caption.AvailableLearnerGroup")</div>
+                        <select id="availableLearnerGroups" name="availableLearnerGroups" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.inputfield-box-L2-in")" size="6" multiple>
+                        #foreach($list in $availableLearnersGroupList)
+                            <option value="$list.id">$list.name</option>
+                        #end
+                        </select>
+                    </div>
+                    <!-- center-box-transfer-arrow -->
+                    <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.inputfield-box-L2a")">
+                        <img src="$brander.getBrandElement("lms.manageUser.regInvitation.arrow-transfer-r")" width="38" height="29" alt="" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.arrow-transfer")" onclick="moveAvailableToSelected();" />
+                        <img src="$brander.getBrandElement("lms.manageUser.regInvitation.arrow-transfer-l")" width="38" height="29" alt="" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.arrow-transfer")" onclick="moveSelectedToAvailable();" />
+                    </div>
+                    <!-- right-box -->
+                    <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.inputfield-box-L2")">
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.CG-content-row")">$brander.getBrandElement("lms.changeGroups.caption.SelectedLearnerGroup")</div>
+                        <select id="selectedLearnerGroups" name="selectedLearnerGroups" class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.inputfield-box-L2-in")" size="6" multiple>
+                        #foreach($list2 in $selectedLearnersGroupList)
+                        <option value="$list2.id">$list2.name</option>
+                        #end
+                        </select>
+                    </div>
+                </div>
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+            </div>
+            <!-- End-Select-Learner-Group -->
+            <div class="buttonContainer"><!-- button-div -->
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                <div style="float:right; margin-top:3px;">
+				  <a onClick="submitButtonForm(document.selfRegistration,'wizardSubmitter','_target1');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:left; margin-top:3px;">
+				  <a onClick="submitButtonForm(document.selfRegistration,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+                <input type="hidden" id="currentpage" name="_page" value="0"/>
+            </div>
+            <!-- button-div -->
+				 </div>
+            </td>
+            <!-- right-pannel-content-end -->
+            </tr>
+            <!-- content-area-end -->
+			<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td>
+			</tr>
+        </table><!-- main-container -->
+    </form>
+</body>
+</html>

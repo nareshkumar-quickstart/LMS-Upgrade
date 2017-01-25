@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+#parse("snippets/learnerHead.vm")
+	
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+<body>
+<script language="javascript" type="text/javascript" src="../js/360js.js"></script>
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+	$('#content2a').scroll(function()
+	{
+		$('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+});
+</script>
+
+<script type="text/javascript">
+function FormSubmit(buttonclick) {
+	//alert(buttonclick);
+	document.getElementById('action').value=buttonclick;
+	document.trainingPlan.submit();
+}
+function onLearnerGroupSelection(objCheckbox,hiddenId){
+	document.getElementById(hiddenId).value=objCheckbox.checked;
+}
+</script>
+
+<form name="trainingPlan" action="mgr_assignTraningPlan.do" method="POST"> 
+
+			
+<div id="main-container">
+
+	<!-- header -->
+	##parse("snippets/managerHeader.vm")
+	#parse("snippets/loginHeader.vm")
+
+	<!-- header-end -->
+	
+	<div id="content2a">
+	<!-- content-area -->
+		<!-- left-pannel-content -->
+		<div id="left-pannel">
+			<!-- left-menu-content -->
+			<div id="leftmenu">
+				<div id="l-menu-back">
+					<div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.lmenuHeader") <br>$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.lmenu.step3-6")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.lmenu.step1")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manager.addTrainingPlans.leftMenuSelectTrainingPlan")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.manager.addTrainingPlans.leftMenuMethod")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manager.addTrainingPlans.leftMenuSelectLearnersor")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.manager.addTrainingPlans.leftMenuGroups")</b></div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.lmenu.step4")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.lmenu.step5")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.learner.preferences.caption.header")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6")</div>
+				</div>
+			</div>
+			<!-- left-menu-content-end -->
+		</div>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+			#springBind("trainingPlanForm.selectedLearnerGroups")
+			#if($status.error)
+			<!-- error-box -->
+			 <div id="message_box">
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				#foreach($errorCode in $status.errorCodes)
+			#set ($error = $brander.getBrandElement($errorCode))
+			<div class="width40pct">
+				<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+				<div class="message_box_align">$error</div>
+				</div>
+				#end
+			</div>
+			<!-- error-box -->
+			#end
+
+			<!-- Logo+Manage-User -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogoContainer")">
+				<div id="e3" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogo2")"><img src="$brander.getBrandElement("lms.pixel.pageiconTraininPlanPNG")" alt="" /></div>
+				<div id="e4" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitleDiv")">
+					<div id="e5" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitle1")">$brander.getBrandElement("lms.manager.assignTrainingPlan.caption.title1")</div>
+					<div id="e6" class="$brander.getBrandElement("lms.mycourses.cssClass.courseDetails")">$brander.getBrandElement("lms.manager.addTrainingPlans.step2-learnergroup.caption.description")</div>
+				</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Courses -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+				<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageOrganizationGroup.caption.LearnerGroups")</div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+					<!-- 1 -->
+
+					#springBind("trainingPlanForm.learnerGroupTrainingItems")
+					#set($lrnGroupsSize = $status.value.size())
+					#set($lrnGroupsSize = $lrnGroupsSize - 1)
+					#foreach($index in [0..$lrnGroupsSize])
+						#if($index%2 == 0)
+							#set($rowCSS = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-row"))
+						#else
+
+							#set($rowCSS = $brander.getBrandElement("lms.manageOrganizationGroup.cssClass.User-checkbox-row-d"))
+						#end
+						<div id="e15" class="$rowCSS">
+
+							#springBind("trainingPlanForm.learnerGroupTrainingItems[$index].learnerGroupId")
+
+							<input type="hidden" name="${status.expression}" value="${status.value}"/>
+
+							#springBind("trainingPlanForm.learnerGroupTrainingItems[$index].selected")
+
+							<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User_coll_H1")">
+								<input type="checkbox" #if(${status.value}=="true") checked #end onclick="onLearnerGroupSelection(this,'${status.expression}');"/>
+								<input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+							</div>
+							
+							#springBind("trainingPlanForm.learnerGroupTrainingItems[$index].learnerGroupName")
+							<div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.Org-grp_4e")"> ${status.value}
+							</div>
+
+						</div>
+					#end
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- End-Courses -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+				<input type="hidden" id="currentpage" name="_page" value="2"/>
+				<div class="btn-left2"><input type="image" id="cancel" name="_cancel" alt="Cancel" src="brands/default/en/images/btn-cancel_n.gif"/></div>
+				<div class="btn-right1"><input type="image" id="next" name="_target5" alt="Next" src="brands/default/en/images/btn-next_n.gif"/></div>
+				<div class="btn-right1"><input type="image" id="previous" name="_target1" alt="Previous" src="brands/default/en/images/btn-previous_n.gif"/></div>
+			</div>
+			
+			<!-- scrollable-div -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+			
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content2-area-end -->
+	</div>
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

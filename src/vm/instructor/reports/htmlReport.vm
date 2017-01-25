@@ -1,0 +1,29 @@
+#set ($numCols = $columns.size())
+#set ($numCols = $numCols + 1)
+#set ($numColsHeader = $columns.size())
+
+<!-- BEGIN LISTVIEW TABLE -->
+<table width="100%" border="0" cellpadding="5" cellspacing="0" style="margin-top:2px; border-top:5px;">
+<tr style="height:25px;">
+    #set($colspn=$numCols)
+    <td nowrap>Last run on $formUtil.formatDate($lastExecutedDate, "MMMM dd yyyy hh:mm aaa")</td>
+    <td colspan="$colspn" align="right" nowrap>Total number results: $!{objects.size()}</td>
+</tr>
+<tr style="height:24px;">
+#foreach($col in $sorter.sort($columns, "displayOrder"))
+<td class="box_subheader" nowrap>$col.displayName</td>
+#end
+</tr>
+#foreach($item in $objects)
+    #if ($velocityCount%2==0)
+        #set($color="row_1")
+    #else
+        #set($color="row_2")
+    #end
+    <tr style="height:24px;">
+    #foreach($col in $sorter.sort($columns, "displayOrder"))
+        <td class="$color" nowrap>$!formUtil.formatReportField($col.columnFormat, $item.get($col.dbColumnName))&nbsp;</td>
+    #end
+    </tr>
+#end
+</table>

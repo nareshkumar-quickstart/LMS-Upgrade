@@ -1,0 +1,169 @@
+
+<script language="javascript" type="text/javascript">
+	
+	//http://www.quirksmode.org/dom/inputfile.html
+	function initFileUploads() {
+        //if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile2';
+        fakeFileUpload.id = '11';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.id="txtBrowseFile";
+        fakeinput.style.cssText="width:260px;*width:260px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        image.id="22"
+        var span=document.createElement('span');
+        span.className="browsbutton2";
+        span.id="33";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file2';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+</script>
+
+<style type="text/css">
+
+input.file2 {
+    position: relative;
+    text-align: right;
+    z-index: 2;
+    *text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    height:22px;
+    width:390px;
+    cursor:pointer
+}
+
+a.browsbutton2 {
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    background: transparent url(../images/button_right.gif) no-repeat center right;
+    white-space: nowrap;
+    color: #CCCCCC;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, Geneva, sans-serif;
+    font-size: 10px !important;
+    font-size: 10px;
+    padding: 5px 6px 8px 0 !important;
+    line-height: 8px !important;
+    letter-spacing: 1px;
+    font-weight: normal;
+    float:left;
+    margin-left:10px;
+    width:70px;
+    *width:75px;
+}
+
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+
+.input_field_browse {width:370px;position:static;float: left;margin: 0px 0px 0px 0px;}
+</style>
+
+<div id="uploadAffidavitDialog"  class="visible" title="Upload Affidavit" style="float:left; height:230px; width:444px; left:35%; top:30%;">
+
+    <div id="searchBoxsf" style="width: 100%; height: 80%" align="center" >
+		<b>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.affidavitUpload.header")</b>
+		<br>
+		
+		</br>
+	    <div style="float:center">$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.affidavitUpload.text")</div><br/><br/>
+	    
+   		<div class="message_box" id="msgebox">&nbsp;</div>
+	    <br>
+	    	<table  border="0" cellspacing="0" cellpadding="2">
+			  <tr>
+			    <td nowrap >Import File: </td>
+			    <td>
+			    <div class="input_field_browse" >
+					<div class="fileinputs">
+						<input type="file" name="affidavitFile" id="impFile" class="file2"/>
+					</div>
+				</div>
+			    </td>
+			  </tr>
+			</table>
+
+
+	    <br />
+	    <br />
+	    <br />
+	     <div style="margin-left: 125px;">
+            <div class="btn_start"></div>
+            <div onclick="showUploadBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.cancel")</div>
+            <div class="btn_end"></div>
+        </div>                  
+        <div>
+            <div class="btn_start"></div>
+            <div id="affidavitFileDiv" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.continue")</div>
+            <div class="btn_end"></div>
+        </div>                  
+        
+	</div>
+	
+	<div id="fileUploaded" style="display:none">
+	    <div class="alert_message_box_title" style="width: 478px;">&nbsp;&nbsp;Alert</div>
+	    <div class="alert_message_box_icon"></div>
+	    <div class="alert_message_box_text" id='tx'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File uploaded successfully.</div>
+	    <br style="clear:both" />
+	    <div class="simplemodal-close" style="float: left; margin-top: 10px; margin-right: 0px;margin-left:210px;">
+		    <a  onclick="">
+		        <div class="btn_start"></div>
+		        <div class="btn_normal">OK</div>
+		        <div class="btn_end"></div>
+		    </a>
+	    </div>
+    </div>
+	<script type="text/javascript">
+		
+    $(function() {
+		$('#affidavitFileDiv').click(function() {
+        	url = 'acc_manageUserStatus.do?method=uploadAffidavit';
+        	var len = $("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length;
+        	if(len==0){
+    			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+    			return;
+    		}
+    		$("#msgebox").html("");
+        	url = url + '&learnerEnrollmentId='+$("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').val();
+            $('#impFile').upload(url, function(res) {
+               	var searchBox = document.getElementById('uploadAffidavitDialog');
+            	searchBox.className = "visible";   
+            	$('#tx').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + res);         	
+            	$('#fileUploaded').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }, 'html');
+    	});
+    });
+    
+  </script>
+  </div>
+  

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.360training.com/vu360/schemas/lms/trainingplans"
+	xmlns:vu360-lms-trainingplan="http://www.360training.com/vu360/schemas/lms/trainingplans"
+	elementFormDefault="qualified">
+
+	<element name="GetAllTraingPlansByIdsRequest">
+		<complexType>
+			<sequence>
+				<element minOccurs="1" maxOccurs="10000" name="trainingPlanIds" type="long"/>
+			</sequence>
+		</complexType>
+	</element>
+
+    <element name="TrainingPlanPredictRequest">
+		<complexType>
+			<attribute name="userName" type="string" />
+		</complexType>	
+    </element>
+    
+	<element name="GetTrainingPlanCoursesByDueDateRequest">
+		<complexType>
+			<attribute name="userName" type="string" />
+			<attribute name="xDays" type="int" />
+		</complexType>	
+    </element>
+    
+	<element name="GetEmployeeCoursesStatusRequest">
+		<complexType>
+			<attribute name="userName" type="string" />
+			<attribute name="isCustomer" type="boolean" />
+		</complexType>	
+    </element>
+    
+	<element name="GetTrainingPlanAssignmentsByDateRequest">
+		<complexType>
+			<sequence>
+				<element minOccurs="1" maxOccurs="10000" name="trainingPlanIds" type="long"/>
+			</sequence>
+			<attribute name="startDate" type="string" />
+			<attribute name="endDate" type="string" />
+		</complexType>
+	</element>    
+
+    <element name="TrainingPlanPredictResponse">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="0" name="trainingplans"
+					type="vu360-lms-trainingplan:TrainingPlanSoapVO" nillable="true" />
+			</sequence>
+			<attribute name="customerId" type="long" />
+		</complexType>
+	</element>
+	<element name="GetAllTraingPlansByIdsResponse">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="0" name="trainingplans"
+					type="vu360-lms-trainingplan:TrainingPlanSoapVO" nillable="true" />
+			</sequence>
+			<attribute name="customerId" type="long" />
+		</complexType>
+	</element>
+	
+    <element name="GetTrainingPlanCoursesByDueDateResponse">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="0" name="trainingplancourses"
+					type="vu360-lms-trainingplan:TrainingPlanCourseSoapVO" nillable="true" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<element name="GetEmployeeCoursesStatusResponse">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="0" name="trainingplancoursesstatus"
+					type="vu360-lms-trainingplan:TrainingPlanCourseStatusSoapVO" nillable="true" />
+			</sequence>
+		</complexType>	
+    </element>
+    
+    <element name="GetTrainingPlanAssignmentsByDateResponse">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="0" name="trainingPlanAssignments"
+					type="vu360-lms-trainingplan:TrainingPlanAssignmentSoapVO" nillable="true" />
+			</sequence>
+		</complexType>
+	</element>
+	
+	<complexType name="TrainingPlanSoapVO">
+		<attribute name="trainingPlanId" type="long" />
+		<attribute name="trainingPlanName" type="string" />
+	</complexType>
+	
+	<complexType name="TrainingPlanAssignmentSoapVO">
+		<attribute name="trainingPlanId" type="long" />
+		<attribute name="trainingPlanName" type="string" />
+		<attribute name="userName" type="string" />
+		<attribute name="assignmentDate" type="string" />
+		<attribute name="completionDate" type="string" />
+	</complexType>
+	
+	<complexType name="TrainingPlanCourseSoapVO">
+		<attribute name="userName" type="string" />
+		<attribute name="email" type="string" />
+		<attribute name="title" type="string" />
+		<attribute name="progress" type="double" />
+		<attribute name="dueDate" type="string" />
+	</complexType>
+	
+	<complexType name="TrainingPlanCourseStatusSoapVO">
+		<attribute name="userName" type="string" />
+		<attribute name="email" type="string" />
+		<attribute name="expiredCourses" type="int" />
+		<attribute name="completedCourses" type="int" />
+		<attribute name="inProgressCourses" type="int" />
+		<attribute name="notStartedCourses" type="int" />
+	</complexType>
+	
+</schema>

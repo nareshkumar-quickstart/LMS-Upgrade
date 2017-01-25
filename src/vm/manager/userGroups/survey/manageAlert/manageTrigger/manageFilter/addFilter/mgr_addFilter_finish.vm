@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+   #parse("snippets/compliance/complianceHead.vm")
+
+
+<script type="text/javascript" language="javascript" src="javascript/360js.js"></script>	
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script language="javascript" type="text/javascript">
+	document.title="$brander.getBrandElement("lms.manager.addDFCourses.caption.pageTitle")";
+</script>
+
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function(){ 
+    	$("#toggleIconForSummary").click(function() {
+    	  toggleView('toggleIconForSummary', 'collapsibleSummary');
+        });
+    });
+
+	function submitFormWithDescriptionData(textAreaId){	
+    	updateTextArea("description1");
+    	submitButtonForm(document.addCustomCourses,'wizardSubmitter','_finish');
+	}
+	
+</script>
+</head>
+    <body>
+    <form name="addTriggerForm" method="post" action="mgr_addTriggerFilter.do?triggerId=$addTriggerFilterForm.triggerId">
+        <input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+           #parse("snippets/managerWizardHeader.vm")
+		 </td></tr>
+		 
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <div> 
+                    <div id="l-menu-back"> 
+                        <div class="l-menu-back-text-h">Add Filter Wizard<br/> Showing 4 of 4</div> 
+                        <div class="l-menu-back-text-acted">1. Filter Summary</div> 
+                        <div class="l-menu-back-text-acted">2. Select Filter Type</div> 
+                        #springBind("addTriggerFilterForm.filterType")
+                        #if($!{status.value}=="learners")
+                          <div class="l-menu-back-text-acted">3. Select Learners</div>
+                        #elseif($!{status.value}=="learnergroups")
+                          <div class="l-menu-back-text-acted">3. Select User Groups</div>
+                        #elseif($!{status.value}=="organizationgroups")
+                          <div class="l-menu-back-text-acted">3. Select Organization Groups</div>
+                        #elseif($!{status.value}=="courses")
+                          <div class="l-menu-back-text-acted">3. Select Courses</div>
+                        #end
+                        <div class="l-menu-back-text-act">4. Confirmation</div> 
+                    </div> 
+                </div>
+		</table></td>
+		 
+<TD id="content" >
+	<div id="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_surveys">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+				<div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+				<div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+				</td>
+		    </tr>
+		</table>
+
+                    <div id="resultBox" class="search_box_result">
+                        <div id="resultHeader" class="box_header">
+                            <div id="toggleIconForSummary" style="float: left; margin-right: 5px;margin-left: 7px;margin-top: 7px;" class="icon-caret-down-large"></div>
+                            <div class="box_heading">Summary</div>
+                        </div>
+                    
+                    <div id="collapsibleSummary">
+                       <table class="gridtable" style="margin-left:100px;margin-top:20px;margin-bottom:20px;"  width="50%" cellpadding="0" cellspacing="0" heigth="100%">
+                            #springBind("addTriggerFilterForm.filterType")
+                            <tr>
+                            	#if($!{status.value}=="learners")
+                                  <th style="text-align:left;">Learners</th>
+                                #elseif($!{status.value}=="learnergroups")
+                                  <th style="text-align:left;">User Groups</th>
+                                #elseif($!{status.value}=="organizationgroups")
+                                  <th style="text-align:left;">Organizational Groups</th>
+                                #elseif($!{status.value}=="courses")
+                                  <th style="text-align:left;">Courses</th>
+                                #end
+							</tr>
+                              
+                              #if($!{status.value}=="learners")
+                              #springBind("addTriggerFilterForm.learnerss")
+                              #foreach($learner in $!{status.value})
+                                 <tr><td>$!{learner.vu360User.firstName}</td></tr>
+                              #end
+                           		
+                             #elseif($!{status.value}=="learnergroups")
+							 #springBind("addTriggerFilterForm.selectedLearnerGroupList")
+							 #set($count = 0)
+							 #foreach($learnerGroup in $!{status.value})									
+							  <tr><td>$!{learnerGroup.name}</td></tr>
+							 #end
+							 #springBind("addTriggerFilterForm.filterType")
+								#elseif($!{status.value}=="organizationgroups")
+								#springBind("addTriggerFilterForm.selectedOrgGroupList")
+								#set($count = 0)
+								#foreach($orgGroup in $!{status.value})
+									#if($count==0)
+										#set($count = 1)
+									#else
+									    <tr>	
+									 #end
+									<td>$!{orgGroup.name}</td></tr>								
+								#end
+								#springBind("addTriggerFilterForm.filterType")
+								#elseif($!{status.value}=="courses")
+									
+									#springBind("addTriggerFilterForm.selectedCourseList")
+									#foreach($courses in $!{status.value})
+										<tr><td>$courses.courseTitle</td></tr>								
+									#end
+
+								#end
+                            </tr>
+                        </table>
+                    </div>
+                    </div>
+                     <input type="hidden" id="currentpage" name="_page" value="7" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                  <div style="float:right; margin-top:15px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_finish');">Finish</div>
+                            <div class="btn_end"></div>
+                    </div>
+                    #springBind("addTriggerFilterForm.pageIndex")
+                   <div style="float:right; margin-top:15px;margin-right:5px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_target$!{status.value}');">Previous</div>
+                            <div class="btn_end"></div>
+                    </div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_cancel');">Cancel</div>
+                            <div class="btn_end"></div>
+
+                    </div>
+                </div>
+
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+           #parse("snippets/managerFooter.vm")
+	</td></TR>
+        </table>
+        </form>
+    </body>
+
+</html>

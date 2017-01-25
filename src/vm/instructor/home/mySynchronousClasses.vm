@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script language="javascript" type="text/javascript">
+	
+	var launchWindow;
+	function launchForum (fg) {
+		var url = "${context.launchURL}" + fg.replace("-", "");		
+		if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+		
+        launchWindow = window.open(url,'Discussion Forum','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=600,left=0,top=0');
+        launchWindow.focus();
+        launchWindow.opener=this.window;		
+	}
+	
+	function showForumDetails(comp,sName){
+        $(function(){
+            offset = 15;
+            divId=($(comp).attr('id').split("-"));
+            if(divId[0] == "details") {
+                $(comp).stop().hover(function(evt){
+                     $('<div id="detail-text"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td><b>'+sName+'</b></td></tr><tr><td><br>$brander.getBrandElement("lms.instructor.launchCourses.toolTip.lauchDiscussionForum")</td></tr></table></div>').addClass('tooltip').css('top',evt.pageY+offset).css('left', evt.pageX+offset).appendTo('body').hide().fadeIn(200);
+                     }, function(){
+                     $('#detail-text').remove();
+                 });
+
+             }
+        });
+    }
+	
+    $(document).ready(function(){
+       });
+    function showDetails(comp,sName,sDate,eDate,cSize){
+        $(function(){
+            offset = 15;
+            divId=($(comp).attr('id').split("-"));
+            if(divId[0] == "details") {
+                $(comp).stop().hover(function(evt){
+                     $('<div id="detail-text"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td colspan="2"><b>'+sName+'</b></td></tr><tr><td width="70px"><br><b>Start Date</b></td><td width="156px"><br>'+sDate+'</td></tr><tr><td><br><b>End Date</b></td><td><br>'+eDate+'</td></tr><tr><td><br><b>Max Class Size</b></td><td><br>'+cSize+'</td></tr></table></div>').addClass('tooltip').css('top',evt.pageY+offset).css('left', evt.pageX+offset).appendTo('body').hide().fadeIn(200);
+                     }, function(){
+                     $('#detail-text').remove();
+                 });
+
+             }
+        });
+    }
+</script>
+
+</head>
+<body>
+<form name="CourseForm">
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!-- Header starts -->
+			#parse("snippets/instructorHeader.vm")
+			<!-- Header ends -->
+			</td></tr>
+			
+<!-- Body Start -->
+<TD id="content" >
+	<div id="scrollable">
+			  <table border="0" cellpadding="0" cellspacing="0" style="padding:0; margin-top:25px;width:99%;">
+                  <tr>
+                    <td width="50%" valign="top" >
+                        <div id="resultBox" class="search_box_result" style="height:425px;margin-bottom:20px;">
+                            <div id="resultHeader" class="box_header">
+                                <div class="box_heading">$brander.getBrandElement("lms.instructor.launchCourses.caption.sectionTitle")</div>
+                            </div>
+
+                            <div style="height:400px; overflow-y:auto; overflow-x:hidden;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td class="portlet_subheader" width="50%">$brander.getBrandElement("lms.instructor.launchCourses.caption.myClasses")</td>
+                                    <td class="portlet_subheader">$brander.getBrandElement("lms.instructor.launchCourses.caption.myDiscussionForums")</td>
+                                </tr>                                
+							#if(  ${context.dfcCourseList.size()} >=  ${context.mySynchClassList.size()} )
+								#set( $indexLimit = ${context.dfcCourseList.size()} - 1 )
+							#else 
+								#set( $indexLimit = ${context.mySynchClassList.size()} - 1 )
+							#end
+							#set( $alternateStyle = "portlet_row_1" )
+							#if( $indexLimit >= 0 )
+							#foreach( $curIndex in [0..$indexLimit] )								 
+								<tr>
+								#if ( $curIndex <= (${context.mySynchClassList.size()} - 1) )
+									<td class="$alternateStyle" ><div id="details-$index" onmouseover="showDetails(this,'$!{context.mySynchClassList.get($curIndex).getSectionName().replaceAll("'","\\'")}','$!{context.mySynchClassList.get($curIndex).getClassStartDateString()}','$!{context.mySynchClassList.get($curIndex).getClassEndDateString()}','$!{context.mySynchClassList.get($curIndex).getMaxClassSize()}');">
+										<a target=”_blank” href="#springUrl($!{context.mySynchClassList.get($curIndex).getLaunchURL($brander)})">
+										$!{context.mySynchClassList.get($curIndex).getSectionName()}</a>
+									</div></td>
+								#else
+									<td class="$alternateStyle" >&nbsp;</td>
+								#end
+									
+								#if ( $curIndex <= (${context.dfcCourseList.size()} - 1) )
+									<td class="$alternateStyle" ><div id="details-$curIndex" onmouseover="showForumDetails(this,'$!{context.dfcCourseList.get($curIndex).getCourseTitle()}');"  ><a onClick="launchForum('${context.dfcCourseList.get($curIndex).getCourseGUID()}');">$!{context.dfcCourseList.get($curIndex).getCourseTitle()}</a></div></td>
+								#else
+									<td class="$alternateStyle" >&nbsp;</td>
+								#end                                        
+								</tr>
+								
+								#if( $alternateStyle=="portlet_row_1" )                                        
+									#set( $alternateStyle = "portlet_row_2" )
+								#else
+									#set( $alternateStyle = "portlet_row_1" )
+								#end
+							#end
+							#end 
+                            </table>
+                            </div>
+                        </div>
+                    </td>
+                    <td valign="top">
+                       <div id="resultBox" class="search_box_result" style="margin-bottom:20px;">
+                            <div id="resultHeader" class="box_header">
+                                <div id="resultHeader" class="box_heading">$brander.getBrandElement("lms.viewAllEntitlements.caption.Enrollments")</div>
+                            </div>
+                            <div id="pie">
+                                <strong>$brander.getBrandElement("lms.instructor.caption.upgradeflash.defaulttext")</strong>
+                            </div>
+                            <script type="text/javascript" src="javascript/amCharts/swfobject.js"></script>
+                            <script type="text/javascript">
+                               var so = new SWFObject("javascript/amCharts/Pie/ampie/ampie.swf", "ampie", "500", "400", "8", "#FFFFFF");
+                                so.addVariable("path", "javascript/amCharts/Pie/ampie/");
+                                so.addVariable("settings_file", encodeURIComponent("javascript/amCharts/Pie/ampie/ampie_settings.xml"));
+                                so.addVariable("data_file", encodeURIComponent("javascript/amCharts/Pie/ampie/ampie_data.xml"));
+                                so.addVariable("quality", "high"); 
+                                so.addVariable("menu", "false"); 
+                                so.addVariable("pluginurl", "http://www.macromedia.com/go/getflashplayer"); 
+                                so.write('pie');
+                            </script>
+                       </div>
+                    </td>
+                  </tr>
+                  <tr>
+                      <td valign="top" align="center">
+
+                       <div id="resultBox" class="search_box_result" style="margin-bottom:20px;">
+                            <div id="resultHeader" class="box_header">
+                                <div id="resultHeader" class="box_heading">$brander.getBrandElement("lms.instructor.caption.coursecompleted.defaulttext")</div>
+                            </div>
+                           <script type="text/javascript" src="javascript/amCharts/swfobject.js"></script>
+                            <div id="column">
+                                <strong> $brander.getBrandElement("lms.instructor.caption.flashplayer.defaulttext")</strong>
+                            </div>
+                            <script type="text/javascript">
+                                var so = new SWFObject("javascript/amCharts/Bar/amcolumn/amcolumn.swf", "amcolumn", "400", "400", "8", "#FFFFFF");
+                                so.addVariable("path", "javascript/amCharts/Bar/amcolumn/");
+                                so.addVariable("settings_file", encodeURIComponent("javascript/amCharts/Bar/amcolumn/amcolumn_settings.xml"));
+                                so.addVariable("data_file", encodeURIComponent("javascript/amCharts/Bar/amcolumn/amcolumn_data.xml"));
+                                so.addVariable("quality", "high"); 
+                                so.addVariable("menu", "false");
+                                so.write("column");
+                            </script>
+                       </div>
+                    </td>
+                    <td width="50%" valign="top">
+                        <div id="resultBox" class="search_box_result" style="height:424px; margin-bottom:20px;">
+                            <div id="resultHeader" class="box_header">
+                                <div id="resultHeader" class="box_heading">$brander.getBrandElement("lms.instructor.caption.homesearch.defaulttext")</div>
+
+                            </div>
+                            <div style="height:400px; overflow-y:auto; overflow-x:hidden;">
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td class="portlet_subheader">Student Name</td>
+                                        <td class="portlet_subheader" width="60px;">Days</td>
+                                    </tr>
+                                    #set($index = 0)
+                                    #set($evenOdd = 0)
+                                    #foreach ($student in ${context.studentsFallingBehindList})
+                                        #if( $evenOdd==0 )
+                                            #set( $evenOdd = 1 )
+                                            #set( $alternateStyle = "row_2" )
+                                        #else
+                                            #set( $evenOdd = 0 )
+                                            #set( $alternateStyle = "row_1" )
+                                        #end
+                                        <tr>
+                                            <td class="$alternateStyle" style="border-right:none;height:23px;"><div>$!{student.user.getName()}</div></td>
+                                            <td class="$alternateStyle">$!{student.days}</td>
+                                        </tr>
+                                        #set($index = $index + 1)
+                                    #end
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                  </tr>
+              </table>
+        </div>
+    </div>
+	</td></tr>
+
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+           <!-- Footer starts -->
+			 #parse("snippets/managerFooter.vm")
+			<!-- Footer ends -->
+</td></tr>			
+    </TABLE>
+        </form>
+
+	<div id="process" style="display:none;">
+        <div class="process_window">
+            <div class="icon_clock"></div>
+            <div class="process_heading">$brander.getBrandElement("lms.instructor.caption.wait.defaulttext")</div>
+            <div id="process_text" class="processing_text">$brander.getBrandElement("lms.instructor.caption.wpage.defaulttext")</div>
+            <div class="bars_container">
+                <div class="progress_bar"></div>
+                <div id="status_bar" class="status_bar"></div>
+            </div>
+        </div>
+        <div class="process_window_shadow"></div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+
+  
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script src="javascript/wisiwig/richtext.js" type="text/javascript" language="javascript"></script>
+    <script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+    <!-- Include the Free Rich Text Editor Variables Page -->
+    <script src="javascript/wisiwig/config.js" type="text/javascript" language="javascript"></script>
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function(){
+			showDefaultValue();
+            document.mailContentForm.fromEmail.focus();
+        });
+
+        function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.manageform.submit();
+        }
+
+        function gotoNextStape(){
+            try{                
+                updateTextArea("email");
+                submitButtonForm(document.mailContentForm,'wizardSubmitter','_target5');
+            }catch(e){
+                alert(e);
+            }
+        }
+        function showDefaultValue(){
+  document.getElementById('actionmethod').value='editEmail';  
+  document.getElementById('showDefaultValue').value='showDefaultValue';  	 
+  document.brandingForm.submit();
+}  
+    </script>
+</head>
+
+<body>
+    <form name="mailContentForm" method="POST" action="mgr_sendMailToLearners.do">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                    <!-- left-pannel-content-start -->
+                    <div>
+                        <div id="l-menu-back">
+                            <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignMailOrgGroups.caption.sendEmailWizard") <br/>showing 3 of 4</div>
+                            <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignMailOrgGroups.caption.selectGroupsLearners")</div>
+                            <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignMailOrgGroups.caption.selectRecipients")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignMailOrgGroups.caption.sendEmail")</div>
+                            <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignMailOrgGroups.caption.confirmation")</div>
+                        </div>
+                    </div>
+                    <!-- left-pannel-content-end -->
+			</table>
+		</td>
+		
+        <TD id="content" >
+	<div id="scrollable">
+            <!-- right-pannel-content -->
+                    #springBind("learnerEmailForm.*")
+                    #if($status.error)
+                        #set($errorCodes = [])
+                        #set($temp = true)
+                        #springBind("learnerEmailForm.fromEmail")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+                        #springBind("learnerEmailForm.message")
+                        #if($status.error)
+                            #foreach($errorCode in $status.errorCodes)
+                                #set($temp = $errorCodes.add($errorCode))
+                            #end
+                        #end
+
+                        #if($errorCodes.size() > 0)
+                        <!-- error-box -->
+                        <div id="message_box">
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            #foreach($errorCode in $errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                            #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+                    #end
+
+                    <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoAnnouncements">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.mailContent.caption.sendEmailToLearners")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.mailContent.caption.sendEmailToLearnersDesc")</div>
+			</td>
+		    </tr>
+		</table>                         
+                          
+     
+                    <!-- Logo+Manage-User-end -->
+
+                    <!-- Review-&-Confirm -->
+                    <div class="content-Block" >
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.mailContent.caption.sendEmail")</div>
+                        </div>
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="Search-inputfield-box">
+                            <!-- s -->
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                <!-- 1 -->
+                                <div id="e12" class="search-content-row">
+                                    #springBind("learnerEmailForm.fromEmail")
+                                    #if($!{status.error})
+                                    <div class="send_email_label_error">From</div><div class="send_email_label_required"> <img src="brands/default/en/images/addLearner_06.gif"/> </div>
+                                    #else
+                                    <div class="send_email_label">From</div><div class="send_email_label_required"> <img src="brands/default/en/images/Learner_06.gif"/> </div>
+                                    #end
+                                    <div class="search_field-2"><input type="text" tabindex="1" name="${status.expression}" id="${status.expression}" value="$!{status.value}" class="search_field"/></div>
+                                </div>
+                                <!-- 2 -->
+                                <div id="e13" class="search-content-row">
+                                    #springBind("learnerEmailForm.leranersToBeMailed")
+                                    #set($count = $!{status.value.size()})
+                                    #set($emailAddress = "")
+                                    #if($count > 0)
+                                        #set($count = $count - 1)
+                                        #foreach($index in [0..$count])
+                                            #set($user = $!{status.value.get($index)})
+                                            #set($emailAddress = $emailAddress + $user.vu360User.emailAddress + ", ")
+                                        #end
+                                    #end
+                                    <div class="send_email_label">To</div><div class="send_email_label_required">&nbsp;</div>
+                                    #springBind("learnerEmailForm.toEmails")
+                                    <div class="search_field-2"><input type="text" name="${status.expression}" tabindex="2" id="${status.expression}" value="$!{status.value}" class="search_field"/></div>
+                                </div>
+                                <!-- 3 -->
+                                <div id="e13" class="search-content-row">
+                                    #springBind("learnerEmailForm.message")
+                                    #if($!{status.error})
+                                    <div class="send_email_label_error">Subject</div><div class="send_email_label_required"> <img src="brands/default/en/images/addLearner_06.gif"/> </div>
+                                    #else
+                                    <div class="send_email_label">Subject</div><div class="send_email_label_required"> <img src="brands/default/en/images/Learner_06.gif"/> </div>
+                                    #end
+                                    #springBind("learnerEmailForm.mailSubject")
+                                    <div class="search_field-2"><input type="text" tabindex="3" name="${status.expression}" id="${status.expression}" value="$!{status.value}" class="search_field"/></div>
+                                </div>
+                                <!-- 4 -->
+                                <div id="e13" class="$brander.getBrandElement("lms.mailContent.cssClass.search-content-row3")">
+                                    <div class="send_email_label">Message</div><div class="send_email_label_required">&nbsp;</div>
+                                    <!-- WISIWIG START -->
+                                    <!-- LMS-9798 | S M Humayun | 13 Apr 2011 -->
+                                    <div class="addEditPropertyLeftAdmin" style="float: left;">
+                                        #springBind("learnerEmailForm.message")                                        
+                                         <textarea id="email" name="${status.expression}" rows="" cols="" class="textarea-lrg" style="height:270px;width:370px">$!{status.value}</textarea>
+                                                <script language="JavaScript" type="text/javascript">
+                                                    generate_wysiwyg('email');
+                                                </script>
+                                    </div>
+                                    <!-- WISIWIG END  -->
+                                </div>
+                            </div>
+                            <!-- 00 -->
+                            <div id="e12" class="$brander.getBrandElement("lms.mailContent.cssClass.search-content-row1")"></div>
+                            <div id="e12" class="$brander.getBrandElement("lms.mailContent.cssClass.search-content-row1")"></div>
+                            <!-- 00 -->
+                        </div>
+                        <!-- End-User-left-right-list -->
+                        <!-- Review-&-Confirm-end -->
+                        <!-- check-box -->
+                        <div class="content-Block2">
+                            #springBind("learnerEmailForm.notifyMe")
+                            <div id="e16" class="search-content-row">
+                                <div class="$brander.getBrandElement("lms.mailContent.cssClass.User_coll_1")"><input tabindex="5" type="checkbox" name="notifyMe" id="notifyMe" value="on"/></div>
+                                <div class="$brander.getBrandElement("lms.mailContent.cssClass.User_coll_4")">Send me a copy</div>
+                            </div>
+                        </div>
+                        <!-- check-box -->
+                        <!-- End-Invitation-Message --> 
+                        <!-- button-div -->
+                        #set ($previousPageIndex = $pageIndex)
+                        #set ($target = "_target$previousPageIndex")
+                        <div class="managerBtn">
+                            <input type="hidden" id="currentpage" name="_page" value="4"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+							<div style="float:right; margin-top:3px;">
+							  <a onclick="gotoNextStape();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Finish</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:right; margin-top:3px;margin-right:5px;">
+							  <a onClick="submitButtonForm(document.mailContentForm,'wizardSubmitter','$target');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Previous</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:3px;">
+								<a onClick="submitButtonForm(document.mailContentForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Cancel</div>
+									  <div class="btn_end"></div>
+								</a>
+							</div>		
+                           
+                        </div>
+                    <!-- scrollable-div -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                </div>
+                <!-- right-pannel-content-end -->
+            </td></tr>
+			<!-- content-area-end -->
+           <tr> <!-- Footer BLOCK -->
+		   	<td id="footer" colspan="2">
+			<!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td>
+			</tr>
+        </table>
+    </form>
+</body>
+</html>

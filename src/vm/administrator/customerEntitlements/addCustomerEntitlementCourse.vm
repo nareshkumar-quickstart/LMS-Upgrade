@@ -1,0 +1,381 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/jquery.treeview.css" />
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script src="javascript/jquery.cookie.js" type="text/javascript"></script>
+<script src="javascript/jquery.treeview.js" type="text/javascript"></script>
+
+<script language="javascript" type="text/javascript">
+    function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+
+              } else {  
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+    function selectAllCheckBoxes(countCheckBoxes)
+    {
+            var objCheckAll=document.getElementById("chkAll");
+
+            if (objCheckAll.checked) {
+                    for(var i = 0; i < countCheckBoxes; i++){
+                            var objCheckBox=document.getElementById("chk"+i);
+                            objCheckBox.checked=true;
+                            changeRowColor(objCheckBox);
+                            var hiddenid = "selectedCourses[" + i + "].selected";
+                            setCourseSelection(objCheckBox, hiddenid);
+                    }
+            }else{
+                    for(var i = 0; i < countCheckBoxes; i++){
+                            var objCheckBox=document.getElementById("chk"+i);
+                            objCheckBox.checked=false;
+                            changeRowColor(objCheckBox);
+                            var hiddenid = "selectedCourses[" + i + "].selected";
+                            setCourseSelection(objCheckBox, hiddenid);
+                    }
+            }
+    }
+    function doSearch(buttonclick) {
+        document.getElementById('courseSearchType').value=buttonclick;
+        document.getElementById('gridaction').value='search';
+        //document.getElementById('sortDirection').value=1;
+        document.searchResultForm.submit();
+        return true;
+    } 
+
+    function search() {
+        document.getElementById('courseSearchType').value="advancedSearch";
+        document.getElementById('gridaction').value='search';
+        //document.getElementById('sortDirection').value=1;
+        document.searchResultForm.submit();
+        return true;
+    } 
+
+    function setCourseSelection(checkbox, id){
+        document.getElementById(id).value = checkbox.checked;
+    }
+
+    function onAllSearch(){
+        document.getElementById('courseSearchType').value='allSearch';
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('gridaction').value="search";
+        document.getElementById('gridShowAll').value="true";
+        return true;
+    }
+
+    function onNextPage(nextIndex){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('gridaction').value="search";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+
+    function onPreviousPage(previousIndex){
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('gridaction').value="search";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+    $(document).ready(function(){   
+        $('#content2a').scroll(function() {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+
+        $("#browser").treeview();
+    });
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.searchResultForm.submit();
+    }
+    function showSearchBox(){
+        var searchBox = document.getElementById('searchBox');
+        if(searchBox.className == "visible"){
+            searchBox.className = "search_box40";
+            $('#searchBox input[type="text"]:first').focus();
+        }else{
+            searchBox.className = "visible";
+        }
+    }
+</script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js" ></script>
+</head>
+#macro(treeviewAddCourseGroup $courseGroup)
+    <li><span>$courseGroup.value.name</span>
+        <ul>
+            #foreach($course in ${courseGroup.courses})
+                <li><input type="checkbox" id="_orgGroup$course.course.id" name="courseGroups" value="$course.course.id" #if($course.selected) checked #end #if(!$course.enabled) disabled #end /><span>$course.course.courseTitle</span></li>
+            #end
+            #foreach($courseChildGroup in ${courseGroup.children})
+                #treeviewAddCourseGroup($courseChildGroup)
+            #end
+        </ul>
+    </li>
+#end
+<body>
+    <div id="main-container"><!-- main-container -->
+
+        <!-- header -->
+         #parse("snippets/adminWizardHeader.vm")
+        <!-- header-end -->
+
+        <div id="content2a">
+        <!-- content-area -->
+            <!-- left-pannel-content -->
+            <div id="sideBar" class="side_bar">
+                <div id="l-menu-back">
+                    <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.AddCustomerEntitlements")<br />$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.step-3-4")</div>
+                    <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.administrator.custEntitlement.caption.EntitlementDetails")</div>
+                    <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.administrator.custEntitlement.caption.OrginationalGroup")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.administrator.custEntitlement.caption.OrginationalGroupAssignment")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.SelectCourses")</div>
+                    <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.Summary")</div>
+                </div>
+            </div>
+            <!-- left-pannel-content-end -->
+
+            <!-- right-pannel-content -->
+            <div id="right-pannel">
+                #springBind("addCustomerEntitlementsForm.*")
+                #if($status.error)  
+                    #set($errorCodes = [])  
+                    #set($temp = true)
+                    #springBind("addCustomerEntitlementsForm.selectedCourses")
+                    #if($status.error)
+                        #foreach($errorCode in $status.errorCodes)
+                            #set($temp = $errorCodes.add($errorCode))
+                        #end
+                    #end
+                
+                    #if($errorCodes.size() > 0)
+                        <!-- error-box -->
+                         <div id="message_box">
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            #foreach($errorCode in $errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$!error</div>
+                                </div>
+                            #end
+                        </div>
+                        <!-- error-box -->
+                    #end
+                #end
+
+                <!-- Logo+Manage-User -->
+                		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="courseLogoCustomer">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.administrator.custEntitlement.caption.AddCustomerEntitlements")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.administrator.custEntitlement.caption.page3.subTitle")</div>
+					</td>
+				    </tr>
+				</table>
+		
+                <!-- Logo+Manage-User-end -->
+
+                <form name="searchResultForm" method="post" action="adm_customerEntitlements.do" >
+                        <!-- Courses -->
+                        #springBind( "addCustomerEntitlementsForm.courseSearchType" )
+                        <div #if(${status.value} == 'advancedSearch' || ${status.value} == 'allSearch') class="content-Block-new" #else class="content-Block" #end >
+                            <!-- Search Box -->
+                            <div id="searchBox" class="visible">
+                                #springBind("addCustomerEntitlementsForm.courseSearchType")
+                                #set($searchType=$!{status.value})
+                                <div style="padding: 5px">$brander.getBrandElement("lms.administrator.adddistributorentitlement.caption.SearchCourses")</div>
+                                <div style="padding: 5px">
+                                    <div style="width:75px; float:left">$brander.getBrandElement("lms.mycourses.courseName") </div> 
+                                    <div style="float:left">#springBind("addCustomerEntitlementsForm.searchCourseName")<input type="text" id="searchCourseName" name="${status.expression}" value="$!{status.value}" maxlength="50" onkeypress="doEnter(event);" class="search_field" style="font-size:9px; width:170px"/> </div><br style="clear:both" />
+                                </div>
+                                <div style="padding: 5px">
+                                    <div style="width:75px; float:left">$brander.getBrandElement("lms.manageUser.searchLearner.caption.courseId") </div> 
+                                    <div style="float:left">#springBind("addCustomerEntitlementsForm.searchCourseID")<input type="text" id="searchCourseID" name="${status.expression}" value="$!{status.value}" onkeypress="doEnter(event);" class="search_field" style="font-size:9px; width:170px"/> </div><br style="clear:both" />
+                                </div>
+                                <div style="padding: 5px">
+                                    <div style="width:75px; float:left">$brander.getBrandElement("lms.survey.caption.Keywords")</div> 
+                                    <div style="float:left">#springBind("addCustomerEntitlementsForm.searchCourseKeyword")<input type="text" id="searchCourseKeyword" name="${status.expression}" value="$!{status.value}" onkeypress="doEnter(event);" class="search_field" style="font-size:9px; width:170px"/> </div><br style="clear:both" />
+                                </div>
+                                <div style="float:right; margin-top:2px; margin-right:15px;">
+                                   <!--  <div class="btn_new_normal" name="qsearch" onclick="doSearch('advancedSearch');">
+                                        <span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span>
+                                    </div> -->
+                                    <a class="button" name="qsearch" onclick="doSearch('advancedSearch');"><span class="button" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a>
+                                </div> 
+                                <div style="float:right; margin-top:2px; ">&nbsp;</div>
+                                <div style="float:right; margin-top:2px; ">
+                                    <a class="button"  ><span class="button" onmousedown="showSearchBox(this);" >$brander.getBrandElement("lms.manageUser.viewOrganizationGroup.caption.Cancel") </span></a>
+                                </div>
+                                <input id="gridaction" type="hidden" name="action" value="" />
+                                <input id="courseSearchType" type="hidden" name="courseSearchType" value="${searchType}" />
+                            </div>
+                            <!-- Search Box -->
+                            #springBind("addCustomerEntitlementsForm.selectedCourses")
+                                    $pager.setItems($status.value)
+                                    #set($totalCount = $pager.total)
+                                    #if($pager.hasItems())
+                                        #set($pageFirstIndex = $pager.firstIndex)
+                                        #set($pageLastIndex = $pager.lastIndex)
+                                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #end
+                                <div class="Block-Contain-header">
+                                    <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.Courses")</div>
+                                    <div style="width:300px;height:100%;float:left;border:0px solid red;"></div>
+                                    <div style="float:left;border:0px solid red;" onClick="showSearchBox();">
+                                        <a class=button ><span class="button">Search</span></a>
+                                    </div>
+                                <!-- Search box open button -->
+                                <!-- page index for search result -->
+                                #springBind( "addCustomerEntitlementsForm.courseSearchType" )
+                                #if(${status.value} == 'advancedSearch' || ${status.value} == 'allSearch')
+                                    #springBind("addCustomerEntitlementsForm.selectedCourses")
+                                    $pager.setItems($status.value)
+                                    #set($totalCount = $pager.total)
+                                    #if($pager.hasItems())
+                                        #set($pageFirstIndex = $pager.firstIndex)
+                                        #set($pageLastIndex = $pager.lastIndex)
+                                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                        #set($currentPageCount = $pageLastIndex + 1)
+                                    #else
+                                        #set($pageFirstIndex = 0)
+                                        #set($pageLastIndex = 0)
+                                        #set($currentPageSize = 0)
+                                        #set($currentPageCount = 0)
+                                    #end
+                                    #springBind("addCustomerEntitlementsForm.sortColumnIndex")
+                                    #set($sortColumnIndex = $status.value)
+                                    <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$status.value" />
+                                    #springBind("addCustomerEntitlementsForm.sortDirection")
+                                    #if($status.value > 0) 
+                                        #set($sortDirection = 0)
+                                    #else
+                                        #set($sortDirection = 1) 
+                                    #end
+                                    <input type="hidden" id="sortDirection" name="sortDirection" value="$status.value" />
+                                    <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                                    <input type="hidden" id="gridShowAll" name="showAll" value=#if($searchType == "allSearch") "true" #else "false" #end />
+
+                                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();">
+                                        <input type="image" value="Search" name="_target2" onclick="return onAllSearch();" src="$brander.getBrandElement("lms.pixel.checkboxGif")" />
+                                    </div>
+
+                                    #if( $pager.nextIndex ) <div id="e14c" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"><input type="image" value="Search" name="_target2" onclick="return onNextPage($pager.nextIndex);" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>#else <div class="icon_disabled">&nbsp;</div> #end
+
+                                    #if( $pager.prevIndex ) <div id="e14b" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"><input type="image" value="Search" name="_target2" onclick="return onPreviousPage($pager.prevIndex);" src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/> </div>#else <div class="icon_disabled">&nbsp;</div> #end
+
+                                    <div id="e14a" class="box_description">$brander.getBrandElement("lms.manageUser.editLearner.caption.Showing") $!pager.pageDescription</div>
+
+                                <!-- page index for search result -->
+                                #end
+                            </div>
+                            <!-- User-left-right-list -->
+                            <div id="e7b" class="User-checkbox-box">
+                                <!-- 1 -->
+                                #springBind( "addCustomerEntitlementsForm.courseSearchType" )
+                                #if(${status.value} == 'advancedSearch' || ${status.value} == 'allSearch')
+                                    #springBind("addCustomerEntitlementsForm.selectedCourses")
+                                    #if ($!{status.value})
+                                        #set($courseListSize = ${status.value.size()} - 1)
+                                        #if($currentPageSize > 0)
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                            #foreach($loopindex in [$pageFirstIndex..$pageLastIndex])
+                                                #set($index = $loopindex - $pageFirstIndex)
+                                                #springBind("addCustomerEntitlementsForm.selectedCourses[$index].selected")
+
+                                                #if($index%2 == 0)
+                                                    #set($alternate="row_1")
+                                                #else
+                                                    #set($alternate="row_2")
+                                                #end
+                                                <tr>
+                                                    <td class="$alternate" width="17px"><input id="chk$index" type="checkbox" #if(${status.value}) checked #end onclick="setCourseSelection(this,'${status.expression}'); changeRowColor(this);" />
+                                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+                                                    </td>
+                                                    <td class="$alternate" style="border-right:none;">#springBind("addCustomerEntitlementsForm.selectedCourses[$index].course.courseTitle")<div>$!{status.value}</div></td>
+                                                </tr>
+                                            #end
+                                            </table>
+                                            #else
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                            <td colspan="5" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                            </td>
+                                </tr>
+                                </table>
+                                        #end
+                                        
+                                    #end
+                                 #else
+                                    #springBind("addCustomerEntitlementsForm.selectedCourses")
+                                    <ul id="browser" class="filetree">
+                                        <li><span class="folder">$distributorName</span>
+                                        <ul>
+                                        #foreach($courseGroup in ${courseTreeAsList})
+                                            #treeviewAddCourseGroup($courseGroup)
+                                        #end
+                                        </ul>
+                                        </li>
+                                    </ul>
+                                 #end
+                            </div>
+                            <!-- End-User-left-right-list -->
+                        </div>
+                        <!-- End-Courses -->
+
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                    
+                    <!-- button-div -->
+                    <div class="managerBtn">
+                        <!-- <div class="btn-left2"><input type="image" src="brands/default/en/images/btn-cancel_n.gif" id="cancel" name="_cancel" title="Cancel" /></div>
+                        <div class="btn-right1"><input type="image" src="brands/default/en/images/btn-previous_n.gif" id="previous" name="_target1" title="Previous" />&nbsp;<input type="image" src="brands/default/en/images/btn-next_n.gif" id="next" name="_target4" title="Next" /></div> -->
+                        <input type="hidden" id="currentpage" name="_page" value="2"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                        <div class="btn-left2">
+                            <a class="button" onClick="submitButtonForm(document.searchResultForm,'wizardSubmitter','_cancel');"><span class="button">Cancel</span></a>                            
+                        </div>
+                        <div class="btn-right1">
+                             <a class="button" onClick="submitButtonForm(document.searchResultForm,'wizardSubmitter','_target4');"><span class="button">Next</span></a>                             
+                        </div>
+                        <div class="btn-right1">
+                             <a class="button" onClick="submitButtonForm(document.searchResultForm,'wizardSubmitter','_target1');"><span class="button">Previous</span></a>
+                        </div>
+                    </div>
+                    
+                    <!-- scrollable-div -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                </form>
+
+            </div><!-- right-pannel-content-end -->
+
+        </div><!-- content-area-end -->
+        
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+
+    </div>
+</body>
+</html>

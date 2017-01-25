@@ -1,0 +1,303 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/jquery.client.js"> </script>
+<script type="text/javascript" language="javascript" src="brands/default/en/scripts/scripts-password-strength.js"> </script>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript">
+
+    function searchLearner() {
+        document.getElementById('action').value="search";
+        document.addCustomer.submit();
+    } 
+
+    function search() {
+        document.getElementById('action').value="search";
+        document.addCustomer.submit();
+    } 
+    
+    function setCourseSelection(checkbox, id){
+        document.getElementById(id).value = checkbox.checked;
+    }
+    
+    function onAllPage(){
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('action').value="paging";
+        document.getElementById('gridShowAll').value="true";
+        return true;
+    }
+
+    function onNextPage(nextIndex){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+
+    function onPreviousPage(previousIndex){
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function() {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+
+</script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js" ></script>
+</head>
+<body>
+<form name="addCustomer" method="post" action="adm_addCustomer.do" >
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminWizardHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-pannel-content -->
+        <div>
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.addNewCustomer.step1")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.pickDistributor")</div>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.customerProfile")</div>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.customerPreferences")</div>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.summary")</div>
+            </div>
+        </div>
+		</table></td>
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+        #springBind("addCustomerForm.*")
+            #if($status.error)
+            <!-- error-box -->
+             <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                </div>
+                #end
+            </div>
+            <!-- error-box -->
+            #end
+
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="courseLogoCustomer">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.addNewCustomer")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.administrator.editCustomerDistributor.caption.text")</div>
+					</td>
+				    </tr>
+				</table>
+            
+            <!-- Logo+Manage-User-end -->
+
+            <div id="resultBox" class="content-Block-new"><!-- content-Block-new -->
+                <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                    <div id="searchBox" class="visible"><!-- Search input window -->
+                        <div style="padding: 5px">$brander.getBrandElement("lms.administrator.addNewCustomer.caption.searchDistributor")</div>
+                        #springBind("addCustomerForm.distName")
+                        <div style="padding: 5px"><div style="width:75px; float:left" >$brander.getBrandElement("lms.administrator.searchMember.caption.DistributorName") </div> <div style="float:left"><input id="simpleSearchCriteria" type="text" name="${status.expression}" onkeypress="doEnter(event);" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field"/></div><br style="clear:both" /></div>
+                        <div style="float:right; margin-top:2px; margin-right:15px;">
+                            <!-- <div class="btn_new_normal" name="qsearch" onclick="search();">
+                                <span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span>
+                            </div> -->
+                            <a class="button" name="qsearch" onclick="searchLearner();"><span class="button" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a>
+                            #**<div class="btn_start"></div>
+                            <div class="btn_new_normal" name="qsearch" onclick="doSearch('advanceSearch');">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+                            <div class="btn_end">
+                                <!-- <input id="action" type="hidden" name="action" value="advanceSearch" />
+                                <input id="direction" type="hidden" name="direction" value="prev" />
+                                <input id="pageIndex" type="hidden" name="pageIndex" value="0" /> -->
+                            </div>
+                            **#
+                        </div> 
+                        <div style="float:right; margin-top:2px; ">&nbsp;</div>
+                        <div style="float:right; margin-top:2px; ">
+                            #**<div class="btn_start"></div>
+                            <div class="btn_new_normal" onmousedown="showSearchBox(this);" >$brander.getBrandElement("lms.manageUser.viewOrganizationGroup.caption.Cancel")</div>
+                            <div class="btn_end"></div>*#
+                            <a class="button"  ><span class="button" onmousedown="showSearchBox(this);" >$brander.getBrandElement("lms.manageUser.viewOrganizationGroup.caption.Cancel") </span></a>
+                        </div>
+                    </div><!-- Search input window -->
+                    #springBind("addCustomerForm.distributors")
+                        $pager.setItems($status.value)
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                        #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                        #end
+                        <input type="hidden" id="action" name="action" value="" />
+                        <input type="hidden" id="sortDirection" name="sortDirection" value="1" />
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="gridShowAll" name="showAll" value="false" />
+                        
+                        <div id="e13" class="Search-Containerheaderleft4" >$brander.getBrandElement("lms.administrator.addNewDistributorGroups.caption.DistributorList")</div>
+                        <div class="result_left_side">
+                            <div style="float:left; margin-top:3px;">
+								<a onclick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Search</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+							
+                            <div id="e14d" class="icon_all">
+                                <input type="image" value="Search" name="_target0" onclick="return onAllPage();" src="$brander.getBrandElement("lms.pixel.checkboxGif")" title="Show All" />
+                            </div>
+                            #if( $pager.nextIndex ) 
+                                <div id="goNext" class="icon_next"><input type="image" value="Search" name="_target0" onclick="return onNextPage($pager.nextIndex);" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /> </div> 
+                            #else 
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                            #end
+                            
+                            #if( $pager.prevIndex ) 
+                                <div id="goBack" class="icon_back"><input type="image" value="Search" name="_target0" onclick="return onPreviousPage($pager.prevIndex);" src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/> </div>
+                            #else 
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                            #end
+                            
+                            #set($totalCountminus1 = $totalCount - 1)
+                            #if($pageFirstIndex == 0 && $pageLastIndex <= 9 && $pageLastIndex!=0)
+                            #set($x = $pageFirstIndex+1)
+                            #elseif($pageFirstIndex > 0)
+                            #set($x = $pageFirstIndex+1)
+                            #elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+                            #set($x = $pageFirstIndex+1)
+                            #else
+                            #set($x = 0)
+                            #end
+                            #if($pageLastIndex != 0)
+                            #set($y = $pageLastIndex+1)
+                            #elseif($totalCount == 1)
+                            #set($y = 1)
+                            #else
+                            #set($y = 0)
+                            #end
+                            <div id="e14a" class="$brander.getBrandElement("lms.administrator.addNewDistributorGroups.cssClass.Search-ContainerheaderRight")">$brander.getBrandElement("lms.administrator.addNewDistributorGroups.caption.Showing") $x - $y $brander.getBrandElement("lms.administrator.addNewDistributorGroups.caption.of") $totalCount  </div>
+                        </div>
+                </div><!-- Result Header Ends -->
+                <div id="searchResult"><!-- searchResult -->
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="box_subheader">$brander.getBrandElement("lms.administrator.editCustomerDistributor.caption.name")</td>
+                            <td class="box_subheader">$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Status")</td>
+                        </tr>
+                    #springBind("addCustomerForm.distributors")
+                    #set($courseListSize = ${status.value.size()} - 1)
+                    #if($courseListSize >= 0)
+                        #set($count = 0)
+                        #foreach($index in [$pageFirstIndex..$pageLastIndex])
+                            #if($count%2 == 0)
+                                #set($alternate="row_1")
+                            #else
+                                #set($alternate="row_2")
+                            #end
+                            <tr>
+                                <td class="$alternate">
+                                    #springBind("addCustomerForm.distributors[$index]")
+                                    #set($dis = ${status.value})
+                                    <input type="radio" #if(${dis.selected}) checked    #end  name="dists"  value="$dis.distributor.id"   />#springBind("addCustomerForm.distributors[$index].distributor.name")
+                                    $!{status.value}
+                                </td>
+                                <td class="$alternate" style="border-right:none;"> 
+                                    ##springBind("addCustomerForm.distributors[$index].distributor.active")
+									#if($dis.distributor.active)
+                                        $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Active")
+                                    #else
+                                        $brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.Inactive")
+                                    #end
+                                </td>
+                            </tr>
+                            #set($count = $count+1)
+                        #end
+                    #else
+                        <tr>
+                            <td colspan="2" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                            </td>
+                        </tr>
+                    #end
+                    </table>
+                </div><!-- searchResult -->
+            </div>
+
+            <!-- button-div -->
+            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.managerBtn")">
+                <!-- <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-left")"><input type="image" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-cancel_n.gif")" width="71" height="19" id="cancel" name="_cancel" title="Cancel" align="top" /></div>
+                <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-right")"><input type="image" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-next_n.gif")" width="71" height="19"  id="next" name="_target1" title="Next" align="top"/></div> -->
+                <input type="hidden" id="currentpage" name="_page" value="0"/>
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<div style="float:right; margin-top:3px;">
+				  <a onClick="submitButtonForm(document.addCustomer ,'wizardSubmitter','_target1');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Next</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:left; margin-top:3px;">
+					<a onClick="submitButtonForm(document.addCustomer ,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+						<div class="btn_start"></div>
+						<div class="btn_normal">Cancel</div>
+						<div class="btn_end"></div>
+					</a>
+				</div>	
+			</div>
+            <!-- scrollable-div -->
+
+            <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+            
+            <!-- right-pannel-content-end -->
+        </div>
+        <!-- content-area-end -->
+    </td></tr>
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

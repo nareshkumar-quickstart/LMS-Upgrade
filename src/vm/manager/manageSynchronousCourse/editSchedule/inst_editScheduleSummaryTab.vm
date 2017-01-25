@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructorHead46.vm")
+
+<head>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/lms_rtf_styles.css"/>
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelSurveyInfoAndDisplaySurveys';
+        document.editScheduleSummaryTabForm.submit();
+}
+
+function saveInformation(){
+        document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editScheduleSummaryTabForm.submit();
+}
+function changeLocation(){
+        document.getElementById('actionmethod').value='changeLocation';
+        document.editScheduleSummaryTabForm.submit();
+}
+$(document).ready(function()
+{
+    $('#frame_body').height($(window).height() - ($('#header').height()+$('#frame_footer').height()));
+    if ($('#right-pannel-new').height()<$('#frame_body').height()) {
+        $('#right-pannel-new').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel-new').height());
+
+        $('#frame_body').scroll(function()
+        {
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		$("#enrolEndDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<form name="editScheduleSummaryTabForm" method="POST" action="ins_editCourseSchedule.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+<div id="main-container">
+
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+
+   
+	<div class="tab_bar">
+
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody><tr>
+                            <td width="192"><div class="tab_blank"></div></td>
+                            <td>&nbsp;</td>
+                            <td width="405">
+                                <a href="ins_editCourseSchedule.do?method=viewScheduleSummary"><div class="tab_selected">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a>
+                                <a href="ins_editCourseSchedule.do?method=viewScheduleScheduling"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+                                <a href="ins_editCourseSchedule.do?method=viewScheduleResources"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a>
+                                <a href="ins_editCourseSchedule.do?method=viewScheduleInstructor"><div style="border-right-style: solid;" class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.instructors")</div></a>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody></table>
+
+                </div>
+
+        <div id="frame_body">
+        <!-- content-area -->
+			<!-- left-pannel-content -->
+			         
+			   #parse("snippets/instructorCourseLeftMenu.vm")
+			
+                <!-- left-pannel-content-end -->
+
+                <!-- right-pannel-new-content -->
+                <div id="right-pannel-new" class="scrollable" style="height: 400px;">
+
+                        #springBind("courseForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                        <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                        #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+
+
+                        
+                 <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editSchedule.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.editSchedule.caption.subTitle.editSchedule")</div>
+			</td>
+		    </tr>
+		</table>				 
+                <!-- Logo+Manage-User-end -->
+                        
+						
+			 <!-- search_box_result -->
+						<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.editSchedule.caption.summary")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td width="20%"><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.className")</span></td>
+                                <td width="30%"><div class="required_field">*</div><input type="text" value="InCopy CS3 Essential Training" class="input_text_field" id="field_class_name"></td>
+                                <td width="20%"></td>
+                                <td width="30%"></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.courseName")</span></td>
+                                <td><div class="required_field">*</div><input type="text" value="Adobe InCopy" class="input_text_field" id="field_course_name"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.maximumClassSize")</span></td>
+                                <td><input type="text" style="margin-left: 10px;" value="15" class="input_text_field" id="field_size"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.minimumClassSize")</span></td>
+                                <td><input type="text" style="margin-left: 10px;" value="15" class="input_text_field" id="field_size"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.enrollmentCloseDate")</span></td>
+                                <td>
+								<input type="text" value="8/17/09" style="width: 152px; margin-left: 10px;" class="input_text_field" id="enrolEndDate"><div class="icon_calen"></div></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.status")</span></td>
+                                <td><select style="margin-left: 10px; width: 183px; font-size: 11px;" id="field_status"><option>Active</option><option>Inactive</option></select></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" style="float: left; margin-left: 10px; margin-right: 3px;" onclick="onlineMeeting();" checked="" id="onlineMeeting">
+								<div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.onlineMeeting")</div></td>
+                                <td><select style="margin-left: 10px; width: 183px; font-size: 11px;" id="field_meeting_type"><option>WebEx</option><option>Global Scholar</option></select></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.meetingID")</span></td>
+                                <td><input type="text" style="margin-left: 10px;" value="801215" class="input_text_field" id="field_meeting_id"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.meetingPasscode")</span></td>
+                                <td><input type="text" style="margin-left: 10px;" value="2774" class="input_text_field" id="field_meeting_passcode"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><div class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.location")</div></td>
+                                <td><div class="required_field">*</div><input type="text" value="6th Street" class="input_text_field" id="field_location"></td>
+                                <td>
+                                     <a onClick="changeLocation();">
+                                        <div style="float: left; margin-top: 5px; margin-left: 10px;">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnChange")</div>
+                                            <div class="btn_end"></div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                       <!-- button-div -->
+						<div style="float: right; margin-top: 15px; margin-right: 15px;">
+						  <a onClick="saveInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					   </div>
+					  <div style="float: right; margin-top: 15px; margin-right: 10px;">
+						<div>
+						  <a onClick="cancelInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					  </div>
+				   </div>
+					<!-- button-div -->  
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-new-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </div>
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/instructorFooter46.vm")
+#end   
+<!-- footer-end -->
+
+</div>
+</form>
+</body>
+</html>

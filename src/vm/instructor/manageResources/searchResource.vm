@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+ <html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+     #parse("snippets/instructor/instructorHead.vm")
+
+
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+
+        $(document).ready(function(){
+			$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+			if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+			}
+			$('#sideBar').height($('#right-pannel').height());
+           $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='selectedResources']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='selectedResources']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            );
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+        function search() {
+            document.getElementById('actionmethod').value='searchResources';
+            document.getElementById('showAll').value=false;
+            document.manageResourcerForm.submit();
+        }
+
+        function editResources() {
+            document.getElementById('actionmethod').value='editResource';
+            document.manageResourcerForm.submit();
+        }
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer',
+                onShow: function (dialog) {
+                    dialog.data.find('.alert_message_box_text').append(message);
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteResources(){
+            if ($("INPUT[type='checkbox'][name='selectedResources']:checked").length>0) {
+                confirm("$brander.getBrandElement("error.manageResource.DeleteConfirmation")", function () {
+                    document.getElementById('actionmethod').value='deleteResources';
+                    document.manageResourcerForm.submit();
+                });
+            }else {
+                $('#selectRegulutor').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+        function sortResources(sortColumnIndex,sortDirection,pageIndex,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('showAll').value=showAll;
+            document.getElementById('pageIndex').value=pageIndex;
+            document.getElementById('actionmethod').value='searchResources';
+            document.getElementById('sorting').value='true';
+            document.manageResourcerForm.submit();
+        }
+
+        function checkAll( countCheckBoxes ) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    changeRowColor(objCheckBox);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    changeRowColor(objCheckBox);
+                }
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+<form name="manageResourcerForm" id="manageResourcerForm" method="post" action="ins_manageResources.do">
+<input type="hidden" id="actionmethod" name="method" value="searchResources"/>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+        <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        #parse("snippets/instructorResourcesLeftMenu.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+        #if( $context.deleteError != false )
+        <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #set ($error = $brander.getBrandElement($context.deleteError))
+                <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                </div>
+            </div>
+        <!-- error-box -->
+        #end
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-tools">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.Instructor.PageHeading.caption.ManageResources")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.Instructor.PageInlineText.caption.ManageResources")</div>
+			</td>
+		    </tr>
+		</table>
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+
+                <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="window.location.href='ins_addResource.do'">$brander.getBrandElement("lms.Instructor.caption.AddResource.ManageResources")</div>
+                        <div class="btn_end"></div>
+                </div>
+
+                <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="deleteResources();">$brander.getBrandElement("lms.Instructor.caption.DeleteResource.ManageResources")</div>
+                        <div class="btn_end"></div>
+                </div>
+
+                </div>
+                <div id="searchBox" style="float:left; height:150px; width:300px; left:45%;" class="visible">
+                    $brander.getBrandElement("lms.Instructor.caption.SearchResources.ManageResources")<br/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.Instructor.caption.ResourceName.ManageResources")</div> <input type="text" onkeypress="doEnter(event);" name="resourceName" value="$!{context.resourceName}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.Instructor.caption.AssetTagnumber.ManageResources")</div> <input type="text" onkeypress="doEnter(event);" name="tagNumber" value="$!{context.tagNumber}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.Instructor.caption.ResourceType.ManageResources")</div>
+                        #set($typeList = ${context.rTypes})
+                        <select class="input_text_field" name="resourceType" style="width:175px; height:20px; float:right; margin-right:14px;">
+                            <option value="All" >All</option>
+                            #foreach ($type in $typeList)
+                                <option value="$type" >$type</option>
+                            #end
+                        </select>
+                        <br/><br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="search();">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+                <div class="result_left_side">
+                <!-- Result Description -->
+
+                $pager.setItems($!{context.resourceList})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                        #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="false" />
+                <input type="hidden" id="sorting" name="sorting" value="false" />
+                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+                 #if($!{context.showAll})
+                    #set($showAll=$!{context.showAll})
+                 #else
+                    #set($showAll=false)
+                 #end
+
+                    <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="showSearchBox(this);document.manageResourcerForm.resourceName.focus();">$brander.getBrandElement("lms.instructor.courseOverview.btnSearch")</div>
+                        <div class="btn_end"></div>
+                    </div>
+
+                    <!-- All Icon -->
+                    #if($totalCount > 10 )
+                        <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='ins_manageResources.do?method=searchResources&showAll=true';" ></div>
+                    #end
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_manageResources.do?method=searchResources&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled"></div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='ins_manageResources.do?method=searchResources&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled"></div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount==0)                    	
+                    <div id="resultDescription" class="box_description" style="margin-right:-22px;" > $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>                   
+                    #elseif($totalCount==1)
+                         <div id="resultDescription" class="box_description" style="margin-right:-22px;" > $brander.getBrandElement("lms.accreditation.caption.Showing") 1 - $totalCount of $totalCount</div>
+                    #elseif($totalCount>1)
+                    	     <div id="resultDescription" class="box_description" #if($totalCount<11) style="margin-right:-22px;" #end> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>                                                 
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                    <td class="box_subheader" style="padding-left:5px;" width="60%"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>$brander.getBrandElement("lms.Instructor.caption.ResourceName.ManageResources")</td>
+                    <td class="box_subheader" style="padding-left:5px;"><div #if($context.sortColumnIndex==1) class="icon_up"#end ></div>$brander.getBrandElement("lms.Instructor.caption.ResourceType.ManageResources")</td>
+                    <td class="box_subheader" style="padding-left:5px; border-right:none;"><div #if($context.sortColumnIndex==2)class="icon_up" #end></div>$brander.getBrandElement("lms.Instructor.caption.AssetTagnumber.ManageResources")</td>
+                  </tr>
+                </table>
+                  <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+            <!-- Search Result Start -->
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader" width="60%" style="padding-left:5px;"><div #if($context.sortDirection == 0) onclick="sortResources(0,1,$pageCurrIndex,$showAll);" #else onclick="sortResources(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down"#end></div>$brander.getBrandElement("lms.Instructor.caption.ResourceName.ManageResources")</div></td>
+                        <td class="box_subheader" style="padding-left:5px;"><div #if($context.sortDirection == 0) onclick="sortResources(1,1,$pageCurrIndex,$showAll);" #else onclick="sortResources(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down"#end></div>$brander.getBrandElement("lms.Instructor.caption.ResourceType.ManageResources")</div></td>
+                        <td class="box_subheader" style="padding-left:5px; border-right:none;"><div #if($context.sortDirection == 0) onclick="sortResources(2,1,$pageCurrIndex,$showAll);" #else onclick="sortResources(2,0,$pageCurrIndex,$showAll);" #end ><div id="userNameSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.Instructor.caption.AssetTagnumber.ManageResources")</div></td>
+                    </tr>
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                        #set($resource = $context.resourceList.get($loopIndex))
+                        #if($loopIndex%2 == 0)
+                            #set($alternate="row_1")
+                        #else
+                            #set($alternate="row_2")
+                        #end
+                        #if($loopIndex == $pageLastIndex)
+                            <tr>
+                                <td class="$alternate" width="17px" style="border-bottom:none;"><input type="checkbox" id="chk$loopIndex" name="selectedResources" value="${resource.id}" style="margin-left:3px" onclick="changeRowColor(this);"/></td>
+                                <td class="$alternate" style="border-bottom:none;"><div onclick="window.location.href='ins_manageResources.do?method=editResource&id=$resource.id'"><u>$!{resource.name}</u> &nbsp;</div></td>
+                                <td class="$alternate" style="border-bottom:none;">$!{resource.resourceType.name}&nbsp;</td>
+                                <td class="$alternate"style="border-bottom:none; border-right:none;">$!{resource.assetTagNumber}&nbsp;</td>
+                            </tr>
+                         #else
+                            <tr>
+                                <td class="$alternate" width="17px"><input type="checkbox" id="chk$loopIndex" name="selectedResources" value="${resource.id}" style="margin-left:3px" onclick="changeRowColor(this);"/></td>
+                                <td class="$alternate"><div onclick="window.location.href='ins_manageResources.do?method=editResource&id=$resource.id'"><u>$!{resource.name}</u> &nbsp;</div></td>
+                                <td class="$alternate">$!{resource.resourceType.name}&nbsp;</td>
+                                <td class="$alternate" style="border-right:none;">$!{resource.assetTagNumber}&nbsp;</td>
+                            </tr>
+                        #end
+                    #end
+                </table>
+            </div>
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Space -->
+        <div style="height:25px;"></div>
+        </div>
+    </td></tr>
+    <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	    <!-- Footer starts -->
+    #parse("snippets/managerFooter.vm")
+    <!-- Footer ends -->
+	</td></tr>
+
+    </table>
+
+    <div id="selectRegulutor" style="display:none" class="message_box">
+        <div class="alert_message_box_title" style="width: 480px">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:180px; margin-top:70px;" class="simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+
+    <div id="deleteConfirmation" style="display:none" class="message_box">
+        <div class="alert_message_box_title" style="width: 480px">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text"></div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:140px; margin-top:60px;" class="no simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+            </div>
+            <div id="btn_ok_select" style="margin-left:182px; margin-top:60px;" class="yes">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+
+</form>
+</body>
+</html>

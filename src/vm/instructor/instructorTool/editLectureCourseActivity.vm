@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+
+
+        <script language="javascript" type="text/javascript">
+            function saveGrade() {
+                document.getElementById('actionmethod').value='saveGrade';
+                document.editGrdForm.submit();
+            }
+            function onSelection(objCheckbox,hiddenId,labelId) {
+                document.getElementById(hiddenId).value=objCheckbox.checked;
+                if(objCheckbox.checked) {
+                    document.getElementById(labelId).innerHTML = 'Yes';
+                } else {
+                    document.getElementById(labelId).innerHTML= 'No';
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="editGrdForm" id="editGrdForm" method="post" action="ins_mngGradeBook.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+ 	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+			</td></tr>
+			
+                <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+ #parse("snippets/instructorManageGradeLeftMenu.vm")
+		</table></td>
+
+		<TD id="content" >
+			<div id="scrollable">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:10px;">
+                            <tr>
+                                <td colspan="2">
+                                  <!-- Page Description -->
+                          	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                          		    <tr>
+                          			<td id="page-icon" class="page-icon-tools">
+                          			    &nbsp;
+                          			</td>
+                          			<td id="page-description">
+                          			    <div id="page-heading">$brander.getBrandElement("lms.Instructor.PageTitle.caption.editGradebook")</div>
+                          			    <div id="page-help">$brander.getBrandElement("lms.instructor.editGradebooks.inlineText")</div>
+                          			</td>
+                          		    </tr>
+                          		</table>  								  
+           
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    #springBind("gradeBookForm.synClassName")
+                                    #set($synClassName = $!{status.value} )
+                                    #springBind("gradeBookForm.activityName")
+                                    #set($activityName = $!{status.value} )
+                                    <div class="selected_object">$synClassName  -  $activityName</div>
+                                </td>
+                                <td width="200px">
+                                     <div style="float:right; margin-top:10px;" >
+                                        <div class="btn_start"></div>
+                                        <!-- <div class="btn_normal" onclick="location.href='ins_mngGradeBook.do?method=createPdf';">$brander.getBrandElement("lms.Instructor.button.print")</div> -->
+                                        <div class="btn_normal" onClick="window.print();">$brander.getBrandElement("lms.Instructor.button.print")</div>
+                                        <div class="btn_end"></div>
+                                     </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="resultBox" class="search_box_result">
+                            <div id="resultHeader" class="box_header">
+                                <div class="box_heading">
+                                    $brander.getBrandElement("lms.instructor.addActv.caption.stu")
+                                </div>
+                            </div>
+                            <div id="searchResult">
+                                <table border="0" width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef" >
+                                        <td class="box_subheader" width="120px" ><div class="icon_up"></div>$brander.getBrandElement("lms.Instructor.caption.FirstName")</td>
+                                        <td class="box_subheader"><div class="table_column" style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.caption.LastName")</div></td>
+                                        <td class="box_subheader" width="80px" style="border-right:none;"><div class="table_column" style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.caption.Attended")</div></td>
+                                    </tr>
+                                    #springBind("gradeBookForm.manageGradeList")
+                                    #set($listSize = $!{status.value.size()} - 1 )
+                                    #set($index = 0 )
+                                    #foreach($grade in $!{status.value})
+                                         #if($index%2 == 0)
+                                            #set($alternate="row_1")
+                                        #else
+                                            #set($alternate="row_2")
+                                        #end
+                                        #if($index == $listSize)
+                                            <tr>
+                                                <td class="$alternate" style="border-bottom:none;" height="23px">$!{grade.user.firstName}</td>
+                                                <td class="$alternate" style="border-bottom:none;">$!{grade.user.lastName} &nbsp;</td>
+                                                <td class="$alternate" style="border-right:none; border-bottom:none;">
+                                                    #springBind("gradeBookForm.manageGradeList[$index].attended")
+                                                    <input type="checkbox" id="cb5" class="check_box_small" style="float:left;" #if($!{status.value}) checked #end onclick="onSelection(this,'${status.expression}','label$index');"/>
+                                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                                    <div id="label$index" class="column_text_small" style="padding-top:2px;" >#if($!{status.value}) Yes #else No #end</div>
+                                                </td>
+                                            </tr>
+                                        #else
+                                            <tr>
+                                                <td class="$alternate" height="23px">$!{grade.user.firstName}</td>
+                                                <td class="$alternate">$!{grade.user.lastName} &nbsp;</td>
+                                                <td class="$alternate" style="border-right:none;">
+                                                    #springBind("gradeBookForm.manageGradeList[$index].attended")
+                                                    <input type="checkbox" id="cb2" class="check_box_small" style="float:left;" #if($!{status.value}) checked #end onclick="onSelection(this,'${status.expression}','label$index');" />
+                                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                                    <div id="label$index" class="column_text_small" style="padding-top:2px;" >#if($!{status.value}) Yes #else No #end</div>
+                                                </td>
+                                            </tr>
+                                        #end
+                                        #set($index = $index + 1 )
+                                    #end
+                                </table>
+                            </div>
+                        </div>
+
+                        <a onClick="saveGrade();">
+                            <div style="float:right; margin-top:25px;">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+                                <div class="btn_end"></div>
+                            </div>
+                        </a>
+                        <a onClick="location.href='ins_mngGradeBook.do?method=editGradebookCourseActivityView';">
+                            <div style="float:right; margin-top:25px; margin-left:25px;">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.instructor.caption.search.Cancel")</div>
+                                <div class="btn_end"></div>
+                            </div>
+                        </a>
+                    </div>
+                        </td></tr>
+
+                <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+                <!-- Footer Start -->
+                #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+	</td></tr>				
+            </table>
+        </form>
+    </body>
+</html>

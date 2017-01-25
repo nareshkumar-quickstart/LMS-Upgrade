@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/jquery.css" />
+<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+ <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+
+    document.title="Administrator - $context.title";
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.viewCustomerEntitlementForm.submit();
+    } 
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+$("INPUT[type='checkbox'][name='customfield']").click(function(){
+
+                $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+
+         });
+
+  $('#chkAll').click(function(){
+
+                $("INPUT[type='checkbox'][name='customfield']").attr('checked', $('#chkAll').is(':checked'));
+
+                $("INPUT[type='checkbox'][name='customfield']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+
+            });
+
+    });
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+        function deleteCustomFields(){
+            if ($("INPUT[type='checkbox'][name='customfield']:checked").length>0) {
+                confirm("Are you sure you want to delete the custom field(s)?", function () { 
+                    document.getElementById('action').value='deleteCustomField';
+                    document.manageCustomField.submit();
+                });
+            }else {
+                $('#selectCustomField').modal({close:false,position: ["40%",]});
+            }
+       }
+</script>
+
+    <style type="text/css">
+        /* Confirm Overlay */
+        #confirmModalOverlay {background-color:#eee; cursor:wait;}
+        /* Overlay */
+        #simplemodal-overlay {background-color:#eee; cursor:wait;}
+    </style>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content --><!-- <div class="leftmenu-top-shadow"></div> -->
+        #if( $context.type.equals("customer"))
+		   #set($logoClass="courseLogoCustomer")
+           #parse("snippets/adminCustomerLeftMenu.vm")
+        #elseif( $context.type.equals("reseller") )
+			#set($logoClass="courseLogoDistributor")
+            #parse("snippets/adminDistributorLeftMenu.vm")
+        #end
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="$!logoClass">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$context.title</div>
+			    <div id="page-help">$context.description</div>
+			</td>
+		    </tr>
+		</table>            
+            
+            <!-- Logo+Manage-User-end -->
+
+            <!--Group-Name-div -->
+            <div class="group-name" #if(! ${context.selectedCustomer.Name}) style="display:none;"#end>
+                <div>$!{context.selectedCustomer.Name}</div>
+            </div>
+
+            <!-- Group-Name-div -->
+            $pager.setItems($context.CustomerEntitlementsList)
+            #set($totalCount = $pager.total)
+            #if($pager.hasItems())
+                #set($pageFirstIndex = $pager.firstIndex)
+                #set($pageLastIndex = $pager.lastIndex)
+                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                #set($currentPageCount = $pageLastIndex + 1)
+            #else
+                #set($pageFirstIndex = 0)
+                #set($pageLastIndex = 0)
+                #set($currentPageSize = 0)
+                #set($currentPageCount = 0)
+            #end
+            <form name="manageCustomField" method="post" action="adm_manageCustomField.do">
+			<input type="hidden" id="action" name="method" />
+			<input type="hidden" id="entity" name="entity" value="$context.type"/>
+                <div id="resultBox" class="content-Block-new"><!-- content-Block-new -->
+                    <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                        <div style="float:left; height:23px;">
+						<div style="float:left; margin-top:3px;">
+						  <a onClick="window.location.href='adm_addCustomField.do?entity=$context.type';" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Add Custom Field</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+						  <a onClick="deleteCustomFields();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Delete Custom Field</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                        </div>
+
+						  <!--<a href="adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&showAll=true">
+                                <div id="e14d" class="icon_all"  onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" ></div>
+                        </a> -->
+                        #if( $pager.nextIndex )
+                        <div id="e14c" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="window.location.href='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&pageIndex=$pager.nextIndex';" ></div>
+                        #else
+                        <div class="icon_disabled">&nbsp;</div>
+                        #end
+                        #if( $pager.prevIndex )
+                        <div id="e14b" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="window.location.href='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement&pageIndex=$pager.prevIndex';" ></div>
+                        #else
+                        <div class="icon_disabled">&nbsp;</div>
+                        #end
+                        #set($totalCountminus1 = $totalCount - 1)
+                        #if($pageFirstIndex == 0 && $pageLastIndex <= 9 && $pageLastIndex!=0)
+                        #set($x = $pageFirstIndex+1)
+                        #elseif($pageFirstIndex > 0)
+                        #set($x = $pageFirstIndex+1)
+                        #elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+                        #set($x = $pageFirstIndex+1)
+                        #else
+                        #set($x = 0)
+                        #end
+                        #if($pageLastIndex != 0)
+                        #set($y = $pageLastIndex+1)
+                        #else
+                        #set($y = 0)
+                        #end
+                        <!--<div id="e14a" class="box_description">$brander.getBrandElement("lms.manageUser.editLearner.caption.Showing") $x - $y $brander.getBrandElement("lms.manageUser.editLearner.caption.of") $totalCount </div>-->
+                    </div><!-- Result Header end -->
+
+                    <div id="searchResult"><!-- searchResult -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            <tr bgcolor="#efefef">
+
+<td class="check_box_top" width="2%" ><input id="chkAll" type="checkbox" name="selectAll" /></td>
+                                <td width="80%" class="box_subheader">Custom Field Name</td>
+                                <td width="18%" class="box_subheader">Type</td>
+ 
+                            </tr>
+                     #if( $context.customFieldsList)
+#set($count = 0 )
+#set( $customFieldsList = $context.customFieldsList)
+#foreach($customField in $customFieldsList )
+#if($count%2 == 0)
+#set($alternate="row_1")
+#else
+#set($alternate="row_2")
+#end
+
+<tr>
+<td style="text-align:right" class="$alternate" ><input type="checkbox" id="chk$count" name="customfield" value="${customField.id}"  /></td>
+<td class="$alternate"><a onClick="javascript:window.location='adm_manageCustomField.do?method=displayCustomFieldForEdit&customFieldId=$customField.id&entity=${context.type}';">$!{customField.fieldLabel}</a></td>
+<td class="$alternate"><a onClick="javascript:window.location='adm_manageCustomField.do?method=displayCustomFieldForEdit&customFieldId=$customField.id&entity=${context.type}';">$!{customField.fieldType}</a></td>
+</tr>
+#set($count = $count+1)
+                        #end
+                    #else
+                            <tr>
+                                <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                </td>
+                            </tr>
+                    #end
+
+#if($count==0)
+
+<tr >
+
+<td colspan="4"  style="border-bottom: 1px solid #DFDFDF !important ">
+<div   class="result_blank">$brander.getBrandElement("lms.accreditation.caption.No-records-found-message")</div>
+</td>
+</tr>
+
+#end
+
+                        </table>
+                    </div><!-- searchResult -->
+
+                </div><!-- content-Block-new -->
+            </form>
+
+            <!-- space -->
+    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")" style="height:7px;"></div>
+            <!-- space -->
+
+        </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+<!-- *****************************************************-->
+<div id="deleteConfirmation" style="display:none;">
+    <div class="header" >$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text" style="width:75%;">$brander.getBrandElement("lms.administrator.CustomFields")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+    
+
+<!-- *****************************************************-->
+<div id="selectCustomField" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+</body>
+</html>

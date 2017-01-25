@@ -1,0 +1,109 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+
+    <div id="header" class="page_header">
+        <div style="width:200px; float:left;"><!-- logo -->
+            <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+        </div><!-- logo ends-->
+
+        <div style="float:right;"><!-- top-nav-right-menu -->
+
+		#if($userPermissionChecker.hasAccessToFeatureGroup("Reports", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-INS-0010", $userData, $ssn))
+    	<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    		<a onclick="submitForm('insReports','insReports','ins_ManageReports.do')" href="#" #if($menu == "insReports")  #end>
+    		   <img id="manager-reports" alt="Profile" src="brands/default/en/images/reports_on.png"
+    	                    onmouseover="this.src='brands/default/en/images/reports_hover.png'"
+    	                    onmouseout="this.src='brands/default/en/images/reports_on.png'"/>	
+    		</a>
+    		</td></tr>
+    		<tr><td #if($menu == "insReports") class="selected" #end>
+    		$brander.getBrandElement("lms.mycourses.header.Reports")					
+    		</td></tr>
+    	</table>
+    	#end
+		
+		#if($userPermissionChecker.hasAccessToFeatureGroup("Grades & Resources", $userData, $ssn) && ($userPermissionChecker.hasAccessToFeature("LMS-INS-0005", $userData, $ssn) 
+				|| $userPermissionChecker.hasAccessToFeature("LMS-INS-0006", $userData, $ssn) || $userPermissionChecker.hasAccessToFeature("LMS-INS-0007", $userData, $ssn) 
+				|| $userPermissionChecker.hasAccessToFeature("LMS-INS-0008", $userData, $ssn) || $userPermissionChecker.hasAccessToFeature("LMS-INS-0009", $userData, $ssn)))
+  		<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    		<a onclick="submitForm('insResources','ManageGradebooks','ins_mngGradeBook.do')" href="#" #if($menu == "insResources")  #end>
+    		   <img id="instructor-grades-resources" alt="Search" src="brands/default/en/images/icon-tools-normal.png"
+    	                    onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'"
+    	                    onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/>	
+    		</a>
+    		</td></tr>
+    		<tr><td #if($menu == "insResources") class="selected" #end>
+    		$brander.getBrandElement("lms.Instructor.caption.GradeResources")
+    		</td></tr>
+    	</table>
+    	#end
+
+		#if($userPermissionChecker.hasAccessToFeatureGroup("Courses", $userData, $ssn) && ($userPermissionChecker.hasAccessToFeature("LMS-INS-0003", $userData, $ssn) || $userPermissionChecker.hasAccessToFeature("LMS-INS-0004", $userData, $ssn)))
+  		<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    		<a
+    			#if($userPermissionChecker.hasAccessToFeature("LMS-INS-0003", $userData, $ssn)) 
+    			onclick="submitForm('Courses','LMS-INS-0003','ins_manageSynchronousCourse.do')"
+    			#elseif($userPermissionChecker.hasAccessToFeature("LMS-INS-0004", $userData, $ssn)) 
+    			onclick="submitForm('Courses','LMS-INS-0004','ins_viewCourseGroups.do')"
+    			#end
+			href="#" #if($menu == "Courses")  #end>
+    		   <img id="instructor-courses" alt="Courses" src="brands/default/en/images/training_on.png"
+    	                    onmouseover="this.src='brands/default/en/images/training_hover.png'"
+    	                    onmouseout="this.src='brands/default/en/images/training_on.png'"/>	
+    		</a>
+    		</td></tr>
+    		<tr><td #if($menu == "Courses") class="selected" #end>
+    		$brander.getBrandElement("lms.manageUser.searchLearner.caption.Courses")					
+    		</td></tr>
+    	</table>
+    	#end
+  
+  		#if($userPermissionChecker.hasAccessToFeatureGroup("Search", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-INS-0002", $userData, $ssn))
+    	<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    		<a onclick="submitForm('Search','LMS-INS-0002','ins_searchLearner.do')" href="#" #if($menu == "Search") #end>
+    		   <img id="instructor-search" alt="Search" src="brands/default/en/images/search_on.png"
+    	                    onmouseover="this.src='brands/default/en/images/search_hover.png'"
+    	                    onmouseout="this.src='brands/default/en/images/search_on.png'"/>	
+    		</a>
+    		</td></tr>
+    		<tr><td #if($menu == "Search") class="selected" #end>
+    		$brander.getBrandElement("lms.instructor.caption.search.Search")					
+    		</td></tr>
+    	</table>	
+    	#end
+		
+		#if($userPermissionChecker.hasAccessToFeatureGroup("Dashboard", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-INS-0001", $userData, $ssn))
+    	<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    		<a onclick="submitForm('Dashboard','LMS-INS-0003','ins_synchronousClasses.do')" href="#" #if($menu == "Dashboard") #end>
+    		   <img id="instructor-dashboard" alt="Dashboard" src="brands/default/en/images/icon-dashboard-normal.png"
+    	                    onmouseover="this.src='brands/default/en/images/icon-dashboard-hover.png'"
+    	                    onmouseout="this.src='brands/default/en/images/icon-dashboard-normal.png'"/>	
+    		</a>
+    		</td></tr>
+    		<tr><td #if($menu == "Dashboard") class="selected" #end>
+    		$brander.getBrandElement("lms.instructor.launchCourses.caption.MyDashboard")					
+    		</td></tr>
+    	</table>		
+		#end
+        
+        <!-- LMS-15500 -->
+        #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') 
+	        #if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<a onclick="" href="#springUrl('/predict.do')">
+								<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td #if($menu == "Predict") class="selected" #end>
+								$brander.getBrandElement("lms.header.caption.Predict")
+						</td>
+					</tr>
+				</table>
+			#end
+		#end	
+        </div><!-- top-nav-right-menu ends-->
+	</div>

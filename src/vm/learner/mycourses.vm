@@ -1,0 +1,534 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<META HTTP-EQUIV="cache-control" CONTENT="no-cache" />
+<META HTTP-EQUIV="expires" CONTENT="0" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"/> 
+
+	<!-- Parsed Page Head -->
+	
+	#parse("snippets/learnerNewHead.vm")
+
+	<!-- Page Javascript -->
+		
+	<style type="text/css" >
+		.process_window, .process_window_shadow{        
+            width:400px;
+            height:140px;
+            padding-top:15px;
+            padding-left:15px;
+            background-color:#F7F7F7;
+            border:1px;
+            border-style:solid;
+            border-color:#E8E8E8;
+            position:absolute;
+            z-index:0;
+        }
+        .process_window_shadow{
+            margin-left:4px;
+            margin-top:4px;
+            background-color:#F1F1F1;
+            border:none;
+            z-index:-1;
+        }
+        .icon_clock{
+            float:left;
+            height:55px;
+            width:57px;
+            margin-left:5px;
+            background-image:url(brands/default/en/images/clock.gif);
+            background-repeat:no-repeat;
+        }
+        .process_heading{
+            float:left;
+            width:300px;
+            font-size:18px;
+            margin-top:17px;
+            margin-left:10px;
+            font-weight:bold;
+        }
+        .processing_text{
+            float:left;
+            width:500px;
+            padding-left:7px;
+            margin-top:20px;
+        }
+		.bars_container{
+            float:left;
+            height:21px;
+            width:375px;
+            margin-top:10px;
+            margin-left:5px;
+            border:1px;
+            border-color:#E8E8E8;
+            background-color:#FF0000;
+            border-style:solid;
+            z-index:1;
+        }
+        .progress_bar, .status_bar{
+            position:absolute;
+            height:21px;
+            width:375px;
+            background-color:#FFFFFF;
+        }
+        .status_bar{
+            background-image:url('brands/default/en/images/bluePercentBar.gif');
+            z-index:2;
+		}
+	</style>
+	<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+    
+	
+		var pageProgressObject = {
+			status: "",
+			message: ""
+		}
+	
+	function getSubscriptionCourse(obj)
+	{
+	  //alert('Hello' + obj.value);
+	  document.getElementById('selSubscription').value=obj.value;
+	  //alert(document.getElementById('selSubscription').value);
+	  
+	}
+	
+        function processPage(obj){
+		
+			
+        
+        	var _msg='$brander.getBrandElement("lms.learner.progressbar.message")';
+        
+        	if(obj.value=='recent'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.recentcourses.message")';
+        	}else if(obj.value=='enrolled'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.enrolledcourses.message")';
+        	}else if(obj.value=='coursecatalog'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.coursecatalog.message")';
+        	}else if(obj.value=='survey'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.survey.message")';	
+        	}
+        	
+        	if(obj.value=='completedCourses'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.completedCourses.message")';	
+        	}
+        	if(obj.value=='expiredCourses'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.expiredCourses.message")';	
+        	}
+        	if(obj.value=='coursesAboutToExpire'){
+        		_msg='$brander.getBrandElement("lms.learner.progressbar.coursesAboutToExpire.message")';	
+        	}
+        	
+        	process(_msg);
+
+			pageProgressObject.message = _msg;
+        }
+		
+		
+		function showProcessOverlay(){
+		
+			var marginLeft=($(window).width()/2)-200;
+            var margintTop=($(window).height()/2)-70;
+			$('#process').css('display', 'block');
+            $('#process').css("left" , marginLeft);
+            $('#process').css("top" , margintTop);	
+
+			pageProgressObject.status = "show";
+			
+		}
+		
+		function hideProcessOverlay(){
+			$('#process').css('display', 'none');
+			pageProgressObject.status = "hidden";
+			pageProgressObject.message = "";
+		
+		}
+    
+        function process(processBarMessage){
+        
+        	var statusUpdateId=0;
+
+			if(pageProgressObject.status == ""){
+			
+				//console.log("this is the first time loading");
+			}else{
+				//console.log("this is a subsequent time loading");
+			}
+			
+			if($('#process').css('display')== 'none'){
+				showProcessOverlay();
+				clearInterval(statusUpdateId);
+			}else if($('#process').css('display')== 'block'){
+				hideProcessOverlay();
+				statusUpdateId = setInterval("updateStatus()", 300);
+			}
+			
+			$('#status_bar').width(1);
+			$('#process_text').html(processBarMessage);			
+			
+			
+    	}
+        	
+            function updateStatus(){
+            	var status_bar = document.getElementById("status_bar");
+        		if(parseInt(status_bar.style.width) < 360) {//375){
+            			status_bar.style.width = (parseInt(status_bar.style.width)+15)+"px"
+        		}
+        	}
+            		
+    </script>
+            
+    <script language="javascript" type="text/javascript">
+        var launchWindow;
+        var printWindow;
+        function findCourseType(courseId) {    		
+    		#foreach ($course in ${context.myCourseItems})    					 				
+    				if('${course.courseID}' == courseId)
+    				{    					
+    					if($course.courseCategoryType.equals("Scorm Course"))
+    					{
+    						return true;
+				    	}
+				    }			    			
+		    #end
+		    return false;
+    	}
+        
+        function launchCourse(courseId, enrollmentId) {
+        	//stopBothTimers();
+        	
+        	IS_LS360_SCORM = false;
+        	IS_LS360_SCORM = findCourseType(courseId);
+        	
+            var url = "#springUrl("/lrn_launchCourse.do")";
+            var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+			
+        }
+        
+        function launchCourse(courseId, enrollmentId, courseType) {
+        	//stopBothTimers();
+        	IS_LS360_SCORM = false;        	
+        	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+			
+			setInfoBarToggle ();
+        	        	
+        	        	
+            var url = "#springUrl("/lrn_launchCourse.do")";
+            var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            
+            launchWindow.focus();
+            launchWindow.opener=this.window;            
+        }
+    
+    
+        function selfEnroll(courseId) {
+        	//stopBothTimers();
+
+        	
+			IS_LS360_SCORM = false;
+			IS_LS360_SCORM = findCourseType(courseId);
+			
+			setInfoBarToggle ();
+        	
+            var url = "#springUrl("/lrn_selfEnrollment.do")";
+            var params = "?courseId="+courseId +"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+        }
+        function printCertificate(enrollmentId) {
+            var url = '#springUrl("/completionCertificate.pdf")';
+            var params = "?learnerEnrollmentId="+enrollmentId;
+            if ( printWindow != null ) {
+                printWindow.close();
+            }
+            printWindow = window.open(url+params,'Certificate','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            printWindow.focus();
+            printWindow.opener=this.window;
+        }
+        function selfEnroll(courseId, courseType) {
+        	//stopBothTimers();
+
+			setInfoBarToggle ();
+			
+			IS_LS360_SCORM = false;        	
+			IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+
+            var url = "#springUrl("/lrn_selfEnrollment.do")";
+            var params = "?courseId="+courseId +"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+        }
+    	
+    	
+        /*This script helps to show the tooltip on the text element.*/
+        function showToolTip(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+    	
+        function hideToolTip(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    	
+    	function storeValue(){
+    		document.getElementById('originalVal').value=document.getElementById('search').value;
+    		document.getElementById('search').value="Search";
+    	}
+    	
+    	function searchSubmit(e){
+        	var keycode;
+        	if (window.event) keycode = window.event.keyCode;
+        	else if (e) keycode = e.which;
+        	else return true;
+            //alert(keycode);
+            //alert(document.getElementById('originalVal').value);
+        	
+            if (keycode == 13){
+                document.CourseForm.submit();
+                return false;
+            }else{
+                if (keycode == 1 || keycode == 0){
+                    document.getElementById('search').value=document.getElementById('originalVal').value;
+                    document.CourseForm.submit();
+                    return false;
+                } else
+                	return true;
+            }
+        }        	
+    </script>
+    #set ($dollar = "$")
+    
+	<script>
+    	## putting this in to keep the session alive while the user is in the course.
+    	## send message home every 20 minutes
+    	function keepAlive() {
+    	    ${dollar}.getJSON("#springUrl("/view.do?vm=keepalive")", function(json){
+            	setTimeout("keepAlive()",1200000);
+            });
+    	}
+    	setTimeout("keepAlive()",1200000);
+    </script>
+            
+    <!--script type="text/javascript" src="javascript/lmsSCORMAdapter.js"></script>
+    
+	<script>
+   
+		var API_1484_11 = new SCORMAdapter();
+        var API = new SCORMAdapter();
+    </script-->
+    
+    <script type="text/javascript" language="javascript">
+    	//  JS Document Ready
+        $(document).ready(function() {      
+            processPage('');
+            
+        });
+    </script>
+    <!-- END: Page Javascript -->
+    
+</head>
+
+    <body onload="javascript:processPage('')">
+		
+		<form name="CourseForm" id="CourseForm">
+		<!-- Page Table -->
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            
+    		<!-- Header Row -->
+    		<tr>
+                <td id="header" colspan="2">
+					
+					#parse("snippets/learnerNewHeader.vm")
+					
+					<div id="page-searchbar">
+				
+						<input type="hidden" id="actionmethod" name="method" value=""></input> 
+				
+                        <div id="searchbar-left" style="float:left;"></div>
+        				
+        				<div id="searchbar-searchfield" style="float:right;">
+
+							<!-- Add Search Submit Enter Function -->
+							<div id="searchbar-button" class="searchfield-end" style="float:right;" onclick="searchSubmit(event);"></div>
+							
+							<div class="searchfield-stem" style="float:right;">
+								<input type="hidden" value="" id="originalVal"/>
+								<input type="text" onblur="storeValue();" onfocus="this.value=''" value="Search" onKeyPress="return searchSubmit(event);" id="search" name="search"/>
+                    		</div>
+							
+							<div class="searchfield-start" style="float:right;"></div>
+							<div id="searchbar-curve" style="float:right;"></div>
+						</div>
+					</div>
+					
+					
+					
+    			</td>
+    		</tr>
+			<!-- END: Header Row -->
+			
+    		<!-- Page Header Row Tabs -->
+           
+    		<!-- END: Page Header Row Tabs -->
+    		
+    		<!-- Page -->
+            <tr id="main">
+    			
+    			<!-- Page Content -->
+    			<td id="content">
+    				
+    				<!-- Page Scrollable Area -->
+    				<div id="scrollable">	
+						
+						<!-- Logo+Manage-User -->
+                		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                		    <tr>
+                    			<td id="logoHolder" class="courseLogoCourses">
+                    			    &nbsp;
+                    			</td>
+                    			<td id="page-description">
+                    			    <div id="page-heading">$brander.getBrandElement("lms.mycourses.myCourses")</div>
+                    			    <div id="page-help">$brander.getBrandElement("lms.mycourses.helpText")</div>
+                    			</td>
+                		    </tr>
+                		</table>
+                        <!-- Logo+Manage-User-end -->
+    
+                        <!-- drop-down-div -->
+                        <div style="width:100%; height:30px;">
+                            <div style="font-size:11px; width:75px; height:30px; float:left;"></div>
+							<div style="padding-left:10px; width:700px; float:left">$brander.getBrandElement("lms.mycourses.show")&nbsp;
+                                #if($context.viewType == "recent")
+                                    #set($indx0="selected='selected'")
+                                #elseif($context.viewType == "enrolled")
+                                    #set($indx1="selected='selected'")
+                                #elseif($context.viewType == "coursecatalog")
+                                    #set($indx2="selected='selected'")
+    							 #elseif($context.viewType == "completedCourses")
+                                    #set($indx3="selected='selected'")
+    							#elseif($context.viewType == "expiredCourses")
+                                    #set($indx4="selected='selected'")		
+    							#elseif($context.viewType == "coursesAboutToExpire")
+                                    #set($indx5="selected='selected'")
+    							#elseif($context.viewType == "subscription")
+                                    #set($indx7="selected='selected'")                                    
+                                #end
+                            
+								
+								<select tabindex="5" style="border: 1px solid #CCCCCC; font-size: 10px; font-weight: normal; height: 65%; min-height: 65%; width: 170px;" onChange="processPage(this);document.CourseForm.submit();" id="show" name="show">
+                                    <option $!indx0 value="recent">$brander.getBrandElement("lms.mycourses.dropdown.recent")</option>
+                                    <option $!indx1 value="enrolled">$brander.getBrandElement("lms.mycourses.dropdown.enrolled")</option>
+									<option $!indx2 value="coursecatalog">$brander.getBrandElement("lms.mycourses.dropdown.indx1")</option>
+									<option $!indx3 value="completedCourses">$brander.getBrandElement("lms.mycourses.dropdown.indx2")</option>
+    								<option $!indx4 value="expiredCourses">$brander.getBrandElement("lms.mycourses.dropdown.indx4")</option>
+    								<option $!indx5 value="coursesAboutToExpire">$brander.getBrandElement("lms.mycourses.dropdown.indx7")</option>
+    								<option $!indx6 value="survey">$brander.getBrandElement("lms.mycourses.dropdown.survey")</option>
+									##if(${context.lstSubscription})
+									  <option $!indx7 value="subscription">My Subscription</option>
+									##end
+                                </select>
+								&nbsp;&nbsp;&nbsp;&nbsp;
+								
+								#if(${context.isSubUser} == "true")
+								
+									#if(${context.cbosubscription})
+										<select tabindex="6" style="border: 1px solid #CCCCCC; font-size: 10px; font-weight: normal; height: 65%; min-height: 65%; width: 170px;" onChange="getSubscriptionCourse(this);document.CourseForm.submit();" id="cboSubscription" name="cboSubscription">
+											#foreach ($subscription in ${context.cbosubscription})
+												#if($!{request.session.getAttribute("subId")} == $!{subscription.subscriptionId})
+													<option selected value="$subscription.subscriptionId" onclick="getSubscriptionCourse(this);document.CourseForm.submit();">$subscription.subscriptionName</option>
+												#else
+													<option value="$subscription.subscriptionId" onclick="getSubscriptionCourse(this);document.CourseForm.submit();">$subscription.subscriptionName</option>
+												#end  
+											#end
+										</select>																
+									#end
+								#end	
+								<input type="hidden" value="" id="selSubscription" name="selSubscription"/>
+                            </div>
+                            
+                        </div>
+                        ##parse vm...
+                        #if($context.viewType == "recent")
+                            #parse("/learner/myCourse/myRecentCourses.vm")
+                        #elseif($context.viewType == "enrolled")
+                            #parse("/learner/myCourse/myEnrolledCourses.vm")
+                        #elseif($context.viewType == "coursecatalog")
+    						#parse("/learner/myCourse/myCourseCatalogRevamp.vm")
+    					#elseif($context.viewType == "completedCourses")
+                            #parse("/learner/myCourse/myCompletedCoures.vm")
+    					#elseif($context.viewType == "expiredCourses")
+                            #parse("/learner/myCourse/myExpiredCourses.vm")
+    					#elseif($context.viewType == "coursesAboutToExpire")
+                            #parse("/learner/myCourse/myCoursesAboutToExpire.vm")
+    					#elseif($context.viewType == "subscription")
+                            #parse("/learner/myCourse/mySubscription.vm")							
+                        #end
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+    						
+						
+                    </div>
+                	<!-- END: Page Scrollable Area -->	
+					
+                </td>
+				<!-- END: Page Content -->
+				
+            </tr>
+			<!-- END: Page-->
+			
+			<!-- Page Footer-->
+			<tr>				
+        		<td id="footer" colspan="2">
+					<!-- Footer -->
+						
+						#parse("snippets/learnerNewFooter.vm")
+						
+					<!-- END: Footer-->
+				</td>
+			</tr>
+			<!-- END: Page Footer -->
+			
+		</table>
+		<!-- END: Page Table -->
+		
+		<div id="process" style="position:absolute; display:none;">
+            <div id="prcWndw" class="process_window">
+                <div class="icon_clock"></div>
+                <div class="process_heading">$brander.getBrandElement("lms.learner.mycourses.caption.wait.defaulttext")</div>
+                <div id="process_text" class="processing_text">$brander.getBrandElement("lms.learner.mycourses.caption.wpage.defaulttext")</div>
+                <div class="bars_container">
+                    <div class="progress_bar"></div>
+                    <div id="status_bar" class="status_bar"></div>
+                </div>
+				
+            </div>
+            
+        </div>
+		
+		</form>
+		
+	</body>
+	
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+
+#springBind("editCustomerForm.volume")
+
+<script language="JavaScript" src="javascript/volumeSlider.js" ></script>
+<script language="javascript" type="text/javascript">
+function EditSave(buttonclick) {
+         //alert(buttonclick);
+         document.getElementById('actionmethod').value='saveCustomerPreferences';
+         document.editCustomerForm.submit();
+}
+
+function EditCancel(buttonclick) {
+        document.getElementById('actionmethod').value='cancelEditCustomer';
+        document.editCustomerForm.submit();
+}
+       
+</script>
+
+<script  language="JavaScript" type="text/javascript">
+function moveTo(value){
+if(value=='') value=0;
+        if (value==0){
+                value=31.5;
+        }else{
+                value=31.5+value*6.3;
+        }
+        carpeLeft("horizontal_slider",value);
+}
+
+function moveMinus(){
+        var value_display=document.getElementById("value_display");
+        var value=parseInt(value_display.value)-1;
+        if(value>=-5){
+                value_display.value=value;
+                if (value==0){
+                        value=31.5;
+                }else{
+                        value=31.5+value*6.3;
+                }
+                carpeLeft("horizontal_slider",value);
+         }
+}
+
+function movePlus(){
+        var value_display=document.getElementById("value_display");
+        var value=parseInt(value_display.value)+1;
+        if(value<=5){
+                value_display.value=value;
+                if (value==0){
+                        value=31.5;
+                }else{
+                        value=31.5+value*6.3;
+                }
+                carpeLeft("horizontal_slider",value);
+        }
+}
+$(document).ready(function()
+{
+       
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+</script>
+</head>
+
+<body onLoad="moveTo('$!{status.value}')">
+<form name="editCustomerForm" method="post" action="mgr_editCustomer.do" >
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <tr> <!-- First Block -->
+            <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                 <!-- header -->
+                 #parse("snippets/managerHeader.vm")
+                 <!-- header-end -->
+            </td>
+            </tr>
+
+            <tr id="main"> <!-- SECOND BLOCK -->
+            <!-- <LEFT NAGIVATION> -->
+            <td id="left-navigation" valign="top">
+            <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                 <!-- left-pannel-content -->
+                 #parse("snippets/managerCustomerLeftMenu.vm")
+                 <!-- left-pannel-content-end -->
+            </table>
+            </td>
+
+            <!-- right-pannel-content -->
+            <TD id="content" >
+            <div id="scrollable">
+                <!-- Logo+Manage-User -->
+        	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" >
+		    <tr>
+			<td id="page-icon" class="courseLogoProfile">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.editCustomerPreferences.caption.editCustomer")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.learner.preferences.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table> 
+                        
+                <!-- Logo+Manage-User-end -->
+
+ <table class="content-table" border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+        <td class="content-table-header" colspan="4">
+            <div class="content-table-heading">$brander.getBrandElement("lms.administrator.editCustomerPreferences.caption.Preferences")</div>
+        </td>
+    </tr>
+    <tr>
+        <td width="232">
+            $brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.Audio")
+        </td>
+        <td width="265">
+             #springBind("editCustomerForm.audio")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+
+        </td>
+        <td width="70" style="display:;">
+           <div class="radio-button-table-layout_b">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+        </td>
+        <td style="display:;">
+            #springBind("editCustomerForm.audioLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+
+    <tr class="colored-row">
+        <td>
+            Captioning
+        </td>
+        <td>
+             ##springBind("editCustomerForm.audio")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+
+        </td>
+        <td style="display:;">
+          #springBind("editCustomerForm.audioLocked")
+          <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+          </td>
+        <td style="display:;">
+           ##springBind("editCustomerForm.audio")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+	
+    <!-- [LMS-15061] - Hiding Bandwidth Selection on user preferences -->
+    <tr style="display:none; " >
+        <td>
+		<div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.Bandwidth")</div>
+        <td>
+               #springBind("editCustomerForm.bandwidth")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> High </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> Low </div>
+               </div>
+        </td>
+        <td style="display:;">
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+        </td>
+        <td style="display:;">
+               #springBind("editCustomerForm.bandwidthLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+
+    <tr >
+        <td>
+            <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewDistributorSummary.caption.Video")
+        </td>
+        <td>
+               #springBind("editCustomerForm.vedio")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+        <td style="display:;">
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+        </td>
+        <td style="display:;">
+               #springBind("editCustomerForm.vedioLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+
+    <tr class="colored-row">
+        <td>
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.editCustomerProfile1.caption.registeration-Emails")
+        </td>
+        <td>
+               #springBind("editCustomerForm.regEmail")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+        <td style="display:;">
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>        </td>
+        <td style="display:;">
+               #springBind("editCustomerForm.regEmailLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+
+    <tr >
+        <td>
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.editCustomerProfile1.caption.enrollment-Emails")</div>
+        </td>
+        <td>
+               #springBind("editCustomerForm.enrollEmail")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+        <td style="display:;">
+               <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+        <td style="display:;">
+               #springBind("editCustomerForm.enrollEmailLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+	
+    <tr class="colored-row">
+        <td>
+            <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.editCustomerProfile1.caption.Course-Completetion-Emails")</div>
+        </td>
+        <td>
+               #springBind("editCustomerForm.courseCompCertificateEmails")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+        <td style="display:;">
+		       <div class="radio-button-table-layout">$brander.getBrandElement("lms.administrator.addNewCustomerSummary.caption.locked")</div>
+        </td>
+        <td style="display:;">
+               #springBind("editCustomerForm.courseCompCertificateEmailsLocked")
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> Yes </div>
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorPreferences.cssClass.btn_radio2")"><input type="radio" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> No </div>
+               </div>
+        </td>
+    </tr>
+	
+               <!-- Preferences-end -->
+			   </td>
+            </table>
+                               <!-- </PREFERENCES TABLES> -->
+
+								   
+		   	   <!-- button-div -->
+              <div class="buttonContainer">
+              <div style="float:right; margin-top:3px;">
+              <a onClick="EditSave('Update');" style="text-decoration:none;">
+              <div class="btn_start"></div>
+              <div class="btn_normal">Save</div>
+              <div class="btn_end"></div>
+              </a>
+              </div>
+              <div style="float:right; margin-top:3px;margin-right:5px;">
+              <a onClick="EditCancel('Cancel');" style="text-decoration:none;">
+              <div class="btn_start"></div>
+              <div class="btn_normal">Cancel</div>
+              <div class="btn_end"></div>
+              </a>
+              </div>
+              </div>
+              <!-- scrollable-div -->
+              <!-- space -->
+              <div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.manager-bottom-space")"></div>
+              <!-- space -->
+
+  			  
+			  
+          <!-- right-pannel-content-end -->
+			<!-- content-area-end -->
+			
+            <tr> <!-- Footer BLOCK -->
+            <td id="footer" colspan="2">
+                 <!-- footer -->
+                 #parse("snippets/managerFooter.vm")
+                 <!-- footer-end -->
+            </td>
+            </tr>
+	
+	      </td>
+    </tr>
+</table>
+			
+</table>
+</form>
+</body>
+</html>

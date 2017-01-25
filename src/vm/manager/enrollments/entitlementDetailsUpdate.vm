@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+## this must be included on every page for all head items
+#parse("snippets/learnerHead.vm")
+  
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/style.css" />
+<link rel="stylesheet" href="brands/default/en/css/jquery.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<body>
+
+
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+	<script src="javascript/jquery.js" type="text/javascript"></script>
+	<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script src="javascript/jquery.cookie.js" type="text/javascript"></script>
+<script src="javascript/jquery.treeview.js" type="text/javascript"></script>
+ 
+<script type="text/javascript">
+jQuery.noConflict();
+function FormSubmit(buttonclick) {
+//alert(buttonclick);
+document.getElementById('action').value=buttonclick;
+document.manageform.submit();
+}
+function numeralsonly(num,restrictedvalue) {
+    var validator = document.getElementById(num).value;
+    if(document.getElementById('NotUnlimited').checked == true){
+    if (validator > restrictedvalue) {
+    alert("please enter number less than equals "+restrictedvalue);
+    document.getElementById(num).value = "0";
+    return false;
+    }
+    }
+}
+jQuery(document).ready(function(){
+jQuery("#browser").treeview({
+toggle: function() {
+}
+});
+});
+</script>
+
+  <form name="manageform" method="post" action="">
+<div id="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.main-container")">
+
+<!-- header -->
+#parse("snippets/managerHeader.vm")
+<!-- header-end -->
+#macro( treeviewEntitlementDetails $treeNodes )
+#set($lastDepth=0)
+<ul id="browser" class="$brander.getBrandElement("lms.changeGroup.cssClass.filetree")">
+#foreach($node in $treeNodes)
+#set($depthDiff = ${node.depth} - ${lastDepth})
+#if($depthDiff==0)
+
+#elseif($depthDiff>0)
+#foreach($i in [1..$depthDiff])
+<ul>
+#end
+#elseif($depthDiff<0)
+#foreach($i in [-1..$depthDiff])
+</ul>
+</li>
+#end
+#end
+
+#set($value1 = ${node.value.id})
+<li>
+	<div style="border: 0px solid red;height:20px;width:98%;" >
+		<div style="border: 0px solid blue;float:left;width:40%;height:18px;" >
+			<input type="checkbox" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" 
+			#if($!{context.countmap.get($value1)} > 0) checked 
+			#end 
+			onClick=""/>${node.value.name}
+		</div>
+		<div  style="border:0px solid blue;float:right;height:18px;width:180px;">&nbsp;
+		</div>
+		<div style="float:right;height:18px;width:28%;text-align: right;" >
+			<div style="float:right;padding-top: 1px;"><input style="height:14px;width:30px;" type="text" id="${node.value.name}" onkeyup="javascript:return numeralsonly('${node.value.name}',$!{context.customerEntitlement.MaxNumberSeats});" value="$!{context.countmap.get($value1)}" name="${node.value.name}" class=""/></div>
+			<div style="float:right;text-align: left;">Max Enrollments &nbsp&nbsp&nbsp&nbsp</div>
+		</div>
+		
+	</div>
+
+#if(${node.isLeaf()})
+</li>
+#end
+#set($lastDepth=$node.depth)
+#end
+#foreach($i in [1..${lastDepth}])
+</ul>
+</li>
+#end
+</ul>
+#end 
+
+<div id="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content2")">
+<!-- content-area -->
+<!-- left-pannel-content -->
+<div id="left-pannel">
+<!-- left-menu-content -->
+	#parse("snippets/entitlementLeftMenu.vm")
+<!-- left-menu-content-end -->
+</div>
+<!-- left-pannel-content-end -->
+	<!-- right-pannel-content -->
+<div id="right-pannel">
+ <!-- Logo+Manage-User -->
+<div id="e1" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogoContainer")">
+<div id="e3" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogo2")"><img src="$brander.getBrandElement("lms.manageUser.icon_Change-Groups.gif")" alt="" /></div>
+<div id="e4" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitleDiv")">
+<div id="e5" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitle1")">$brander.getBrandElement("lms.updateEntitlements.caption.title")</div>
+<div id="e6" class="$brander.getBrandElement("lms.mycourses.cssClass.courseDetails")">$brander.getBrandElement("lms.updateEntitlements.caption.subtitle")</div>
+</div>
+</div>
+<!-- Logo+Manage-User-end -->
+			
+			<!-- Entitlements-Details -->
+			<div class="content-Block">
+				<div id="e12" class="Block-Contain-header">
+					<div id="e13" class="Search-Containerheaderleft">$brander.getBrandElement("lms.updateEntitlements.colHeader.entitlementsDetails")</div>
+				</div>
+				<!-- User-left-right-list -->
+				<div id="e7b" class="Search-inputfield-box">
+					<!-- 1 -->
+					<div id="e12" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.EntitlementName")</div>
+						<div class="input_field_area-user-f"><input type="text" value="$!{context.customerEntitlement.Name}" name="EntitlementName" class="input_field"/></div>
+					</div>
+					<!-- 2 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.MaximumEnrollments")</div>
+#if($!{context.customerEntitlement.AllowUnlimitedEnrollments})
+						<div class="btn_radio1a"><input type="radio" name="MaximumEnrollmentsRadio" id="Unlimited" value="Unlimited" checked />Unlimited</div>
+						<div class="btn_radio1c"><input type="radio" name="MaximumEnrollmentsRadio" id="NotUnlimited" value="NotUnlimited"/></div>
+						#else
+						<div class="btn_radio1a"><input type="radio" name="MaximumEnrollmentsRadio" id="Unlimited" value="Unlimited"/>Unlimited</div>
+						<div class="btn_radio1c"><input type="radio" name="MaximumEnrollmentsRadio" id="NotUnlimited" value="NotUnlimited" checked/></div>
+						#end
+						<div class="input_field_area-user-fss"><input type="text" value="$!{context.customerEntitlement.MaxNumberSeats}" name="MaximumEnrollments" class="input_field"/></div>
+					</div>
+					<!-- 3 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.AllowSelfEnrollment")</div>
+					
+#if($!{context.customerEntitlement.AllowSelfEnrollment})
+						<div class="btn_radio1a"><input type="radio" name="AllowSelfEnrollment" id="" value="false"/> No </div>
+						<div class="btn_radio1b"><input type="radio" name="AllowSelfEnrollment" id="" value="true" checked/> Yes </div>
+						#else
+						<div class="btn_radio1a"><input type="radio" name="AllowSelfEnrollment" id="" value="false" checked/> No </div>
+						<div class="btn_radio1b"><input type="radio" name="AllowSelfEnrollment" id="" value="true" /> Yes </div>
+						#end 
+					</div>
+					<!-- 4 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.EntitlementType")</div>
+						#if($!{context.CourseGroup})
+						<div class="btn_radio1a"><input type="radio" name="EntitlementType" id="" value="coursegroup" checked/> Course Group </div>
+						<div class="btn_radio1b"><input type="radio" name="EntitlementType" id="" value="course"/> Courses </div>
+						#elseif($!{context.Course})
+						<div class="btn_radio1a"><input type="radio" name="EntitlementType" id="" value="coursegroup"/> Course Group </div>
+						<div class="btn_radio1b"><input type="radio" name="EntitlementType" id="" value="course" checked/> Courses </div>
+						#else
+						<div class="btn_radio1a"><input type="radio" name="EntitlementType" id="" value="coursegroup"/> Course Group </div>
+						<div class="btn_radio1b"><input type="radio" name="EntitlementType" id="" value="course" /> Courses </div>
+						#end
+					</div>
+					<!-- 5 -->
+					<div id="e13" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.EntitlementType.StartDate")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")" >
+							#if ($!{context.StartDate})
+								<input type="text" style="width:150px;" id="StartDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.ntitlementDetailsUpdate.calender.tooltipStartDate")" name="StartDate" value="$!{context.StartDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+							#else
+								<input type="text" style="width:150px;" id="StartDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.ntitlementDetailsUpdate.calender.tooltipStartDate")" name="StartDate" value="$!{context.StartDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+							#end
+							<script type="text/javascript">
+							    jQuery.noConflict();
+							    jQuery("#StartDate").datepicker({ 
+							    showOn: "both", 
+							    buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+							    buttonImageOnly: true 
+							});
+							</script>
+						</div>		
+					</div>
+					<!-- 6 -->
+					<div id="e12" class="search-content-row">
+						<div class="block_text_in2">$brander.getBrandElement("lms.updateEntitlements.TermsofServices")</div>
+						<div class="btn_radio1c"><input type="radio" id="" name="TermsofServicesRadio"/></div>
+						<div class="input_field_area-user-fss"><input type="text" value="$!{context.customerEntitlement.DefaultTermOfServiceInDays}" name="TermsofServices" class="input_field"/></div>
+						<div class="btn_radio1">&nbsp;&nbsp;days <input type="radio" id="" name="TermsofServicesRadio"/>$brander.getBrandElement("lms.updateEntitlements.FixedEndDate")</div>
+						
+						<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")" >
+							#if ($!{context.EndDate})
+								<input type="text" style="width:150px" id="EndDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.ntitlementDetailsUpdate.calender.tooltipEndDate")" name="EndDate" value="$!{context.EndDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+							#else
+								<input type="text" style="width:150px" id="EndDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.ntitlementDetailsUpdate.calender.tooltipEndDate")" name="EndDate" value="$!{context.EndDate}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+							#end
+								
+							##<input type="text" value="$!{context.StartDate}" name="StartDate" class="input_field"/>
+							<script type="text/javascript">
+							        jQuery.noConflict();
+								jQuery("#EndDate").datepicker({ 
+								showOn: "both", 
+								buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+								buttonImageOnly: true 
+							});
+							</script>
+											
+							</div>
+					</div>
+					<div id="e12" class="search-content-row">
+						<div class="block_text_in-r-f"><!-- using for space --></div>
+						<div class="input_field_area-user"></div>
+					</div>
+					<!--  -->
+				</div>
+				<!-- End-User-left-right-list -->
+			</div>
+			<!-- End-Entitlements-Details -->
+
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+
+			<!-- tree -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+				<!-- 1 -->
+				<div id="e7c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+					<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.manageOrganizationGroup.b-courseheaderDivleft2")">
+							$brander.getBrandElement("lms.manageUser.manageOrganizationGroup.caption.OrgGroup")
+						</div>
+					</div>
+					<div id="main">					
+						#treeviewEntitlementDetails(${context.orgGroupTreeAsList})
+								
+					</div>
+				</div>
+				
+				<!-- 1 -->
+			</div>
+			<!-- tree-end -->
+
+			
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			<!-- scrollable-div -->
+			<!-- button-div -->
+			<div class="managerBtn">
+				<div><input type="button" value="cancel" name="cancel" onclick="" class="btn-76w" /></div>
+				<div><input type="button" value="update" name="update" onclick="FormSubmit('update');" class="btn-76w-r" /></div>										<input type="hidden" id="action" name="action" />
+			</div>
+		<!-- right-pannel-content-end -->
+		</div>
+		
+	<!-- content2-area-end -->
+	</div>
+	
+	<!-- footer -->
+#parse("snippets/managerFooter.vm")
+	<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

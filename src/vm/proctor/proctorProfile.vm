@@ -1,0 +1,207 @@
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/proctor/proctorHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+        
+        <script type="text/javascript" src="javascript/ui.datepicker.js"></script> 
+        <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+        <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+        <script type="text/javascript" language="javascript">
+	
+    function formSubmit(){
+		document.proctorProfileForm.submit();		
+    }
+	
+	function isAlphaNumeric( val ) {
+		if ( /^[a-zA-Z0-9]+$/i.test(val) ) { // if Alphanumeric
+			if ( /^[a-zA-Z]+$/i.test(val) ) { // if only Alpha
+				return false;
+			}
+			else if ( /^[0-9]+$/i.test(val) ) { // if only Numeric
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	
+    $(document).ready(function()
+    {
+        $('#content2_n').scroll(function()
+        {
+            $('#message_box').animate({top:$('#content2_n').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function()
+        {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            $('#message_box_saved').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        document.proctorProfileForm.newPassword.focus();
+    });
+</script>
+    </head>
+
+<body>
+    <form name="proctorProfileForm" method="post" action="proctorProfile.do?method=updateProctorProfile"> 
+        <input type="hidden" id="action" name="method" />
+
+    	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+    		<tr> <!-- First Block -->
+    			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!-- header -->
+                    #parse("snippets/proctor/proctorHeader.vm")
+                <!-- header-end -->
+            	</td>
+    		</tr>
+    	
+            <tr id="main"> <!-- SECOND BLOCK -->
+            	<td id="left-navigation" valign="top">
+            		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                        <!-- This is a table without a row, the parsed vm is a div -->
+                        #parse("snippets/proctor/proctorLeftMenuProfile.vm")
+                        <!-- left-pannel-content-end -->
+            		</table>
+            	</td>
+    		
+    			<!-- right-pannel-content -->
+                <td id="content" >
+                	<div id="scrollable">
+                            #springBind("proctorProfileForm.*")
+                            #if($status.error)
+                                <!-- error-box -->
+                                <div id="message_box">
+                                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                    #foreach($errorCode in $status.errorCodes)
+                                        #if($errorCode != 'custom.field.required')
+                                        #set ($error = $brander.getBrandElement($errorCode))
+                                        <div class="width40pct">
+                                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                            <div class="message_box_align">$!error</div>
+                                        </div>
+                                        #end
+                                    #end
+                                    #foreach($errorMessage in $status.errorMessages)
+                                        #if(!$!errorMessage.equals(""))
+                                        <div class="width40pct">
+                                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                            <div class="message_box_align">$!errorMessage</div>
+                                        </div>
+                                        #end
+                                    #end
+    							</div>
+    							<!-- error-box -->
+    							#else
+    								#springBind("proctorProfileForm.saved")
+    								#if(${status.value} == "true")
+    									<div id="message_box_saved" >
+    										<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+    										<div class="width40pct">
+    											<div class="message_box_align"><img src="$brander.getBrandElement("lms.successMessage.pixel.right.jpg")" width="34" height="30" alt="" /></div>
+    											<div class="message_box_align">CHANGES SAVED</div>
+    										</div>
+    									</div>
+    								#end
+    						#end
+    
+                            <!-- Logo+Manage-User -->
+                			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                    		    <tr>
+                        			<td id="page-icon" class="courseLogoProfile">
+                        			    &nbsp;
+                        			</td>
+                        			<td id="page-description">
+                        			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.learnerProfile.caption.pageHead")</div>
+                        			    <div id="page-help">$brander.getBrandElement("lms.proctor.proctorProfile.caption.pageDesc")</div>
+                        			</td>
+                    		    </tr>
+    						</table>
+    						<!-- Logo+Manage-User-end -->
+    		    <!-- Proctor-Information -->
+                <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="b-courseheaderDivleft">$brander.getBrandElement("lms.proctor.proctorProfile.caption.information")</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="Search-inputfield-box">
+                        <!-- 1 -->
+                        <div id="e12" class="search-content-row">
+                            #springBind("proctorProfileForm.proctorId")
+                            <div class="block_text_in-r-f" >$brander.getBrandElement("lms.proctor.proctorProfile.caption.ProctorID")</div>
+                            <div class="com-star-r-t"></div>
+                            <div class="input_field_area-user-f"><input type="text" maxlength="255" tabindex="5" name="${status.expression}" value="$!{status.value}" class="input_field" disabled="true"/></div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+                        <!-- 2 -->
+                        <div id="e13" class="search-content-row">
+                            #springBind("proctorProfileForm.newPassword")
+                            <!--<div class="block_text_in-r-f" >$brander.getBrandElement("lms.login.caption.Password")</div>-->
+                            <!--<div class="com-star-r-t"></div>-->
+                            
+                            <div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.login.caption.Password"):</div>
+                            <div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" 
+                            #elseif(! $status.value || $status.value.equals("")) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                           
+                           
+                            <div class="input_field_area-user-f"><input type="password" id="${status.expression}" maxlength="50" tabindex="6" name="${status.expression}" value="$!{status.value}" class="input_field"/></div>
+                            <div class="com-star-r-t"></div>
+                        <div class="block_text_in-r2" style="width:50%">$brander.getBrandElement("lms.proctor.proctorProfile.caption.pwStrength")</div>
+                        </div>
+                        <!-- 3 -->
+                        <div id="e13" class="search-content-row">
+                            #springBind("proctorProfileForm.confirmPassword")
+                            <div #if($status.error) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.manageUser.addNewLearner.confirmPassword.text"):</div>
+                            <div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" 
+                            #elseif(! $status.value || $status.value.equals("")) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                            <div class="input_field_area-user-f"><input type="password" maxlength="255" tabindex="7" id="${status.expression}" name="${status.expression}" value="$!{status.value}" class="input_field"/></div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+                  </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- Personal-Information-end -->
+    
+            <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+    
+             <!-- button-div -->
+                        <div id="e13" class="buttonContainer">
+            				<div style="float:right;">
+            					<a onClick="formSubmit();" style="text-decoration:none;" tabindex="30">
+            						<div class="btn_start"></div>
+            						<div class="btn_normal">$brander.getBrandElement("lms.manageUser.learnerProfile.caption.btnSave")</div>
+            						<div class="btn_end"></div>
+            					</a>
+            				</div>
+            				<!-- <div style="float:right;margin-right:5px;">
+            				  <a onClick="window.location='lrn_myCourses.do'" style="text-decoration:none;">
+            					  <div class="btn_start"></div>
+            					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+            					  <div class="btn_end"></div>
+            				  </a>
+            				</div>-->
+            			</div>
+            
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+            
+                        <!-- right-pannel-content-end -->
+                    </div>
+                    <!-- content-area-end -->
+                </td>
+    		</tr>
+    		<tr> <!-- Footer BLOCK -->
+            	<td id="footer" colspan="2">
+                <!-- footer -->
+                #parse("snippets/proctor/proctorFooter.vm")
+                <!-- footer-end -->
+            	</td>
+    		</tr>
+    	</table>
+	</form>
+</body>
+
+</html>

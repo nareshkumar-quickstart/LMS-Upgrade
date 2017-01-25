@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" />
+<script type="text/javascript" language="javascript">		
+	#set ($dollar = "$")
+	## putting this in to keep the session alive while the user is in the course.
+	## send message home every 20 minutes
+	function keepAlive() {
+	    ${dollar}.getJSON("#springUrl("/view.do?vm=keepalive")", function(json){
+        setTimeout("keepAlive()",1200000);
+        });
+	}
+	setTimeout("keepAlive()",1200000);
+</script>
+<script type="text/javascript" language="javascript">
+	 function validateUploadedFile(id){
+        var objFile=document.getElementById(id);
+        if (objFile.value =="" ){
+            var message_box=document.getElementById("message_box");
+            message_box.style.display="block";
+            return false;
+        }
+        document.getElementById("imghide").style.display = "";
+        document.fileSubmit.submit();
+        return true;
+    }
+
+    function myCall(ob) {
+        var del = ob.value;
+        var myLink = document.getElementById("alink");
+        myLink.href = "$brander.getBrandElement('lms.batchImportUsers.samplefile')";
+    }
+
+    var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+        if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:245px;*width:245px;float:left;text-align:left;"
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton";
+        span.innerHTML="Browse";
+        span.style.cssText="margin-left:-1px;cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file hidden';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+$(document).ready(function(){
+  $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+    }
+       $('#sideBar').height($('#right-pannel').height());
+        initFileUploads();
+        $('#content2a').scroll(function()   {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function()    {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		
+		$("#btnNext").click(function(e){
+			$("#btnCancel").attr("disabled","disabled");
+		     
+    	});
+		
+		$("#btnCancel").click(function(e){
+            if($("#btnCancel").attr("disabled")=="disabled") {
+                e.preventDefault();  
+    			window.alert("You can not cancel while uploading, Please wait.");
+            }   
+    	});
+		
+    });
+</script> 
+</head>
+<body >
+<form name="addCustomCourses" method="post" action="mgr_addCourse.do" enctype="multipart/form-data" >      
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	  #parse("snippets/managerWizardHeader.vm")
+	  </td></tr>
+	  
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-pannel-content -->
+		<div>
+			<div id="l-menu-back">
+				<div class="l-menu-back-text-h">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.title")$brander.getBrandElement("lms.instructor.addCourse.leftPanel.showing2of3")</div>
+				<div class="l-menu-back-text-acted">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step1")</div>
+				<div class="l-menu-back-text-act">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step2.scorm")</div>
+				<div class="l-menu-back-text">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step3.scorm")</div>
+			</div>
+		</div>
+		</table></td>
+		
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+<TD id="content" >
+<!--[if IE 6]>
+                <style>
+                    #scrollable{
+                        width:97%;
+                    }
+                </style>
+                <![endif]-->
+	<div id="scrollable" style="position: relative;">
+		#springBind("courseForm.*")
+				#if($status.error)
+				<!-- error-box -->
+				 <div id="message_box">
+					<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					#foreach($errorCode in $status.errorCodes)
+				#set ($error = $brander.getBrandElement($errorCode))
+				<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+					</div>
+					#end
+				</div>
+				<!-- error-box -->
+				#end
+
+            <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+		     <td>
+ 			    &nbsp;&nbsp;&nbsp;
+ 			</td>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addSCORMPackage.caption.courseTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addSCORMPackage.caption.courseDesc")</div>
+			</td>
+		    </tr>
+		</table>			
+            <!-- Logo+Manage-User-end -->
+			
+			<!-- Review-&-Confirm -->
+			<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.addSCORMPackage.ImpSingleContPack")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td height="30" width="150"><span class="row_text">$brander.getBrandElement("lms.instructor.addSCORMPackage.caption.file")</span></td>
+                                <td width="680px">
+                                    <div id="survey-name-required">
+                                        <div class="required_field">*</div>
+                                    </div>
+									
+                                <div class="input_field_browse">
+								#springBind("courseForm.file")
+                                    <div class="fileinputs">
+										<input type="file" name="file"  id="impFile" class="file"/></div>
+									</div>
+                                </td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+					<!--<div style="margin-top: 20px;" class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.addSCORMPackage.ImpMultContPack")</span></div>
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                            <tbody><tr>
+                                <td>
+                                 
+										
+	<applet code="com.radinks.dnd.DNDAppletPlus" url="${fileUploadURL}" allow_types="zip" message="Drag and Drop your files here." archive="dnd/dndplus.jar" height="200" width="100%">
+	Your browser does not support the <code>applet</code> tag. Please update your browser.
+	</applet> -->
+							<!--	<object height="200" width="100%" type="application/x-java-applet;version=1.5">
+								<param value="dnd/dndlite.jar" name="archive">
+								<param value="com.radinks.dnd.DNDAppletLite" name="code">
+								<param value="Rad Upload Lite" name="name">
+								<param value="10000" name="max_upload">
+								<param value="${fileUploadURL}" name="url">
+								<param value="&lt;br&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drag and Drop your files here." name="message">
+								</object>
+										-->
+                               <!-- </td>
+                            </tr>
+                        </tbody></table>
+					
+					</div>-->
+			<!-- Review-&-Confirm-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		    <!-- button-div -->
+		    
+		    <input type="hidden" id="currentpage" name="_page" value="2" />
+		    <input type="hidden" id="currentpage" name="_page" value="2" />
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />	
+			
+			<div style="float: right; margin-top: 15px; margin-right: 15px;">
+              <a id="btnNext" onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_target3');"  style="text-decoration:none;">
+                  <div class="btn_start"></div>
+                   <div class="btn_normal">$brander.getBrandElement("lms.instructor.addSCORMPackage.btnNext")</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>
+		   
+		   <div style="float: right; margin-top: 15px; margin-right: 10px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_target0');"  style="text-decoration:none;">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnPrevious")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+		   
+		    <div style="float: left; margin-top: 15px; margin-left: 20px;">
+              <div disabled>
+                  <a id="btnCancel" onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+
+			
+
+			</div>
+			<!-- scrollable-div -->
+	
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		<!-- right-pannel-content-end -->
+		</div>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- content-area-end -->
+	 #parse("snippets/managerFooter.vm")
+	</td></tr>
+  <!-- footer -->
+  </td></tr>		 
+    <!-- footer-end -->
+</table>
+</form>
+</body>
+</html>

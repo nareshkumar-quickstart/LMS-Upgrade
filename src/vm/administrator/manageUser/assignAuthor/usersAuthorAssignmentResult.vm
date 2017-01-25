@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        function cancelAction() {
+			document.selectLearnersForm.submit();
+		}
+			
+        $(document).ready(function(){
+            $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+            if ($('#right-pannel').height()<$('#content2a').height()) {
+                $('#right-pannel').height($('#content2a').height());
+            }
+            $('#sideBar').height($('#right-pannel').height());
+        });
+    </script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<form name="selectLearnersForm" method="post" action="adm_assignAuthorToUsersCancel.do">
+	#springBind("searchLearnersForm.distributorId")
+	<input type="hidden" id="distributorId" name="distributorId" value="$!{status.value}" />
+	#springBind("searchLearnersForm.customerId")
+	<input type="hidden" id="customerId" name="customerId" value="$!{status.value}" />
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- content-area -->
+        <!-- left-pannel-content-start -->
+        #parse("snippets/assignAuthorWizardLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+        <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+			<div class="page_description" id="pageDescription">
+			  	    <!-- Page Icon -->
+			    #if($adminSelectedEntityType == 'DISTRIBUTOR')				  	    		  	
+			    <div class="courseLogoDistributor" id="logoHolder"></div>
+			    #elseif($adminSelectedEntityType == 'CUSTOMER')
+			    <div id="logoHolder" class="courseLogoCustomer"></div>
+			    #end
+			    <!-- Page Heading -->
+			    <div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.assignAuthorToLearners.step1.caption.title")</div>
+			    <!-- Page Description -->
+			    <div id="pageDescriptionText">$brander.getBrandElement("lms.assignAuthorToLearners.step2.description")</div>
+			</div>
+			<!--    Logo+Manage-User-end -->
+
+                <!-- Result -->
+                <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+                        <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Results Summary</div>
+                        </div>
+
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                                <!-- 1 -->
+                                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                        <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")" style="width:30%;">Total Users Selected: </div>
+                                        <div class="row_text">$!{context.selectedUsersCount}</div>
+                                </div>
+                                <!-- 2 -->
+                                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")" style="border:0px solid red;height:auto;">
+                                        <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")" style="width:30%;">No. of Users successfully assigned Author:</div>
+                                        <div class="row_text">$!{context.authorCreatedUsers.size()}</div>                                        
+                                </div>
+                                <!-- 3 -->
+                                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")" style="border:0px solid red;height:auto;">
+                                        <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")" style="width:30%;">No. of Users who failed to become Author:</div>
+                                        <div class="row_text">$!{context.authorNotCreatedUsers.size()}</div>
+                                </div>
+                        </div>
+                </div>
+                <!-- End-User-list -->
+				
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space -->				
+				#if($context.authorCreatedUsers.size() > 0)
+	                <!-- User-list -->
+	                <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+					#set($totCount = $!{context.NumberOflearnersFailedToEnroll})
+	                        <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+	                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">List Of Users successfully assigned Author</div>
+	                        </div>
+							<!-- User-left-right-list -->
+	                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+							#set($index = 0)
+							#set($displayLabel=true)
+	                        #foreach($user in $!{context.authorCreatedUsers} )
+	                            #if($index%2==0)
+	                                    #set($alternate="row_1")
+	                            #else
+	                                    #set($alternate="row_2")
+	                            #end
+								<!-- 1 -->                                
+	                            <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+									<div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")" style="width:30%;">										
+										#if($displayLabel==true)
+											#if($context.authorCreatedUsers.size() == 1)
+												User
+											#elseif($context.authorCreatedUsers.size() > 1)
+												Users
+											#end											
+											#set($displayLabel=false)
+										#else
+											&nbsp;
+										#end										
+									</div>
+									<div class="row_text">$user.username</div>
+	                            </div>
+								#set($index = $index + 1)
+							#end
+	                        </div>
+	                </div>
+	                <!-- End-User-list -->
+	
+	                <!-- space -->
+	                <div class="manager-bottom-space"></div>
+	                <!-- space -->
+				#end
+								
+				#if($context.authorNotCreatedUsers.size() > 0)
+	                <!-- User-list -->
+	                <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+					#set($totCount = $!{context.NumberOflearnersFailedToEnroll})
+	                        <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+	                                <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">List Of Users who failed to become Author</div>
+	                        </div>
+							<!-- User-left-right-list -->
+	                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+							#set($index = 0)
+							#set($displayLabel=true)
+	                        #foreach($user in $!{context.authorNotCreatedUsers} )
+	                            #if($index%2==0)
+	                                    #set($alternate="row_1")
+	                            #else
+	                                    #set($alternate="row_2")
+	                            #end
+								<!-- 1 -->                                
+	                            <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+									<div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")" style="width:30%;">										
+										#if($displayLabel==true)
+											#if($context.authorNotCreatedUsers.size() > 1)
+												Users
+											#else
+												User
+											#end												
+											#set($displayLabel=false)
+										#else
+											&nbsp;
+										#end
+									</div>
+									<div class="row_text">$!user.username</div>
+	                            </div>
+								#set($index = $index + 1)
+							#end
+	                        </div>
+	                </div>
+	                <!-- End-User-list -->
+	
+	                <!-- space -->
+	                <div class="manager-bottom-space"></div>
+	                <!-- space -->
+				#end
+				
+                <div class="managerBtn">
+                    <div class="btn-right1">
+                            <a class="button" onClick="cancelAction()" ><span class="button">Ok</span></a>
+                    </div>
+                </div>
+
+                <!-- space -->
+                <div class="manager-bottom-space"></div>
+                <!-- space end -->
+
+        <!-- right-pannel-content-end -->
+        </div>
+    <!-- content-area-end -->
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</form>
+</table>
+</body>
+</html>

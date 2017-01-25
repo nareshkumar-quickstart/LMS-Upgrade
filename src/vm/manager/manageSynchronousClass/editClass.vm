@@ -1,0 +1,417 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script type="text/javascript" language="javascript">
+    function FormSubmit(buttonclick) {
+        document.manageform.submit();
+    }
+
+    // LMS-4180
+    function toggleMeetingCodes(checked)
+    {
+        document.getElementById("imgMeetingIdReq").style.display=(checked ? 'block' : 'none');
+        document.getElementById("imgMeetingCodeReq").style.display=(checked ? 'block' : 'none');
+        document.getElementById("imgMeetingType").style.display=(checked ? 'block' : 'none');
+        document.getElementById("imgClassSize").style.display=(checked ? 'none' : 'block');
+		
+        document.getElementById("meetingId").disabled=!checked;
+        document.getElementById("meetingPassCode").disabled=!checked;
+        document.getElementById("meetingType").disabled=!checked;
+        document.getElementById("maxClassSize").disabled=checked;
+    }
+
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#tabBar').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        $("#expirationDate").datepicker({
+            showOn: "both",
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+            buttonImageOnly: true
+        });
+    });
+
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+       <!-- header -->
+	#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+
+		<!-- Tabs Start -->
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+                     <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td width="195"><div class="tab_blank"></div></td>
+                                <td>&nbsp;</td>
+                                <td width="600">
+                                   <a href="mgr_editSynchronousClass.do?id=${context.synchClass.getId()}"><div class="tab_selected">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a>
+							<a href="mgr_editSynchronousClassSchedule.do?id=${context.synchClass.getId()}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+							 <a href="mgr_editSynchronousClassResources.do?id=${context.synchClass.getId()}"><div class="tab" >$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a>
+                                    <a href="mgr_editSynchronousClassInstructor.do?id=${context.synchClass.getId()}"><div class="tab" >Instructors</div></a>
+                                    <!--LMS:5551 <a href="mgr_editSynchronousClassLocation.do?id=${context.synchClass.getId()}&method=searchLocation"><div class="tab">Location</div></a> -->
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                    </table>
+                </td>
+                <!-- Tabs End -->
+				
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</table></td>
+
+<TD id="content" >
+	<div id="scrollable">
+                #if($!{context.validateCourseName} || $!{context.validateClassName}  || $!{context.validateMaxClassSize} || $!{context.validateMeetingId} || $!{context.validateMeetingPasscode} 
+					|| $!{context.validatePresenterFirstName} || $!{context.validatePresenterLastName} || $!{context.validatePresenterEmailAddress} || $!{context.validateEnrollmentCloseDate}) <!-- Sana Majeed | LMS-4180 -->
+                    #set($errorCodes = [])
+                    #set($temp = true)
+                    #if($!{context.validateCourseName})
+                        #set($temp = $errorCodes.add(${context.validateCourseName}))
+                    #end
+                   
+                    <!-- LMS-4180 -->
+                    #if($!{context.validateMeetingId})
+                        #set($temp = $errorCodes.add(${context.validateMeetingId}))
+                    #end
+                    #if($!{context.validateMeetingPasscode})
+                        #set($temp = $errorCodes.add(${context.validateMeetingPasscode}))
+                    #end
+                    #if($!{context.validateClassName})
+                        #set($temp = $errorCodes.add(${context.validateClassName}))
+                    #end
+                    #if($!{context.validateMaxClassSize})
+                        #set($temp = $errorCodes.add(${context.validateMaxClassSize}))
+					#end
+					
+					#if($!{context.validatePresenterFirstName})
+						#set($tmp = $errorCodes.add(${context.validatePresenterFirstName}))
+					#end
+                    #if($!{context.validatePresenterLastName})
+                        #set($temp = $errorCodes.add(${context.validatePresenterLastName}))
+                    #end
+                    #if($!{context.validatePresenterEmailAddress})
+                        #set($temp = $errorCodes.add(${context.validatePresenterEmailAddress}))
+                    #end
+					#if($!{context.validateEnrollmentCloseDate})
+                        #set($temp = $errorCodes.add(${context.validateEnrollmentCloseDate}))
+                    #end
+
+                    <!-- error-box -->
+                    <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $errorCodes)
+                            #set ($error = $errorCode)
+                            <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                            </div>
+                        #end
+                        </div>
+                    <!-- error-box -->
+                #end
+
+                <form name="manageform" action="mgr_updateSynchronousClass.do?synchCourseId=${context.synchCourseId}" method="post">
+
+               
+				<!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editSchedule.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.searchLearner.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+
+               
+
+                <!-- Logo+Manage-User-end -->
+
+                #set($courseType = $context.courseType)
+                #set($synchClass = $context.synchClass)
+                    <div class="content-Block"><!-- content-Block 1 -->
+                        <div id="e7a" class="Block-Contain-header">
+                            <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.instructor.addSynchronousCourse.caption.summary")</div>
+                        </div>
+
+                        <!-- Class edit info starts -->
+                        <input type="hidden" name="id" value="$synchClass.getId()">
+                        <div id="e7b" class="Search-inputfield-box">
+                            <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                            <!-- 1 -->
+                            <div id="e12" class="search-content-row">
+                                <div  #if($!{context.validateCourseName}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>Course Name</div>
+                                <div class="com-star-r-t">&nbsp;</div>
+                                <div class="input_field_area-user-f">
+                                $!{context.synchCourseName}
+                                <input type="hidden" id="courseName" name="courseTitle" value="$!{context.synchCourseName}" class="input_field" tabindex='2' maxlength='255'> </div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                            <!-- 2 -->
+                            <div id="e11" class="search-content-row">
+                                <div  #if($!{context.validateClassName}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>Class Name</div>
+                                <div class="com-star-r-t"><img  #if($!{context.validateClassName}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #elseif(! ${synchClass.getSectionName()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+								<div class="input_field_area-user-f">
+                                <input type="text" id="className" name="className" value="$!{synchClass.getSectionName()}" class="input_field" tabindex='1' maxlength='250'> </div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                            <!-- 3 -->
+                            <div id="e13" class="search-content-row">
+                                <div #if($!{context.validateMaxClassSize}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >Max Class Size</div>
+                                <div class="com-star-r-t"><img id="imgClassSize" #if(! ${synchClass.getMaxClassSize()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validateMaxClassSize} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ! ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end  /></div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" id="maxClassSize" name="maxClassSize" value="$!{synchClass.getMaxClassSize()}" class="input_field" tabindex='9'  maxlength='8' #if( ${synchClass.isOnlineMeeting()} ) disabled #end  > </div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+                                                        
+                            <!-- 4 -->
+                            <div id="e15" class="search-content-row">
+                                <div class="block_text_in-r-f">Status</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                <select class="input_field1c" name="status" tabindex='4'>
+                                    <option #if (${synchClass.getClassStatus()} == "Active") selected #end  value="Active" >Active</option>
+                                    <option #if (${synchClass.getClassStatus()} == "InActive") selected #end  value="InActive">InActive</option>
+                                </select>
+                            </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+                        <!-- 6 --><!-- LMS-4180 -->
+                        <div id="e6" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) style="display:none;" #end >
+                            <div class="block_text_in-r-f"><input type="checkbox" value="1" tabindex='6' name="onlineMeetingTF" #if( ${synchClass.isOnlineMeeting()} ) checked #end onclick="toggleMeetingCodes(this.checked);" style="display:none; float:left; margin-left:0px; margin-right:0px;"></input>
+                            Online Meeting</div>
+                            <div class="com-star-r-t"><img id="imgMeetingType" #if(! ${synchClass.isOnlineMeeting()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end   #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+								<script type="text/javascript">
+									function meetingType_onchange(e) {
+										var meetingId = document.getElementById("e19");
+										var meetingType = document.getElementById("e16");
+										var meetingURL = document.getElementById("e18");
+										
+										var presenterFirstName = document.getElementById("e23");
+										var presenterLastName = document.getElementById("e24");
+										var presenterEmailAddress = document.getElementById("e25");
+										
+									
+										if(e.options[e.options.selectedIndex].value == "Others") {
+											meetingURL.style.display = "block";
+											
+											meetingId.style.display = "none";
+											meetingType.style.display = "none";
+											presenterFirstName.style.display = "none";
+											presenterLastName.style.display = "none";
+											presenterEmailAddress.style.display = "none";
+										} 
+										else if(e.options[e.options.selectedIndex].value == "Webinar") {
+											presenterFirstName.style.display = "block";
+											presenterLastName.style.display = "block";
+											presenterEmailAddress.style.display = "block";
+											
+											meetingURL.style.display = "none";
+											meetingId.style.display = "none";
+											meetingType.style.display = "none";
+										}  
+										else {
+										
+											presenterFirstName.style.display = "none";
+											presenterLastName.style.display = "none";
+											presenterEmailAddress.style.display = "none";
+											meetingURL.style.display = "none";
+											
+											meetingId.style.display = "block";
+											meetingType.style.display = "block";
+										}
+									}
+								</script>
+                            <select class="input_field1c" name="meetingType" id="meetingType" tabindex='7' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end onchange="meetingType_onchange(this)" >
+                            <!--<option #if (${synchClass.getMeetingType()} == "dimdim") selected #end  value="dimdim">$brander.getBrandElement("lms.instructor.caption.dimdim.defaulttext")</option>
+                            <option #if (${synchClass.getMeetingType()} == "WebEx") selected #end  value="WebEx">WebEx</option>-->
+							<option #if (${synchClass.getMeetingType()} == "Webinar") selected #end  value="Webinar">360training Provider</option>
+							#if($context.showOtherProviderOption=='true')
+								<option #if (${synchClass.getMeetingType()} == "Others") selected #end  value="Others">Other Provider</option>
+							#end
+
+							<!--    <option #if (${synchClass.getMeetingType()} == "GlobalScholar") selected #end  value="GlobalScholar">GlobalScholar</option>-->
+                            </select>
+                            </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+                        <!-- 5 --><!-- LMS-4180 -->
+                        <div id="e19" class="search-content-row" style="display:none;" >
+                            <div #if( ${context.validateMeetingId} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >Meeting Id</div>
+                            <div class="com-star-r-t"><img id="imgMeetingIdReq" #if(! ${synchClass.getMeetingID()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validateMeetingId} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="meetingId" name="meetingId" value="$!{synchClass.getMeetingID()}" class="input_field" tabindex='8'  maxlength='50' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+                         <!-- 6 --><!-- LMS-4180 -->
+                        <div id="e16" class="search-content-row" style="display:none;" >
+                            <div #if( ${context.validateMeetingPasscode} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >Meeting Passcode</div>
+                            <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! ${synchClass.getMeetingPassCode()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validateMeetingPasscode} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="meetingPassCode" name="meetingPassCode" value="$!{synchClass.getMeetingPassCode()}" class="input_field" tabindex='9'  maxlength='20' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+
+						<div id="e18" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")|| ${synchClass.getMeetingType()} == "Webinar") style="display:none;" #end>
+                            <div #if( ${context.validateMeetingURL} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >Meeting URL</div>
+                            <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! ${synchClass.getMeetingURL()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validateMeetingURL} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="meetingURL" name="meetingURL" value="$!{synchClass.getMeetingURL()}" class="input_field" tabindex='9'  maxlength='200' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+						
+						<div id="e23" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || ${synchClass.getMeetingType()} == "Others") style="display:none;" #end >
+                            <div #if( ${context.validatePresenterFirstName} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterFirstName")</div>
+                            <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! ${synchClass.getPresenterFirstName()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validatePresenterFirstName} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="presenterFirstName" name="presenterFirstName" value="$!{synchClass.getPresenterFirstName()}" class="input_field" tabindex='9' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+						
+						<div id="e24" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || ${synchClass.getMeetingType()} == "Others") style="display:none;" #end >
+                            <div #if( ${context.validatePresenterLastName} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterLastName")</div>
+                            <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! ${synchClass.getPresenterLastName()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validatePresenterLastName} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="presenterLastName" name="presenterLastName" value="$!{synchClass.getPresenterLastName()}" class="input_field" tabindex='9' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+						
+						<div id="e25" class="search-content-row" #if($courseType==$brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || ${synchClass.getMeetingType()} == "Others") style="display:none;" #end >
+                            <div #if( ${context.validatePresenterEmailAddress} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.presenterEmailAddress")</div>
+                            <div class="com-star-r-t"><img id="imgMeetingCodeReq" #if(! ${synchClass.getPresenterEmailAddress()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif( ${context.validatePresenterEmailAddress} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  #if( ${synchClass.isOnlineMeeting()} ) style="background-color: #66FF00; display:block" #else style="background-color: #66FF00; display:none" #end /></div>
+                            <div class="input_field_area-user-f">
+                            <input type="text" id="presenterEmailAddress" name="presenterEmailAddress" value="$!{synchClass.getPresenterEmailAddress()}" class="input_field" tabindex='9' #if(! ${synchClass.isOnlineMeeting()} ) disabled #end > </div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+                         <!-- 7 -->
+                        <div id="e17" class="search-content-row">
+                            <div class="block_text_in-r-f">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.timezone")</div>
+                            <div class="com-star-r-t"></div>
+                            <div class="input_field_area-user-f">
+                                <select name="timeZoneId" class="input_field1c" tabindex='9' >
+                                #foreach ($timeZone in $context.timeZoneList)
+                                    <option value="$timeZone.id" #if($timeZone.id == $!{synchClass.getTimeZone().getId()} ) selected #end  >$timeZone.getFormattedTimeZone()</option>
+                                #end
+                                </select>
+                            </div>
+                        </div>
+
+						
+                        <!-- 8 -->
+                        <div id="e8" class="search-content-row">
+							<div #if( ${context.validateEnrollmentCloseDate} ) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.enrollmentCloseDate")</div>
+                            <div class="com-star-r-t"><img  #if( ${context.validateEnrollmentCloseDate} ) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #elseif(! ${synchClass.getEnrollmentCloseDate()} ) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end  style="background-color: #66FF00"/></div>
+                            <div class="input_field_area-user-f">
+                                <input type="text" style="width:165px" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="enrollmentCloseDate" value="$!{context.synchClass.getEnrollmentCloseDateStr()}" tabindex='10' class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                            </div>
+                        </div>
+
+                        <!-- 8 -->
+                        <div id="e8" class="search-content-row" >
+                            <div class="block_text_in-r-f">Location</div>
+                            <div class="com-star-r-t"></div>
+                            <div class="input_field_area-user-f" style="border:0px solid red;width:60%;">
+                                <div style="border:0px solid blue;float:left;">
+                                    <input type="text" style="width:165px" id="location" date:closeAtTop="false" name="location" value="$!{context.synchClass.location.name}" tabindex='10' class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                                </div>
+                                <div style="float: left; margin-top: 0px; margin-left: 10px;">
+					  <div>
+						  <a onClick="window.location.href='mgr_editSynchronousClassLocation.do?id=${context.synchClass.id}&method=addLocation';">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.addSynchronousClass.caption.change")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					  </div>
+				   </div>
+                            </div>
+                        </div>
+
+                        <!-- Course edit info starts -->
+                        <div id="e13" class="search-content-row">
+                            <div class="block_text_in-r-f"></div>
+                            <div class="input_field_area-user-f"></div>
+                            <div class="com-star-r-t"></div>
+                        </div>
+
+                    </div>
+                    <!-- User Profile ends -->
+                </div><!-- content-Block 1 -->
+
+                <!-- button-div -->
+                   <input type="hidden" id="currentpage" name="_page" value="0"/>
+				<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				<div style="float: right; margin-top: 15px; margin-right: 20px;">
+              <div>
+                  <a onClick="FormSubmit('update');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">Update</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+            <div style="float: right; margin-top: 15px; margin-left: 20px;">
+              <div>
+                  <a onClick="window.location.href='mgr_manageSynchronousClass.do?id=${context.synchCourseId}';">
+                      <div class="btn_start"></div>
+                     <div class="btn_normal">Cancel</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+                    <!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                </form>
+
+            </div><!-- right-pannel -->
+        </td></tr><!-- content-area -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+   #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+		</td></tr>
+    </table><!-- main-container -->
+	<script type="text/javascript">
+		//meetingType_onchange(document.getElementById("meetingType"));
+	</script>
+</body>
+</html>

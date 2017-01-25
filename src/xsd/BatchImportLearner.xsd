@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.360training.com/vu360/schemas/lms/integrationInterface"
+        xmlns:vu360-lms-int="http://www.360training.com/vu360/schemas/lms/integrationInterface"
+        elementFormDefault="qualified">
+
+    <element name="BatchImportLearnerRequest">
+        <complexType>
+			<attribute name="transactionGUID" type="string" use="required"/>
+			<attribute name="customerGUID" type="string" use="required"/>
+	        <attribute name="userName" type="string" use="required"/>
+	        <attribute name="fileLocation" type="string" use="required"/>
+	        <attribute name="accountLocked" type="boolean" use="required"/>      
+	        <attribute name="visibleOnReport" type="boolean" use="required"/>  
+			<attribute name="notifyLearnerOnRegistration" type="boolean" use="required"/>  
+	        <attribute name="actionOnDuplicateRecords"  use="required">
+	        	<simpleType>
+					<list itemType="vu360-lms-int:ActionOnDuplicateRecords"/>
+				</simpleType>
+	         </attribute>  
+	    </complexType>
+    </element>
+    
+    <element name="BatchImportLearnerResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+	        <attribute name="transactionResult" use="required">
+				<simpleType>
+					<list itemType="vu360-lms-int:TransactionResultType"/>
+				</simpleType>
+	        </attribute>
+	        <attribute name="transactionResultMessage" type="string"/>
+    	</complexType>
+	</element>
+
+	<simpleType name="ActionOnDuplicateRecords">
+		<restriction base="string">
+			<enumeration value="Update"/>
+			<enumeration value="Ignore"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="TransactionResultType">
+		<restriction base="string">
+			<enumeration value="Success"/>
+			<enumeration value="Failure"/>
+		</restriction>
+	</simpleType>
+</schema>

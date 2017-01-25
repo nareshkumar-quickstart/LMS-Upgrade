@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+
+    $(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+         if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+		$('#sideBar').height($('#right-pannel').height());
+        $('#frame_body').scroll(function(){
+            $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function(){
+            $("#message_box").animate({
+               opacity: .5
+            }, "slow", "linear", function(){$("#message_box").hide();} );
+        });
+        $("INPUT[type='checkbox'][name='resources']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+         $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='resources']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='resources']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+
+    function FormSubmit(buttonclick) {
+        document.manageform.submit();
+    }
+
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer',
+            onShow: function (dialog) {
+                dialog.data.find('.message_box_text').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function removeResources(){
+        if ($("INPUT[type='checkbox'][name='resources']:checked").length>0) {
+            confirm("Are you sure you want to delete the Resource(s)?", function () {
+                document.schResourceForm.action.value='removeResources';
+                document.schResourceForm.submit();
+            });
+        }else {
+            $('#selectResources').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+        }
+    }
+
+    function sortResources(sortColumnIndex,sortDirection){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.schResourceForm.action.value='showResources';
+        document.schResourceForm.submit();
+    }
+</script>
+</head>
+
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+					<!-- header -->
+					#parse("snippets/managerHeader.vm")
+					<!-- header-end -->	
+			</td></tr>
+			
+	 <!-- Tabs Start -->
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+             <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="192"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="600">
+                            <a href="mgr_editSynchronousClass.do?id=${context.synchClass.getId()}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a>
+							<a href="mgr_editSynchronousClassSchedule.do?id=${context.synchClass.getId()}"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+							 <a href="mgr_editSynchronousClassResources.do?id=${context.synchClass.getId()}"><div class="tab_selected" >$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a>
+                            <a href="mgr_editSynchronousClassInstructor.do?id=${context.synchClass.getId()}"><div style="border-right-style: solid;" class="tab" >Instructors</div></a>
+                            <!--<a href="mgr_editSynchronousClassLocation.do?id=${context.synchClass.getId()}&method=searchLocation"><div class="tab">Location</div></a>-->
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+            </table>
+        </td>
+        <!-- Tabs End -->
+		
+		<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</table></td>
+
+<TD id="content" >
+	<div id="scrollable">
+        <form name="schResourceForm" id="schResourceForm" method="post" action="mgr_editSynchronousClassResources.do?id=${context.synClassId}" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+
+            <input id="action" type="hidden" name="method" value="advanceSearch" />
+            <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+
+            <div id="error_messages" style="display:none;">
+                <div class="error_box">
+                    <div id="errors" style="width:98%; float:left;"></div>
+                    <div class="close_icon" onclick="hideErrors();"></div>
+                </div>
+            </div>
+
+            <!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editSynchronousClass.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.editSynchronousClass.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+            <!-- Search Result Start -->
+            <div id="resultBox" class="search_box_result">
+
+                <!-- Result Header Start -->
+                <div id="resultHeader" class="box_header">
+                    <!-- Result Heading -->
+                    <div style="float:left; height:23px;">
+                        <div style="float:left; margin-top:2px;" >
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="window.location.href='mgr_addResourceToSchedule.do?scheduleId=${context.scheduleId}'">$brander.getBrandElement("lms.Instructor.caption.AddResource.ManageResources")</div>
+                                <div class="btn_end"></div>
+                        </div>
+                        <div style="float:left; margin-top:2px;" >
+                                <div class="btn_start"></div>
+                                <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="removeResources();">$brander.getBrandElement("lms.instructor.caption.manageResource.remove")</div>
+                                <div class="btn_end"></div>
+                        </div>
+                    </div>
+                    <div class="result_left_side">
+                        <div id="resultDescription" class="box_description" #if(${context.reNumber}<11) style="margin-right:2px;" #end>$brander.getBrandElement("lms.manageUser.editLearner.caption.Showing") #if( ${context.reNumber} > 0 ) 1 - ${context.reNumber} #else 0 - 0 #end $brander.getBrandElement("lms.manageUser.editLearner.caption.of") ${context.reNumber}</div>
+                    </div>
+                </div>
+
+                #if(${context.reNumber} == 0)
+                    <div id="searchResult_1">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                          <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                            <td class="box_subheader" style="padding-left:5px;" width="60%">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceName")</td>
+                            <td class="box_subheader" style="padding-left:5px;">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceType")</td>
+                            <td class="box_subheader" style="padding-left:5px; border-right:none;">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AssetTagNum")</td>
+                          </tr>
+                        </table>
+                          <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noResourcesFound")</div>
+                    </div>
+                #else
+                    #set($resources = ${context.resources})
+                    #set($totalResources = $resources.size() - 1)
+                    <div id="searchResult_2">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                          <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                            <td class="box_subheader" ><div #if($context.sortDirection == 0) onclick="sortResources(0,1);" #else onclick="sortResources(0,0);" #end ><div #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end ></div>&nbsp;&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceName")</div></td>
+                            <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortResources(1,1);" #else onclick="sortResources(1,0);" #end ><div style="margin-left:5px;" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>&nbsp;&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceType")</div></td>
+                            <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="sortResources(2,1);" #else onclick="sortResources(2,0);" #end ><div style="margin-left:5px;" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end ></div>&nbsp;&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AssetTagNum")</div></td>
+                          </tr>
+                          #set($loopIndex = 0)
+                          #foreach($re in $resources)
+                            #if($loopIndex%2 == 0)
+                                #set($alternate="row_1")
+                            #else
+                                #set($alternate="row_2")
+                            #end
+                            <tr>
+                                <td class="$alternate" width="17px" #if($loopIndex == $totalResources) style="border-bottom:none;" #end><input type="checkbox" name="resources" value="$re.id" style="margin-left:-2px"/></td>
+                                <td class="$alternate" #if($loopIndex == $totalResources) style="border-bottom:none;" #end>$re.name</td>
+                                <td class="$alternate" #if($loopIndex == $totalResources) style="border-bottom:none;" #end>$re.resourceType.name</td>
+                                <td class="$alternate" #if($loopIndex == $totalResources) style="border-right:none; border-bottom:none;" #else style="border-right:none;" #end>$re.assetTagNumber</td>
+                            </tr>
+                            #set($loopIndex = $loopIndex + 1)
+                          #end
+                        </table>
+                    </div>
+                #end
+
+            </div>
+            <!-- Search Result End -->
+
+            <div style="float:right; margin-top:25px; margin-right:0px; margin-bottom:25px;">
+                <div class="btn_start"></div>
+                <a onClick="location.href='mgr_manageSynchronousClass.do?id=${context.synchCourseId}';"><div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Save")</div></a>
+                <div class="btn_end"></div>
+            </div>
+
+            <div style="float:right; margin-top:25px; margin-left:25px; margin-bottom:25px;">
+                <div class="btn_start"></div>
+                <a onClick="location.href='mgr_manageSynchronousClass.do?id=${context.synchCourseId}';"><div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.Instructor.button.Cancel")</div></a>
+                <div class="btn_end"></div>
+            </div>
+
+        </form>
+        </div>
+
+        <div id="selectResources" style="display:none" class="message_box">
+            <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+            <div class="message_box_icon"></div>
+            <div class="message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+            <center>
+                <div id="btn_ok_select" style="margin-left:132px; margin-top:20px;" class="simplemodal-close">
+                    <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+                </div>
+            </center>
+        </div>
+
+        <div id="deleteConfirmation" style="display:none" class="message_box">
+            <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+            <div class="message_box_icon"></div>
+            <div class="message_box_text"></div>
+            <center>
+                <div id="btn_ok_select" style="margin-left:120px; margin-top:20px;" class="no simplemodal-close">
+                    <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+                </div>
+                <div id="btn_ok_select" style="margin-left:15px;" class="yes">
+                    <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+                </div>
+            </center>
+        </div>
+
+    </td></tr>
+    <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- Footer Start -->
+    #parse("snippets/managerFooter.vm")
+    <!-- Footer End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    </table>
+</body>
+</html>

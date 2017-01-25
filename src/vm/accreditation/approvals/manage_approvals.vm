@@ -1,0 +1,414 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#set($IsNewPage = $newPage)
+#if(! $IsNewPage)
+	#set($IsNewPage = "false")
+#end 
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='approvalIds']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='approvalIds']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+        });
+
+        function changeRowColor(checkbox) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+            } else {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+            }
+        }
+
+        function search() {
+            document.getElementById('actionmethod').value='searchApproval';
+            document.manageApprovalForm.submit();
+        }
+
+        function onAllPage(){
+                document.getElementById('actionmethod').value="searchApproval";
+                document.getElementById('pageIndex').value=0;
+                document.getElementById('showAll').value="true";
+                document.manageApprovalForm.submit();
+        }
+
+        function onNextPage(nextIndex){
+                document.getElementById('actionmethod').value="searchApproval";
+                document.getElementById('pageIndex').value=nextIndex;
+                document.getElementById('showAll').value="false";
+                var itemNo= document.getElementById('pageCurrIndex').value;
+                var items=$pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+                document.manageApprovalForm.submit();
+        }
+
+        function onPreviousPage(previousIndex){
+                document.getElementById('actionmethod').value="searchApproval";
+                document.getElementById('pageIndex').value=previousIndex;
+                document.getElementById('showAll').value="false";
+                var itemNo= document.getElementById('pageCurrIndex').value;
+                var items=$pager.itemsPerPage;
+                document.getElementById('pageCurrIndex').value=parseInt(itemNo) - parseInt(items) ;
+                document.manageApprovalForm.submit();
+        }
+
+        function sortApproval(sortColumnIndex, sortDirection,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('actionmethod').value="searchApproval";
+            document.getElementById('showAll').value=showAll;
+            document.manageApprovalForm.submit();
+         }
+
+        function checkAll( countCheckBoxes ) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    changeRowColor(objCheckBox);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    changeRowColor(objCheckBox);
+                }
+            }
+        }
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.alert_message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteApproval(){
+            if ($("INPUT[type='checkbox'][name='approvalIds']:checked").length>0) {
+                confirm("Are you sure you want to delete the approval(s)?", function () {
+                    document.getElementById('actionmethod').value='deleteApproval';
+                    document.manageApprovalForm.submit();
+                });
+            }else {
+                $('#messageAlert').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+<form name="manageApprovalForm" method="post" action="acc_manageApproval.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+      <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+<!--Header Start -->
+#parse("snippets/accreditation/accreditationDefaultHeader.vm")
+<!-- Header End -->
+	 </td></tr>
+	 
+<!-- Body Start -->
+  <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+		
+      <TD id="content" >
+	<div id="scrollable">
+
+
+    #if($IsNewPage == "false")
+    	#springBind("approvalForm.*")
+		#parse("snippets/errorMessages.vm")								
+    #end
+    <!-- error-box -->
+
+
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.manageApproval.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>
+        <!-- Page Description -->
+
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+			<!-- Alert Message Box -->
+			<div id="messageAlert" style="display:none">
+				<div class="header">&nbsp;&nbsp;$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+				<div class="alert_message_box_icon"></div>
+				<div class="alert_message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+				<br style="clear:both" />
+				<div class='buttons'>
+					<div class='no simplemodal-close'>
+						<div style="float: left; margin-top: 2px; margin-right: 0px;margin-left:45px;">
+							<div>
+								<a  onclick="">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Alert Message Box - Ends -->
+			
+			<!-- Delete Message Box -->
+			<div id='deleteConfirmation' style='display:none'>
+				<div class='header'><span>$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</span></div>
+				<div class="alert_message_box_icon"></div>
+				<div class="alert_message_box_text"></div>
+				<br style="clear:both" />
+				
+				<div style="margin-left: auto; margin-right: auto; width: 180px;">
+					<div class='simplemodal-close' style="width:220px">
+						<div style="float: center; margin-top: 3px; margin-left: 20px;">
+							<div>
+								<a onClick=""><span class="no button">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div>
+									<div class="btn_end"></div>
+								</span></a>
+							</div>
+						</div>
+						   
+						<div style="float: center; margin-top: 0px; margin-left: 20px;">
+							<div>
+								<a class="" onClick=""><span class="yes button">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div>
+									<div class="btn_end"></div>
+								</span>	</a>
+							</div>
+						</div>							   
+					</div>
+				</div>
+			</div>				
+			<!-- Delete Message Box - end-->
+			
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                    <div class="control-button-position">
+                        <a href="acc_addApproval.do">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.caption.Add-Approvals")</div>
+                            <div class="btn_end"></div>
+                        </a>
+                     </div>
+                    <div class="control-button-position" onClick="deleteApproval();">
+                        <a href="#">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Delete-Approvals")</div>
+                            <div class="btn_end"></div>
+                        </a>
+                     </div>
+                </div>
+                <div id="searchBox" style="float:left; height:210px; width:300px; left:37%;" class="visible">
+                    <b>$brander.getBrandElement("lms.accraditation.editApproval.caption.Search-Approvals")</b><br/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Name")</div> <input type="text" name="appName" onkeypress="doEnter(event);" value="$!{context.appName}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Number")</div> <input type="text" name="appNumber" onkeypress="doEnter(event);" value="$!{context.appNumber}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Type")</div>                     
+                        #set($typeList = $brander.getBrandElements("lms.accraditation.editApproval.type"))
+                        <select class="input_text_field" name="appType" style="width:176px; height:20px; float:right; margin-right:15px;">
+                            <!-- <option> </option> -->
+                            #foreach ($type in $typeList)
+                                <option value="$type" #if($!{context.appType} == $type ) selected #end>$type</option>
+                            #end
+                        </select>
+                        <br/><br/>
+                        <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.caption.Status")</div>                                             
+                        <select class="input_text_field" name="appStatus" style="width:176px; height:20px; float:right; margin-right:15px;">                                                       
+                            <option value="-1" #if($!{context.appStatus} == "-1" ) selected #end>All</option>                            
+                            <option value="1"  #if($!{context.appStatus} == "1" ) selected #end>Active</option>
+                            <option value="0"  #if($!{context.appStatus} == "0" ) selected #end>In-Active</option>
+                        </select>
+                        <br/><br/>                        
+                    ##<div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.caption.Regulator")</div> <input type="text" name="regulator" value="$!{context.regulator}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="search();">$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+                <div class="result_left_side">
+                    <!-- Result Description -->
+                $pager.setItems($!{context.approvals})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                        #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="false" />
+                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+
+                #if($!{context.showAll})
+                    #set($showAll=$!{context.showAll})
+                #else
+                   #set($showAll=false)
+                #end
+
+                #set($sortColumnIndex = $!{context.sortColumnIndex})
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$!{context.sortColumnIndex}" />
+                #set($sortDirection = $!{context.sortDirection})
+                <input type="hidden" id="sortDirection" name="sortDirection" value="$!{context.sortDirection}" />
+
+                    <div class="control-button-position">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="return onAllPage();" ></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="return onNextPage($pager.nextIndex);" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="return onPreviousPage($pager.prevIndex);" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>  
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize > 0)
+                <!-- Search Result Start -->
+                <div id="searchResult_2">
+                    <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll"  style="margin-left:3px"/></td>
+                            <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 0) "sortApproval('0','1',$showAll);" #else "sortApproval('0','0',$showAll);" #end ><div id="approvalName" #if($sortColumnIndex == 0 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Name")</a></td>
+                            <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 1) "sortApproval('1','1',$showAll);" #else "sortApproval('1','0',$showAll);" #end ><div id="approvalNumber" #if($sortColumnIndex == 1 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 1) class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Number")</a></td>
+                            <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 2) "sortApproval('2','1',$showAll);" #else "sortApproval('2','0',$showAll);" #end ><div id="approvalType" #if($sortColumnIndex == 2 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 2) class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Type")</a></td>
+                            <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 3) "sortApproval('3','1',$showAll);" #else "sortApproval('3','0',$showAll);" #end ><div id="regulator" #if($sortColumnIndex == 3 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 3) class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Regulator")</a></td>
+                            <td class="box_subheader" style="border-right:none;"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 4) "sortApproval('4','1',$showAll);" #else "sortApproval('4','0',$showAll);" #end ><div id="active" #if($sortColumnIndex == 4 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 4) class="icon_down" #end ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Active")</a></td>
+                        </tr>
+                        #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                            #set($approval = $!{context.approvals.get($loopIndex)})
+                            #if($loopIndex%2 == 0)
+                                #set($alternate="row_1")
+                            #else
+                                #set($alternate="row_2")
+                            #end
+                            <tr >
+                                <td class="$alternate" width="17px" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end >
+                                	<input type="checkbox" name="approvalIds" #if($!{approval.active} == 'No') Disabled #end value="$!{approval.id}" onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+                                #if($!{approval.approvalType} == 'Provider Approval')
+                                    <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end>#if($!{approval.active} == 'Yes') <a class="list-item-underline-a" href="acc_manageApproval.do?method=showProviderApprovalSummary&appId=$!{approval.id}" >$!{approval.approvalName} </a> #else $!{approval.approvalName} #end</td>
+                                #elseif($!{approval.approvalType} == 'Instructor Approval')
+                                    <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end>#if($!{approval.active} == 'Yes') <a class="list-item-underline-a" href="acc_manageApproval.do?method=showInstructorApprovalSummary&appId=$!{approval.id}" >$!{approval.approvalName} </a> #else $!{approval.approvalName} #end</td>
+                                #elseif($!{approval.approvalType} == 'Course Approval')
+                                    <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end><a class="list-item-underline-a" href="acc_manageApproval.do?method=showCourseApprovalSummary&appId=$!{approval.id}">$!{approval.approvalName} </a> </td>
+                                #end
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end>$!{approval.approvalNumber}</td>
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end>$!{approval.approvalType}</td>
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end>$!{approval.regulatorName}</td>
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;border-right:none;" #else style="border-right:none;" #end>$!{approval.active}</td>
+                            </tr>
+                        #end
+                    </table>
+                </div>
+                
+            #else
+                <div id="searchResult_1">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Name")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Number")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Approval-Type")</td>
+                            <td class="box_subheader"><div  ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Regulator")</td>
+                            <td class="box_subheader" style="border-right:none;"><div  ></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Active")</td>
+                        </tr>
+                    </table>
+                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.accreditation.caption.No-records-found-message") #else To find an approval click on the Search button above #end</div>
+                </div>
+                <!-- Result Subheader End -->
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        </div>
+        <div>
+        
+
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

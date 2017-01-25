@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+    document.title="$brander.getBrandElement("lms.manager.trainingPlan.title.editSelectName")";
+
+    function doSearch(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.editTrainingPlanNameAndDescriptionForm.submit();
+    } 
+
+    $(document).ready(function()
+    {
+    	
+        document.editTrainingPlanNameAndDescriptionForm.trainingPlanName.focus();
+    });
+</script> 
+</head>
+<body>
+<form name="editTrainingPlanNameAndDescriptionForm" method="post" action="mgr_editTrainingPlanNameAndDescription.do">
+    <input type="hidden" name="Id" value="$!{context.trainingPlan.id}" />    
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!-- header -->
+            #parse("snippets/managerHeader.vm")
+		</td></tr>
+					
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+				<table width="100%" cellspacing="0" cellpadding="0" border="0">
+					<tbody>
+					<tr>
+						<td width="194"><div class="tab_blank"></div></td>
+						<td>&nbsp;</td>
+						<td width="280">
+							<a href="mgr_editTrainingPlanNameAndDescription.do?Id=$!{context.trainingPlan.id}">
+								<div class="tab_selected" >$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</div>
+							</a>
+							<a href="mgr_editTrainingPlanCourse.do?Id=$!{context.trainingPlan.id}">
+								<div class="tab" style="border-right-style: solid;">$brander.getBrandElement("lms.accraditation.editApproval.addCourse.caption.Courses")</div>
+							</a>
+						</td>
+						<td>&nbsp;</td>
+					</tr>
+					</tbody>
+				</table>
+			</td> 
+            <!-- header-end -->
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                    <!-- left-pannel-content -->
+                    #parse("snippets/planEnrollLeftMenu.vm")
+                    <!-- left-pannel-content-end -->
+					</table></td>
+					
+                    <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+                            #if($!{context.validateName})
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #set ($error = $brander.getBrandElement($!{context.validateName}))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                            </div>
+                            <!-- error-box -->
+                            #end
+
+
+                            
+                            
+                 <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manager.editTrainingPlan.caption.EditTrainingPlanSummary")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manager.editTrainingPlan.caption.Desc")</div>
+			</td>
+		    </tr>
+		</table>				 
+                <!-- Logo+Manage-User-end -->                            
+
+                            <!-- Preview -->
+                            <div class="content-Block">
+                                <div id="e7a" class="Block-Contain-header">
+                                    <div id="e8" class="Search-Containerheaderleft">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</div>
+                                </div>
+
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="Search-inputfield-box">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 1 -->
+                                    <div id="e13" class="search-content-row">
+                                        <div #if($status.error) class="block_text_TrainingPlan" #else class="block_text_TrainingPlan" #end style="width:100px;">$brander.getBrandElement("lms.manager.addTrainingPlans.trainingPlanName.caption")</div>
+                                        <div class="trainingPlan_requiredfield"  style="width:30px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" /></div>
+                                        <div style="margin-left:144px;"><input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){doSearch('SavePlanNameAndDescription');}" name="trainingPlanName" value="$!{context.trainingPlan.Name}" class="inputfield-box-L2-in-f" style="width:501px;*width:499px;"/></div>
+                                    </div>
+                                    
+                                    <!-- 6 -->
+                                    <div id="e13" class="search-content-row2">
+                                        <div class="block_text_TrainingPlan" style="width:100px;">$brander.getBrandElement("lms.manager.editTrainingPlan.caption.Description")</div>
+                                        <div class="trainingPlan_requiredfield" style="visibility:hidden;width:30px;"><img src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" /></div>
+                                        <div style="margin-left:145px;width:600px;" >
+                                        	<textarea id="description1" rows="" cols="" name="trainingPlanDescription" class="inputfield-box-L2-in-a">$!{context.trainingPlan.Description}</textarea>
+                                        	<script language="JavaScript">
+												generate_wysiwyg('description1');
+											</script>
+                                        </div>
+                                    </div>
+                                    <!-- 00 -->
+                                    <div id="e12" class="search-content-row1"><!-- using for space --></div>
+                                    <!-- 00 -->
+                                </div>
+                                <!-- End-User-left-right-list -->
+
+                            </div>
+                            <!-- Preview-end -->
+
+                            <!-- space -->
+                            <div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.manager-bottom-space")"></div>
+                            <!-- space -->
+
+                            <!-- button-div -->
+                            <div class="$brander.getBrandElement("lms.administrator.entitlementSearch.cssClass.managerBtn")">
+                                <div style="float:right; margin-top:3px;">
+								  <a onClick="updateTextArea('description1');doSearch('SavePlanNameAndDescription');" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Save</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+								<div style="float:right; margin-top:3px;margin-right:5px;">
+								  <a onClick="window.location.href='mgr_searchTrainingPlans.do';return false;" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Cancel</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+                                <input type="hidden" id="action" name="action" value="" />
+                            </div>
+                            <!-- scrollable-div -->
+
+                            <!-- space -->
+                            <div class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.manager-bottom-space")"></div>
+                            <!-- space -->
+
+                    </div><!-- right-pannel-content-end -->
+
+            </td></tr><!-- content2-area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td></tr>            
+    </table><!-- main-container -->
+</form>
+</body>
+</html>

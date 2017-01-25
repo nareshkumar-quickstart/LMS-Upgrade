@@ -1,0 +1,131 @@
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#revert').click(function(){
+            showDefaultValue();
+        });
+        
+        $('#aboutUsSelectionOption').change(function(){
+            templateOption($(this).attr("selectedIndex"),'about');
+        });
+        $('#iconcaretAboutus').click(function(){
+            restoreTable($(this), 'aboutUsContent');
+            if($(this).attr('class') == 'icon-caret-down-large'){
+                $('#aboutUsSelectionOption').trigger('change');
+            }
+        });
+    });
+    
+    function showDefaultValue(){
+      $('#actionmethod').val("showDefaultValue");
+      $('#showDefaultValue').val("showDefaultValue");
+      
+      if( $('#templateType').length > 0 ){
+          $('#templateType').val("aboutusTemplate");
+      }else{
+          $('#brandingForm').append(
+            "<input id='templateType' name='templateType' type='hidden' value='aboutusTemplate' />");
+      }
+      $('#brandingForm').submit();
+    }   
+</script>
+<table border="0" cellpadding="0" cellspacing="0" width="99%">
+  <tr>
+    <td>
+    
+    <table id="about-us" class="content-Block" border="0" cellpadding="0" cellspacing="0" style="width: 100%;" >
+    <tr>
+        <td class="content-table-header" colspan="3">
+            <div id="iconcaretAboutus" class="icon-caret-down-large" style="float:left; margin-right:5px; padding-left:5px; padding-right:5px;"></div>
+            <div class="content-table-heading">About Us</div>
+        </td>
+    </tr>
+    
+    <tr name="aboutUsContent">
+        <td style="padding:5px;" width="15%">
+            Link To
+        </td>
+        <td width="2%">&nbsp;</td>
+        <td style="padding:5px;" id="lastcolumn">
+            #springBind("brandingForm.aboutUsSelectionOption")
+            <select id="${status.expression}" name="${status.expression}" 
+                class="select-med">
+                <option value="1" #if($!{status.value}==1) selected #end>LMS Template</option>
+                <option value="2" #if($!{status.value}==2) selected #end>External Page</option>
+                <option value="3" #if($!{status.value}==3) selected #end>Email Address</option>
+            </select>
+        </td>
+    </tr>
+    <tr id="trExternalUrl-about" style="display:none;" name="aboutUsContent">
+        <td style="padding:5px;">
+            External Page URL
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td style="padding:5px;">
+        	#springBind("brandingForm.aboutUsURL")
+            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+        </td>
+    </tr>
+    <tr id="trEmailAddress-about" style="display:none;" name="aboutUsContent">
+        <td style="padding:5px;">
+            Email Address
+        </td>
+        <td>
+            &nbsp;
+        </td>
+        <td style="padding:5px;">
+            #springBind("brandingForm.aboutUsEmail")
+            <input type="text" name="${status.expression}" value="$!{status.value}" class="input-lrg" />
+        </td>
+    </tr>
+    <tr id="trLmsTemplate-about" style="display:none;" name="aboutUsContent">
+        <td valign="top" style="padding:5px;">
+            Message
+        </td>
+        <td id="revert" class="icon-revert" style="background-position:1px 15px;">
+            &nbsp;
+        </td>
+        <td style="padding:5px;" id="template">
+            #springBind("brandingForm.aboutUslmsTemplateText")
+            <textarea id="about1" name="${status.expression}" rows="" cols="" class="textarea-lrg" style="height:270px;">$!{status.value}</textarea>
+            <script language="JavaScript" type="text/javascript">
+                generate_wysiwyg('about1');
+            </script>
+        </td>
+    </tr>
+</table>
+    
+    
+     </td>
+  </tr>
+  <tr>
+    <td>     
+    
+                    
+		<table cellspacing="0" cellpadding="0" border="0" id="table-bottom-controls">
+		    <tr name="aboutUsContent">
+		         <td>	            
+					<div style="float: right; margin-top: 15px;">
+		                 <a onclick="saveBrands();">
+		                 <div class="btn_start"></div>
+		                 <div class="btn_normal">Save</div>
+		                 <div class="btn_end"></div>
+		                 </a>
+		            </div>
+		            <div style="float: right; margin-top: 15px; margin-right: 5px;">
+	                  <a style="text-decoration: none;" onclick="cancel();">
+	                  <div class="btn_start"></div>
+	                  <div class="btn_normal">Cancel</div>
+	                  <div class="btn_end"></div>
+	                  </a>
+	                  </div>
+		        </td>
+		    </tr>
+		</table>
+	
+		
+	</td>
+  </tr>
+</table>

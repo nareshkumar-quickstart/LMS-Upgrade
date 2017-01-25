@@ -1,0 +1,256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+    <script language="javascript" type="text/javascript">
+        document.title="Display Survey";
+        function finishSurvey(){
+            document.getElementById('actionmethod').value='finishSurvey';
+            document.displaySurveyForm.submit();
+        }
+
+        function cancelform(){
+            document.getElementById("actionmethod").value='cancelDisplaySurvey';
+            document.displaySurveyForm.submit();
+        }
+
+        function nextForm(){
+            document.getElementById("actionmethod").value='showSurveyView';
+            document.displaySurveyForm.submit();
+        }
+
+        function checkAnswer(checkbox, id){
+        //alert(document.getElementById(id).value + "----" + document.getElementById(id).checked+"=="+checkbox.checked);
+            if( document.getElementById(id).value == "false"  ){
+             
+                document.getElementById(id).value = true;}
+            else           
+                document.getElementById(id).value = false;
+        }
+       
+       
+        $(document).ready(function() {
+ 
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            $('#message_box_saved').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+ 
+});
+    </script>
+</head>
+<body>	
+		<form name="displaySurveyForm" method="POST" action="lrn_takeSurvey.do">
+        <input type="hidden" id="actionmethod" name="method" value=""/>
+        <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>  
+        <input type="hidden" id="action" name="questionNo" value="$!{context.questionNo}"/>
+        <input type="hidden" id="action" name="totalQuestions" value="$!{context.totalQuestions}"/>    
+
+		<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+        
+		<!-- Header Row -->
+		<tr id="singleColumn-header">
+            <td id="header" colspan="2">
+				#parse("snippets/learnerNewHeader.vm")
+			</td>
+		</tr>
+		
+		<tr id="singleColumn-searchbar">
+		<!-- search Bar -->
+			<input type="hidden" id="action" name="method" value="displaySurveys"/>
+            <td  id="row-tabs" class="tab_bar" colspan="2">
+                &nbsp;
+            </td>
+			<!-- search Bar end -->
+		</tr>
+		<!-- Page -->
+        <tr id="main">
+			
+			<!-- Page Content -->
+			<td id="content">
+				
+				<!-- Page Scrollable Area -->
+				<div id="scrollable">	
+
+                     #set( $hasErrors = false )   
+                    #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+                    #set($questionNumber = $!{context.questionNo})
+                    #set($surveyQuestionLoopStart = $!{context.questionNo})
+                    #set($surveyQuestionLoopEnd = $!{context.totalQuestions})
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd - 1 )
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd + $surveyQuestionLoopStart )
+                     
+                     
+                    #if($questionCount > 0)
+                        #set($maxQuestionIndex = $questionCount - 1)           
+                        #foreach( $index in [0..$surveyQuestionLoopEnd])               
+                            #springBind("takeSurveyForm.survey.questionList[$index]")
+                            #if( $status.error )
+                                #set( $hasErrors = true )           
+                            #end   
+                        #end                     
+                    #end
+                   
+                    #if($hasErrors)
+                        <!-- error-box -->
+                        <div id="message_box" style="float:left;clear:left;">
+                            <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+        
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$brander.getBrandElement("lms.learner.error.responseRequired")</div>
+                                </div>
+         
+        
+                        </div>           
+                    #end
+               
+                <div id="right-pannel" style="margin-left:20px">
+        
+                    <!-- contentLogo-area -->
+                    <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.mainLogoContainer")">
+                        <div id="b4" class="courseTitleDiv2">
+                            <div id="b5" class="courseTitle1">${takeSurveyForm.survey.surveyRef.name}</div>
+                            <div id="b6" class="courseDetails">&nbsp;</div>
+                        </div>
+                    </div>
+        
+                    <!-- contentLogo-area-end -->
+                    #springBind("takeSurveyForm.survey.questionList")
+                    #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+                    #set($questionNumber = $!{context.questionNo})
+                    #set($surveyQuestionLoopStart = $!{context.questionNo})
+                    #set($surveyQuestionLoopEnd = $!{context.totalQuestions})
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd - 1 )
+                    #set($surveyQuestionLoopEnd = $surveyQuestionLoopEnd + $surveyQuestionLoopStart )
+         
+                    #if($questionCount > 0)
+                        #set($maxQuestionIndex = $questionCount - 1)
+                       
+                        #foreach($index in [$surveyQuestionLoopStart..$surveyQuestionLoopEnd])
+                            #set($surveyQuestion = ${takeSurveyForm.survey.questionList.get($index)} )
+                            #springBind("takeSurveyForm.survey.questionList[$index]")
+                             
+                            #set($prefix = "survey.questionList[$index]")
+                            #set($questionNumber = $questionNumber + 1)
+                            <!-- 1 -->
+                            <div class="content-Block" style="margin:10px;">
+                                <div id="e7a" class="Block-Contain-header"></div>
+                                <!-- User-left-right-list -->
+                                <div id="e7b" class="User-checkbox-box">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 5a -->
+                                    <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                                       
+                                        <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" />
+         
+                                        #if($status.error) 
+                                            <div class="com-star-r-t"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"    /></div>
+                                        #elseif(${surveyQuestion.surveyQuestionRef.required})
+                                            <div class="com-star-r-t">*</div>
+                                        #else   
+                                        <div class="User_coll_1b"></div>
+                                        #end
+                                        <div #if($status.error )  style="color:#FF0000;padding-left:15px;" #else  style="padding-left:15px;" #end class="input_field_area-user-f2-b" >$questionNumber. ${surveyQuestion.surveyQuestionRef.text}</div>
+                                    </div>
+                                    <div style="border:0px solid green;float:left;width:100%;">$surveyQuestion.renderQuestion($prefix)</div>
+                                    <!-- 00 -->
+                                    <div id="e12" class="search-content-row1"><!-- using for space --></div>
+                                    <!-- 00 -->
+                                </div>
+                               
+                                <!-- End-User-left-right-list -->
+                            </div>
+        
+                            <!-- 1-end -->
+        
+                            <!-- space -->
+                            <div class="manager-bottom-space"></div>
+                            <!-- space -->
+                        #end
+                    #end
+        
+                     #if($!{context.nextPageIndex} == '0')
+                            #if(${context.showTerms} != "false")
+                            <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                                <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                                    <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                        $brander.getBrandElement("lms.administrator.searchMember.caption.agreement")
+                                    </div>
+                                </div>
+                                <div style="border:0px solid green;float:left;width:100%;">
+                                    <textarea readonly="true" style="margin-left:20px; margin-bottom:10px; margin-top:10px; background:white;" cols="88" rows="4">$!{context.showTerms}</textarea>
+                                </div>
+                                <div style="border:0px solid green;float:left;width:100%;">
+                                    <input type="checkbox" style="margin-left:22px;"></input> $brander.getBrandElement("lms.administrator.searchMember.caption.agree")
+                                </div>
+                            </div>
+                            #end
+        
+                            #if(${context.showLinks} != "false")
+                            <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                                <div id="e12" style="border:0px solid red;float:left;width:100%; margin-bottom:10px;">
+                                    <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                        $brander.getBrandElement("lms.survey.caption.links")
+                                    </div>
+                                </div>
+                                <div style="border:0px solid green;float:left;width:100%;">
+                                    #foreach($link in ${context.showLinks})
+                                    <span style="color:blue; text-decoration:underline; cursor:pointer; margin-top:10px; margin-left:20px;">
+                                       <a href="$link.urlName" target="_blank">$link.urlName</a><br>
+                                    </span>
+                                    #end
+                                </div>
+                                <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                                <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                            </div>
+                            #end
+                        #end
+                    <!-- button-div -->
+                    <div class="managerBtn">
+                        <div class="btn-left2">
+                            <!--<input type="button" value="Cancel" class="btn-submit_n71" title="Cancel" name="imagesubmit1" align="top" onClick="cancelform();" />-->
+                            <a class="button" onClick="cancelform();"><span class="button">Cancel</span></a>
+                        </div>
+                       
+                        <div class="btn-right1">
+                           
+        
+                            #if($!{context.nextPageIndex} == '0')
+                                <!--<input type="button" value="Finish" class="btn-submit_n71" title="Finish" name="imagesubmit1" align="top" onClick="finishSurvey();"/> -->
+                                <a class="button" onClick="finishSurvey();"><span class="button">Finish</span></a> 
+                            #else
+                                <!--<input type="button" value="Next" name="Next" title="Next" onclick="nextForm('next');" class="btn-submit_n71" />-->
+                                <a class="button" onClick="nextForm('next');"><span class="button">Next</span></a>
+                            #end
+                           
+                        </div>
+                       
+                        <div class="btn-right1">
+                            <!--<input type="button" value="Clear All" class="btn-submit_n71" title="Clear All" name="imagesubmit1" align="top"/>-->
+                            <a class="button" onClick="document.displaySurveyForm.reset();"><span class="button">Clear All</span></a>
+                        </div>
+                       
+                    </div>
+                    <!-- scrollable-div -->
+        
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+
+                </div>
+            	<!-- END: Page Scrollable Area -->				
+            </td>
+        </tr>
+		<!-- END: Page-->
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+	</table>
+		
+    </form>
+</body>
+</html>

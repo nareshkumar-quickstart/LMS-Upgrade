@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+           xmlns:vu360-lms-selfservice="http://com/softech/vu360/lms/selfservice/webservices/orderservice"
+           targetNamespace="http://com/softech/vu360/lms/selfservice/webservices/orderservice"
+           elementFormDefault="qualified">
+
+    <element name="OrderCreatedRequest">
+ 		<complexType>
+            <sequence>
+                <element name="order" type="vu360-lms-selfservice:Order" nillable="false"/>
+                <element name="products"  maxOccurs="unbounded" minOccurs="0"  type="vu360-lms-selfservice:Product"  />
+            </sequence>
+            <attribute name="transactionGUID" type="string" use="required"/>
+            <attribute name="CCILeadId" type="string" use="optional"/>
+            <attribute name="eventDate" type="dateTime" use="required"/>
+            <!-- <attribute name="productCode" type="string" use="required"/> -->
+         </complexType>
+    </element>
+    
+     <complexType name="Product">
+    	<attribute name="code" type="string" use="required"/>
+        <attribute name="type" type="string" use="required"/>
+        <attribute name="category" type="string" use="required"/>
+        <attribute name="name" type="string" use="required"/>
+        <attribute name="description" type="string" use="required"/>
+        <attribute name="organizationId" type="string" use="required"/>
+    </complexType>
+    
+  
+      <simpleType name="OrderStatusType">
+        <restriction base="string">
+            <enumeration value="Pending"/>
+            <enumeration value="Approved"/>
+            <enumeration value="Denied"/>
+            <enumeration value="Closed"/>
+            <enumeration value="Suspended"/>
+        </restriction>
+    </simpleType>
+    <simpleType name="TransactionResultType">
+        <restriction base="string">
+            <enumeration value="Success"/>
+            <enumeration value="Failure"/>
+        </restriction>
+    </simpleType>
+    <complexType name="AuthenticationCredential">
+        <attribute name="username" type="string" use="required"/>
+        <attribute name="password" type="string" use="required"/>
+        <attribute name="domain" type="string"/>
+    </complexType>
+    <complexType name="Address">
+        <sequence>
+            <element name="addressLine1" type="string" nillable="false"/>
+            <element name="addressLine2" type="string"/>
+            <element name="addressLine3" type="string"/>
+            <element name="city" type="string" nillable="false"/>
+            <element name="state" type="string" nillable="false"/>
+            <element name="zipCode" type="string" nillable="false"/>
+            <element name="country" type="string" nillable="false"/>
+        </sequence>
+    </complexType>
+    <complexType name="Contact">
+        <sequence>
+            <element name="billingAddress" type="vu360-lms-selfservice:Address" nillable="false"/>
+            <element name="shippingAddress" type="vu360-lms-selfservice:Address"/>
+            <element name="authenticationCredential"
+                     type="vu360-lms-selfservice:AuthenticationCredential" nillable="false"/>
+        </sequence>
+        <attribute name="firstName" type="string" use="required"/>
+        <attribute name="lastName" type="string" use="required"/>
+        <attribute name="emailAddress" type="string" use="required"/>
+        <attribute name="alternateEmailAddress" type="string"/>
+        <attribute name="primaryPhone" type="string" use="required"/>
+        <attribute name="alternatePhone" type="string"/>
+        <attribute name="billingShippingAddressSame" type="boolean"/>
+    </complexType>
+    <complexType name="Customer">
+        <sequence>
+            <element name="primaryContact" type="vu360-lms-selfservice:Contact" nillable="false"/>
+            <element name="primaryAddress" type="vu360-lms-selfservice:Address" nillable="false"/>
+        </sequence>
+        <attribute name="customerName" type="string" use="required"/>
+        <attribute name="companyName" type="string" />
+        <attribute name="customerId" type="string" use="required"/>
+    </complexType>
+    <complexType name="Order">
+        <sequence>
+            <element name="customer" type="vu360-lms-selfservice:Customer" nillable="false"/>
+            <element maxOccurs="unbounded" minOccurs="0" name="lineItem"
+                     type="vu360-lms-selfservice:OrderLineItem" nillable="false"/>
+        </sequence>
+        <attribute name="orderId" type="string" use="required"/>
+        <attribute name="orderDate" type="dateTime" use="required"/>
+        <attribute name="distributorId" type="string" use="required"/>
+        <attribute name="system" type="string" default="VU360-SF"/>
+        <!-- <attribute name="orderStatus" type="OrderStatusType" use="required"/> -->
+    </complexType>
+    <complexType name="OrderLineItem">
+        <attribute name="groupguid" type="string"/>
+        <attribute name="guid" type="string" use="required" />
+        <!--  This could be a courseGUID or a courseGroupGUID -->
+        <attribute name="lineitemguid" type="string" />
+        <attribute name="quantity" type="integer" use="required" />
+        <attribute name="termOfService" type="integer" use="required" />
+    </complexType>
+    
+    <element name="OrderCreatedResponse">
+    	<complexType>
+	        <attribute name="transactionGUID" type="string" use="required"/>
+	        <attribute name="eventDate" type="dateTime" use="required"/>
+	        <attribute name="transactionResult" use="required"/>
+	        <attribute name="transactionResultMessage" type="string"/>
+    		<attribute name="customerGUID" type="string" />
+    	</complexType>
+	</element>
+
+
+
+
+</schema>

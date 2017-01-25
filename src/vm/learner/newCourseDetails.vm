@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+##this script converts from seconds to <Hours:Minute> format
+<script language="javascript">
+	var seconds = $!{context.courseStatistics.totalTimeInSeconds};
+	var output;
+	var hours = seconds/3600;
+	var minutes = Math.round((seconds%3600)/60);
+	if (hours < 1){ 
+		hours = "00";
+	}else if (hours < 10){
+		hours = "0"+hours;
+	}
+	if (minutes < 1){ 
+		minutes = "00";
+	}else if (minutes < 10){
+		minutes = "0"+minutes;
+	}
+	output = hours+":"+minutes
+	document.getElementById('time').value = output;
+</script>
+
+#parse("snippets/courseDetailsHead.vm")
+
+<body><form name="myCourseDetaiForm">
+<!-- Header -->
+    	#parse("snippets/detailsHead.vm")
+    	<!-- Body start -->
+    	 <div>
+         <div class="$brander.getBrandElement("lms.coursedetail.container")">
+
+            <div class="$brander.getBrandElement("lms.coursedetail.new_detailimg")">
+               <div class="$brander.getBrandElement("lms.coursedetail.new_indetailimg")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.new_actualimg")">
+                     <img src='$brander.getBrandElement("lms.pixel.iconMyCoursesJPG")' alt="">
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.head_desc_one")">
+                     <div class="$brander.getBrandElement("lms.coursedetail.head_desc_two")">$brander.getBrandElement("lms.coursedetails.header.text")</div>
+                     <div class="$brander.getBrandElement("lms.coursedetail.head_desc_three")">
+                        $!{context.course.description}
+                     </div>
+                     <div class="$brander.getBrandElement("lms.coursedetail.detail_buttons")">
+                       <img src="$brander.getBrandElement("lms.pixel.viewCourseDescriptionPng")"  onClick=window.location.href="lrn_courseDescription.do?courseId=$!{context.course.courseId}" onMouseOver="src='$brander.getBrandElement("lms.pixel.viewCourseDescription_overPng")'" onMouseOut="src='$brander.getBrandElement("lms.pixel.viewCourseDescriptionPng")'"/>
+			<img src="$brander.getBrandElement("lms.pixel.courseCompletionReportPng")"  onMouseOver="src='$brander.getBrandElement("lms.pixel.courseCompletionReport_overPng")'" onMouseOut="src='$brander.getBrandElement("lms.pixel.courseCompletionReportPng")'"/>&nbsp;&nbsp;
+                     </div>
+                  </div>
+               </div>
+            </div>
+
+            <div class="$brander.getBrandElement("lms.coursedetail.table_header")">
+               <div class="$brander.getBrandElement("lms.coursedetail.table_picture_one")">
+                 $brander.getBrandElement("lms.mycourses.courseName")
+                 #if(! $context.courseStatistics.percentComplete)
+			 #set($remainingPct=100)
+		#else
+			 #set($remainingPct=100-$!{context.courseStatistics.percentComplete})
+		#end
+               </div>
+               <div class="$brander.getBrandElement("lms.coursedetail.table_picture_two")">
+                  $brander.getBrandElement("lms.courseAvail.courseProgress")
+               </div>
+
+               <div class="$brander.getBrandElement("lms.coursedetail.course_title")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.course_title_pic")">
+                    <a href="">$!{context.course.courseTitle}</a>
+                  </div>  
+               </div>
+               <div class="$brander.getBrandElement("lms.coursedetail.row_one_cname")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_one_vname")">
+                 <img src="$brander.getBrandElement("lms.pixel.statusBarStartJpg")">
+                 <img src="$brander.getBrandElement("lms.pixel.progressBarJpg")" width="$!{context.courseStatistics.percentComplete}" height='11'>
+                 <img src="$brander.getBrandElement("lms.pixel.statusBarsJpg")" width="$remainingPct" height='11'>
+                 <img src="$brander.getBrandElement("lms.pixel.statusBarEndJpg")">
+                  </div>
+               </div>               
+            </div>
+
+            <div class="$brander.getBrandElement("lms.coursedetail.row_two_cname")">&nbsp;</div>
+
+            <div class="$brander.getBrandElement("lms.coursedetail.row_two_vname")">
+               <div class="$brander.getBrandElement("lms.coursedetail.course_table_start")">
+                   $brander.getBrandElement("lms.coursedetails.description.secondrow.tableheader.text")
+               </div>
+               <div class="$brander.getBrandElement("lms.coursedetail.table_evenrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.courseStatus.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                    $brander.getBrandElement("inprogress")
+                  </div>
+               </div>   
+               <div class="$brander.getBrandElement("lms.coursedetail.table_oddrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.percentComplete.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                   $!{context.courseStatistics.percentComplete}
+                   #if(! $context.courseStatistics.percentComplete) 
+                   #else % 
+                   #end
+                  </div>  
+               </div>
+               <div class="$brander.getBrandElement("lms.coursedetail.table_evenrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.preAssessmentScore.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                    $!{context.courseStatistics.pretestScore}
+                    #if(! $context.courseStatistics.pretestScore) 
+                    #else % 
+                    #end
+                  </div>
+               </div>   
+               <div class="$brander.getBrandElement("lms.coursedetail.table_oddrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.averageQuizScore.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                   $!{context.courseStatistics.averageQuizScore}
+                   #if(! $context.courseStatistics.averageQuizScore) 
+                   #else % 
+                   #end
+                  </div>  
+               </div>
+               <div class="$brander.getBrandElement("lms.coursedetail.table_evenrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.highestPostAssessmentScore.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                   $!{context.courseStatistics.heighestPostTestScore}
+                  </div>
+               </div>   
+               <div class="$brander.getBrandElement("lms.coursedetail.table_oddrow")">
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subone")">
+                    $brander.getBrandElement("lms.coursedetails.coursestatistics.timeSpentInCourse.label.text")
+                  </div>
+                  <div class="$brander.getBrandElement("lms.coursedetail.row_subtwo")">
+                   <script>
+			document.write(output);
+		   </script>
+                  </div>  
+               </div>
+            </div>
+
+            <div class="$brander.getBrandElement("lms.coursedetail.space_style")">&nbsp;</div>
+
+            <div class="$brander.getBrandElement("lms.coursedetail.last_table")">
+               <div class="$brander.getBrandElement("lms.coursedetail.last_table_head")">
+                  $brander.getBrandElement("lms.coursedetails.description.thirdrow.tableheader.text")
+               </div>
+            </div>
+
+         </div>
+      </div>
+       <!-- Body End-->
+        <!-- Footer Start-->
+     #parse("snippets/detailsFooter.vm")
+      <!-- Footer End -->          
+
+    </body>
+</html>
+       

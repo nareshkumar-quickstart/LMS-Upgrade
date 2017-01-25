@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+    <script type="text/javascript">
+        document.title="$brander.getBrandElement("lms.enrollment.searchEnrollment.caption.title")";
+		function trim(stringToTrim) {
+			return stringToTrim.replace(/^\s+|\s+$/g,"");
+		}
+		function ltrim(stringToTrim) {
+			return stringToTrim.replace(/^\s+/,"");
+		}
+		function rtrim(stringToTrim) {
+			return stringToTrim.replace(/\s+$/,"");
+		}
+        
+		function doSearch() {
+		var firstName= trim( ltrim( rtrim( document.learnerSearchForm.firstName.value ) ) );
+		var lastName= trim( ltrim( rtrim( document.learnerSearchForm.lastName.value ) ) );
+		var email= trim( ltrim( rtrim( document.learnerSearchForm.emailAddress.value ) ) );
+        
+		
+		if( firstName.length == 0 &&  lastName.length == 0  &&  email.length == 0 )
+		{
+		
+			//alert("$brander.getBrandElement("lms.enrollment.searchEnrollment.blankSearch.error")");
+			$('#selectLearner').modal({close:false,position: ["40%",]});
+			return false;
+		}
+		// test for Customer selected yet or not 
+		/*else if ( #if($adminSelectedEntityType != 'CUSTOMER') true #else false #end )
+		{
+		
+			//alert("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.blankSearch")");
+			$('#customerSelect').modal({close:false,position: ["40%",]});
+			return false;		
+		}*/		
+//            document.getElementById('searchType').value=buttonclick;
+//            document.getElementById('actionMethod').value = 'searchLearner';
+
+            document.learnerSearchForm.submit();
+        }
+
+     function onAllPage(){
+        document.getElementById('actionmethod').value='showAllApplicationLearners';
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="true";
+        document.nextPreviousForm.submit();
+    }
+
+    function onNextPage(nextIndex){
+        document.getElementById('actionmethod').value='showAllApplicationLearners';
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        document.nextPreviousForm.submit();
+    }
+
+    function onPreviousPage(previousIndex){
+        document.getElementById('actionmethod').value='showAllApplicationLearners';
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('action').value="paging";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+        document.nextPreviousForm.submit();
+    }
+
+    function sortLearner(sortColumnIndex, sortDirection, showAll){
+        document.getElementById('lastActionmethod').value='searchLearner';
+        document.getElementById('lastShowAll').value=showAll;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+       // alert(sortColumnIndex);
+        document.getElementById('sortDirection').value=sortDirection;
+        document.searchResultForm.submit();
+    }
+
+
+        $(document).ready(function(){
+                $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+                if ($('#right-pannel').height()<$('#content2a').height()) {
+                    $('#right-pannel').height($('#content2a').height());
+                }
+                $('#sideBar').height($('#right-pannel').height());
+				
+				$('#close_message').click(function()
+					{
+						$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+					});
+            });
+    </script>
+</head>
+
+#springBind("viewLearnerEnrollmentForm.searchType")
+#set($searchType=$!{status.value})
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#parse("snippets/managerHeader.vm")
+<!-- header-end -->
+</td></tr>
+
+<!-- content-area -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        #parse("snippets/planEnrollLeftMenu.vm")
+		</table>
+	</td>
+	
+    <!-- right-pannel-content -->
+    <TD id="content" >
+	<div id="scrollable">
+            
+			#if($context.exception || $context.empty_search_exception)
+				<!-- error-box -->
+				 <div id="message_box">
+					<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					 
+				<div class="width40pct">
+				#if($context.exception )
+					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="message_box_align">A problem has occurred , please refine your search.</div>
+				#end #if($context.empty_search_exception)	
+					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="message_box_align">Empty Search is not allowed.</div>
+				#end
+					</div>
+				</div>
+			<!-- error-box -->
+			#end
+				
+			#if($context.customerSelection == "NOT SET")
+				<!-- error-box -->
+				 <div id="message_box">
+					<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					 
+				<div class="width40pct">
+				
+					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="message_box_align">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.customerSelect")</div>
+				
+					</div>
+				</div>
+				<!-- error-box -->
+			#end	
+			
+    <!-- Logo+Manage-User -->
+                		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="page-icon-plan">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.manager.planenroll.viewEnrollmentDetailForCertEnableDisable.pageHeading")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.manager.planenroll.viewEnrollmentDetailForCertEnableDisable.inlineHelptext")</div>			           
+					</td>
+				    </tr>
+				</table>			
+
+    <!-- Logo+Manage-User-end -->
+
+            <!-- ****************************************************************************************** -->
+					#* if ($context.exception ) 
+						<div class="content-error"> An problem has occurred , please refine your search. </div>
+					*#
+            <!-- Search Result Start -->
+            <div id="resultBox" class="content-Block-new">
+                    <!-- Result Heading -->
+                    <div id="searchBox" style="float:left;" class="visible">
+                        <form name="learnerSearchForm" method="post" action="mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner">
+                            <div style="padding: 5px">$brander.getBrandElement("lms.manageUser.searchLearner.caption.searchUsers")</div>
+                            #springBind("viewLearnerEnrollmentForm.firstName")
+                            <div style="padding: 5px"><div style="width:75px; float:left;">$brander.getBrandElement("lms.manageUser.searchLearner.caption.firstName") </div> <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){return doSearch('advancedSearch');}" id="searchCourseName" type="text" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                            #springBind("viewLearnerEnrollmentForm.lastName")
+                            <div style="padding: 5px"><div style="width:75px; float:left;">$brander.getBrandElement("lms.manageUser.searchLearner.caption.lastName") </div><div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){return doSearch('advancedSearch');}" id="searchCourseId" type="text" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                            #springBind("viewLearnerEnrollmentForm.emailAddress")
+                            <div style="padding: 5px"><div style="width:75px; float:left;">$brander.getBrandElement("lms.manageUser.searchLearner.caption.emailAddress") </div><div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){return doSearch('advancedSearch');}" id="searchKeyword" type="text" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                            <div style="padding: 5px;margin-left:40px;margin-right:40px;height:20px">
+                                <!--<div class="btn_start"></div>
+                                <div class="btn_new_normal" onmousedown="showSearchBox(this);">Cancel</div>
+                                <div class="btn_end"></div>-->
+								<a class="button" onClick="showSearchBox(this);;"><span class="button">Cancel</span></a>
+								
+								
+                                <!--<div class="btn_start"></div>
+                                <div class="btn_new_normal" value="Search" name="searchbutton" onclick="return doSearch('advancedSearch');">Search</div>
+                                <div class="btn_end"></div>-->
+								<a class="button" onClick="doSearch();"><span class="button">Search</span></a>
+								
+                            <input type="hidden" name="advancedSearch" value="true"/>
+                            <input type="hidden" name="method" value="searchLearner"/>
+                            <input type="hidden" name="searchType" value="advancedSearch"/>
+                                
+                            </div>
+                        </form>
+                    </div>   
+
+
+
+                    #springBind("viewLearnerEnrollmentForm.adminSearchMemberList")
+                       $pager.setItems($status.value)
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                            #set($pageCurrIndex = $pager.index)
+                        #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                            #set($pageCurrIndex = 0)
+                        #end
+                    <!-- Result Header Start -->
+                    <div id="resultHeader" class="box_header">
+                    <form name="nextPreviousForm" method="post" action="mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner">
+                        <div class="result_left_side">
+
+                            <!-- <div style="float:left;" onClick="showSearchBox(document.getElementById('srch'));">
+                                <div class="btn_search_start" ></div>
+                                <div class="btn_new_normal" id="srch" >Search</div>
+                                <div class="btn_end"></div>
+                            </div>-->
+							<div style="float:left; margin-top:2px;">
+							  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Search</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+
+                            <!-- All Icon -->
+							#if ( $totalCount > 0 )
+                            <div class="icon_all" value="Search" name="allSearchButton" onclick="onAllPage();" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                            #end
+							
+                             #if($!{context.totalRecord}==-1)
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                            #else
+                                <!-- Next Icon -->
+                                #if ( $pager.nextIndex )
+                                <div id="goNext" value="Search" name="nextPageBotton" onclick="onNextPage($pager.nextIndex);" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
+                                #else
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                <!-- Back Icon -->
+                                #if( $pager.prevIndex )
+                                <div id="goBack" value="Search" name="previousPageBotton" onclick="onPreviousPage($pager.prevIndex);" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+                                #else 
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+                            #end
+                                <!-- Showing Results -->
+                                #set($firstIndex = $pageFirstIndex+1)
+                                #set($lastIndex = $pageLastIndex+1)
+                                <div id="resultDescription" class="box_description">Showing #if($totalCount != 0) $firstIndex - $lastIndex #else $pageFirstIndex - $pageLastIndex #end of $totalCount</div>
+
+                                <input type="hidden" id="action" name="action" value="" />
+                                <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                                <input type="hidden" id="showAll" name="showAll" value="false" />
+                                <input type="hidden" id="actionmethod" name="method" value=""/>
+                        </div>  
+                    </form>
+                </div>
+                <!-- Result Header End -->
+                #springBind("viewLearnerEnrollmentForm.learnerItems")
+                #set($learnerMember = $status.value)
+                #set($y = $currentPageSize - 1)
+                
+                
+                    <!-- Result Subheader End -->
+                    <!-- Search Result Start -->
+                    #set($totCount=$context.members.size())
+                    <div id="searchResult_2">
+
+                        <form name="searchResultForm" action="mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner" method="POST" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+
+                                <input type="hidden" id="lastShowAll" name="showAll" value="false" />
+                                <input type="hidden" id="lastActionmethod" name="method" value=""/>
+                                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+
+                            <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            #springBind("viewLearnerEnrollmentForm.adminSearchMemberList")
+                            #if($status.value)
+                                  #if($status.value.size()>0)
+                                        #if (!$context.sortDirection && !$context.sortColumnIndex)
+                                                <tr bgcolor="#efefef">
+                                                        <td class="box_subheader" width="200px" height="22px"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if($context.sortColumnIndex == 0) class="icon_up" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.firstName")</div></td>
+                                                        <td class="box_subheader" width="100px"><div onClick=#if(!$context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="typeSort" #if($context.sortColumnIndex == 1) class="icon_up" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.lastName")</div></td>
+                                                        <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if($context.sortColumnIndex == 2) class="icon_up" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.userName")</div></td>
+                                                        <td class="box_subheader" width="70px" ><div >$brander.getBrandElement("lms.enrollment.searchEnrollment.enrollments")</div></td>
+                                                        
+                                                </tr>
+                                        #else
+                                                <tr bgcolor="#efefef">
+                                                        <td class="box_subheader" width="200px" height="22px"><div onClick=#if($context.sortDirection == 0) "sortLearner('0','1','$!context.showAll');" #else "sortLearner('0','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 0)) class="icon_up" #elseif($context.sortColumnIndex == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.firstName")</div></td>
+                                                        <td class="box_subheader" width="100px"><div onClick=#if($context.sortDirection == 0) "sortLearner('1','1','$!context.showAll');" #else "sortLearner('1','0','$!context.showAll');" #end ><div id="typeSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 1)) class="icon_up" #elseif($context.sortColumnIndex == 1) class="icon_down" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.lastName")</div></td>
+                                                        <td class="box_subheader" width="150px" ><div onClick=#if($context.sortDirection == 0) "sortLearner('2','1','$!context.showAll');" #else "sortLearner('2','0','$!context.showAll');" #end ><div id="nameSort" #if(($context.sortDirection == 0 )&&($context.sortColumnIndex == 2)) class="icon_up" #elseif($context.sortColumnIndex == 2)class="icon_down" #end ></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.userName")</div></td>
+                                                        <td class="box_subheader" width="70px" ><div >$brander.getBrandElement("lms.enrollment.searchEnrollment.enrollments")</div></td>
+                                                        
+                                                </tr>
+                                        #end
+                                        #set($adminSearchMember = $status.value)
+                                        #set($count = 0)
+                                        #foreach($loopindex in [$pageFirstIndex..$pageLastIndex]) 
+                                            #set($searchMember = $!{adminSearchMember.get($loopindex)})
+
+                                            #if($count%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+                                        <tr>
+                                            <td class="$alternate" width="200px" >#dotPaddingWithOutTitle($!{searchMember.firstName} 50)</td>
+                                            <td class="$alternate" width="100px">#dotPaddingWithOutTitle($!{searchMember.lastName} 50)</td>
+                                            <td class="$alternate" width="150px">#if($!{searchMember.eMail})  #dotPaddingWithOutTitle($!{searchMember.eMail} 40) #else &nbsp; &nbsp; #end</td>
+                                            <td class="$alternate" width="90px"><a href="#springUrl("/mgr_ViewEnrollmentForCertEnableDisable.do?method=showEnrollments&id=$!{searchMember.id}")" ><u>View Enrollments</u></a></td>
+                                            
+                                        </tr>
+                                        #set($count = $count+1)
+                                        #end
+                                   #else
+                                    <tr bgcolor="#efefef">
+                                        <td class="box_subheader" width="200px" height="22px"><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.firstName")</td>
+                                        <td class="box_subheader" width="100px"><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.lastName")</div></td>
+                                        <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.userName")</div></td>
+                                        <td class="box_subheader" width="70px" >$brander.getBrandElement("lms.enrollment.searchEnrollment.enrollments")</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                            <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                        </td>
+                                    </tr>
+                                #end
+                             #else
+                                <tr bgcolor="#efefef">
+                                    <td class="box_subheader" width="200px" height="22px"><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.firstName")</td>
+                                    <td class="box_subheader" width="100px"><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.lastName")</div></td>
+                                    <td class="box_subheader" width="150px" ><div class=""></div>$brander.getBrandElement("lms.enrollment.searchEnrollment.userName")</div></td>
+                                    <td class="box_subheader" width="70px" >$brander.getBrandElement("lms.enrollment.searchEnrollment.enrollments")</div></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                        <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div>
+                                    </td>
+                                </tr>
+                             #end
+                            </table>
+                        </form>
+					
+					
+                    </div>
+                <!-- Search Result End -->
+            </div>
+            <!-- Search Result End -->
+
+            <!-- ****************************************************************************************** -->
+
+<!-- space -->
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+<!-- space -->
+
+<!-- right-pannel-content-end -->
+</td></tr>
+<!-- content-area-end -->
+
+
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+<!-- footer -->
+#parse("snippets/managerFooter.vm")
+<!-- footer-end -->
+</td></tr>
+</table>
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.enrollment.searchEnrollment.blankSearch.error")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div>-->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+<div id="customerSelect" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.customerSelect")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+        <!--    <div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div>-->
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+</body>
+</html>

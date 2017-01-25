@@ -1,0 +1,43 @@
+	##LMS-16713
+	<script>
+	function go(thiss, lmsadmin){
+		if(thiss.value=='7'){
+			window.location.href= '$!{authorModeRedirectionURL}' ;
+		}else{
+			setpage(thiss,lmsadmin);
+		}
+	}
+	</script>
+        <div id="inst_footer">
+            <div class="copyright_text_new">$brander.getBrandElement("lms.login.footerLinksCopyright") - <a target=_newwin href=$brander.getBrandElement("lms.login.footer.aboutusURL") style="color:#999999; text-decoration:underline;" > $brander.getBrandElement("lms.login.footer.aboutus.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.contactusURL") style="color:#999999; text-decoration:underline;" target=_newwin> $brander.getBrandElement("lms.login.footer.contactus.caption")</a> | <a href="#" style="color:#999999; text-decoration:underline;" >$brander.getBrandElement("lms.login.footer.termofuse.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.onlineprivacypracticesURL") target=_newwin style="color:#999999; text-decoration:underline;" >$brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")</a></div>
+
+            <div class="log_out_new">|  <a href="logout" style="color:#999999;text-decoration:none;""> $brander.getBrandElement("lms.login.logout")</a></div>
+            <div class="user_mode_new" style="margin-top:5px;">
+               <select style="font-size:9px;"  id="drpMode" onChange="go(this,$!{userData.isLMSAdministrator()});">
+                 #if($!{userData.isInLearnerRole()})
+                    <option value="2" #if($!adminCurrentMode == 'ROLE_LEARNER') selected #end>$brander.getBrandElement("lms.mycourses.learnerMode")</option>
+                  #end
+                  #if($!{userData.isTrainingAdministrator()})
+                    <option value="1" #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') selected #end>$brander.getBrandElement("lms.manager.manangerMode")</option>
+                  #end
+                  #if($!{userData.isRegulatoryAnalyst()})
+                    <option value="4" #if($!adminCurrentMode == 'ROLE_REGULATORYANALYST') selected #end>$brander.getBrandElement("lms.admin.AccreditationMode")</option>
+                  #end
+                  #if($!{userData.isInstructor()})
+                    <option value="5" #if($!adminCurrentMode == 'ROLE_INSTRUCTOR') selected #end>$brander.getBrandElement("lms.admin.InstructorMode")</option>
+                  #end
+                  #if($!{userData.isLMSAdministrator()})
+                    <option value="3" #if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') selected #end>$brander.getBrandElement("lms.admin.AdminMode")</option>
+                  #end
+                    ##LMS-16713
+                    #if($!{authorMode})
+                        <option value="7" #if($!adminCurrentMode == 'ROLE_AUTHOR') selected #end>$brander.getBrandElement("lms.admin.AuthorMode")</option>
+                    #end
+                  
+               </select>
+               
+            </div>
+        </div>
+
+
+        

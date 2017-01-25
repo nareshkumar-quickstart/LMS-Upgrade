@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+#parse("snippets/learnerHead.vm")
+
+<body>
+
+<script src="$brander.getBrandElement("lms.manageUser.jquery.js")" type="text/javascript"></script>
+	<script src="$brander.getBrandElement("lms.manageUser.jquery.cookie.js")" type="text/javascript"></script>
+	<script src="$brander.getBrandElement("lms.manageUser.jquery.treeview.js")" type="text/javascript"></script>
+	<script language="javascript" type="text/javascript" src="$brander.getBrandElement("lms.manageUser.360js.js")"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+				$("#browser").treeview({
+						toggle: function() {
+						}
+					});
+			});
+			function FormSubmit(buttonclick) {
+	  //alert(buttonclick);
+	  document.getElementById('action').value=buttonclick;
+	  document.changeOrgGroup.submit();
+				  }
+	</script>
+
+  <form action="" method="post" name="changeOrgGroup">
+<div id="main-container">
+
+	<!-- header -->
+	#parse("snippets/loginHeader.vm")
+	<!-- header-end -->
+
+	#macro( treeviewAddGroups $treeNodes )
+#set($lastDepth=0)
+<ul id="browser" class="$brander.getBrandElement("lms.changeGroup.cssClass.filetree")">
+#foreach($node in $treeNodes)
+#set($depthDiff = ${node.depth} - ${lastDepth})
+#if($depthDiff==0)
+
+#elseif($depthDiff>0)
+#foreach($i in [1..$depthDiff])
+<ul>
+#end
+#elseif($depthDiff<0)
+#foreach($i in [-1..$depthDiff])
+</ul>
+</li>
+#end
+#end
+<li><span><input type="checkbox" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end onClick="getLearnerGrpByOrgGroup(this.id);"/>${node.value.name}</span>
+#if(${node.isLeaf()})
+</li>
+#end
+#set($lastDepth=$node.depth)
+#end
+#foreach($i in [1..${lastDepth}])
+</ul>
+</li>
+#end
+</ul>
+#end 
+
+	<div id="content2a">
+		<!-- content-area -->
+		<!-- sub-header+arrow -->
+		<div  id="content3">
+			<div class="$brander.getBrandElement("lms.changeGroup.cssClass.content-show-page")">
+				<div id="e14c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img src="brands/default/en/images/arrow-forward.gif" width="6" height="10" alt="" /></div>
+				<div id="e14b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.ContainerheaderRight-ico")"><img src="brands/default/en/images/arrow-review.gif" width="6" height="10" alt="" /></div>
+				<div id="e14a" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-ContainerheaderRight")">Showing 4 of 20 </div>
+			</div>
+		</div>
+		<!-- sub-header+arrow-end -->
+		<!-- left-pannel-content -->
+		<div id="left-pannel">
+			<!-- left-menu-content -->
+			<div class="leftmenu-top-shadow"></div>
+			<div id="leftmenu">
+
+				<div id="l-menu-back">
+$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizard") <br/>Showing 2 of 3
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep1")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep2")</div>
+					<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizardStep3")</div>
+				</div>
+
+			</div>
+			<!-- left-menu-content-end -->
+		</div>
+		<!-- left-pannel-content-end -->
+		<!-- right-pannel-content -->
+		<div id="right-pannel">
+			<!-- Logo+Manage-User -->
+<div class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogoContainer")">
+				<div id="e3" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogo2")"><img src="$brander.getBrandElement("lms.pixel.iconAddLearner")" alt="" /></div>
+				<div id="e4" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitleDiv")">
+					<div id="e5" class="$brander.getBrandElement("lms.mycourses.cssClass.courseTitle1")">$brander.getBrandElement("lms.manageUser.addNewLearner.title")</div>
+					<div id="e6" class="$brander.getBrandElement("lms.mycourses.cssClass.courseDetails")">$brander.getBrandElement("lms.manageUser.addNewLearner.managerDetails.text")</div>
+				</div>
+			</div>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- button-div -->
+			<div class="$brander.getBrandElement("lms.changeGroup.cssClass.group-name")">
+				<div>Shuja Rahman</div>
+			</div>
+			<!-- button-div -->
+			<!-- tree -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+				<!-- 1 -->
+				<div id="e7c" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+					<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+						<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Select Organization Group</div>
+					</div>
+					<div id="main">
+								#treeviewAddGroups(${context.orgGroupTreeAsList})</div>
+				</div>
+				<!-- 1 -->
+			</div>
+			<!-- tree-end -->
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+
+<input type="button" value="getLearnerGroup" name="clickedbutton" onclick="FormSubmit('getLearnerGroup');">
+							<input type="hidden" id="action" name="action" />
+
+			<!-- space -->
+			<!-- Select-Learner-Group -->
+			<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+				<div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+					<div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">Select User Group</div>
+				</div>
+				<div id="e7b" class="$brander.getBrandElement("lms.changeGroup.cssClass.Search-inputfield-box2")">
+					<!-- left-box -->
+					<div class="$brander.getBrandElement("lms.changeGroup.cssClass.inputfield-box-L2")">
+						<div id="e12" class="CG-content-row">$brander.getBrandElement("lms.changeGroups.caption.AvailableLearnerGroup")</div>
+						<div class="my_textArea_1">
+											#*<textarea rows="5" cols="20">$!{context.learnerGroups}
+											$!{context.learnerGroups.name}
+											</textarea> *#
+											<select name="learnerGroups" class="listtextbox" multiple size="5">
+											#foreach($list in ${context.LearnerGroupView})
+<option value="$list.id">$list.name</option>
+#end
+</select>
+										</div>
+					</div>
+					<!-- center-box-transfer-arrow -->
+					<div class="inputfield-box-L2a">
+						<img src="brands/default/en/images/arrow-transfer-r.gif" width="38" height="29" alt="" class="arrow-transfer" onclick="FormSubmit('selectLearnerGroup');"/>
+						<img src="brands/default/en/images/arrow-transfer-l.gif" width="38" height="29" alt="" class="arrow-transfer" onclick="FormSubmit('deselectLearnerGroup');"/>
+					</div>
+					<!-- right-box -->
+					<div class="inputfield-box-L2">
+						<div id="e12" class="CG-content-row">$brander.getBrandElement("lms.changeGroups.caption.SelectedLearnerGroup")</div>
+						<div class="my_textArea_2">
+											<select name="deSelectedLearnerGroups" class="listtextbox" multiple size="5">
+#foreach($list2 in ${context.selectedLearnerGroups})
+<option value="$list2.id">$list2.name</option>
+
+#end
+											</select>
+										</div>
+					</div>
+				</div>
+				<!-- space -->
+				<div class="manager-bottom-space"></div>
+				<!-- space -->
+			</div>
+			<!-- End-Select-Learner-Group -->
+			<!-- button-div -->
+			<div class="managerBtn">
+			
+				<div><input type="button" value="Next" class="btn-66w" onclick=window.location.href="mgr_view_NewLearner.do" /></div>
+				<div><input type="button" value="Previous" class="btn-66w-l" onclick=window.location.href="mgr_add_newLearner.do" /></div>
+			</div>
+			<!-- button-div -->
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			
+			<!-- right-pannel-content-end -->
+		</div>
+		<!-- content-area-end -->
+	</div>
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	<!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

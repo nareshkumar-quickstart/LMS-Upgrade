@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<style>
+#message_box_info_subscription {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #ff0000;
+    color: #ff0000;
+    font-family: Arial,Helvetica,sans-serif;
+    padding: 5px;
+    position: absolute;
+    text-align: left;
+    width: 77%;
+    z-index: 100;
+}
+</style>
+
+<script language="javascript" type="text/javascript">
+
+function selfEnroll(courseId) {
+            //stopBothTimers();
+            IS_LS360_SCORM = false;
+            IS_LS360_SCORM = findCourseType(courseId);
+            var url = "#springUrl("/lrn_selfEnrollment.do")";
+            var params = "?courseId="+courseId +"&method=displayLearnerProfile";
+            if ( launchWindow != null ) {
+            launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+            }
+           
+function selfEnroll(courseId, courseType,subscriptionId) {
+             
+            
+            // display the info bar for learner convenience
+			$("#message_box_info_subscription").show();
+		   
+            IS_LS360_SCORM = false;        	
+            IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+            var url = "#springUrl("/lrn_selfEnrollment.do")";
+            var params = "?courseId="+courseId +"&method=displayLearnerProfile=&subscriptionId=" + subscriptionId;
+            
+            if ( launchWindow != null ) {
+            launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+            
+            }
+            
+function classrommEnrollment(courseId,subscriptionId) {
+             
+            
+            // display the info bar for learner convenience
+			$("#message_box_info_subscription").show();
+		   
+            IS_LS360_SCORM = false;        	
+            IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+            var params = "?courseId="+courseId +"&subscriptionId=" + subscriptionId;
+            var url = "#springUrl("/multimodality.do")";
+            
+            
+            if ( launchWindow != null ) {
+            launchWindow.close();
+            }
+            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=668,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+            
+            }            
+
+                       
+			function search()
+			{
+			  
+		        var varcourseName= document.getElementById('courseName').value;
+		        
+		        
+				if( varcourseName.length == 0 ){
+				
+					$('#selectLearner').modal({close:false,position: ["40%",]});
+					return false;
+				}
+				
+				document.CourseForm.submit();
+			}
+						
+			
+			function showSearchBox(divId){
+				var searchBox = document.getElementById('searchBox');
+				if(searchBox.className == "visible"){
+					searchBox.className = "search_box";
+					$('#searchBox input[type="text"]:first').focus();
+				}else{
+					searchBox.className = "visible";
+				}
+			}
+
+        
+   
+</script>
+<div>
+
+#if ($!{context.totalRecord} > 0)
+                        <input id="direction" type="hidden" name="direction" value="prev" />
+                        <input id="pageIndex" type="hidden" name="pageIndex" value="0" />
+                        
+                        
+                        #end
+                            <!-- Next Icon -->
+                          
+</div>
+
+<table id="course-list-alt" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid none #CCCCCC;border-bottom:none; margin-top:0px;"> 
+  
+    #set ($evenOdd = 0)
+    
+	##foreach ($subscription in ${context.lstSubscription})
+	
+      #set($subscription = ${context.subscription})
+      #set( $lstsubscriptionindex = 1)
+      #set( $lstSubscriptioncourses = ${context.lstSubscription} )
+      #if ($lstSubscriptioncourses.size() > 0)
+      
+	<tr class="borderRow">
+		<td colspan="4">
+			<table border="0" width="100%">
+				<tr>
+					<td width="5%" style="border-bottom: 0px !important" class="header"><img src="$brander.getBrandElement("lms.pixel.iconCourseGroup")" class="icon" alt=""></td>
+					<td width="33%" class="header" style="border-bottom: 0px !important"><span style="float:left;margin-left:-8px;_margin-left:-4px;">$lstSubscriptioncourses[0].subscriptionName</span></td>
+					<td width="17%" style="border-bottom: 0px !important" class="header">
+						
+						<div class="result_left_side">
+							<div style="float:left; margin-top:3px;">
+							  <div>
+								  <a onclick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Search</div>
+									  <div class="btn_end"></div>
+								  </a>
+							  </div>
+						   </div>
+						</div>
+					
+					</td>
+					<td width="45%" style="border-bottom: 0px; !important "  >
+					
+					
+					  #if($!{context.totalRecord}==-1)
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                            #else
+                                #if($!{context.recordShowing} == $!{context.totalRecord})
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #else
+                                
+                                #set($lPpageNumcnt = $!{context.pageNo} *10 + 10)
+                                #if($lPpageNumcnt < $!{context.totalRecord})
+                                
+                                 <div id="goNext" onClick="location.href='?method=&search=Search&courseSearch=$!{context.coursesearch}&show=subscription&subscriptionId=$!{context.subscriptionId}&direction=next&pageIndex=$!{context.pageNo}';"class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
+                                #end
+                                #end
+                                <!-- Back Icon -->
+                                #if ($!{context.pageNo} == 0)
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #else
+                                <div id="goBack" onClick="location.href='?method=&search=Search&courseSearch=$!{context.coursesearch}&show=subscription&subscriptionId=$!{context.subscriptionId}&direction=prev&pageIndex=$!{context.pageNo}';" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+                                 #end
+                            #end
+                            <!-- Showing Results -->
+                            #set($lPpageNum =$!{context.pageNo} *10)
+                            #set($rPpageNum =$lPpageNum + 10)
+                            
+                            <div id="resultDescription" class="box_description">Showing #if($!{context.totalRecord}<=0) 0 - 0 of 0 #else #if($lPpageNum <  $!{context.totalRecord}) $lPpageNum - #if($rPpageNum > $!{context.totalRecord}) $!{context.totalRecord} of $!{context.totalRecord} #else $rPpageNum of $!{context.totalRecord} #end #end #end</div>
+					
+					
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>	 
+	  
+        #if($lstSubscriptioncourses.size() > 0 )
+			#set( $resultStart = $lPpageNum)
+			
+			#if($lstSubscriptioncourses.size() < 10)
+			  #set( $resultEnd = $lstSubscriptioncourses.size() - 1)
+			#else
+			  #set( $resultEnd = $lPpageNum + 9)
+			#end
+				#foreach ($index in [$resultStart..$resultEnd])	
+				  #if( $evenOdd == 0 )
+                     #set( $evenOdd = 1 )
+                  #else
+                      #set( $evenOdd = 0 )
+                  #end
+				   #if($index < $lstSubscriptioncourses.size())
+				     
+				   
+				   #set( $courseIcon = $lstSubscriptioncourses[$index].courseType )
+					#set( $courseIconPath = "" )
+					
+					#if($courseIcon == "Self Paced Course")	
+						#set( $courseIconPath = "lms.pixel.iconSelfPaced" )	
+					#elseif($courseIcon == "DFC")					
+						#set( $courseIconPath = "lms.pixel.iconDiscussionForum" )					
+					#elseif($courseIcon == "Weblink")		
+						#set( $courseIconPath = "lms.pixel.iconWeblinkCourse" )						
+					#elseif($courseIcon == "Scorm Course")		
+						#set($courseIconPath = "lms.pixel.iconScormCourse")		
+					#elseif($courseIcon == "Legacy Course")	
+						#set($courseIconPath = "lms.pixel.iconLegacyCourse")		
+					#elseif($courseIcon == "Learner Assignment")	
+						#set($courseIconPath = "lms.pixel.iconhomeworkAssignMent")
+					#else
+						#set($courseIconPath = "lms.pixel.iconOnlineGif")		
+					#end
+					
+				  <tr>
+						<td width="31" valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+						<img class="icon" src="$brander.getBrandElement($courseIconPath)"></td>
+						<td valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+                         <a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($lstSubscriptioncourses[$index].courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || $lstSubscriptioncourses[$index].courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) ) #if($lstSubscriptioncourses[$index].enrollmentId) "lrn_enrollSyncCourse.do?courseId=$lstSubscriptioncourses[$index].subscriptionCourseId" #else "javascript:classrommEnrollment('$lstSubscriptioncourses[$index].subscriptionCourseId','$lstSubscriptioncourses[$index].subscriptionId');" #end #else "javascript:selfEnroll('$lstSubscriptioncourses[$index].subscriptionCourseId', '$lstSubscriptioncourses[$index].courseType','$lstSubscriptioncourses[$index].subscriptionId')"#end>$lstSubscriptioncourses[$index].subscriptionCourseName</a>
+                         
+						<br>
+						
+						
+						#if(!$lstSubscriptioncourses[$index].enrollmentId)
+							<div style="margin-top:5px;">
+								<span style="color: #999999;font-size: 10px;">Not Started</span>
+							</div>	
+						#else 
+							<div style="margin-top:5px;">
+								<span style="color: #999999;font-size: 10px;">Started</span>
+							</div>
+						#end
+		                </td>
+	                    <td align="center" valign="middle" width="20%;" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+	                    
+						<input type="hidden" id="selectedSubscriptionId" name="selectedSubscriptionId" value="$lstSubscriptioncourses[$index].subscriptionId" />
+	              </tr>
+	              
+				#end
+              #end				
+	     #set( $lstsubscriptionindex = $lstsubscriptionindex +1 )	
+     #end
+     #else
+       	<tr>
+	         <td colspan="3" align="center">
+                      <div class="result_left_side">
+							<div style="float:left; margin-top:3px;valign:top;">
+							  <div>
+								  <a onclick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Search</div>
+									  <div class="btn_end"></div>
+								  </a>
+							  </div>
+						   </div>
+						</div>
+	         </td>
+	    </tr>
+       	
+       	<tr>
+	         <td colspan="3" align="center">
+	           <table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="margin-top:40px;border:1px solid #CCCCCC;border-bottom:none;">
+                            <tbody>
+                                <tr class="borderRow-alt">
+                                    <td colspan="3" align="center" valign="top">No Subscription courses found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+	         </td>
+	    </tr>
+	#end
+
+</table>
+
+<!-- space -->
+<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+<!-- space -->
+
+<div id="searchBox" style="float:left; height:90px; top : 27%;width:280px; left:40%;" class="visible">
+	Search Courses<br/><br/>
+	<div style="float:left">Course Name</div> <input type="text" name="courseName" id="courseName" onkeypress="doEnter(event)" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+
+	<div style="float:right; margin-top:2px; margin-right:15px;">
+		<div class="btn_start"></div>
+		<div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="search();">Search</div>
+		<div class="btn_end"></div>
+	</div>
+	<div style="float:right; margin-top:2px; ">
+		<div class="btn_start"></div>
+		<div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">Cancel</div>
+		<div class="btn_end"></div>
+	</div>
+</div>         
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.enrollment.searchEnrollment.blankSearch.error")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+          <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div>

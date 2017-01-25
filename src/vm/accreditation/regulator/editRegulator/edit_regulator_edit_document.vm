@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                $('#frame_body').height($(window).height() - ($('#frame_header').height()+$('#footer').height()));
+                if ($('#right-pannel').height()<$('#frame_body').height()) {
+                    $('#right-pannel').height($('#frame_body').height());
+                }          
+                $('#sideBar').height($('#right-pannel').height());
+                //  initFileUploads();
+                $('#content2a').scroll(function()   {
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+			
+                $("#toggleIconDocument").click(function() {
+                    toggleView('toggleIconDocument', 'collapsibleDocument');
+                });
+            });
+            function editRegulatorDocument() {
+                document.getElementById('actionmethod').value='editRegulatorDocument';
+                document.manageRegulatorForm.submit();
+            }
+            function  editRegulatorSaveDocument(){
+                document.getElementById('actionmethod').value='editRegulatorSaveDocument';
+                //    alert(document.getElementById('actionmethod').value);
+                document.manageRegulatorForm.submit();
+            }
+            function  downloadDocument(){
+                document.getElementById('actionmethod').value='downloadDocument';
+                //    alert(document.getElementById('actionmethod').value);
+                document.manageRegulatorForm.submit();
+            }
+        
+        </script>
+    </head>
+    <body>
+        <form name="manageRegulatorForm" method="post" action="acc_manageRegulator.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- Header starts -->
+                        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+                        <!-- Header ends -->
+                    </td></tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-navigation" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            #parse("snippets/accreditation/sidebar_regulator.vm")
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable">
+		 #springBind("regulatorForm.*")
+                            #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                     #foreach($errorCode in $status.errorCodes)
+                                     #set ($error = $brander.getBrandElement($errorCode))
+                                     <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                    </div>
+                                    #end
+                            </div>
+                            <!-- error-box -->
+                            #end
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accraditation.document.caption.editRegulatorEditDocument.title")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorEditDocument.description")</div>
+                                    </td>
+                                </tr>
+                            </table>			
+
+                            <div class="search_box_result" style="border:none">
+                                <div style="float:left; margin-top:3px;">
+                                    <a onclick="downloadDocument();">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorDownload")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div style="height:20px;width:92%;"></div>
+
+
+                            <div class="search_box_result">
+                                <div class="box_header">
+                                    <div id="toggleIconDocument" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                    <span class="box_heading">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.editRegulatorDocument")</span>
+                                </div>
+                                <div id="collapsibleDocument">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                        <tr>
+                                            <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.name")</span></td>
+                                            #springBind("regulatorForm.document.name")
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end style="background-color: #66FF00"/></div></td>
+
+                                            <td width="50%"><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" style="width:815px"></input></td>
+                                            <td width="15%"></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="20%" valign="top"><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.description")</span></td>
+                                            <td style="width:15px;"></td>
+                                            #springBind("regulatorForm.document.description")
+                                            <td><textarea class="input_text_area" name="${status.expression}"  rows="5" cols="100">$!{status.value}</textarea></td>
+                                            <td width="15%"></td>
+                                            <td width="15%"></td>
+                                        </tr>
+
+                                    </table>
+                                </div>
+                            </div>	 
+
+                            <!-- ******************************************************** -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onclick="editRegulatorSaveDocument();">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:right; margin-top:15px;margin-right:5px;">
+                                    <a onclick="editRegulatorDocument();">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->				
+
+                        </div>
+                    </td></tr>
+                <!-- Body End -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                        <!-- Footer End -->
+                    </td></tr>
+            </table>
+    </body>
+</html>

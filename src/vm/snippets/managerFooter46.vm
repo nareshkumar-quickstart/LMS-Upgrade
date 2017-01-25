@@ -1,0 +1,51 @@
+	##LMS-16713
+	<script>
+	function go(thiss, lmsadmin){
+		if(thiss.value=='7'){
+			window.location.href= '$!{authorModeRedirectionURL}' ;
+		}else{
+			setpage(thiss,lmsadmin);
+		}
+	}
+	</script>
+        <div id="frame_footer">
+            <div class="copyright_text">$brander.getBrandElement("lms.login.footerLinksCopyright") - <a target=_newwin href=$brander.getBrandElement("lms.login.footer.aboutusURL") class="log-out"  > $brander.getBrandElement("lms.login.footer.aboutus.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.contactusURL") class="log-out" target=_newwin> $brander.getBrandElement("lms.login.footer.contactus.caption")</a> | <a href=# class="log-out" >$brander.getBrandElement("lms.login.footer.termofuse.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.onlineprivacypracticesURL") target=_newwin class="log-out" >$brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")</a></div>
+            <div class="user_mode" style="margin-top: 5px;">
+            #if ( ! $request.getAttribute("switchBackUrl") || $request.getAttribute("switchBackUrl")=="")
+               <select style="font-size: 9px;"   id="drpMode" onChange="go(this,$!{userData.isLMSAdministrator()});">
+                  #if($!{userData.isInLearnerRole()})
+                    <option value="2" #if($!adminCurrentMode == 'ROLE_LEARNER') selected #end>$brander.getBrandElement("lms.mycourses.learnerMode")</option>
+                  #end
+                  #if($!{userData.isTrainingAdministrator()})
+                    <option value="1" #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') selected #end>$brander.getBrandElement("lms.manager.manangerMode")</option>
+                  #end
+                   #if($!{userData.isRegulatoryAnalyst()})
+                    <option value="4" #if($!adminCurrentMode == 'ROLE_REGULATORYANALYST') selected #end>$brander.getBrandElement("lms.admin.AccreditationMode")</option>
+                  #end
+                  #if($!{userData.isInstructorMode()})
+                    <option value="5" #if($!adminCurrentMode == 'ROLE_INSTRUCTOR') selected #end>$brander.getBrandElement("lms.admin.InstructorMode")</option>
+                  #end
+                  #if($!{userData.isLMSAdministrator()})
+                    <option value="3" #if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') selected #end>$brander.getBrandElement("lms.admin.AdminMode")</option>
+                  #end
+
+                ##LMS-16713
+                #if($!{authorMode})
+                    <option value="7" #if($!adminCurrentMode == 'ROLE_AUTHOR') selected #end>$brander.getBrandElement("lms.admin.AuthorMode")</option>
+                #end
+               </select>
+            #else
+               #set ($var=$!{request.getAttribute("switchBackUrl")})
+               #if($!var.lastIndexOf('?')>0)
+                    #set($switchBackUrl="$var&switchBackReuest=true")
+               #else
+                    #set($switchBackUrl="$var?switchBackReuest=true")
+               #end
+               <a href="$!switchBackUrl" class="log_out">$brander.getBrandElement("lms.login.switchback")</a>
+            #end
+            |#if($hasSwitchedAuth) <a href="switchexituser.do" class="$brander.getBrandElement("lms.mycourses.cssClass.log-out")">$brander.getBrandElement("lms.login.switchback")</a> #else <a href="logout" class="$brander.getBrandElement("lms.mycourses.cssClass.log-out")">$brander.getBrandElement("lms.login.logout")</a>
+            #end
+            </div>
+        </div>
+		
+		

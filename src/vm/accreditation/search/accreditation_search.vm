@@ -1,0 +1,568 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+            function toggleSearch(){
+                var resultBoxSimple=$("#resultBoxSimple");
+                var resultBoxAdvanced=$("#resultBoxAdvanced");
+                var tblSimpleSearch=document.getElementById("tblSimpleSearch");
+                var divPlaceSimple=document.getElementById("divPlaceSimple");
+                var tblAdvancedSearch=document.getElementById("tblAdvancedSearch");
+                var divPlaceAdvanced=document.getElementById("divPlaceAdvanced");
+
+                if(resultBoxSimple[0].style.display=="none"){
+                    resultBoxSimple[0].style.display="block";
+                    tblSimpleSearch.style.display="block";
+                    divPlaceSimple.style.display="block";
+                    resultBoxAdvanced[0].style.display="none";
+                }else{
+                    resultBoxSimple[0].style.display="none";
+                    resultBoxAdvanced[0].style.display="block";
+                    tblAdvancedSearch.style.display="block";
+                    divPlaceAdvanced.style.display="block";
+                }
+            }
+
+            function sortRecords(sortColumnIndex, sortDirection, pageIndex, showAll, searchType){
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value=searchType;
+                document.getElementById('showAll').value=showAll;
+                document.getElementById('pageIndex').value=pageIndex;
+                document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                document.getElementById('sortDirection').value=sortDirection;
+                document.searchForm.submit();
+            }
+
+            function doEnter(event,searchType){
+                if(event==null){
+                    event = window.event;
+                } 
+                var unicode=event.which? event.which : event.keyCode;
+                if (unicode == 13){
+                    if(document.all){//ie
+                        window.event.cancelBubble = true;
+                        window.event.returnValue = false;
+
+                        switch(searchType){
+                            case 1:
+                                searchAll();
+                                break;
+                            case 2:
+                                searchRegulators();
+                                break;
+                            case 3:
+                                searchCredentials();
+                                break;
+                            case 4:
+                                searchProviders();
+                                break;
+                            case 5:
+                                searchApprovals();
+                                break;
+                            case 6:
+                                searchInstructors();
+                                break;
+                            default:
+                                searchAll();
+                                break;
+
+                        }
+                    }else{//firefox
+                        if(event.cancelable){
+                            event.preventDefault();
+                        }
+                        switch(searchType){
+                            case 1:
+                                searchAll();
+                                break;
+                            case 2:
+                                searchRegulators();
+                                break;
+                            case 3:
+                                searchCredentials();
+                                break;
+                            case 4:
+                                searchProviders();
+                                break;
+                            case 5:
+                                searchApprovals();
+                                break;
+                            case 6:
+                                searchInstructors();
+                                break;
+                            default:
+                                searchAll();
+                                break;
+
+                        }
+                    }
+                }
+            }
+
+            function searchAll() {
+            
+                document.getElementById('actionmethod').value='searchMembers'
+                document.getElementById('searchType').value='';
+                document.getElementById('allSearch').value='true';
+                document.searchForm.submit();
+            }
+
+            function searchRegulators() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value='Regulator';
+                document.getElementById('allSearch').value='false';
+                document.searchForm.submit();
+            }
+
+            function searchCredentials() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value='Credential';
+                document.getElementById('allSearch').value='false';
+                document.searchForm.submit();
+            }
+
+            function searchProviders() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value='Provider';
+                document.getElementById('allSearch').value='false';
+                document.searchForm.submit();
+            }
+
+            function searchApprovals() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value='Approval';
+                document.getElementById('allSearch').value='false';
+                document.searchForm.submit();
+            }
+
+            function searchInstructors() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('searchType').value='Instructor';
+                document.getElementById('allSearch').value='false';
+                document.searchForm.submit();
+            }
+
+            function showAllState() {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('showAllValue').value='true';
+                document.searchForm.submit();
+            }
+
+            function doPaging(pageIndex) {
+                document.getElementById('actionmethod').value='searchMembers';
+                document.getElementById('pageIndex').value=pageIndex;
+                document.getElementById('paging').value='paging';
+                document.searchForm.submit();
+            }
+
+            $(document).ready(function() {
+                $("#toggleIcon").click(function() {
+                    $("#searchTable").toggle();
+                    toggleArrowIcon();
+                });
+                
+                 $("#toggleAdvanceIcon").click(function() {
+                    toggleView('toggleAdvanceIcon', 'tblAdvancedSearch');
+                });
+            });
+	
+            /** Toggles the arrow icon. */
+            function toggleArrowIcon(){
+                //TODO: Replce it with $("#toggleIcon").toggleClass().
+                if( $("#toggleIcon").attr('class') == 'icon-caret-down-large') {
+                    $("#toggleIcon").removeClass('icon-caret-down-large');
+                    $("#toggleIcon").addClass('icon-caret-right-large');
+                }else{
+                    $("#toggleIcon").removeClass('icon-caret-right-large');
+                    $("#toggleIcon").addClass('icon-caret-down-large');
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="searchForm" method="post" action="acc_search.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+            <input type="hidden" id="searchType" name="searchType" value=""/>
+            <input type="hidden" id="allSearch" name="allSearch" value=""/> 
+
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- Header starts -->
+                        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+                        <!-- Header ends -->
+                    </td></tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+
+                    <TD id="content" >
+                        <div id="scrollable">
+
+                            <!-- Page Description start -->
+                            <div id="pageDescription" class="page_description">
+                                <!-- Page Icon -->
+                                <div id="pageIcon" class="icon_search"></div>
+                                <!-- Page Heading -->
+                                <div id="pageHeading" class="page_heading">Search</div>
+                                <!-- Page Description -->
+                                <div id="pageDescriptionText">Search for regulators, credentials, approvals, instructors using the search tool.</div>
+                            </div>
+                            <!-- Page Description end-->
+                            <!-- ******************************************************************************* -->
+                            <!-- Simple Search Result Start -->
+                            <div id="resultBoxSimple" class="search_box_result" #if(! $!{context.searchType})  style="" #elseif($!{context.searchType}=="") style="" #else style="display:none;" #end ><!-- resultBox -->
+
+                                 <!-- Result Header Start -->
+                                 <div id="resultHeader" class="box_header">
+                                    <div style="float: left;">
+                                        <div id="toggleIcon" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                        <div class="box_heading" style="float: left;">Search</div>
+                                    </div>
+
+                                    <div class="result_left_side">
+                                        <div onmouseover="showTooltip('Minimize/Maximize', event);" onmouseout="hideTooltip();" id="iconSimple" class="icon_minimize" onmousedown="minimizeSearch();"></div>
+                                        <div id="resultDescription" class="box_description">Simple Search</div>
+                                    </div>
+                                </div>
+                                <!-- Result Header End -->
+
+                                <div style="height:10px" id="divPlaceSimple"></div>
+
+                                <div id="searchTable">
+                                    <!-- Search Table start -->
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" id="tblSimpleSearch" style="display:block">
+                                        <tr>
+                                            <td width="200px"><span class="row_text" style="margin-left:40px;">Keyword</span></td>
+                                            <td width="500px"><input type="text"  name="allName" onKeyPress="doEnter(event,1);" class="input_text_field" style="width:500px"></input></td>
+                                            <td>
+                                                <div style="float:left; margin-top:5px; ">
+                                                    <div class="btn_start"></div>
+                                                    <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'"onclick="searchAll();">Search</div>
+                                                    <div class="btn_end"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td height="15"></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="row_text"><u><a onClick="toggleSearch();" style="font-size:11px;text-decoration: underline;" href="#">Advance Search</a></u></span></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                    <!-- Search Table end -->
+                                </div>
+
+                            </div>
+                    
+                    <!-- Advanced Search Result Start -->
+                    <div id="resultBoxAdvanced" class="search_box_result" #if(! $!{context.searchType}) style="display:none;" #elseif($!{context.searchType}=="") style="display:none;" #else style="display:block;" #end>
+
+                         <!-- Result Header Start -->
+                                 <div id="resultHeader" class="box_header">
+                                    <div style="float: left;">
+                                        <div id="toggleAdvanceIcon" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                        <div class="box_heading" style="float: left;">Search</div>
+                                    </div>
+		                            <div class="result_left_side">
+		                                <div onmouseover="showTooltip('Minimize/Maximize', event);" onmouseout="hideTooltip();" id="iconAdvanced" class="icon_minimize" onmousedown="minimizeSearch();"></div>
+		                                <div id="resultDescription" class="box_description">Advance Search</div>
+		                            </div>
+                        		</div>
+ 							<!-- Result Header END -->
+ 							
+                        <div style="height:10px" id="divPlaceAdvanced"></div>
+
+                        <!-- Search Table -->
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%" id="tblAdvancedSearch">
+                            <tr>
+                                <td><span class="row_text" style="margin-left:30px;"><b>Regulators:</b></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Regulator Name</span></td>
+                                <td width="500px"><input type="text" name="regName" value="$!{context.regName}" onKeyPress="doEnter(event,2);" class="input_text_field" style="width:500px"></input></td>
+                                <td>
+                                    <div style="float:left; margin-top:5px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="searchRegulators();">Search</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="15"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text" style="margin-left:30px;"><b>Credentials:</b></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Official License Name</span></td>
+                                <td width="500px"><input type="text" name="credName" value="$!{context.credName}" onKeyPress="doEnter(event,3);" class="input_text_field" style="width:500px"></input></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Short License Name</span></td>
+                                <td width="500px"><input type="text" name="credType" value="$!{context.credType}" onKeyPress="doEnter(event,3);" class="input_text_field" style="width:500px"></input></td>
+                                <td>
+                                    <div style="float:left; margin-top:5px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="searchCredentials();">Search</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="15"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text" style="margin-left:30px;"><b>Providers:</b></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Provider Name</span></td>
+                                <td width="500px"><input type="text" name="provName" value="$!{context.provName}" onKeyPress="doEnter(event,4);" class="input_text_field" style="width:500px"></input></td>
+                                <td>
+                                    <div style="float:left; margin-top:5px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'"onclick="searchProviders();">Search</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="15"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text" style="margin-left:30px;"><b>Approvals:</b></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Approval Name</span></td>
+                                <td width="500px"><input type="text" name="apprName" value="$!{context.apprName}" onKeyPress="doEnter(event,5);" class="input_text_field" style="width:500px"></input></td>
+                                <td>
+                                    <div style="float:left; margin-top:5px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'"onclick="searchApprovals();">Search</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="15"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text" style="margin-left:30px;"><b>Instructors:</b></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td width="200px"><span class="row_text" style="margin-left:40px;">Instructor Name</span></td>
+                                <td width="500px"><input type="text" name="instName" value="$!{context.instName}" onKeyPress="doEnter(event,6);" class="input_text_field" style="width:500px"></input></td>
+                                <td>
+                                    <div style="float:left; margin-top:5px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'"onclick="searchInstructors();">Search</div>
+                                        <div class="btn_end"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="15"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text"><u><a onClick="toggleSearch();" style="font-size:11px;text-decoration: underline;" href="#">Simple Search</a></u></span></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Advanced Search Result Ends -->
+                    <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+                    <!-- Search Result Start -->
+
+                    <!-- space -->
+                    <div style="height:20px"></div>
+                    <!-- space -->
+
+                    <div id="resultBox" class="search_box_result">
+                        <!-- Result Header Start -->
+                        <div id="resultHeader" class="box_header">
+                            <!-- Result Heading -->
+
+                            <div class="result_left_side">
+                                <!-- Result Description -->
+                                #if(! ${searchMemberForm})
+
+                                #else
+                                #springBind("searchMemberForm.items")
+                                #end
+                                $pager.setItems($!{status.value})
+                                #set($totalCount = $pager.total)
+                                #if($pager.hasItems())
+                                #set($pageFirstIndex = $pager.firstIndex)
+                                #set($pageLastIndex = $pager.lastIndex)
+                                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                #set($currentPageCount = $pageLastIndex + 1)
+                                #set($pageCurrIndex = $pager.index)
+                                #else
+                                #set($pageFirstIndex = 0)
+                                #set($pageLastIndex = 0)
+                                #set($currentPageSize = 0)
+                                #set($currentPageCount = 0)
+                                #set($pageCurrIndex = 0)
+                                #end
+                                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                                <input type="hidden" id="paging" name="paging" value="" />
+                                <input type="hidden" id="sortDirection" name="sortDirection" value="0" />
+                                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="0" />
+                                <input type="hidden" id="showAllValue" name="showAll" value="" />
+                                #if(! ${context.showAll})
+                                #set($showAll=false)
+                                #elseif($!{context.showAll}=="")
+                                #set($showAll=false)
+                                #elseif($!{context.showAll})
+                                #set($showAll=${context.showAll})
+                                #else 
+                                #set($showAll=false)   
+                                #end
+
+                                #if($!{context.searchType})
+                                #set($searchType=${context.searchType})
+                                #else
+                                #set($searchType='')
+                                #end
+                                <!-- All Icon -->
+                                <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="showAllState();" ></div>
+                                <!-- Next Icon -->
+                                #if($pager.nextIndex)
+                                <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="doPaging($pager.nextIndex);" ></div>
+                                #else
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($pager.prevIndex)
+                                <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="doPaging($pager.prevIndex);" ></div>
+                                #else
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #end
+
+                                #if($totalCount>1)
+                                <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                                #else
+                                <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                                #end
+
+                            </div>
+                        </div>
+                        <!-- Result Header End -->
+                        #if(! ${searchMemberForm})
+
+                        #else
+                        #springBind("searchMemberForm.searchType")
+                        #set($type = $!{status.value})
+                        #springBind("searchMemberForm.allSearch")
+                        #set($all = $!{status.value})
+                        #end
+
+                        <!-- Result Subheader Start -->
+                        #if($currentPageSize == 0)
+                        <div id="searchResult_1" >
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                <tr bgcolor="#efefef">
+
+                                    <td class="box_subheader" width="30%">Name</td>
+                                    <td class="box_subheader" style="border-right:none;">Type</td>
+                                </tr>
+                            </table>
+                            <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                        </div>
+                        <!-- Result Subheader End -->
+                        #else
+
+                        <!-- Search Result Start -->
+                        <div id="searchResult_2">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="box_subheader" width="30%"><div #if($context.sortDirection == 0) onclick="sortRecords(0,1,$pageCurrIndex,$showAll,'$searchType');" #else onclick="sortRecords(0,0,$pageCurrIndex,$showAll,'$searchType');" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>Name</div></td>
+                                    <td class="box_subheader" width="30%"><div #if($context.sortDirection == 0) onclick="sortRecords(1,1,$pageCurrIndex,$showAll,'$searchType');" #else onclick="sortRecords(1,0,$pageCurrIndex,$showAll,'$searchType');" #end ><div id="firstNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>Type</div></td>
+                                </tr>
+                                #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                #if($loopIndex%2 == 0)
+                                #set($alternate="row_1")
+                                #else
+                                #set($alternate="row_2")
+                                #end
+                                <tr>
+                                    #if(! ${searchMemberForm})
+
+                                    #else
+                                    #springBind("searchMemberForm.items[$loopIndex].type")
+                                    #set($type = $!{status.value})
+                                    #springBind("searchMemberForm.items[$loopIndex].id")
+                                    #set($id = $!{status.value})
+                                    #springBind("searchMemberForm.items[$loopIndex].name")
+                                    #end
+                                    #if($type == "CREDENTIAL")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><div onclick="javascript:window.location='acc_manageCredential.do?method=editCredentialSummary&cid=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "REGULATOR")
+                                    <td class="$alternate"#if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end ><div onclick="javascript:window.location='acc_manageRegulator.do?method=editRegulatorSummary&id=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "PROVIDER")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end ><div onclick="javascript:window.location='acc_manageProvider.do?method=editProvider&providerId=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "COURSE-APPROVAL")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><div onclick="javascript:window.location='acc_manageApproval.do?method=showCourseApprovalSummary&appId=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "PROVIDER-APPROVAL")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><div onclick="javascript:window.location='acc_manageApproval.do?method=showProviderApprovalSummary&appId=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "INSTRUCTOR-APPROVAL")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><div onclick="javascript:window.location='acc_manageApproval.do?method=showInstructorApprovalSummary&appId=$id';">$!{status.value}</div></td>
+                                    #elseif($type == "INSTRUCTOR")
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none;" #end><div onclick="javascript:window.location='acc_manageInstructor.do?method=editInstructorSummary&id=$id';">$!{status.value}</div></td>
+                                    #end
+                                    <td class="$alternate" #if ($!{velocityCount}==$!{currentPageSize}) style="border-bottom:none; border-right:none;cursor:default;" #else style="border-right:none;cursor:default;" #end><div onclick="">$type</div></td>
+                                </tr>
+                                #end
+                            </table>
+                        </div>
+
+                        #end
+                        <!-- Search Result End -->
+                    </div>
+                    <!-- Search Result End -->
+                    </div><!-- scrollable -->
+
+                </tr><!-- frame_body -->
+                <!-- Body end -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- Footer starts -->
+                        #parse("snippets/managerFooter.vm")
+                        <!-- Footer ends -->
+                    </td></tr>
+            </table>
+        </form>
+    </body>
+</html>

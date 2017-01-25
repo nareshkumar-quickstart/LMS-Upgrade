@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+		<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+		<title>Seamless Signon</title>
+	</head>
+	<body>
+		<a id="loading">Please wait</a>
+		<!--  <form id="seamless" name="seamless" action="https://lms.360training.com/lms/j_spring_security_check?" method="post" > -->
+		<form id="seamless" name="seamless" action="${domain}/lms/j_spring_security_check?" method="post" >
+			<input type="hidden" name="username" id="username" value='${userName}' />
+			<input type="hidden" name="password" id="password" value='${password}' />
+			<input type="hidden" name="isCASAuthenticated" value='1' />
+			##set($to=$request.getParameter('to'))
+			#if($to)
+				<input type="hidden" name="spring-security-redirect" id="spring-security-redirect" value='${to}' />
+			#else
+				<input type="hidden" name="spring-security-redirect" id="spring-security-redirect" value='/interceptor.do' />
+			#end
+		</form>
+		
+		<script type="text/javascript">
+ 			$(document).ready(function() {
+				// text spinning
+    			i = 0;
+                text = "Please wait ";
+                setInterval(function() {
+                    $("#loading").html(text+Array((++i % 4)+1).join("."));
+                }, 500);
+				// Submit form
+				$("#seamless").submit();
+			});
+ 	</script>
+	</body>
+</html>

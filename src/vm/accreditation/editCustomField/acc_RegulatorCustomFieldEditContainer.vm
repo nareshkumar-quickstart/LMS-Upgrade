@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                document.title="$brander.getBrandElement("lms.accraditation.PageTitle.caption.EditCustomField")";
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+                $("#toggleIconFieldType").click(function() {
+                    toggleView('toggleIconFieldType', 'collapsibleFieldType');
+                });
+            });
+
+            function cancelCustomField() {
+                document.getElementById('action').value="processCancel";
+                document.editCustomField.submit();
+            }
+
+            function saveCustomField() {
+                document.getElementById('action').value="saveCustomField";
+                document.editCustomField.submit();
+            }
+        
+        </script>
+    </head>
+    <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <tr> <!-- First Block -->
+                <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                    <!--Header Start -->
+                    #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+                    <!-- Header End -->
+                </td></tr>
+
+            <!-- Body Start -->
+            <tr id="main"> <!-- SECOND BLOCK -->
+                <td id="left-navigation" valign="top">
+                    <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                        #parse("snippets/accreditation/sidebar_custom_field.vm")
+                    </table></td>
+
+                <TD id="content" >
+                    <div id="scrollable">
+
+                        #springBind("customFieldForm.*")
+                        #if($status.error)  
+                        <!-- error-box -->
+                        <div id="message_box">
+                            <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                 #foreach($errorCode in $status.errorCodes)
+                                 #set ($error = $brander.getBrandElement($errorCode))
+                                 <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">$error</div>
+                                </div>
+                                #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+
+                        <!-- Page Description -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.accreditation.editCustomField.caption.title")</div>
+                                    <div id="page-help">$brander.getBrandElement("lms.accreditation.editCustomField.caption.subTitle")</div>
+                                </td>
+                            </tr>
+                        </table>					
+                        <div id="pageDescription" class="page_description" style="border:1px; border-color:#FFFFFF; border-style:solid;">
+
+
+                            <form name="editCustomField" method="post" action="acc_RegulatorCustomFieldEditController.do">
+                                <input type="hidden" id="action" name="method" />
+                                <div class="search_box_result"><!-- search_box_result -->
+                                    <div id="toggleIconFieldType" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                    <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Type")</span></div>
+
+                                    <div id="collapsibleFieldType">
+							#springBind("customFieldForm.fieldType")
+							#if($!{status.value} == "Radio Button" )
+								#parse("accreditation/editCustomField/edit_customfield_radio.vm")
+							#elseif($!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+								#parse("accreditation/editCustomField/edit_customfield_check.vm")
+							#else
+								#parse("accreditation/editCustomField/edit_customfield_text.vm")
+							#end
+                                    </div>                        
+                                </div><!-- search_box_result -->
+
+                                <!-- ******************************************************** -->
+                                <div class="btn-div">
+                                	
+                                	<div style="float:right; margin-top:15px;margin-right:5px;">
+                                        <a  onClick="cancelCustomField();">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                    </div> 
+                                	
+                                    <div style="float:right; margin-top:15px;">
+                                        <a onClick="saveCustomField();">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Save")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                    </div>	
+
+                                </div>	
+
+                                <!-- bottom-space -->
+                                <div class="manage-bottom-space"></div>
+                                <!-- bottom-space -->		
+
+                            </form>
+
+                        </div><!-- scrollable -->
+
+                </td></tr>
+            <!-- Body End -->
+            <tr> <!-- Footer BLOCK -->
+                <td id="footer" colspan="2">
+                    <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                    <!-- Footer End -->
+                </td></tr>
+        </table>
+    </body>
+</html>

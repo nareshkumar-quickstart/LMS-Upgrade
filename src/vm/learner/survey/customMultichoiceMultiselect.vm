@@ -1,0 +1,25 @@
+#set($qunCount = ${question.surveyView.questionList.size()})
+
+#set($qunNumber = 0)
+#if($qunCount > 0)
+    #set($maxQunIndex = $qunCount - 1)
+    #foreach($loopIndex in [0..$maxQunIndex])
+        #set($surveyQun = ${question.surveyView.questionList.get($loopIndex)})
+        #set($prefixQun = "surveyView.questionList[$loopIndex]")
+		 #set($prefixQtn = "survey.questionList[$question.index].surveyView.questionList[$loopIndex]")
+        #set($qunNumber = $qunNumber + 1)
+
+        <!-- User-left-right-list -->
+        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+            <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                    #if(${surveyQun.surveyQuestionRef.required} == true) <div class="required_field">*</div> #end $qunNumber. ${surveyQun.surveyQuestionRef.text}
+                </div>
+            </div>
+            <div style="border:0px solid green;float:left;width:100%;">
+                $surveyQun.renderQuestion($prefixQtn)
+            </div>
+        </div>
+        <!-- End-User-left-right-list -->
+    #end
+#end

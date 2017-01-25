@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    #parse("snippets/compliance/complianceHead.vm")
+    <head>
+       <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+ <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+    <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<script type='text/javascript'>
+        
+    $(document).ready(function() {
+        $('#sideBar').height($('.scrollable').height());
+    });
+
+
+	function getLearnerGrpByOrgGroup(v){
+			var obj=v;
+
+			}
+
+</script>    </head>
+#macro( treeviewEditFilterOrgGrp $treeNodes )
+		#set($lastDepth = 0)
+		#set($arrParent = [])   
+			#set($count=0)
+			## this line is required to get total org groups
+			
+		#foreach($node in $treeNodes)
+
+			#set($depthDiff = ${node.depth} - ${lastDepth})
+			#set ($var=$velocityCount%2)
+			#if ($!{var}==0)
+				#set ($rowColor="org_row2")
+			#else 
+				#set ($rowColor="org_row1")
+			#end
+			#set ($val=0)
+			$arrParent.add($node.depth,$node.value.id)
+			#if ($!{node.depth}>0)
+				#set ($val=$node.depth - 1)
+				#set($parentId=$arrParent.get($val))
+			#end
+			<div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+				<div class="icon_blank">&nbsp;</div>
+				#foreach($i in [1..${node.depth}])
+					#if ($!{node.depth}>0)
+						<div class="icon_blank2"></div>
+					#end
+				#end
+				#if(${node.isLeaf()})
+					<div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+				#else 
+					<div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+				#end
+				#set($count=$count+1)
+				<div class="org_checkbox"><input type="checkbox" id="_orgGroup$count" name="orgGroup" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end onClick="getLearnerGrpByOrgGroup(this.id);"/></div>
+				#set ($padLimit=100-$node.depth*5)
+				<div class="row_title">#dotPadding(${node.value.name},$padLimit)</div>
+			</div>
+		#end
+	#end
+    <body>
+       <form name="addOrgGroupForm" method="post" action="mgr_addFilterOrgGroup.do?filterId=$request.getParameter('filterId')">
+        <input type="hidden" id="action" name="method" value=""/>
+        <div id="main-container">
+             #parse("snippets/managerWizardHeader.vm")
+            <div id="frame_body">
+                 <div id="sideBar" class="side_bar"> 
+									<div id="l-menu-back"> 
+										<div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addOrgGroupWizard")<br/> Showing 1 of 1</div> 
+										 
+										<div class="l-menu-back-text-act"> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectOrgGroup")</div> 
+										
+									</div> 
+								</div> 
+                <div class="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+                    </div>
+
+                    <div id="table-frame" class="table-frame">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            <tr bgcolor="#efefef">
+                                <td class="table-last-column-heading" style="border-top:0" colspan="5">
+                                    $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.organizationGroups")
+                                </td>
+                            </tr>
+							<tr bgcolor="#FFFFFF">
+								<td>
+									#treeviewEditFilterOrgGrp(${orgGroupTreeAsList})
+								</td>
+							</tr>
+                        </table>
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="4" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addOrgGroupForm,'wizardSubmitter','_finish');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addOrgGroupForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>							
+				 </form>
+							
+                </div>
+            </div>
+           #parse("snippets/managerFooter.vm")
+        </div>
+    </body>
+
+</html>

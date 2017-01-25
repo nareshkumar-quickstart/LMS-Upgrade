@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+#**
+----------------------------------------------------------------------------  
+@Author: Parthasarathi Adhikary (dec.29.2008)
+---------------------------------------------------------------------------- 
+*#
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+## this must be included on every page for all head items
+#parse("snippets/learnerHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<body>
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript">
+function SubmitParent(){
+window.opener.document.getElementById("action").value='extend';
+window.opener.document.getElementById("extendDate").value=document.getElementById('expirationDate').value;
+window.opener.FormSubmit("extend");
+self.close();
+}
+</script>  
+
+<script type="text/javascript">
+	function FormSubmit(buttonclick) {
+	alert(buttonclick);
+	document.getElementById('action').value=buttonclick;
+	document.manageform.submit();
+	}
+</script> 
+
+<div id="main-container">
+##NOTE: date:minDate defines minimum the date which will be active counting from today. here -2 means it will be active from two days before from today.
+##		date:minDate defines maximum the date which eill be active from today. here 6 means it will be active from today to 6 days latter.
+<input type="text" style="width:150px" id="expirationDate" date:minDate="-2" date:maxDate="6" rangeSeparator="/" date:closeAtTop="false" name="expirationDate" value="" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/> 
+
+<script type="text/javascript">
+	$("#expirationDate").datepicker({ 
+	    showOn: "both", 
+	    buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+	    buttonImageOnly: true 
+	});
+</script>
+
+	<div class="managerBtn">
+		<div><input type="button" value="Extend" onclick="SubmitParent()" class="btn-66w-l" /></div>
+	</div>
+</div>
+</body>
+</html>

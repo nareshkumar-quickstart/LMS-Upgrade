@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+        function checkAll( countCheckBoxes, entNumber ) {
+            var objCheckAll=document.getElementById("chkAll"+entNumber);
+             if (objCheckAll.checked) {
+                 for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "chk" + entNumber +  i;
+                    var objCheckBox=document.getElementById("chk"+ entNumber+i);
+                    objCheckBox.checked = true;
+                    var hiddenid = "approvalCredential["+entNumber+"].requirements["+i+"].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var chkid = "chk" + entNumber +  i;
+                    var objCheckBox=document.getElementById("chk"+ entNumber+i);
+                    objCheckBox.checked = false;
+                    var hiddenid = "approvalCredential["+entNumber+"].requirements["+i+"].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            }
+        }
+        function changeRowColor(checkbox,id) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+            } else {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+            }
+            document.getElementById(id).value = checkbox.checked;
+        }
+        function onRequirementSelection(objCheckbox,hiddenId) {
+            document.getElementById(hiddenId).value=objCheckbox.checked;
+        }
+    </script>
+</head>
+<body>
+<form name="addRequirement" method="post" action="acc_addApprovalRequirement.do" >
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+                #parse("snippets/managerWizardHeader.vm")
+            <!-- Header End -->
+			</td</tr>
+			
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div>
+          <div id="l-menu-back">
+             <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.AddRequirementWizard")<br>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.showing-2-of-3")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.SelectCredentialLHead")</div>
+            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.SelectRequirementLHead")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.ConfirmationLHead")</div>
+          </div>
+        </div>
+ </table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("requirementForm.*")
+            #if($status.error)
+                <!-- error-box -->
+                 <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                        #end
+                </div>
+                <!-- error-box -->
+            #end
+                
+                          <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>							  
+                #springBind("requirementForm.approvalCredential")
+                #if($!{status.value.size()} > 0)
+                    #set($credIndex = 0)
+                    #foreach($appCredential in $!{status.value})
+                        #if($appCredential.selected == "true")
+                            #if($appCredential.requirements.size() > 0)
+                                <!-- Search Result Start -->
+                                <div id="resultBox" class="search_box_result">
+                                <!-- Result Header Start -->
+                                    <div id="resultHeader" class="box_header">
+                                        <!-- Result Heading -->
+                                        <div style="float:left; height:23px;">
+                                             <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Credential") $!{appCredential.credential.officialLicenseName} $brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Requirements")</b></div>
+                                        </div>
+                                    </div>
+                                    #set($totCount = $!{appCredential.requirements.size()})
+                                    <!-- Result Header End -->
+                                    <!-- Result Subheader Start -->
+                                    <div id="searchResult_1">
+                                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                            <tr bgcolor="#efefef">
+                                                <td class="check_box_top" width="17px"><input id="chkAll$credIndex" type="checkbox" name="chkAll$credNumber" onClick="checkAll($totCount, $credIndex);" style="margin-left:3px"/></td>
+                                                <td class="box_subheader" style="border-right:none;"><a onmousedown="switchSort('firstNameSort')"><div id="firstNameSort" class="icon_up" ></div>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Name")</a></td>
+                                            </tr>
+                                            #set($requirements = $appCredential.requirements)
+                                            #set($size = $requirements.size() - 1 )
+                                            #foreach($index in [0..$size])
+                                                #if($index%2 == 0)
+                                                    #set($alternate="row_1")
+                                                #else
+                                                    #set($alternate="row_2")
+                                                #end
+                                                <tr>
+                                                    #springBind("requirementForm.approvalCredential[$credIndex].requirements[$index].selected")
+                                                    <td class="$alternate" width="17px" #if ($!{velocityCount}==$!{totCount}) style="border-bottom:none; border-left:none;" #else style="border-left:none;" #end>
+                                                        <input type="checkbox" id="chk$credIndex$index" #if($!{status.value}) checked #end style="margin-left:-2px" onclick="changeRowColor(this,'${status.expression}');onRequirementSelection(this,'${status.expression}');"/>
+                                                        <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                                    </td>
+                                                    #springBind("requirementForm.approvalCredential[$credIndex].requirements[$index].requirement.name")
+                                                    <td class="$alternate" #if ($!{velocityCount}==$!{totCount}) style="border-bottom:none; border-right:none;" #else style="border-right:none;" #end>$!{status.value}</td>
+                                                </tr>
+                                            #end
+                                        </table>
+                                    </div>
+                                    <!-- Result Subheader End -->
+                                </div>
+                                <!-- Search Result End -->
+                                <div style="height:20px;"></div>
+                            #else
+                                <div id="resultBox" class="search_box_result">
+                                <!-- Result Header Start -->
+                                    <div id="resultHeader" class="box_header">
+                                        <!-- Result Heading -->
+                                        <div style="float:left; height:23px;">
+                                             <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>$brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Credential") $!{appCredential.credential.officialLicenseName} $brander.getBrandElement("lms.accraditation.editApproval.addRequirement.caption.Requirements")</b></div>
+                                        </div>
+                                    </div>
+                                    <!-- Result Header End -->
+                                    <!-- Result Subheader Start -->
+                                    <div id="searchResult_1">
+                                        <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                    </div>
+                                </div>
+							#end
+                        #end
+                        #set($credIndex = $credIndex + 1)
+                    #end
+                #end
+
+                <!-- *********************************************** -->
+				<div class="btn-div">
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addRequirement,'wizardSubmitter','_target2');">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>	
+					
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addRequirement,'wizardSubmitter','_target0');">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addRequirement,'wizardSubmitter','_cancel');">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>  
+				</div>	
+				
+				<!-- bottom-space -->
+				<div class="manage-bottom-space"></div>
+				<!-- bottom-space -->
+				
+				<input type="hidden" id="currentpage" name="_page" value="1" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                 
+        </div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

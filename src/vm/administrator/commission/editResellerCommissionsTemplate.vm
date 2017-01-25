@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/jquery.css" />
+<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>  
+ 
+ 
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+ 
+ 
+<script language="javascript" type="text/javascript">
+
+    document.title="Administrator - Edit Commission";
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.viewCustomerEntitlementForm.submit();
+    } 
+
+
+ $(document).ready(function()
+    {
+        $('#right-pannel-report').scroll(function()
+        {
+            $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function()
+        {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+        function deleteEntity(){
+            if ($("INPUT[type='checkbox'][name='commissionableParty']:checked").length>0) {                            
+                confirm("Are you sure you want to delete the commissionable Parties(s)?", function () { 
+                    document.getElementById('action').value='deleteCommissionableParty';
+                    document.manageCommissionableParty.submit();
+                });
+            }else {
+                $('#selectCommissionableParty').modal({close:false,position: ["40%",]});
+            }
+       }
+       
+        function changeSymbol(para){     
+        	var dolSymbol = document.getElementById("dolSymbol");     
+        	var perSymbol = document.getElementById("perSymbol");     
+	        
+	        if(para == "dolSymbol"){         
+		        	dolSymbol.style.visibility = "visible";         
+		        	perSymbol.style.visibility = "hidden";     
+	        	}else{         
+		        	dolSymbol.style.visibility = "hidden";         
+		        	perSymbol.style.visibility = "visible";      
+        	} 
+        }
+       	function saveAction(){
+		   if(document.editResellerCommissionsForm.flat[0].checked)
+	   			document.editResellerCommissionsForm.flatFeeAmount.value = document.editResellerCommissionsForm.payoutAmount.value;
+			else
+	   			document.editResellerCommissionsForm.flatFeeAmount.value = '';
+			if(document.editResellerCommissionsForm.flat[1].checked)
+	   			document.editResellerCommissionsForm.percentage.value = document.editResellerCommissionsForm.payoutAmount.value;
+			else
+	   			document.editResellerCommissionsForm.percentage.value = '';
+			document.editResellerCommissionsForm.submit();
+		}
+       
+       function setSymbel()
+       {     
+      /*  	var varflat = document.getElementById("flatFlatRate");  
+        	var dolSymbol = document.getElementById("dolSymbol");     
+        	var perSymbol = document.getElementById("perSymbol");     
+
+	        if(varflat.checked){         
+		        	dolSymbol.style.visibility = "visible";         
+		        	perSymbol.style.visibility = "hidden";     
+	        }else{         
+		        	dolSymbol.style.visibility = "hidden";         
+		        	perSymbol.style.visibility = "visible";      
+        	} */
+        }
+        
+        
+        function removeCommParicipation(){   
+        
+		if ($("INPUT[type='checkbox'][name='commParticipation']:checked").length > 0) {
+			confirm("Are you sure you want to remove selected Commission Participation(s)?", function () { 
+                    document.forms[1].submit();
+           });		
+        }
+		else {
+            $('#messageAlert').modal({close:false,position: ["40%",]});
+        }
+    }
+</script>
+
+    <style type="text/css">
+        /* Confirm Overlay */
+        #confirmModalOverlay {background-color:#eee; cursor:wait;}
+        /* Overlay */
+        #simplemodal-overlay {background-color:#eee; cursor:wait;}
+        
+	.tab2 {
+		border-color:-moz-use-text-color #DADADA;
+		text-decoration:none;
+		border-left:1px solid #DADADA;
+		border-right:1px none #DADADA;
+		border-style:none none none solid;
+		border-width:0 1px;
+		color:#666666;
+		cursor:pointer;
+		float:left;
+		font-size:10px;
+		height:21px;
+		padding-top:5px;
+		text-align:center;
+		text-transform:uppercase;
+		width:100px;
+	}
+
+        
+    </style>
+</head>
+#macro( allCommRepTree $treeNodes  $treeCount  )
+    #set($lastDepth = 0)
+    #set($arrParent = []) 	
+	<table width="100%" align="left" border="0">
+	<tr >
+		<td width="100%" height="24" align="left" >
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var = $velocityCount + $treeCount )
+		#if ( ($var%2) ==0)
+            #set ($rowColor="tree_node1")
+        #else 
+            #set ($rowColor="tree_node2")
+        #end
+        #set ($val = 0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth} > 0)
+            #set ($val = $node.depth - 1)
+            #set($parentId = $arrParent.get($val))		 	
+        #end
+	
+		<div id="row$treeCount$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" >		
+		#foreach($i in [1..${node.depth}])
+            #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+            #end
+		#end
+		
+		#if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="courseGroupTreeRows(this,${treeNodes.size()} , $treeCount);" nodeid="${node.value.id}"></div>
+        #end			
+			<div class="org_checkbox" ><input type="checkbox" id="_orgGroup${node.value.id}" name="commParticipation" value="${node.value.id}" #if(${node.selected}) checked #end  /></div>
+			
+	
+		#set ($padLimit=60-$node.depth*5)
+		#if(!${node.enabled})
+			<div class="row_title_inst" >#dotPaddingWithOutTitle(${node.value.commissionableParty.name},$padLimit)</div>
+		#else
+			<div class="row_title_inst" ><a href="adm_ManageCommissionAddParticipation.do?method=editParticipation&entity=reseller&commparttyId=${node.value.id}"> #dotPaddingWithOutTitle(${node.value.commissionableParty.name},$padLimit)</a></div>
+		#end
+			<input style="display:none;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")" type="text" id="txtNode${node.value.id}" name="txtNode${node.value.id}" maxlength="50" />
+		</div>	
+    #end
+		</td>
+	</tr>
+	</table>
+#end
+
+<body onload="setSymbel()">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+<tr>
+	<td class="tab_bar" colspan="2">
+			<table cellspacing="0" cellpadding="0" border="0" width="100%">
+				<tr>
+			        <td width="192"><div class="tab_blank"></div></td>
+			        <td>&nbsp;</td>
+			        <td width="483">
+			        
+			        	#set($ssn=$!{request.getSession(true)})
+						#set($commissionType = $ssn.getAttribute("commissionType"))
+						
+						
+						<a href="adm_manageCommission.do?method=editResellerCommission&entity=reseller"><div class="tab_selected">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.summary")</div></a>
+			            #springBind("commissionForm.applyToAllProducts") 
+                        #if(${status.value}=="false")
+                        	#if(${commissionType}=="product")
+				            	<a href="adm_manageCommissionProduct.do?method=searchCommissionProduct&entity=reseller"><div style="border-right-style: solid; width: 140px;" class="tab">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.products")</div></a>
+				            #else
+				            	<a href="adm_manageCommissionProductCategory.do?method=searchCategory&entity=reseller"><div style="border-right-style: solid; width: 140px;" class="tab">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.productCategories")</div></a>			        
+							#end
+						#else
+							#if(${commissionType}=="product")
+				            	<div style="border-right-style: solid; width: 140px;" class="tab">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.products")</div>
+				            #else
+				            	<div style="border-right-style: solid; width: 140px;" class="tab2">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.tab.productCategories")</div>
+				       		#end
+				        #end
+				     </td>
+							            
+			        <td>&nbsp;</td>
+			    </tr>
+			</table>
+	</td>
+</tr>	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+	
+		<div id="error-message-box" style="display:block;">
+            <div class="error_box">
+                <div id="errors"></div>
+                <div id="close-errors" class="close_icon"></div>
+            </div>
+        </div>		
+        
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content --><!-- <div class="leftmenu-top-shadow"></div> -->        
+			#set($logoClass="courseLogoDistributor")
+            #parse("snippets/adminDistributorLeftMenu.vm")        
+        <!-- left-pannel-content-end -->
+		</table>
+		</td>
+		
+		
+<TD>
+	<div id="scrollable">
+			#springBind("commissionForm.*")	
+                    #if($status.error)
+                        <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement('lms.errorMessage.pixel.12-em-cross.png')" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement('lms.errorMessage.pixel.addLearner_06.gif')" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                        </div><!-- error-box -->
+                    #end
+                    
+                    
+                    
+                    #set($validateCommPar=$!{request.getSession(false).getAttribute("validateCommPar")})
+                    #if( "$!validateCommPar" != "" )
+                    <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement('lms.errorMessage.pixel.12-em-cross.png')" />
+	                        <div class="width40pct">
+	                            <div class="message_box_align"><img src="$brander.getBrandElement('lms.errorMessage.pixel.addLearner_06.gif')" width="14" height="14" alt="" /></div>
+	                            <div class="message_box_align">$brander.getBrandElement($validateCommPar)</div>
+	                        </div>
+	                </div><!-- error-box -->
+                    #end
+                    $!{request.getSession(true).setAttribute("validateCommPar", null)}
+                     
+                     
+                     
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-left: 10px;margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="$!logoClass">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerCommissions.EditCommission.Title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.resellerCommission.addCommission.title")</div>
+			</td>
+		    </tr>
+		</table>            
+     
+     
+     				
+     
+     
+     
+     
+     
+    <form name="editResellerCommissionsForm" method="post" action="adm_manageCommission.do?method=updateResellerCommission&entity=reseller" >
+     				
+     <div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">Summary</span></div>
+                        <table cellspacing="3" cellpadding="3" border="0" width="100%" heigth="100%">
+                            <tbody>
+                            <tr>
+                                <td width="24%"><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.name')</span></td>                                
+                                #springBind("commissionForm.name")
+                                <td><input type="text" name="$!{status.expression}" value="$!{status.value}" class="input_text_field" id="field_name"></td>
+                            </tr>
+                            <tr>
+                                <td width="24%"><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.commission.CommissionType')</span></td>                                
+                                #springBind("commissionForm.commissionType")
+                                <td>
+                                	<select name="$!{status.expression}" style="width:182px; height:20px;" class="input_text_field"> 
+                                		<option value="0" #if(${status.value}=="0") selected #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.commissionType.0')</option>
+                                		<option value="1" #if(${status.value}=="1") selected #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.commissionType.1')</option>											
+                                	</select>
+								</td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.payout')</span></td>
+                                <td>
+                                    <div style="float: left; width: 191px;">
+										#springBind("commissionForm.flat")
+                                        <input type="radio" onclick="changeSymbol('dolSymbol');" name="$!{status.expression}" value="true" #if(${status.value}=="true" || ${status.value}=="") checked #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.flatRate')
+                                        <input type="radio" onclick="changeSymbol('perSymbol');" name="$!{status.expression}" value="false" #if(${status.value}=="false") checked #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.percentage')
+                                    </div>
+                                    <div style="float: left; margin-top: 1px; margin-left: 5px;">
+	                            	 	#springBind("commissionForm.flatFeeAmount")
+	                                	 <input type="hidden" name="$!{status.expression}" value="$!{status.value}">
+	                            	 	#springBind("commissionForm.percentage")
+	                                	 <input type="hidden" name="$!{status.expression}" value="$!{status.value}">
+                                        <div style="float: left; margin-right: 5px; margin-top: 2px;" id="dolSymbol">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.flatRate.symbol')</div>                                        	 
+                                        	 #springBind("commissionForm.flat")
+                                        	 #if(${status.value}=="true")
+                                        	 	#springBind("commissionForm.flatFeeAmount")
+                                        		<input type="text" style="width: 40px;" name="payoutAmount" value="$!{status.value}" class="input_text_field">
+                                        	 #else
+                                        	    #springBind("commissionForm.percentage")
+                                        		<input type="text" style="width: 40px;" name="payoutAmount" value="$!{status.value}" class="input_text_field">
+                                        	 #end                                        	 
+                                       		 <div style="float: left; margin-left: 5px; margin-top: 2px; visibility: hidden;" id="perSymbol">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.percentage.symbol')</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.type')</span></td>
+                                <td>
+                                	#springBind("commissionForm.type")
+                                	<select name="$!{status.expression}" style="width:182px; height:20px;" class="input_text_field"> 
+                                		<option value="0" #if(${status.value}=="0") selected #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.type.0')</option>
+                                		<option value="1" #if(${status.value}=="1") selected #end>$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.type.1')</option>											
+                                	</select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.payOnNetIncome')</span></td>
+                                <td>
+                                    #springBind("commissionForm.payOnNetIncome")
+                                    <input type="radio" name="$!{status.expression}" value="true" #if(${status.value}=="true" || ${status.value}=="") checked #end> Yes
+                                    <input type="radio" name="$!{status.expression}" value="false" #if(${status.value}=="false") checked #end> No 
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.applyToAllProducts')</span></td>
+                                <td>
+                                	#springBind("commissionForm.applyToAllProducts") 
+                                	<input type="radio"  name="$!{status.expression}" value="true" #if(${status.value}=="true" || ${status.value}=="") checked #end> Yes
+                                    <input type="radio"  name="$!{status.expression}" value="false" #if(${status.value}=="false") checked #end> No 
+                                </td>
+                            </tr>
+                            <!-- LMS-15436 -->
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement('lms.administrator.resellerCommission.addCommissionForm.paymentMode')</span></td>
+                                <td>
+                                	#springBind("commissionForm.paymentMode") 
+                                	<input type="radio"  name="$!{status.expression}" value="true" #if(${status.value}=="true" || ${status.value}=="") checked #end> 360 pays vendor
+                                    <input type="radio"  name="$!{status.expression}" value="false" #if(${status.value}=="false") checked #end> vendor pays 360 
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>    
+                </form>
+                
+                
+                
+                
+
+&nbsp;
+
+
+<!-- Tree start -->
+ 
+		<div id="resultBox" class="search_box_result" >
+			<div id="resultHeader" class="box_header">
+					
+					<!-- Button panel -->
+					<div style="float:left; height:23px;">	
+						<!-- Add Instructor button -->
+						<div style="float: left; margin-top: 2px;">
+							<div>
+								<a href="adm_ManageCommissionAddParticipation.do?method=addParticipation&entity=reseller">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.addParticipation")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+						<!-- Delete Instructor button -->
+						<div style="float: left; margin-top: 2px; margin-right: 5px;">
+							<div>
+								<a onClick="removeCommParicipation();">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.deleteParticipation")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>						
+					</div>
+					<!-- Button panel - end -->					
+				</div>
+	           	<!-- Result Header End -->	
+				
+				
+				<!-- Search Result Start -->
+	           	<div id="searchResult">
+	           	<form name="commissionsParticipationForm" method="post" action="adm_manageCommissionParticipation.do?method=deleteCommissionParticipation&entity=reseller" >
+   				<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						<tr bgcolor="#efefef">
+							
+							<td  colspan="2" class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:98%;" >Commission Hierarchy</td>							
+						</tr>
+					#if ($context.CommParticList.size() > 0)						
+						
+						#set( $treeCount = 0 )
+						#foreach($commRepTree in $context.CommParticList )
+							<tr>
+							<td colspan="2" width="100%">
+							#set( $treeCount = $treeCount + 1 )							
+							#allCommRepTree(${commRepTree} $treeCount  )
+							</td>
+						</tr>							
+						#end
+							
+					#else							
+						<tr>
+	                        <td colspan="2" width="100%" style="border-bottom-width: 1px; border-bottom-style: solid; border-color: rgb(223, 223, 223) ! important;">	                            
+	                            <div class="result_blank">$brander.getBrandElement("lms.manageOrganizationGroup.caption.noRecordFound")</div>
+	                        </td>
+	                    </tr>
+					#end
+					</table>
+				</form>	
+				</div>	
+				</div>		
+				
+				
+				
+				
+				<div style="float: right; margin-top: 8px;">
+					  <a style="text-decoration: none;" onclick="saveAction();">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Save</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					
+					<div style="float: right; margin-top: 8px;">
+					  <a style="text-decoration: none;" onclick="window.location='adm_manageCommission.do?method=showCommissions&entity=reseller'">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Cancel</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+						
+					
+			    <!-- Search Result End -->
+	    	
+	    	<br />
+	    	<br />
+	    	&nbsp;<br />
+	    	<br />
+	    	
+					
+                           
+    </div>        
+    </td></tr><!-- content-area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<!-- Alert Message Box -->
+				<div id="messageAlert" style="display:none">
+					<div class="header">&nbsp;&nbsp;$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.warningwindow")</div>
+					<br style="clear:both" />
+					<div class='buttons'>
+			        <div class='no simplemodal-close'>
+			            <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+			        </div>
+			    </div>
+				</div>
+				<!-- Alert Message Box - Ends -->
+				
+				<!-- Delete Message Box -->
+				<div id='deleteConfirmation' style='display:none'>
+					<div class='header'><span>$brander.getBrandElement("lms.instructor.manageCourseGroup.deleteConfirmation.title")</span></div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.administrator.resellerCommission.CommissionForm.confirmwindow")</div>
+					<br style="clear:both" />
+
+						<div class='buttons'>
+						            <div class='simplemodal-close'>
+						                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+						                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+						            </div>
+						</div>
+					
+				</div>		
+				
+ 
+</body>
+</html>

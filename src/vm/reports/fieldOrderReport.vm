@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/reportNewHead.vm")
+<script type="text/javascript" language="javascript">
+    function moveDown(obj){
+        var fieldContainer=document.getElementById("fieldContainer");
+        var collection=fieldContainer.getElementsByTagName("div");
+        var divCollection=new Array();
+        for(var i=0,j=0;i<collection.length;){
+            var el=i%5;
+            if(el==0){
+                divCollection[j]=collection[i];
+                if(divCollection[j]==obj.parentNode.parentNode.parentNode){
+                    if(collection[i+5]!=null){
+                        divCollection[j]=collection[i+5];
+                        divCollection[j+1]=collection[i];
+                    }
+                    i=i+6;
+                    j++;
+                }
+                j++;
+            }
+            i++;
+        }
+            for(var i=0;i<divCollection.length;i++){
+                fieldContainer.removeChild(divCollection[i]);
+            }
+
+            for(var i=0;i<divCollection.length;i++){
+                fieldContainer.appendChild(divCollection[i]);
+                if(i>0)divCollection[i].getElementsByTagName("input")[0].value=i;
+            }
+    }
+
+    function moveUp(obj){
+        var fieldContainer=document.getElementById("fieldContainer");
+        var collection=fieldContainer.getElementsByTagName("div");
+        var divCollection=new Array();
+
+        for(var i=0,j=0;i<collection.length;){
+            var el=i%5;
+            if(el==0){
+                divCollection[j]=collection[i];
+                if(divCollection[j]==obj.parentNode.parentNode.parentNode){
+                    if(collection[i-5]!=collection[0]){
+                        divCollection[j]=collection[i-5];
+                        divCollection[j-1]=collection[i];
+                    }
+                }
+                j++;
+            }
+            i++;
+        }
+            for(var i=0;i<divCollection.length;i++){
+                fieldContainer.removeChild(divCollection[i]);
+            }
+
+            for(var i=0;i<divCollection.length;i++){
+                fieldContainer.appendChild(divCollection[i]);
+                if(i>0)divCollection[i].getElementsByTagName("input")[0].value=i;
+            }
+    }
+
+    function saveOrderFields(){
+        document.getElementById("action").value = "saveReportFieldsOrder";
+        document.reportFieldsForm.submit();
+        
+    }
+
+
+   function cancelOrderFields(){
+        document.getElementById("action").value = "cancelReportFieldsOrder";
+        document.reportFieldsForm.submit();
+   }
+
+$(document).ready(function()
+{
+    $('#right-pannel-report').scroll(function()
+    {
+        $('#message_box').animate({top:$('#right-pannel-report').scrollTop()+"px" },{queue: false, duration: 350});  
+    });
+    $('#close_message').click(function()
+    {
+        $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+    });
+});
+ </script>
+</head>
+<body>
+<div id="main-container">
+
+    <!-- header -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminHeader.vm")
+    #else
+       #parse("snippets/managerHeader.vm")
+    #end  
+    <!-- header-end -->
+
+    <!-- TopBar Start -->
+    <div id="topBar" class="Block-Contain-header-report">
+        <div id="reportlistheading" class="master-div">
+            <div name="eTopMenu" class="menu-text">REPORT LIST</div>
+        </div>
+        <div class="master-div2">
+            <div class="master-div3-position"></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=browseReports')" class="sub-top-nav">SUMMARY</a></div></div>
+            <div class="master-div3"><div class="menu-text"><a class="sub-top-nav"><b>FIELDS</b></a></div></div>
+            <div class="master-div3"><div class="menu-text"><a href="#springUrl('/adm_ManageReports.do?method=displayReportFilters')" class="sub-top-nav">FILTERS</a></div></div>
+            <div class=""></div>
+        </div>
+    </div>
+    <!-- TopBar End -->
+
+    <div id="content2r">
+    <!-- content-area -->
+       <!-- left-pannel-content -->
+        #parse("snippets/reportLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+        <!-- <div id="right-pannel"> -->
+        <form name="reportFieldsForm" action="#springUrl('/adm_ManageReports.do')" method="POST">
+        <input type="hidden" id="action" name="method" value=""/>
+        <div id="right-pannel">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+
+            #springBind("reportForm.*")
+            #if($status.error)
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+                #set ($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                </div>
+                #end
+            </div>
+            <!-- error-box -->
+            #end
+
+            <!-- Logo+Manage-User -->
+                <div class="page_description" id="pageDescription">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+                   
+                        <div id="titleHolder" class="courseTitle1">Report Field Ordering</div>
+                        <div id="detailsHolder">On this page you may choose the order of report fields on your report. To change the order click on the up arrow or down arrow next to the field name. Once complete, click on the Save button.</div>
+                   
+                
+            </div>
+
+            <!-- Logo+Manage-User-end -->
+
+            <!-- User-list -->
+            <div class="content-Block">
+                <div id="e12" class="Block-Contain-header">
+                    <div id="e13" class="Search-Containerheaderleft" style="width:90%">#dotPadding($reportForm.currentReport.title,90)</div>
+                </div>
+                <!-- 1 -->
+                <div id="fieldContainer" class="User-checkbox-box">
+                    <div id="e1" class="User-checkbox-row-h">
+                        <div id="e14b" class="Containerheaderleft-ico3"></div>
+                        <div id="e14c" class="Containerheaderleft-ico3a"></div>
+                                                <div id="e14c" class="Containerheaderleft-ico3a"></div>
+                        <div class="User_coll_H7">Fields</div>
+                    </div>
+#if($reportForm.reportFieldsEdit)
+#set($fieldListSize = $reportForm.reportFieldsEdit.size())
+#if($fieldListSize > 0)
+#set($fieldListSize = $fieldListSize - 1)
+#set($valCount = 0)
+#foreach($index in [0..$fieldListSize])
+#springBind("reportForm.reportFieldsEdit[$index].visible")
+#if($!{status.value})
+#set($valCount = $valCount+1)
+                    <div id="e16" class="search-content-row">
+#springBind("reportForm.reportFieldsEdit[$index].displayOrder")
+                                                <div class="User_coll_1">
+                        <div id="e14b" class="arrow-transfer2"><img onClick="moveUp(this);" title="Up" src="brands/default/en/images/arrow-up.gif" width="10" height="6" /></div>
+                        <div id="e14c" class="arrow-transfer2"><img onClick="moveDown(this);" title="Down" src="brands/default/en/images/arrow-down.gif" width="10" height="6" /></div>
+                                                                        </div>
+                        <input type="hidden" id="hdn$valCount" name="${status.expression}" value="${status.value}"/>
+#springBind("reportForm.reportFieldsEdit[$index].displayName")
+                        <div class="User_coll_8">$!{status.value}</div>
+#springBind("reportForm.reportFieldsEdit[$index].id")
+                        <input type="hidden" name="$status.expression" value="$!{status.value}"/>
+                    </div>
+#end
+#end
+#end
+#end
+                </div>
+                <!-- 1 -->
+            </div>
+            <!-- End-User-list -->
+
+            <!-- button-div -->
+            <div class="managerBtn">
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-right3")">
+					<a class="button" onclick="cancelOrderFields();" >
+						<span class="button">Cancel</span>
+					</a>
+					#if(!$currentReport.systemOwned)
+					<a class="button" onclick="saveOrderFields();" >
+						<span class="button">Save</span>
+					</a>
+					#end
+				</div>
+                
+            </div>
+            <!-- scrollable-div -->
+
+
+            </div>
+            <!-- for center-align-div -->
+        </div>
+
+        <!-- </div> -->
+        <!-- right-pannel-content-end -->
+        </form>
+    <!-- content-area-end -->
+    </div>
+
+    <!-- footer -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminFooter.vm")
+    #else
+       #parse("snippets/managerFooter.vm")
+    #end
+    <!-- footer-end -->
+</div>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+    
+    	<!-- Parsed Page Head -->
+		
+    	#parse("snippets/instructor/instructorHead.vm")
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/instructor/css_tree.css"/>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        
+        <script language="javascript" type="text/javascript">
+            function FormSubmit(buttonclick) {
+                document.getElementById('action').value=buttonclick;
+                document.editCourseGroupName.submit();
+            }
+        
+            $(document).ready(function(){
+        	
+            });
+        </script>
+        </head>
+        
+        
+        #macro( editCourseGroupTree $treeNodes  $treeCount  )
+            #set($lastDepth = 0)
+            #set($arrParent = []) 	
+        	<table width="100%" align="left" border="0">
+        	<tr >
+        		<td width="100%" height="24" align="left" >
+            #foreach($node in $treeNodes)		
+        		#set($depthDiff = ${node.depth} - ${lastDepth})
+        		#set ($var = $velocityCount + $treeCount )
+        		#if ( ($var%2) ==0)
+                    #set ($rowColor="tree_node1")
+                #else 
+                    #set ($rowColor="tree_node2")
+                #end
+        		#set ($val = 0)
+        		$arrParent.add($node.depth,$node.value.id)
+        		#if ($!{node.depth} > 0)
+        			#set ($val = $node.depth - 1)
+        			#set($parentId = $arrParent.get($val))		 	
+        		#end
+        	
+        		<div id="row$treeCount$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" >		
+        		#foreach($i in [1..${node.depth}])
+        			#if ($!{node.depth}>0)
+        			<div class="icon_blank2"></div>
+        			#end
+        		#end
+        		
+        		#if(${node.isLeaf()})
+        			<div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+        			#else 
+        			<div id="divIcon$velocityCount" class="icon_collapse" onclick="courseGroupTreeRows(this,${treeNodes.size()} , $treeCount);" nodeid="${node.value.id}"></div>
+        		#end			
+        			<div class="org_checkbox" ><input type="radio" id="_orgGroup${node.value.id}" name="courseGroups" value="${node.value.id}" #if( $!{context.parentCourseGroupId} == ${node.value.id} ) checked="true" #end #if( $!{context.courseGroupId} == ${node.value.id} ) disabled="true" #end  /></div>
+        			<div class="icon-course-group" ></div>
+        	
+        		#set ($padLimit=60-$node.depth*5)
+        			<div class="row_title_inst" >#dotPaddingWithOutTitle(${node.value.name},$padLimit)</div>
+        			<input style="display:none;" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search_field")" type="text" id="txtNode${node.value.id}" name="txtNode${node.value.id}" maxlength="50" />
+        		</div>	
+        	#end
+        		</td>
+        	</tr>
+        	</table>
+        #end
+    
+		<!-- Page Javascript -->
+        <script type="text/javascript" language="javascript">
+        	//  JS Document Ready
+            $(document).ready(function() {
+			
+            });
+        </script>
+		<!-- END: Page Javascript -->
+    
+    </head>
+
+    <body>
+		<form name="editCourseGroupName" id="editCourseGroupName" method="post" action="ins_editCourseGroup.do?courseGroupId=$!{context.courseGroupId}">
+    		<!-- Page Table -->
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+                
+        		<!-- Header Row -->
+        		<tr>
+                    <td id="header" colspan="2">
+    					
+    					#parse("snippets/instructorHeader.vm")
+    					
+        			</td>
+        		</tr>
+    			<!-- END: Header Row -->
+        		
+        		<!-- Page Header Row Tabs -->
+                <tr id="row-tabs">
+        			
+        			<!-- Page Tab Left Sidebar -->
+                    <td id="blank-tab">
+                        &nbsp;
+                    </td>
+    				<!-- END: Page Tab Left Sidebar -->
+    				
+        			<!-- Page Tabs -->
+                    <td id="tabs" align="center">
+                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    		<tr>                    
+                    			<td>&nbsp;</td>
+                    			<td width="204">
+                    				<a href="ins_editCourseGroup.do?courseGroupId=$!{context.courseGroupId}"><div class="tab_selected" >$brander.getBrandElement("lms.instructor.manageCourseGroup.editCourseGroup.tabBar.summary")</div></a>
+                    				<a href="ins_viewCourseGroupCourses.do?courseGroupId=$!{context.courseGroupId}"><div class="tab" style="border-right-style: solid;" >$brander.getBrandElement("lms.instructor.manageCourseGroup.editCourseGroup.tabBar.courses")</div></a>	            	
+                    			</td>
+                    			<td>&nbsp;</td>
+                    		</tr>
+                    	</table>	
+                    </td>
+    				<!-- END: Page Tabs -->
+    				
+                </tr>
+        		<!-- END: Page Header Row Tabs -->
+        		
+        		<!-- Page -->
+                <tr id="main">
+        			
+        			<!-- Page Sidebar -->
+        			<td id="left-navigation" valign="top">
+                        <div id="sidebar-scroller" style="overflow:hidden">
+    						
+							<table id="table-bands" width="100%" cellpadding="0" cellspacing="0" border="0">
+        						<tr>
+                    				<td id="manageUsers" onclick="submitForm('insCourses','insCourses','ins_manageSynchronousCourse.do')" #if ($!{menu}=="insCourses")  class="selected" #end>
+                    					<div class="band_text">$brander.getBrandElement("lms.instructor.Course.Title")</div>
+                    				</td>
+                    			</tr>
+    					
+                       
+                    		 	<tr>
+                    				<td id="manageUsers" onclick="submitForm('insCourses','insCoursegroup','ins_viewCourseGroups.do')" #if ($!{menu}=="insCoursegroup")  class="selected" #end>
+                    					<div class="band_text">$brander.getBrandElement("lms.instructor.CourseGroup.Title")</div>
+                    				</td>
+                    			</tr>
+							</table>
+                        </div>
+        			</td>
+    				<!-- END: Page Sidebar -->
+        			
+        			<!-- Page Content -->
+        			<td id="content">
+        				
+        				<!-- Page Scrollable Area -->
+        				<div id="scrollable">
+    							
+    						<!-- error-box -->			
+                			#if(${context.validateCourseGroup})
+                			<div id="message_box">
+                				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />									
+                				#set ($error = $brander.getBrandElement(${context.validateCourseGroup}))
+                				<div class="width40pct">
+                					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                					<div class="message_box_align">$error</div>
+                				</div>
+                			</div>
+                			#end
+                			<!-- error-box - end -->
+                			
+                			<!-- Logo+Manage-User -->
+                	        <div class="page_description" id="pageDescription">
+                				<!-- Page Icon -->
+                				<div id="logoHolder" class="courseLogoCourses">&nbsp;</div>				
+                				<!-- Page Heading -->
+                				<div class="page_heading" id="pageHeading">$brander.getBrandElement("lms.instructor.editCourseGroup.Heading")</div>
+                				<!-- Page Description -->
+                				<div id="pageDescriptionText">$brander.getBrandElement("lms.instructor.editCourseGroup.Description")</div>
+                			</div>
+                			<!-- Logo+Manage-User-end -->
+                			
+                			<!-- Search Box 1 -->
+                			<div class="search_box_result">
+                			
+                				<!-- Result Header Start -->
+                				<div id="resultHeader" class="box_header">
+                					<!-- Button panel -->
+                					<div style="float:left; height:23px;">	
+                						<div class="table-heading">$brander.getBrandElement("lms.instructor.editCourseGroup.CourseGroupInfo")</div>
+                					</div>
+                					<!-- Button panel - end -->
+                				</div>                
+                	           	<!-- Result Header End -->
+                				
+                				<!-- Search Result Start -->
+                				<div id="searchResult">				
+                					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">												
+                						<tr><td height="5" colspan="2">&nbsp;</td></tr>
+                						<tr>
+                							<td width="200">
+                								<div class="row_text" >$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.courseGroupName")</div>
+                							</td>
+                							<td>
+                								<div class="required_field"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>								
+                								<input type="text" class="input_text_field" style="width:300px;" maxlength="255" name="courseGroupName" value="$!{context.courseGroupName}"  />								
+                							</td>
+                						</tr>
+                						<tr><td height="5" colspan="2">&nbsp;</td></tr>
+                					</table>
+                				</div>		
+                				<!-- Search Result End -->				
+                			</div>
+                	    	<!-- Search Box 1- end-->
+                			
+                			<!-- Search Box -->
+                			<div class="search_box_result" style="margin-top:15px;">
+                			
+                				<!-- Result Header Start -->
+                				<div id="resultHeader" class="box_header">
+                					<!-- Button panel -->
+                					<div style="float:left; height:23px;">	
+                						<div class="table-heading">$brander.getBrandElement("lms.instructor.manageCourseGroup.editCourseGroup.caption.parentCourseGroup")</div>
+                					</div>
+                					<!-- Button panel - end -->
+                					
+                				</div>                
+                	           	<!-- Result Header End -->
+                				
+                				<!-- Search Result Start -->
+                	           	<div id="searchResult">
+                					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">						
+                						<tr bgcolor="#efefef">							
+                							<td class="box_subheader" style="height: 25px; padding-left: 5px; border-right: medium none;width:100%;" >$brander.getBrandElement("lms.instructor.manageCourse.addCourseGroup.table.title.selectCourseGroups")</td>							
+                						</tr>					
+                					#if ( $context.courseGroupTreeList.size() > 0 )
+                						<tr>
+                							<td width="100%">
+                						#set( $treeCount = 0 )
+                						#foreach($courseGroupTree in $context.courseGroupTreeList )
+                							#set( $treeCount = $treeCount + 1 )
+                							#editCourseGroupTree(${courseGroupTree} $treeCount  )
+                						#end
+                							</td>
+                						</tr>
+                					#else
+                						<tr>
+                	                        <td  width="100%" style=" !Important;">	                            
+                	                            <div class="result_blank">$brander.getBrandElement("lms.instructor.manageCourseGroup.addCourse.caption.noRecordFound")</div>
+                	                        </td>
+                	                    </tr>
+                					#end
+                					</table>
+                				</div>		
+                				<!-- Search Result End -->
+                				
+                			</div>
+                	    	<!-- Search Box - end-->
+                			
+                			<!-- Wizard Footer button-div -->
+                			<div class="managerBtn" style="*width:98.5%;">
+                				<div style="float: right; margin-top:15px;">
+                					<div>
+                						<a onClick="FormSubmit('update');">
+                							<div class="btn_start"></div>
+                							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnSave")</div>
+                							<div class="btn_end"></div>
+                						</a>
+                					</div>
+                				</div>
+                				<div style="float: right; margin-top:15px; margin-right:5px;">
+                					<div>												
+                						<a href="ins_viewCourseGroups.do">
+                							<div class="btn_start"></div>
+                							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.manageCourseGroup.caption.btnCancel")</div>
+                							<div class="btn_end"></div>
+                						</a>
+                					</div>
+                				</div>      
+                            </div>
+                			<!-- Wizard Footer button-div - end -->
+                			
+                			<!-- hidden elements for form binding -->
+                			<input id="action" type="hidden" name="action" />			
+                			
+                			<!-- space -->
+                			<div class="manager-bottom-space"></div>
+                			<!-- space -->
+                		
+                		</div>		
+                		
+    					
+                    </td>
+    				<!-- END: Page Content -->
+    				
+                </tr>
+    			<!-- END: Page-->
+    			
+    			<!-- Page Footer-->
+    			<tr>				
+            		<td id="footer" colspan="2">
+    					<!-- footer -->
+                    	#parse("snippets/instructor/instructorFooter.vm")
+                    	<!-- footer-end -->
+    				</td>
+    			</tr>
+    			<!-- END: Page Footer -->
+    			
+    		</table>
+    		<!-- END: Page Table -->
+    	</form>	
+	</body>
+</html>

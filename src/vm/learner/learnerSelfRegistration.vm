@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/loginHead.vm")
+<script type="text/javascript" language="javascript">
+    function submitForm(){
+     //document.getElementById('method').value='displayProfile';
+        document.learnerSelfRegistrationForm.submit();
+    }
+    $(document).ready(function() {
+        $('#content2_n').scroll(function() {
+            $('#message_box').animate({top:$('#content2_n').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+        document.learnerSelfRegistrationForm.passcode.focus();
+    });
+</script>
+</head>
+
+<body>
+<form name="learnerSelfRegistrationForm" action="#springUrl("/learnerRegistration.do")" onSubmit="submitForm();" method="POST">	
+	<input type="hidden" id="method" name="method" value=""/>
+                <input type="hidden" id="registrationId" name="registrationId" value="$!{context.registrationId}"/>
+
+<div id="main-container">
+
+	<!-- header -->
+	<div id="header" class="page_header">
+		<!-- logo -->
+			<div style="width:200px; float:left;">
+				<img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+			</div>
+	<!-- logo-end -->
+		<!-- top-nav-right-menu -->
+		<div class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.headerMenuContainer2")"><!-- top-navigation --></div>
+		 <!-- top-nav-right-menu-end -->
+	</div>
+	<!-- header-end -->
+
+	<div id="content2a">
+		<!-- content-area -->
+		 <div id="right-pannel" style="margin-left:20px">
+		   #if( $!{context.error})
+			<div id="message_box">
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+				
+					<div class="width40pct">
+						<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+						<div class="message_box_align">$brander.getBrandElement("${context.error}")</div>
+					</div>
+			
+			</div>
+			#end
+			<!-- contentLogo-area -->
+			<div id="pageDescription" class="page_description">
+				<div id="pageIcon" class="loginLogo">&nbsp;</div>
+				<div id="pageHeading" class="page_heading" style="margin-top:10px">$brander.getBrandElement("lms.learner.selfRegistration.caption.Welcome")</div>
+				<div id="descriptionId">$brander.getBrandElement("lms.learner.selfRegistration.caption.subtitle") </div>				
+			</div>
+
+			<!-- space -->
+			<br>
+			<!-- space -->
+
+            <!-- login-box -->
+				<table align="center" cellpadding="5" cellspacing="0" style="border: solid #CCCCCC 1px;">
+					<tr style="background-color:#F4F4F4;"><td colspan="3"><span style="font-weight:bold; text-transform:uppercase; ">$brander.getBrandElement("lms.learner.SelfRegistrationlogin.caption.header")</span></td></tr>
+					<tr><td colspan="3"><img height="6" src="$brander.getBrandElement("lms.pixel.gif")"></td></tr>
+					<tr><td>$brander.getBrandElement("lms.learner.SelfRegistrationlogin.caption.Passcode"):</td><td><img width="15" src="$brander.getBrandElement("lms.pixel.gif")"></td><td><input type="password" name="passcode" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search_field")" style="width:300px;"/></td></tr>
+					<tr><td align="right"></td><td><img width="15" src="$brander.getBrandElement("lms.pixel.gif")"></td><td align="right"><span class="btn-right_n" style="margin-top:4px;border:0px solid green;">
+					
+					<!--<input type="submit" value="Next" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.btn-submit_n71")"/>-->
+					<a class="button" onClick="submitForm();"><span class="button">Next</span></a>
+					##<input type="hidden" name="registrationId" value="${context.registrationId}"></span></td></tr>
+				</table>
+            <!-- login-box-row-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		</div>
+		<!-- content-area-end -->
+	</div>
+	<!-- footer -->
+	#parse("footer.vm")
+	<!-- footer-end -->
+
+</div>
+</form>
+</body>
+</html>

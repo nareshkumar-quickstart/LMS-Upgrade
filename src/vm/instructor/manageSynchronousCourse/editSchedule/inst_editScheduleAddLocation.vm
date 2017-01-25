@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructorHead46.vm")
+
+<head>
+ 
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelChangeLocation';
+        document.editCourseAddtionalDetailsForm.submit();
+}
+
+function saveInformation(){
+        document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editCourseAddtionalDetailsForm.submit();
+}
+function finishAction(){
+       // document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editCourseAddtionalDetailsForm.submit();
+}
+$(document).ready(function()
+{
+    $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel-new').height()<$('#frame_body').height()) {
+        $('#right-pannel-new').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel-new').height());
+
+        $('#frame_body').scroll(function()
+        {
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		$("#enrolEndDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<form name="editScheduleSummaryTabForm" method="POST" action="ins_editCourseSchedule.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+</td></tr>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			  <div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">Add Location Wizard showing 1 of 1</div>
+                        <div class="l-menu-back-text-act">1.Select Location</div>
+                    </div>
+                </div>
+			</table></td>
+			
+                <!-- left-pannel-content-end -->
+
+                <!-- right-pannel-new-content -->
+<TD id="content" >
+	<div id="scrollable">
+                    #springBind("courseForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                        <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                        #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+                   <!-- Logo+Manage-User -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.instructor.editSchedule.caption.title.addLocation")</div>
+		<div id="page-help">$brander.getBrandElement("lms.instructor.editSchedule.caption.subTitle.addLocation")</div>
+		</td>
+	</tr>
+</table>
+                        <!-- Logo+Manage-User-end -->
+
+                    <div class="search_box_result" id="resultBox">
+                        <div class="box_header" id="resultHeader">
+                            <div class="box_heading">
+                                SELECT LOCATION
+                            </div>
+                            <div class="visible" style="float: left; height: 180px; width: 300px; left: 47%;" id="searchBox">
+                                Search Locations<br><br><br>
+                                <div style="float: left;">Location Name</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: left;">City</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: left;">State</div>
+                                <select style="float: right; font-size: 10px; width: 174px; height: 20px; margin-right: 15px;" name="status">
+                                    <option selected="">Select a State</option>
+									<option value="AK">Alaska</option>
+									<option value="AL">Alabama</option>
+									<option value="AR">Arkansas</option>
+									<option value="AZ">Arizona</option>
+									<option value="CA">California</option>
+									<option value="CO">Colorado</option>
+									<option value="CT">Connecticut</option>
+									<option value="DC">Washington D.C.</option>
+									<option value="DE">Delaware</option>
+									<option value="FL">Florida</option>
+									<option value="GA">Georgia</option>
+									<option value="HI">Hawaii</option>
+									<option value="IA">Iowa</option>
+									<option value="ID">Idaho</option>
+									<option value="IL">Illinois</option>
+									<option value="IN">Indiana</option>
+									<option value="KS">Kansas</option>
+									<option value="KY">Kentucky</option>
+									<option value="LA">Louisiana</option>
+									<option value="MA">Massachusetts</option>
+									<option value="MD">Maryland</option>
+									<option value="ME">Maine</option>
+									<option value="MI">Michigan</option>
+									<option value="MN">Minnesota</option>
+									<option value="MO">Missourri</option>
+									<option value="MS">Mississippi</option>
+									<option value="MT">Montana</option>
+									<option value="NC">North Carolina</option>
+									<option value="ND">North Dakota</option>
+									<option value="NE">Nebraska</option>
+									<option value="NH">New Hampshire</option>
+									<option value="NJ">New Jersey</option>
+									<option value="NM">New Mexico</option>
+									<option value="NV">Nevada</option>
+									<option value="NY">New York</option>
+									<option value="OH">Ohio</option>
+									<option value="OK">Oklahoma</option>
+									<option value="OR">Oregon</option>
+									<option value="PA">Pennsylvania</option>
+									<option value="PR">Puerto Rico</option>
+									<option value="RI">Rhode Island</option>
+									<option value="SC">South Carolina</option>
+									<option value="SD">South Dakota</option>
+									<option value="TN">Tennessee</option>
+									<option value="TX">Texas</option>
+									<option value="UT">Utah</option>
+									<option value="VA">Virginia</option>
+									<option value="VT">Vermont</option>
+									<option value="WA">Washington</option>
+									<option value="WI">Wisconsin</option>
+									<option value="WV">West Virginia</option>
+									<option value="WY">Wyoming</option>
+
+                                </select>
+                                <br><br>
+                                <div style="float: left;">Zip/Postal:</div><input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: right; margin-top: 2px; margin-right: 15px;">
+                                    <div class="btn_start"></div>
+                                    <div onmousedown="showSearchBox(this)" class="btn_normal">Search</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                                <div style="float: right; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onmousedown="showSearchBox(this);" class="btn_normal">Cancel</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                            </div>
+                            <div class="result_left_side">
+                                <div style="float: left; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onClick="showSearchBox(this);" class="btn_normal">Search</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                                <div class="box_description" id="resultDescription">Showing 1 - 3 of 3</div>
+                            </div>
+                        </div>
+                        <form style="margin-bottom: 0pt; margin-top: -1px; margin-left: 0pt;" name="myform">
+                            <div id="searchResult_2">
+                                <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 2px; border-top: 1px none;">
+                                    <tbody><tr bgcolor="#efefef">
+                                        <td width="17px" class="check_box_top"><input type="checkbox" style="margin-left: 3px; visibility: hidden;" onclick="checkAll(document.myform.row, this)" name="selectAll" id="check_box"></td>
+                                        <td width="50%" class="box_subheader"><div class="icon_up"></div>Location Name</td>
+                                        <td width="25%" class="box_subheader"><div style="margin-left: 5px;">City</div></td>
+                                        <td style="border-right: medium none;" class="box_subheader"><div style="margin-left: 5px;">State</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_1"><input type="radio" style="margin-left: -2px; height: 20px;" name="row"></td>
+                                        <td class="row_1">Academy</td>
+                                        <td class="row_1">Austin</td>
+                                        <td style="border-right: medium none;" class="row_1">TX</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_2"><input type="radio" style="margin-left: -2px; height: 20px;" name="row"></td>
+                                        <td class="row_2">Lamar</td>
+                                        <td class="row_2">Austin</td>
+                                        <td style="border-right: medium none;" class="row_2">TX</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="radio" style="margin-left: -2px; height: 20px;" name="row"></td>
+                                        <td style="border-bottom: medium none;" class="row_1">6th Street</td>
+                                        <td style="border-bottom: medium none;" class="row_1">Austin</td>
+                                        <td style="border-right: medium none; border-bottom: medium none;" class="row_1">TX</td>
+                                    </tr>
+                                </tbody></table>
+                            </div>
+                        </form>
+                    </div>
+                    <div style="float: right; margin-top: 25px; margin-right: 15px;">
+                        <div class="btn_start"></div>
+                        <a href="edit_schedule.jsp"><div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnFinish")</div></a>
+                        <div class="btn_end"></div>
+                    </div>
+
+                    <div style="float: left; margin-top: 25px; margin-left: 25px;">
+                        <div class="btn_start"></div>
+                        <a onClick="cancelInformation();"><div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div></a>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end   
+<!-- footer-end -->
+	 </td></tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+## this must be included on every page for all head items
+#parse("snippets/learnerNewHead.vm")
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript"/>
+
+<script type="text/javascript">
+    document.title="$brander.getBrandElement("lms.manageUser.addNewLearner.title")";
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+    });
+</script>
+#macro( encryptedPassword $password )
+    #set($passwordLength = $password.length())
+    #set( $encPassword ='')
+        #foreach($i in [1..$passwordLength])
+        #set($encPassword="${encPassword}*")
+        #end
+    $encPassword
+#end
+</head>
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminWizardHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-pannel-content -->
+        <div>
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.wizard") <br> showing 3 of 3</div>
+                <div class="l-menu-back-text-inact">1. $brander.getBrandElement("lms.manageUser.addNewLearner.learnerProfile.text")</div>
+                <div class="l-menu-back-text-inact">2. $brander.getBrandElement("lms.manageUser.addNewLearner.learnerGroups.text")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">3. $brander.getBrandElement("lms.manageUser.addNewLearner.learnerConfirmation.text")</div>
+            </div>
+        </div>
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+            		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+				    <tr>
+					<td id="page-icon" class="courseLogoUser">
+					    &nbsp;
+					</td>
+					<td id="page-description">
+					    <div id="page-heading">$brander.getBrandElement("lms.manageUser.addNewLearner.title")</div>
+					    <div id="page-help">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.description")</div>
+					</td>
+				    </tr>
+				</table>            
+            <!-- Logo+Manage-User-end -->
+
+            <form name="manageform" action="adm_addLearner.do" method="POST"> 
+            <!-- Learner-profile -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e7a" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e8" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.addNewLearner.learnerProfile.text")</div>
+                </div>
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                <!-- left-box -->
+                #springBind( "learnerForm.firstName")
+                        #set ($firstName=$!{status.value})
+                #springBind( "learnerForm.middleName")
+                        #set ($middleName=$!{status.value})
+                #springBind( "learnerForm.lastName")
+                        #set ($lastName=$!{status.value})
+                #springBind( "learnerForm.officePhone")
+                        #set ($officePhone=$!{status.value})
+                #springBind( "learnerForm.officePhoneExtn")
+                        #set ($officePhoneExtn=$!{status.value})
+                #springBind( "learnerForm.mobilePhone")
+                        #set ($mobilePhone=$!{status.value})
+                #springBind( "learnerForm.emailAddress")
+                        #set ($emailAddress=$!{status.value})
+                #springBind( "learnerForm.streetAddress1")
+                        #set ($streetAddress1=$!{status.value})
+                #springBind( "learnerForm.streetAddress1a")
+                        #set ($streetAddress1a=$!{status.value})
+                #springBind( "learnerForm.city")
+                        #set ($city=$!{status.value})
+                #springBind( "learnerForm.state")
+                        #set ($state=$!{status.value})
+                #springBind( "learnerForm.zipcode")
+                        #set ($zipcode=$!{status.value})
+                #springBind( "learnerForm.country")
+                        #set ($country=$!{status.value})
+                #springBind( "learnerForm.streetAddress2")
+                        #set ($streetAddress2=$!{status.value})
+                #springBind( "learnerForm.streetAddress2a")
+                        #set ($streetAddress2a=$!{status.value})
+                #springBind( "learnerForm.city2")
+                        #set ($city2=$!{status.value})
+                #springBind( "learnerForm.state2")
+                        #set ($state2=$!{status.value})
+                #springBind( "learnerForm.zipcode2")
+                        #set ($zipcode2=$!{status.value})
+                #springBind( "learnerForm.country2")
+                        #set ($country2=$!{status.value})
+                #springBind( "learnerForm.userName")
+                        #set ($userName=$!{status.value})
+                #springBind( "learnerForm.password")
+                        #set ($learnerpassword=$!{status.value})
+                #springBind("learnerForm.enabled")
+                        #set ($accountDisabled=!${status.value})
+                #springBind("learnerForm.expirationDate")
+                        #set ($expirationDate=$!{status.value})
+                #springBind("learnerForm.accountNonLocked")
+                        #set ($accountNonLocked=!${status.value})
+                #springBind("learnerForm.accountNonExpired")
+                        #set ($accountNonExpired=!${status.value})
+                #springBind("learnerForm.visibleOnReport")
+                        #set ($visibleOnReport=${status.value})
+                #springBind("learnerForm.changePasswordOnLogin")
+                        #set ($changePasswordOnLogin=${status.value})
+                #springBind("learnerForm.role")
+                        #set ($role=$!{status.value})
+                #springBind("learnerForm.roleName")
+                        #set ($roleName=$!{status.value})
+                    <!-- s -->
+                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                    <!-- s -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$firstName</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.middleName")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$middleName</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$lastName</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.officePhone")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$officePhone</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.officePhoneExt")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$officePhoneExtn</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.mobilePhone")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$mobilePhone</div>
+                    </div>
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.eMailAddress")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$emailAddress</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.address1")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$streetAddress1</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.homeAddLn2")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$streetAddress1a</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.city")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$city</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.state")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">
+                        
+                        #if($country == "US" || $country == "United States" || $country == "AU" || $country == "Australia" || $country == "AE" || $country == "United Arab Emirates" || $country == "CA" || $country == "Canada" || $country == "GB" || $country == "United Kingdom")                    
+                            #set( $StateName = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                            #set($Country = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                            #foreach ($objCountry1 in $Country)
+                                #if($country == $objCountry1.value)
+                                    #set( $State_var1 = "lms.manageUser.AddLearner.")
+                                    #set( $State_var2 = ".State")
+                                    #set( $State_var = "$State_var1$objCountry1.value$State_var2")
+                                    #set( $StateName = $brander.getBrandMapElements($State_var) )
+                                #end
+                            #end
+
+                            #foreach ($st in $StateName)
+                                #if($st.value==$state)
+                                    $st.label
+                                #end
+                            #end
+                        #else
+                        	$state
+                        #end
+                        </div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.zip")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$zipcode</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.country")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">
+
+                            #set($CountryName = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                            #foreach ($c in $CountryName)
+                                #if($c.value==$country)
+                                    $c.label
+                                #end
+                            #end
+
+                        </div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.block_text_in-r-fb")"></div>
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.block_text_in2")"></div>
+                   </div>
+                   <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.address2")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$streetAddress2</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.homeAddLn2")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$streetAddress2a</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.city")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$city2</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.state")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">
+						
+						#if($country2 == "US" || $country2 == "United States" || $country2 == "AU" || $country2 == "Australia" || $country2 == "AE" || $country2 == "United Arab Emirates" || $country2 == "CA" || $country2 == "Canada" || $country2 == "GB" || $country2 == "United Kingdom")                        
+                            #set( $StateName = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                            #set($Country = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                            #foreach ($objCountry1 in $Country)
+                                #if($country2 == $objCountry1.value)
+                                    #set( $State_var1 = "lms.manageUser.AddLearner.")
+                                    #set( $State_var2 = ".State")
+                                    #set( $State_var = "$State_var1$objCountry1.value$State_var2")
+                                    #set( $StateName = $brander.getBrandMapElements($State_var) )
+                                #end
+                            #end
+
+                            #foreach ($st in $StateName)
+                                #if($st.value==$state2)
+                                    $st.label
+                                #end
+                            #end
+                        #else
+                        	$state2
+                        #end
+
+                        </div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.zip")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$zipcode2</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.country")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">
+
+                            #set($Country = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                            #foreach ($c in $CountryName)
+                                #if($c.value==$country2)
+                                    $c.label
+                                #end
+                            #end
+
+                        </div>
+                    </div>
+                <!-- left-box-end -->
+                </div>
+            </div>
+            <!-- Learner-profile-end -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- Login-&-Password -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e7a" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e8" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.addNewLearner.loginPassword.text")</div>
+                </div>
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                <!-- left-box -->
+                    <!-- s -->
+                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                    <!-- s -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.eMailAddress")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$userName</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.Password")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">#encryptedPassword($learnerpassword)</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AccountLocked")</div>
+                    #if($accountNonLocked)
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                    #else
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div>
+                    #end
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.accountExpired")</div>
+                    #if($accountNonExpired)
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                    #else
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div>
+                    #end
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.expirationDate")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$expirationDate</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.accountDisabled")</div>
+                    #if($accountDisabled)
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                    #else
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div>
+                    #end
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.visiableReports")</div>
+                    #if($visibleOnReport)
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                    #else
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div>
+                    #end
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.changePass")</div>
+                    #if($changePasswordOnLogin)
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes")</div>
+                    #else
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")</div>
+                    #end
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")"><!-- using for space --></div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">$brander.getBrandElement("lms.manageUser.searchLearner.caption.Role")</div>
+                    <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">$roleName</div>
+                    </div>
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")"><!-- using for space --></div>
+                    </div>
+                <!-- left-box-end -->
+                </div>
+            </div>
+            <!-- Login-&-Password-end -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- Group-Membership -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e7a" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e8" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.groupMembership")</div>
+                </div>
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                <!-- left-box -->
+                    <!-- s -->
+                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                    <!-- s -->
+                    #foreach ($courseGroups in $orgGroupNameList)
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">#if($velocityCount==1)$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.orgGroup")#end</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">                     
+                            <option>$courseGroups</option><br/> 
+                        </div>
+                    </div>
+                    #end
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")"><!-- using for space --></div>
+                    </div>
+                    #foreach ($learnerGroups in $learnerGroupNameList)
+                    <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")">#if($velocityCount==1)$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.learnerGroup")#end</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")">
+                            <option>$!{learnerGroups}</option><br/> 
+                        </div>
+                    </div>
+                    #end
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in-r-fb")"><!-- using for space --></div>
+                    </div>
+                </div>
+                <!-- left-box-end -->
+            </div>
+            <!-- Group-Membership-end -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- button-div -->
+            <input type="hidden" id="currentpage" name="_page" value="2"/>
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />            
+            <div class="managerBtn">
+                <div class="btn-left2"><a class="button" onClick="location.href='adm_manageLearners.do';"><span class="button">Cancel</span></a></div>
+                
+                <div class="btn-right1">
+                 	    				<a class="button" onClick="submitButtonForm(document.manageform,'wizardSubmitter','_finish');"><span class="button">Finish</span></a>
+                </div>
+                     
+                <div class="btn-right1">
+                 	    				<a class="button" onClick="submitButtonForm(document.manageform,'wizardSubmitter','_target1');"><span class="button">Previous</span></a>
+                </div>
+            </div>
+            <!-- button-div -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+            </form>
+        </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</body>
+</html>

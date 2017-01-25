@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructor/instructorHead.vm")
+<head>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelEditCourse';
+        document.editCourseOverviewForm.submit();
+}
+
+function saveInformation(){
+		updateTextArea("overview1");
+		updateTextArea("prerequisites1");
+        document.getElementById('actionmethod').value='saveUpdateCourseOverview';
+        document.editCourseOverviewForm.submit();
+}
+$(document).ready(function()
+{
+    $('#content2a').height($(window).height() - ($('#header').height()+$('footer').height()));
+    if ($('#right-pannel-new').height()<$('#content2a').height()) {
+        $('#right-pannel-new').height($('#content2a').height());
+    }
+    if ($('#right-pannel').height()>$('#content2a').height()) {
+        $('#content2a').height($('#right-pannel').height());
+    }
+	$('#sideBar').height($('#right-pannel-new').height());
+
+        $('#content2a').scroll(function()
+        {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+<form name="editCourseOverviewForm" method="POST" action="ins_viewCourse.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+	 </td></tr>
+   
+<td  id="row-tabs" class="tab_bar" colspan="2">
+
+     <table width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody><tr>
+                <td width="194"><div style="width: 194px;" class="tab_blank"></div></td>
+                <td>&nbsp;</td>
+                <td width="697">
+					#springBind("courseForm.id")
+					<a onclick="FormSubmit('viewCourseSummary');"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.summary")</div></a>
+					#if($courseForm.courseType == "Learner Assignment" || $courseForm.courseType == "Instructor Connect")
+					#else	
+					<a onclick="FormSubmit('viewCourseOverView');"><div style="width: 120px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.courseOverview")</div></a>
+					<a onclick="FormSubmit('viewCourseExamOverView');"><div style="width: 120px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.examOverview")</div></a>
+					#end
+					<a onclick="FormSubmit('viewCourseAdditionalDetails');"><div style="width: 140px;" class="tab">$brander.getBrandElement("lms.instructor.tabBar.additionalDetails")</div></a>
+					#if($courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC") || $courseForm.courseType == $brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) 
+					<a href="ins_manageSynchronousClass.do?id=$status.value"><div class="tab_selected"">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>
+					#elseif($courseForm.courseType == "DFC" || $courseForm.courseType == "Learner Assignment") 					
+					<a href="ins_searchCourseInstructor.do?id=$status.value&courseType=$context.courseType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->
+					#elseif($courseForm.courseType == "Instructor Connect")
+						<a href="ins_searchCourseInstructor.do?id=$status.value&courseType=$context.courseType"><div class="tab">$brander.getBrandElement("lms.instructor.tabBar.instructor")</div></a> <!-- [4/30/2010] For VCS-266 -->-->
+						<a href="ins_manageSynchronousClass.do?id=$status.value"><div class="tab_selected"">$brander.getBrandElement("lms.instructor.tabBar.schedule")</div></a>
+					#end
+					<a href="ins_manageCourseCourseGroups.do?id=$status.value"><div style="border-right-style: solid; " class="tab">$brander.getBrandElement("lms.instructor.tabBar.courseGroups")</div></a>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+    </tbody></table>
+
+</td>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			   #springBind("courseForm.*")
+			   #parse("snippets/instructorCourseLeftMenu.vm")
+			 </table></td>
+			 			
+                <!-- left-pannel-content-end -->
+<TD id="content" >
+	<div id="scrollable">
+		 	  <!-- Page Description -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.editCourse.caption.title.editSchduleTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.editCourse.caption.title.editSchduleDescription")</div>
+			</td>
+		    </tr>
+		</table>		 	  
+	
+        <!-- Search Result Start -->
+        <div class="search_box_result" id="resultBox">
+        <!-- Result Header Start -->
+            <div class="box_header" id="resultHeader">
+                <!-- Result Heading -->
+                <div style="float: left; height: 23px;">
+                    <div style="float: left; margin-top: 2px;">
+						<a href="ins_addCourseSchedule.do">
+                        <div class="btn_start"></div>
+                        <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">Add Schedule</div>
+                        <div class="btn_end"></div>
+						</a>
+                     </div>
+                    <div style="float: left; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">Delete Schedule</div>
+                        <div class="btn_end"></div>
+                     </div>
+                </div>
+                <div class="visible" style="float: left; height: 150px; left: 47%;" id="searchBox">
+                    Search Schedules<br><br><br>
+                    <div style="float: left;">Class Name</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                    <div style="float: left;">Start Date</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                    <div style="float: left;">End Date</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                    <div style="float: right; margin-top: 2px; margin-right: 15px;">
+                        <div class="btn_start"></div>
+                        <div onmousedown="showResult();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Search</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float: right; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onmousedown="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Cancel</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+                <div class="result_left_side">
+                    <!-- Result Description -->
+                    <div style="float: left; margin-top: 2px;">
+                        <div class="btn_start"></div>
+                        <div onClick="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Search</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <!-- All Icon -->
+                    <div onmousedown="showResult();" onmouseout="hideTooltip();" onmouseover="showTooltip('Show All', event);" class="icon_all" id="showAll"></div>
+                    <!-- Next Icon -->
+                    <div onmouseout="hideTooltip();" onmouseover="showTooltip('Next', event);" class="icon_next" id="goNext"></div>
+                    <!-- Back Icon -->
+                    <div onmouseout="hideTooltip();" onmouseover="showTooltip('Back', event);" class="icon_back" id="goBack"></div>
+                    <!-- Showing Results -->
+                    <div class="box_description" id="resultDescription">Showing 1 - 7 of 10</div>
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            <form style="padding: 0pt; margin: 0pt;" name="myform1">
+            <div id="searchResult_1">
+                <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 2px; border-top: 1px none;">
+                  <tbody><tr bgcolor="#efefef">
+                    <td width="17px" class="check_box_top"><input type="checkbox" style="margin-left: 3px;" onclick="checkAll(document.myform1.row, this)" name="selectAll" id="check_box"></td>
+                    <td width="60%" class="box_subheader"><div class="icon_up"></div>Class Name</td>
+                    <td class="box_subheader"><div style="margin-left: 13px;">Start Date</div></td>
+                    <td style="border-right: medium none;" class="box_subheader"><div style="margin-left: 13px;">End Date</div></td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_1"><a href="ins_editCourseSchedule.do?method=viewScheduleSummary">InCopy CS3 Essential Training</a></td>
+                    <td class="row_1">8/17/09</td>
+                    <td style="border-right: medium none;" class="row_1">8/23/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_2">InCopy CS3 Essential Training</td>
+                    <td class="row_2">8/24/09</td>
+                    <td style="border-right: medium none;" class="row_2">8/30/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_1">InCopy CS3 Essential Training</td>
+                    <td class="row_1">9/1/09</td>
+                    <td style="border-right: medium none;" class="row_1">9/7/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_2">InCopy CS3 Essential Training</td>
+                    <td class="row_2">9/8/09</td>
+                    <td style="border-right: medium none;" class="row_2">9/14/09</td>
+                  </tr>
+				  <tr>
+                    <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td style="border-bottom: medium none;" class="row_1">InCopy CS3 Essential Training</td>
+                    <td style="border-bottom: medium none;" class="row_1">9/15/09</td>
+                    <td style="border-right: medium none; border-bottom: medium none;" class="row_1">9/24/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_2">InCopy CS3 Essential Training</td>
+                    <td class="row_2">9/8/09</td>
+                    <td style="border-right: medium none;" class="row_2">9/14/09</td>
+                  </tr>
+				  <tr>
+                    <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td style="border-bottom: medium none;" class="row_1">InCopy CS3 Essential Training</td>
+                    <td style="border-bottom: medium none;" class="row_1">9/15/09</td>
+                    <td style="border-right: medium none; border-bottom: medium none;" class="row_1">9/24/09</td>
+                  </tr>
+                </tbody></table>
+            </div>
+            </form>
+            <!-- Result Subheader End -->
+            <!-- Search Result Start -->
+            <form style="margin-bottom: 0pt; margin-top: -1px; margin-left: 0pt;" name="myform">
+            <div class="visible" id="searchResult_2">
+                <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 2px; border-top: 1px none;">
+                  <tbody><tr bgcolor="#efefef">
+                    <td width="17px" class="check_box_top"><input type="checkbox" style="margin-left: 3px;" onclick="checkAll(document.myform.row, this)" name="selectAll" id="check_box"></td>
+                    <td width="60%" class="box_subheader"><div class="icon_up"></div>Class Name</td>
+                    <td class="box_subheader"><div style="margin-left: 13px;">Start Date</div></td>
+                    <td style="border-right: medium none;" class="box_subheader"><div style="margin-left: 13px;">End Date</div></td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_1"><a href="edit_schedule.jsp">InCopy CS3 Essential Training</a></td>
+                    <td class="row_1">8/17/09</td>
+                    <td style="border-right: medium none;" class="row_1">8/23/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_2">InCopy CS3 Essential Training</td>
+                    <td class="row_2">8/24/09</td>
+                    <td style="border-right: medium none;" class="row_2">8/30/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_1">InCopy CS3 Essential Training</td>
+                    <td class="row_1">9/1/09</td>
+                    <td style="border-right: medium none;" class="row_1">9/7/09</td>
+                  </tr>
+                  <tr>
+                    <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td class="row_2">InCopy CS3 Essential Training</td>
+                    <td class="row_2">9/8/09</td>
+                    <td style="border-right: medium none;" class="row_2">9/14/09</td>
+                  </tr>
+				  <tr>
+                    <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                    <td style="border-bottom: medium none;" class="row_1">InCopy CS3 Essential Training</td>
+                    <td style="border-bottom: medium none;" class="row_1">9/15/09</td>
+                    <td style="border-right: medium none; border-bottom: medium none;" class="row_1">9/24/09</td>
+                  </tr>
+                </tbody></table>
+            </div>
+            </form>
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end   
+<!-- footer-end -->
+</td></tr>
+</table>
+</form>
+</body>
+</html>

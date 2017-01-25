@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/learnerNewHead.vm")
+        <!-- Added by Niles 3.29.11 -->
+        <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+      <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script language="javascript" type="text/javascript">
+            function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.editLearnerGroupName.submit();
+            }
+        </script>
+    </head>
+    #macro( treeAddOrgGroupStep1 $treeNodes )
+        #set($lastDepth = 0)
+        #set($arrParent = [])   
+        #foreach($node in $treeNodes)
+            #set($depthDiff = ${node.depth} - ${lastDepth})
+            #set ($var=$velocityCount%2)
+            #if ($!{var}==0)
+                #set ($rowColor="org_row2")
+                #else 
+                    #set ($rowColor="org_row1")
+            #end
+            #set ($val=0)
+            $arrParent.add($node.depth,$node.value.id)
+            #if ($!{node.depth}>0)
+                #set ($val=$node.depth - 1)
+                #set($parentId=$arrParent.get($val))
+            #end
+            <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" style="height:30px;">
+                <div class="icon_blank" style="padding-top:3px;">&nbsp;</div>
+                #foreach($i in [1..${node.depth}])
+                    #if ($!{node.depth}>0)
+                        <div class="icon_blank2" style="padding-top:3px;"></div>
+                    #end
+                #end
+                #if(${node.isLeaf()})
+                    <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+                    #else 
+                        <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${context.orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+                #end
+                <div class="org_checkbox">
+                    <input type="radio" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end />
+                </div>
+                <div style="text-align:justify;padding-top:3px;">${node.value.name}</div>
+            </div>
+        #end
+    #end
+    <body>
+        <form name="editLearnerGroupName" method="post" action="">
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- header -->
+                        #parse("snippets/managerHeader.vm")
+                        <!-- header-end -->
+                    </td>
+                </tr>
+                <td id="row-tabs" class="tab_bar" colspan="2">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                            <td width="195">
+                                <div style="width:271px;"></div>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td width="305">
+                                <div class="tab_selected" onclick="location.href='mgr_saveLearnerGroupName.do?learnerGroupId=${context.learnerGroup.getId()}'">Summary</div>
+                                <div class="tab" onClick="location.href='mgr_viewLearnerGroupMembers.do?learnerGroupId=${context.learnerGroup.getId()}'" >Members</div>
+                                <div class="tab" onClick="location.href='mgr_viewLearnerGroupCourses.do?learnerGroupId=${context.learnerGroup.getId()}'" style="border-right-style:solid;">Courses</div>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </table>
+                </td>
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-navigation" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <!-- left-pannel-content -->
+                            #parse("snippets/managerLeftMenu.vm")
+                            <!-- left-pannel-content-end -->
+                        </table>
+                    </td>
+                    <!-- right-pannel-content -->
+                    <TD id="content" >
+                        <div id="scrollable">
+                            #set($errorCodes = [])  
+                            #if($!{context.validateLearnerGroupName})
+                                #set($temp = true)
+                            #end
+                            #if($!{context.validateLearnerGroupName})
+                                #set($temp = $errorCodes.add(${context.validateLearnerGroupName}))
+                            #end
+                            #if($!{context.validateDuplicateGroupName})
+                                #set($temp = true)
+                            #end
+                            #if($!{context.validateDuplicateGroupName})
+                                #set($temp = $errorCodes.add(${context.validateDuplicateGroupName}))
+                            #end
+                            <!-- error-box -->
+                            #if($errorCodes.size()>0)
+                                <div id="message_box" >
+                                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                    #foreach($errorCode in $errorCodes)
+                                        #set ($error = $brander.getBrandElement($errorCode))
+                                        <div class="width40pct">
+                                            <div class="message_box_align">
+                                                <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" />
+                                            </div>
+                                            <div class="message_box_align">$error</div>
+                                        </div>
+                                    #end
+                                </div>
+                            #end
+                            <!-- error-box -->
+                            <!-- Logo+Manage-User -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr>
+                                    <td id="page-icon" class="page-icon-users">
+                                        &nbsp;
+                                    </td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.manageUser.editLearnerGroup.caption")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.manageUser.editLearnerGroupName.description")</div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Logo+Manage-User-end -->
+                            <!-- Details -->
+                            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                                    <div id="e13" class="Search-Containerheaderleft")">GROUP DETAILS</div>
+</div>
+<!-- User-left-right-list -->
+<div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+    <!-- 1 -->
+    <!-- space -->
+    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"  style="height:3px;"></div>
+    <!-- space -->
+    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+        <div class="$brander.getBrandElement("lms.manageUser.viewNewLearner.cssClass.block_text_in2")" style="width:200px;">$brander.getBrandElement("lms.manageOrganizationGroup.caption.OrganizationGroupName")</div>
+        <div id="survey-name-required">
+            <div class="required_field">*</div>
+        </div>
+        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+            <input type="text" value="$!{context.learnerGroup.name}" name="learnerGroupName" class="input_text_field" maxlength="50" style="width: 360px;" />
+        </div>
+        <!-- space -->
+        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")" style="height:7px;"></div>
+        <!-- space -->
+    </div>
+</div>
+<!-- End-User-left-right-list -->
+</div>
+<!-- End-Details -->
+<!-- space -->
+<div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+<!-- space -->
+<div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+    <div class="Block-Contain-header">
+        <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.viewLearnerGroupMembers.caption.OrganizationalGroup")</div>
+    </div>
+    #treeAddOrgGroupStep1(${context.orgGroupTreeAsList})
+</div>
+<!-- content-Block -->
+<div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+<!-- button-div -->
+<div style="width:98%;">
+    <div style="float: right; margin-top: 15px;">
+        <div>
+            <a style="text-decoration:none;"  onClick="FormSubmit('Save');">
+                <div class="btn_start"></div>
+                <div class="btn_normal">Save</div>
+                <div class="btn_end"></div>
+            </a>
+        </div>
+    </div>
+    <div style="float: right; margin-top: 15px;margin-right:5px;"">
+        <div>
+            <a style="text-decoration:none;" onClick="javascript:window.location='mgr_manageLearnerGroups.do';">
+                <div class="btn_start"></div>
+                <div class="btn_normal">Cancel</div>
+                <div class="btn_end"></div>
+            </a>
+        </div>
+                                    </div>
+                                    <input type="hidden" id="action" name="action" />
+                                </div>
+                                <!-- scrollable-div -->
+                            </div>
+                            <!-- right-pannel-content-end -->
+</td>
+</tr>
+<!-- content2-area-end -->
+<!-- tooltip -->
+
+<!-- tooltip -->
+<tr> <!-- Footer BLOCK -->
+    <td id="footer" colspan="2">
+        <!-- footer -->
+        #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+    </td>
+</tr>
+</table>
+<!-- main-container -->
+</form>
+</body>
+</html>

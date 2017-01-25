@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+<META HTTP-EQUIV="cache-control" CONTENT="no-cache" />
+<META HTTP-EQUIV="expires" CONTENT="0" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache" />  
+        #parse("snippets/learnerNewHead.vm")
+        <script language="javascript" type="text/javascript">
+            /*this script converts from seconds to <Hours:Minute> format*/
+                var launchWindow;
+                
+                function launchCourse(courseId, enrollmentId) {
+                
+                stopBothTimers();
+        	
+	        	IS_LS360_SCORM = false;
+	        	IS_LS360_SCORM = ('${context.courseType}' == "Scorm Course")?true:false;
+                
+                var url = "#springUrl("/lrn_launchCourse.do")";
+                var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";;
+                if ( launchWindow != null ) {
+                launchWindow.close();
+                }
+                launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+                launchWindow.focus();
+                }
+                
+                function launchCourse(courseId, enrollmentId, courseType) {
+		        	stopBothTimers();
+		        	
+		        	IS_LS360_SCORM = false;        	
+		        	IS_LS360_SCORM = ((courseType == "Scorm Course") ? true : false);
+		        	        	
+		        	        	
+		            var url = "#springUrl("/lrn_launchCourse.do")";
+		            var params = "?courseId="+courseId+"&learnerEnrollmentId="+enrollmentId+"&method=displayLearnerProfile";
+		            if ( launchWindow != null ) {
+		                launchWindow.close();
+		            }
+		            launchWindow = window.open(url+params,'VU360Player','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=no,status=yes,width=1024,height=768,left=0,top=0');
+		                        
+		            
+		            launchWindow.focus();
+		            launchWindow.opener=this.window;
+	            
+	        	}
+	        
+                
+                function showDescription(){
+                document.location="#springUrl("/lrn_courseDescription.do?courseId=$!{context.course.id}&learnerEnrollmentId=$!{context.learnerEnrollment.id}")";
+                }
+                function backToCourses() 	{
+                document.location="#springUrl("/lrn_myCourses.do")";
+                }
+                function courseCompletionReport() {
+                document.location="#springUrl("/lrn_courseCompletionReport.do?courseId=$!{context.course.courseGUID}&learnerEnrollmentId=$!{context.learnerEnrollment.id}&show=$context.viewType")";
+                }
+                function changeTab(selTab) {		
+                document.getElementById('activeTab').value = selTab;
+                document.frmCourseDetail.submit();
+                }
+                $(document).ready(function(){
+                
+                });
+</script>
+<!--script type="text/javascript" language="javascript" src="javascript/lmsSCORMAdapter.js"></script>
+<script>
+   
+		var API_1484_11 = new SCORMAdapter();
+        var API = new SCORMAdapter();
+</script-->
+</head>
+#set($rowClass='style=background-color:#f4f4f4')
+#macro(toogleRowClass $rowClass)
+    #if($rowClass=='style=background-color:#f4f4f4')
+        #set($rowClass='style=background-color:#ffffff')
+        #elseif($rowClass=='style=background-color:#ffffff')
+            #set($rowClass='style=background-color:#f4f4f4')
+    #end
+#end
+<body>
+    <form name="frmCourseDetail" method="post" action="lrn_courseDetails.do?learnerEnrollmentId=${context.learnerEnrollment.id}&show=${context.viewType}" >
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <!-- Header Row -->
+            <tr>
+                <td id="header" colspan="2">
+                    #parse("snippets/learnerNewHeader.vm")
+                </td>
+            </tr>
+            <!-- Page -->
+            <tr id="main">
+                <!-- Page Content -->
+                <td id="content">
+                    <!-- Page Scrollable Area -->
+                    <div id="scrollable">
+                        <!-- Logo+Manage-User -->
+                        <div class="page_description" id="pageDescription" style="margin-left:0px;">
+                            <!-- Page Icon -->
+                            <div class="courseLogoCourses" id="logoHolder"></div>
+                            <!-- Page Heading -->
+                            <div class="page_heading" id="pageHeading">Statistics for $context.userName</div>
+                            <!-- Page Description -->
+                            <div id="learner_pageDescription">$brander.getBrandElement("lms.coursedetails.header.description")</div>
+                        </div>
+                        <!-- Logo+Manage-User-end -->
+                        <table width="98%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td colspan="2">
+                                    <div class="managerBtn1">
+                                        <div style="float:right; margin-top:5px;">
+                                            <a onclick="return window.print();" style="text-decoration:none;">
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.printpage")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+										#*
+                                        #if($context.courseType == "Self Paced Course")
+                                            <div style="float:right; margin-top:5px;">
+                                                <a onclick="return courseCompletionReport();" style="text-decoration:none;">
+                                                    <div class="btn_start"></div>
+                                                    <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.completionreport")</div>
+                                                    <div class="btn_end"></div>
+                                                </a>
+                                            </div>
+										#end
+										*#
+                                        <div style="float:right; margin-top:5px;">
+                                            <a onclick="return showDescription();" style="text-decoration:none;">
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.coursedescription")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+                                        <div style="float:right; margin-top:5px;">
+                                            <a onclick="location.href='lrn_myCourses.do?show=${context.viewType}';" style="text-decoration:none;">
+                                                <div class="btn_start"></div>
+                                                <div class="btn_normal">$brander.getBrandElement("lms.learnercoursedetails.buttons.backtocourses")</div>
+                                                <div class="btn_end"></div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <table id="courseDetails" width="98%" border="0" cellpadding="0" cellspacing="0">
+                            #set ($isExpired=0)
+                            #if( ( $context.learnerEnrollment.enrollmentStatus("expired") || $!dateComparisonTool.difference($dateComparisonTool,$context.learnerEnrollment.enrollmentEndDate).days <= 0) )
+                                    #set ($isExpired=1)
+                            #end
+                            <tr>
+                                <td valign="middle" style="width:40px">
+                                    <img src="$brander.getBrandElement("$context.courseIconToShow")" width="31" height="31" alt="" />
+                                </td>
+                                <td valign="middle" nowrap>
+                                    #if($isExpired==1) <font color="#CCCCCC" size="5pt"> $context.course.courseTitle
+                                            #else
+                                                <a class="courseName" href=#if(($!context.syncClass && $context.syncClass.currentlyInSession== false))"#" #else "javascript:launchCourse('$context.course.id','$context.learnerEnrollment.id', '$context.courseType')" #end>$context.course.courseTitle</a>
+                                    #end
+                                    </td>
+                                    </tr>
+                                        #if ($context.activeTab == 'prev' && $context.similarEnrollments.size() > 0)
+                                            <tr>
+                                                <td id="enrollmentPeriod" colspan="2">
+                                                    <div>$brander.getBrandElement("lms.coursedetails.caption.enrollmentPeriod")</div>
+                                                    <select name="selEnrollmentPeriod" id="selEnrollmentPeriod" onchange="return changeTab('prev');">
+                                                        #foreach ( $enrollment in $context.similarEnrollments )
+                                                            <option value="$enrollment.getId()" #if($enrollment.getId() == ${context.learnerEnrollment.id}) selected #end >$context.formatter.format($enrollment.getEnrollmentStartDate()) - $context.formatter.format($enrollment.getEnrollmentEndDate())</option>
+                                                        #end
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        #end
+								</table>
+                                <table id="courseDetailCss" border="0" width="98%" cellpadding="0" cellspacing="0" >
+                                    #set($rowClass='style=background-color:#f4f4f4')
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="header" colspan="2" >
+                                            <span class="headerRow">Summary Statistics</span>
+                                        </td>
+                                    </tr>
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Status</td>
+                                        #if( ($context.courseType.equals("Learner Assignment")) )
+                                        <td class="table-row" >$!{context.hwcourseassignmentcoursestatus.toLowerCase()}</td>
+                                        #else
+                                        <td class="table-row" >$brander.getBrandElement("lms.mycourses.status.$!{context.courseStatistics.status.toLowerCase()}")</td>
+                                        #end
+                                    </tr>
+                                    #if( (!$context.courseType.equals("External Course")) && (! $context.courseType.equals("DFC")) )
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row" width="85%">Course Progress</td>
+                                            <td class="table-row" >$formUtil.percent($context.courseStatistics.percentComplete, 1)%</td>
+                                        </tr>
+                                    #end
+                                    #if( (! $context.courseType.equals("Scorm Course")) && (! $context.courseType.equals("External Course")) && (! $context.courseType.equals("DFC")) )
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row" width="85%">Pre Assessment Score</td>
+                                            <td class="table-row" >#if($context.courseStatistics.preTestDate  &&(!$context.courseStatistics.pretestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.pretestScore, 2)% #else -- #end</td>
+                                        </tr>
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Average Quiz Score</td>
+                                            <td class="table-row" >#if($context.courseStatistics.lastQuizDate)  $formUtil.roundVal($context.courseStatistics.averageQuizScore,2)% #else -- #end</td>
+                                        </tr>
+                                    #end
+                                    #if (! $context.courseType.equals("DFC"))
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Highest Post Test Score</td>
+                                            <td class="table-row" >#if($context.courseStatistics.lastPostTestDate) $formUtil.roundVal($context.courseStatistics.highestPostTestScore, 2)% #else -- #end</td>
+                                        </tr>
+                                    #end
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Completion Date</td>
+                                        <td class="table-row" >
+                                        	#if ( $context.courseCompleted && $context.courseStatistics.completionDate) $formUtil.formatDateTimeMED($context.courseStatistics.completionDate, $locale) #else -- #end
+                                        </td>
+                                    </tr>
+                                    #if( (! $context.courseType.equals("Scorm Course")) && (! $context.courseType.equals("External Course")) && (! $context.courseType.equals("DFC")) )
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Total Time Spent In Course (hours:minutes)</td>
+                                            <td class="table-row" >$formUtil.formatTimeVeryShortInt($context.courseStatistics.totalTimeInSeconds)</td>
+                                        </tr>
+                                    #end
+                                </table>
+                                <table id="courseDetailCss" border="0"  width="98%" cellpadding="0" cellspacing="0" >
+                                    #set($rowClass='style=background-color:#f4f4f4')
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="header" colspan="2" >
+                                            <span class="headerRow">Detailed Statistics</span>
+                                        </td>
+                                    </tr>
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Status</td>
+                                    #if( ($context.courseType.equals("Learner Assignment")) )
+								        <td class="table-row" >$!{context.hwcourseassignmentcoursestatus.toLowerCase()}</td>
+								    #else
+								        <td class="table-row" >$context.courseStatistics.statusDisplayText</td>
+								    #end
+                                    
+                                    </tr>
+                                    #if( (!$context.courseType.equals("External Course")) && (! $context.courseType.equals("DFC")) )
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Course Progress</td>
+                                            <td class="table-row" >$formUtil.percent($context.courseStatistics.percentComplete, 1)%</td>
+                                        </tr>
+                                    #end
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">First Access Date</td>
+                                        <td class="table-row"  nowrap>#if ( $context.courseStatistics.firstAccessDate )$formUtil.formatDateTimeMED($context.courseStatistics.firstAccessDate, $locale) #else -- #end</td>
+                                    </tr>
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Last Access Date</td>
+                                        <td class="table-row"  nowrap>#if ( $context.courseStatistics.lastAccessDate )$formUtil.formatDateTimeMED($context.courseStatistics.lastAccessDate, $locale) #else -- #end</td>
+                                    </tr>
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Total Number of Accesses</td>
+                                        <td class="table-row" >#if ($context.courseStatistics.launchesAccrued > 0 ) $context.courseStatistics.launchesAccrued #else -- #end</td>
+                                    </tr>
+                                    #if( (!$context.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))) && (!$context.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))  && (! $context.courseType.equals("DFC")) )
+                                        #if( (!$context.courseType.equals("Scorm Course")) && (!$context.courseType.equals("External Course")) )
+                                            #toogleRowClass($rowClass)
+                                            <tr $rowClass  >
+                                                <td class="table-row"  width="85%">Pre Assessment Score</td>
+                                                <td class="table-row" >#if($context.courseStatistics.preTestDate &&(!$context.courseStatistics.pretestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.pretestScore, 2)% #else -- #end</td>
+                                            </tr>
+                                            #toogleRowClass($rowClass)
+                                            <tr $rowClass  >
+                                                <td class="table-row"  width="85%">Average Quiz Score</td>
+                                                <td class="table-row" >#if($context.courseStatistics.lastQuizDate) $formUtil.roundVal($context.courseStatistics.averageQuizScore, 2)% #else -- #end</td>
+                                            </tr>
+                                            #toogleRowClass($rowClass)
+                                            <tr $rowClass  >
+                                                <td class="table-row"  width="85%">Lowest Quiz Score</td>
+                                                <td class="table-row" >#if($context.courseStatistics.lastQuizDate &&(!$context.courseStatistics.lowestQuizScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.lowestQuizScore, 2)% #else -- #end</td>
+                                            </tr>
+                                            #toogleRowClass($rowClass)
+                                            <tr $rowClass  >
+                                                <td class="table-row"  width="85%">Highest Quiz Score</td>
+                                                <td class="table-row" >#if($context.courseStatistics.lastQuizDate) $formUtil.roundVal($context.courseStatistics.highestQuizScore, 2)% #else -- #end</td>
+                                            </tr>
+                                            #toogleRowClass($rowClass)
+                                            <tr $rowClass  >
+                                                <td class="table-row"  width="85%">Total Number of Quizzes Attempted</td>
+                                                <td class="table-row" >#if ($context.courseStatistics.numberQuizesTaken > 0 ) $context.courseStatistics.numberQuizesTaken #else -- #end</td>
+                                            </tr>
+                                        #end
+                                        #toogleRowClass($rowClass)
+                                        #if(($context.courseType.equals("Learner Assignment")) )
+											#if(($context.hwcourseassignmentscoringtype.equals("Scored")))
+												<tr $rowClass  >
+												<td class="table-row"  width="85%">Average Post Test Score</td>
+												#if(($context.hwassignmentcourseAverageMasteryScore.equals(0)))
+												<td class="table-row" >--</td>
+												#else
+												<td class="table-row" >$context.hwassignmentcourseAverageMasteryScore</td>
+												#end
+												</tr>
+										    #end
+										#else
+											<tr $rowClass  >
+											<td class="table-row"  width="85%">Average Post Test Score</td>
+											<td class="table-row" >#if($context.courseStatistics.lastPostTestDate) $formUtil.roundVal($context.courseStatistics.averagePostTestScore, 2)% #else -- #end</td>
+											</tr>
+										#end
+                                        #toogleRowClass($rowClass)
+                                        #if(($context.courseType.equals("Learner Assignment")) )
+                                       
+											 #if(($context.hwcourseassignmentscoringtype.equals("Scored")))
+												<tr $rowClass  >
+												<td class="table-row"  width="85%">Lowest Post Test Score</td>
+												#if(($context.hwcourseassignmentlowestscore.equals(0)))
+												<td class="table-row" >--</td>
+												#else
+												<td class="table-row" >$context.hwcourseassignmentlowestscore</td>
+												#end
+												</tr>
+											 #end	
+										#else
+											<tr $rowClass  >
+											<td class="table-row"  width="85%">Lowest Post Test Score</td>
+											<td class="table-row" >#if($context.courseStatistics.lastPostTestDate &&(!$context.courseStatistics.lowestPostTestScore.toString().equals("-1.0"))) $formUtil.roundVal($context.courseStatistics.lowestPostTestScore, 2)% #else -- #end</td>
+											</tr>
+										#end
+                                        #toogleRowClass($rowClass)
+                                          #if(($context.courseType.equals("Learner Assignment")) )
+                                          
+                                              #if(($context.hwcourseassignmentscoringtype.equals("Scored")))
+												<tr $rowClass  >
+												<td class="table-row"  width="85%">Highest Post Test Score</td>
+												#if(($context.hwcourseassignmenthighestscore.equals(0)))
+												<td class="table-row" >--</td>
+												#else
+												<td class="table-row" >$context.hwcourseassignmenthighestscore</td>
+												#end
+												</tr>
+											   #end	
+										 #else
+												<tr $rowClass  >
+												<td class="table-row"  width="85%">Highest Post Test Score</td>
+												<td class="table-row" >#if($context.courseStatistics.lastPostTestDate)$formUtil.roundVal($context.courseStatistics.highestPostTestScore, 2)% #else -- #end</td>
+												</tr>
+										#end
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Total Number of Post Tests Attempted</td>
+                                            <td class="table-row" >#if ($context.courseStatistics.numberPostTestsTaken > 0 ) $context.courseStatistics.numberPostTestsTaken #else -- #end</td>
+                                        </tr>
+                                    #end
+                                    #toogleRowClass($rowClass)
+                                    <tr $rowClass  >
+                                        <td class="table-row"  width="85%">Completion Date </td>
+                                        <td class="table-row" >#if ( $context.courseCompleted && $context.courseStatistics.completionDate )$formUtil.formatDateTimeMED($context.courseStatistics.completionDate, $locale) #else Incomplete #end</td>
+                                    </tr>
+                                    #if( (!$context.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))) && !$context.courseType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) && (!$context.courseType.equals("Scorm Course")) && (!$context.courseType.equals("External Course")) && (! $context.courseType.equals("DFC")) )
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="table-row"  width="85%">Total Time Spent In Course (hours:minutes)</td>
+                                            <td class="table-row" >#if($context.courseStatistics.totalTimeInSeconds) $formUtil.formatTimeVeryShortInt($context.courseStatistics.totalTimeInSeconds) #else 00:00 #end</td>
+                                        </tr>
+                                    #end
+                                </table>
+                                <br/>
+                                #if ( $!context.activities.size && $context.activities.size > 0 )
+                                    <table  id="courseDetailCss" border="0"  width="98%" cellpadding="0" cellspacing="0" >
+                                        #set($rowClass='style=background-color:#f4f4f4')
+                                        #toogleRowClass($rowClass)
+                                        <tr $rowClass  >
+                                            <td class="header" >Grade Book Activities</td>
+                                            <td class="header">Score</td>
+                                        </tr>
+                                        #set($activities = $context.activities)
+                                        #set($index = 0)
+                                        #foreach($act in $activities)
+                                            #if( $index%2 == 0 )
+                                                #set($rowClass1 = "borderRow-alt")
+                                                #else
+                                                    #set($rowClass1 = "borderRow")
+                                            #end
+                                            <tr class="$rowClass1">
+                                                <td class="table-row"  width="85%">$!{act.actName}</td>
+                                                <td class="table-row" >#if($!{act.actScore} != "Attented" && $!{act.actScore} != "Not-Attented")$!{act.actScore} % #else $!{act.actScore} #end</td>
+                                            </tr>
+                                            #set($index = $index + 1)
+                                        #end
+                                    </table>
+                                    <br/>
+                                #end
+                                #if($context.instructorCoursetype == "Email Online")
+                                ##parse("snippets/viewScheduleSnippet.vm")
+                                #else
+                                #parse("snippets/viewScheduleSnippet.vm")
+                                #end
+                                <br/>
+							</div>
+						</div>
+                        <!-- END: Page Scrollable Area -->
+					</td>
+                </tr>
+                <!-- END: Page-->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        #parse("snippets/learnerNewFooter.vm")
+                    </td>
+                </tr>
+            </table>
+	</form>
+</body>
+</html>

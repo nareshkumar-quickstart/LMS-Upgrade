@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+
+<head>
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type="text/javascript" src="$brander.getBrandElement("lms.manageUser.searchLearner.js.360js")"></script>
+
+<script type="text/javascript" language="javascript">
+
+        function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+        }
+
+$(document).ready(function()
+{
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function()
+        {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+});
+</script>
+<script type="text/javascript">
+        
+
+        function deleteQuestions(){
+                #springBind("manageSurveyForm.surveyQuestions");
+                var qSize = $!{status.value.size()};
+                if ( qSize > 0 ) {
+                        var selected=false;
+                        for( var i=0 ; i<qSize ; i++ ) {
+                                var chkid = "deleteableQuestionsChk[" + i + "]";
+                                if(document.getElementById(chkid).checked == true){
+                                        selected=true;
+                                        break;
+                                }
+                        }
+                        if(selected==true){
+                                if ($("INPUT[type='checkbox'][name='questions']:checked").length>0) {
+                                        confirm("$brander.getBrandElement("lms.survey.editQuestion.messageBox.sure")", function () {
+                                             document.getElementById('action').value = "deletequestion";
+                                             document.manageSurvey.submit();
+                                        });
+                                }
+                        }else{
+                                $('#selectLearner').modal({close:false,position: ["40%",]});
+                        }
+                }else{
+                        $('#selectLearner').modal({close:false,position: ["40%",]});
+                }
+        }
+
+        function confirmDelete() {
+                return confirm("Are you sure you want to delete this question?");
+        } 
+
+        function refresh(){
+                document.getElementById('action').value = "refreshquestion";
+                document.manageSurvey.submit(); 
+        }
+		
+        function setPreviousAction(){
+			document.getElementById('action').value="previous"; 
+		}
+        function onSelectQuestion(checkbox,id) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                }
+            } else {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                }
+            }
+            document.getElementById(id).value = checkbox.checked;
+        }
+
+        function selectAllCheckBoxes(countCheckBoxes, startIndex, lastIndex)
+        {
+                var objCheckAll=document.getElementById("chkAll");
+
+                if (objCheckAll.checked) {
+                        for(var i = startIndex; i <= lastIndex; i++){
+                                var chkid = "deleteableQuestionsChk[" + i + "]";
+                                var objCheckBox=document.getElementById(chkid);
+                                objCheckBox.checked=true;
+                                var hiddenid = "deleteableQuestions[" + i + "]";
+                                onSelectQuestion(objCheckBox,hiddenid);
+                        }
+                }else{
+                        for(var i = startIndex; i <= lastIndex; i++){
+                                var chkid = "deleteableQuestionsChk[" + i + "]";
+                                var objCheckBox=document.getElementById(chkid);
+                                objCheckBox.checked=false;
+                                var hiddenid = "deleteableQuestions[" + i + "]";
+                                onSelectQuestion(objCheckBox,hiddenid);
+                        }
+                }
+        }
+
+        function onAllPage(){
+                document.getElementById('sortDirection').value=1;
+                document.getElementById('pageIndex').value=0;
+                document.getElementById('action').value="paging";
+                document.getElementById('gridShowAll').value="true";
+                return true;
+        }
+
+        function onNextPage(nextIndex){
+                document.getElementById('pageIndex').value=nextIndex;
+                document.getElementById('action').value="paging";
+                document.getElementById('gridShowAll').value="false";
+                return true;
+        }
+
+        function onPreviousPage(previousIndex){
+                document.getElementById('pageIndex').value=previousIndex;
+                document.getElementById('action').value="paging";
+                document.getElementById('gridShowAll').value="false";
+                return true;
+        }
+
+</script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+<body>
+<form name="manageSurvey" method="post" action="adm_manageSyrvey.do" >
+
+<div id="main-container">
+
+        <!-- header -->
+        #parse("snippets/adminWizardHeader.vm")
+        <!-- header-end -->
+        <div id="content2a">
+        <!-- content-area -->
+
+                <!-- sub-header+arrow -->
+                <div  id="content3a"></div>
+                <!-- sub-header+arrow-end -->
+                
+                <!-- left-pannel-content -->
+                <div id="sideBar" class="side_bar">
+                        <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.survey.caption.wizard") <br/>$brander.getBrandElement("lms.instructor.addCourse.leftPanel.showing2of3")</div>
+                                <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.survey.caption.wizardStep1")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.survey.caption.wizardStep2")</div>
+                                <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.survey.caption.wizardStep3")</div>
+                        </div>
+                </div>
+                <!-- left-pannel-content-end -->
+
+                <!-- right-pannel-content -->
+                <div id="right-pannel">
+                        
+                        #springBind("manageSurveyForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                         <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                                </div>
+                                #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+                        <div id="delete_message_box" style="display:none;">
+                                <img id="close_message" onClick="document.getElementById('delete_message_box').style.display='none';" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$brander.getBrandElement("lms.survey.addQuestion.caption.deleteQuestionErrorText")</div>
+                                </div>
+                        
+                        </div>
+
+                        <!-- Logo+Manage-User -->
+                        <div class="logoContainer" id="logomainContainer">
+                            <div class="logoContainerInner1">
+                                <div class="logoContainerInner2">
+                                    <div id="logoHolder" class="courseLogoSurveys">&nbsp;</div>
+                                    <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.addSurvey.questions.caption.title")</div>
+                                    <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.addSurvey.questions.caption.description")</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Logo+Manage-User-end -->
+
+                        <div id="searchResult" class="content-Block-new" ><!-- content-Block -->
+                            #springBind("manageSurveyForm.surveyQuestions")
+                            $pager.setItems($status.value)
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                            #end
+
+                            <input type="hidden" id="action" name="action" />
+                            <input type="hidden" id="sortDirection" name="sortDirection" value="1" />
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                            <input type="hidden" id="gridShowAll" name="showAll" value="false" />
+                            <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                                <div style="float:left;" onClick="popupnew('adm_manageSyrvey.do?_page=1&_target2.x=1&_target2.y=1&action=addquestion', 'ManagerAddNewSurveyNewQuestion','560','480');">
+                                    <a class="button" id="srch"  ><span class="button">$brander.getBrandElement("lms.addNewSurvey.caption.addQuestion")</span></a>
+                                    #*<div class="btn_search_start" ></div>
+                                    <div class="btn_new_normal" id="srch" >$brander.getBrandElement("lms.addNewSurvey.caption.addQuestion")</div>
+                                    <div class="btn_end"></div>*#
+                                </div>
+                                <div style="float:left;" onClick="deleteQuestions();" >
+                                    <a class="button" id="srch"  ><span class="button">$brander.getBrandElement("lms.addNewSurvey.caption.deleteQuestion")</span></a>
+                                    #*<div class="btn_search_start" ></div>
+                                    <div class="btn_normal" id="srch" >$brander.getBrandElement("lms.addNewSurvey.caption.deleteQuestion")</div>
+                                    <div class="btn_end"></div>*#
+                                </div>
+                                <!-- All Icon -->
+                                <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"><input type="image" src="$brander.getBrandElement("lms.pixel.checkboxGif")" onClick="return onAllPage()" width="8" height="8" /></div>
+
+                                <!-- Next Icon -->
+                                #if( $pager.nextIndex )
+                                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"><input type="image" value="Search" name="_target1" onclick="return onNextPage($pager.nextIndex);" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10" /></div>
+                                #else
+                                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                    
+                                #end
+
+                                <!-- Back Icon -->
+                                #if( $pager.prevIndex ) 
+                                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"><input type="image" value="Search" name="_target1" onclick="return onPreviousPage($pager.prevIndex);" src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10" /></div>
+                                #else
+                                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                    
+                                #end
+                                #set($totalCountminus1 = $totalCount - 1)
+                                #if($pageFirstIndex == 0 && $pageLastIndex <= 9 && $pageLastIndex!=0)
+                                        #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex > 0)
+                                        #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex == 0 && $pageLastIndex == $totalCountminus1)
+                                        #set($x = $pageFirstIndex+1)
+                                #else
+                                        #set($x = 0)
+                                #end
+                                #if($pageLastIndex != 0)
+                                        #set($y = $pageLastIndex+1)
+                                #elseif($totalCount == 1)
+                                        #set($y = 1)
+                                #else
+                                        #set($y = 0)
+                                #end
+                                <!-- Showing Results -->
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $x - $y $brander.getBrandElement("lms.manager.manageTrainingPlans.caption.of") $totalCount</div>
+                            </div>
+                            <div id="searchResult"><!-- searchResult -->
+                                <table width="100%"  cellpadding="0" cellspacing="0" style="border-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" width="17px"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes($totalCount,$pageFirstIndex,$pageLastIndex);" /></td>
+                                        <td class="box_subheader">$brander.getBrandElement("lms.listServeyQuestions.caption.Question")</td>
+                                    </tr>
+                                    
+                                    #set($count = 0)
+                                    #springBind("manageSurveyForm.surveyQuestions")
+                                    #set($surveyQuestions = $status.value)
+                                    #if($currentPageSize > 0)
+                                        #foreach($loopindex in [$pageFirstIndex..$pageLastIndex])
+                                                #set($aSurveyQuestion = $!{surveyQuestions.get($loopindex)})
+                                                #springBind("manageSurveyForm.deleteableQuestions[$loopindex]")
+                                                #if($count%2 == 0)
+                                                    #set($alternate="row_1")
+                                                #else
+                                                    #set($alternate="row_2")
+                                                #end
+                                            <tr>
+                                                <td class="$alternate" width="17px"><input id="deleteableQuestionsChk[$loopindex]" name="questions" type="checkbox" #if($status.value) checked #end onclick="onSelectQuestion(this,'$status.expression')"/></td>
+                                                <input type="hidden" id="$status.expression" name="$status.expression" value="$status.value"/>
+                                                <td class="$alternate">#dotPaddingWithOutTitle($!{aSurveyQuestion.text}, 50)</td>
+                                            </tr>
+                                            #set($count = $count+1)
+                                        #end
+                                    #end
+                                </table>
+                            </div><!-- searchResult -->
+                        </div><!-- content-Block -->
+                        <!-- End-Question-list -->
+                        
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- button-div -->
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+                                <div class="btn-left2">
+                                     <a class="button" onClick="submitButtonForm(document.manageSurvey,'wizardSubmitter','_cancel');"><span class="button">$brander.getBrandElement("lms.instructor.addCourse.button.cancel")</span></a>
+                                </div>
+                                <div class="btn-right1">   
+									#if( $finish)
+										<a class="button" onClick="submitButtonForm(document.manageSurvey,'wizardSubmitter','_finish');"><span class="button">$brander.getBrandElement("lms.instructor.courseOverview.btnFinish")</span></a>
+									#else 
+	                                     <a class="button" onClick="submitButtonForm(document.manageSurvey,'wizardSubmitter','_target4');"><span class="button">$brander.getBrandElement("lms.instructor.addSCORMPackage.btnNext")</span></a>
+									#end
+                                </div>
+                                <div class="btn-right1">
+                                     <a class="button" onClick="setPreviousAction('previous');submitButtonForm(document.manageSurvey,'wizardSubmitter','_target0');"><span class="button">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnPrevious")</span></a>
+                                </div>
+                                <input type="hidden" id="currentpage" name="_page" value="1"/>
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                        </div>
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </div>
+        <!-- tooltip -->
+      
+        <!-- tooltip -->
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end
+<!-- footer-end -->
+</div>
+</form>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.survey.editQuestion.messageBox.sure")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+            <a class="button" ><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            #*<div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</div>
+            <div class="btn_end">&nbsp;</div>*#
+        </div>
+        <div class='yes'>
+            <a class="button" ><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            #*<div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div>*#
+        </div>
+</div>
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+            <a class="button" ><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            #*<div class="btn_start">&nbsp;</div>
+            <div class="btn_new_normal">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</div>
+            <div class="btn_end">&nbsp;</div>*#
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

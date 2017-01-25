@@ -1,0 +1,213 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+	#parse("snippets/compliance/complianceHead.vm")
+	<head>
+<script type="text/javascript" src="javascript/js_manager.js" language="javascript"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script type="text/javascript" src="javascript/360js.js" language="javascript" ></script>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+	</head>
+	<body>
+	<form name="manageMyLicense" method="post" action="lrn_licenseedit.do">
+	<input type="hidden" id="action" name="method" value="save"/>
+	#springBind("manageLicenseForm.id")
+	<input type="hidden" name="${status.expression}" value="$!{status.value}" />
+
+	#springBind("manageLicenseForm.redirectTo")
+	<input type="hidden" name="${status.expression}" value="$!{status.value}" />
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+		<tr> 
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">#parse("snippets/learnerNewHeader.vm")</td>
+		</tr>
+	<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0">#parse("snippets/learnerProfileLeftMenu.vm")</table>
+	</td>
+		
+<TD id="content" >
+	<div id="scrollable">
+
+	    <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr><td id="page-icon" class="courseLogoProfile">&nbsp;</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.mylicense.manageLicense.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.mylicense.manageLicense.modify.caption.subheading")</div>
+			</td>
+		    </tr>
+		</table>
+		
+		
+	      <div class="search_box_result">
+
+                <div class="box_header">
+					<span class="box_heading">
+						$brander.getBrandElement("lms.mylicense.newLicense.table.heading.caption")
+					</span>
+				</div>
+                
+				
+				<table border="0" width="100%" cellpadding="0" cellspacing="3">
+                    <tr>
+                     <td>
+                      <table width="100%">
+                         <tr>
+                            <td width="30%">
+                              <span class="row_text">
+								$brander.getBrandElement("lms.mylicense.newLicense.field1.caption")
+							  </span>
+                            </td>
+                            <td>
+                              <div id="survey-name-required" >
+                                <div class="required_field">*</div>
+                            </div>
+                            <select name="licenseIndustryId">
+                            #springBind("manageLicenseForm.licenseIndustries")
+                            #set ($list = $!{status.value})
+                            #foreach($ls in $list)   
+                            	#springBind("manageLicenseForm.licenseIndustryId")
+                            	#if($ls.Id == "$!{status.value}")
+                            	<option selected value="$ls.Id">$ls.name</option>
+                            	#else    
+                                <option value="$ls.Id">$ls.name</option>
+                                #end
+							#end
+                            </select>
+                            </td>
+                         </tr>
+                         <tr>
+                            <td width="30%">
+                            <span class="row_text">
+								$brander.getBrandElement("lms.mylicense.newLicense.field2.caption")
+							</span>
+                            </td>
+                            <td>
+                             <div id="survey-name-required" >
+                                <div class="required_field">*</div>
+                            </div>
+                            	#set($lic = '' )   #set($cer = '' ) 	#set($nts = '' )
+                            	#springBind("manageLicenseForm.licenseOrCertificate")
+                            	#if( $!{status.value} == "License" ) #set($lic = "selected=ture" ) #end
+                            	#if( $!{status.value} == "Certification" ) #set($cer = "selected=ture" ) #end
+                            	#if( $!{status.value} == "Not Sure" ) #set($nts = "selected=ture" ) #end
+                            	<select name="licenseOrCertificate" >
+                                    <option $lic  value="License">License</option>
+                                    <option $cer  value="Certification">Certification</option>
+                                    <option $nts  value="Not Sure" >Not Sure</option>
+                            	</select>  
+                            </td>
+                         </tr>
+                         <tr>
+                            <td width="30%">
+                             <span class="row_text">
+								$brander.getBrandElement("lms.mylicense.newLicense.field3.caption")
+							</span>
+                            </td>
+                            <td>
+                            <div id="survey-name-required" >
+                                <div class="required_field">*</div>
+                            </div>
+                            <select name="state">
+                            #set($State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State"))
+                         	#foreach ($state in $State)
+                         		#springBind("manageLicenseForm.state")
+                                #if($state.value == "$!{status.value}")
+                                    <option value="$state.value" selected>$state.label</option>
+                                #else
+                                    <option value="$state.value" >$state.label</option>
+                                #end
+                            #end
+                            </state>
+                            </td>
+                         </tr>
+                         <tr>
+                            <td width="30%">
+                              <span class="row_text">
+								$brander.getBrandElement("lms.mylicense.newLicense.step2.edit.field1.caption")
+							</span>
+                            </td>
+                            <td>
+                             <div id="survey-name-required" >
+                                <div class="required_field">*</div>
+                            </div>
+                            #springBind("manageLicenseForm.credentials")
+			                    #set ($list = $!{status.value})
+                                <select name="selectedCredentialId">
+                                #if(!$list.isEmpty )
+                                    #foreach($ls in $list)
+                                   		#springBind("manageLicenseForm.selectedCredentialId") 
+                                   		#if($ls.id == "$!{status.value}")      
+		                                <option selected=ture value="$ls.id" >$ls.credential.officialLicenseName</option>
+		                                #else
+		                                <option value="$ls.id" >$ls.credential.officialLicenseName</option>
+		                                #end
+									#end
+								#end
+                                </select>
+                            </td>
+                         </tr>
+                         <tr>
+                          <td width="30%">
+                            <span class="row_text">
+								$brander.getBrandElement("lms.mylicense.newLicense.step3.field1.caption")
+							</span>
+                          </td>
+                          <td>
+                           <div class="required_field" style="width:8px;" ></div>
+							#springBind("manageLicenseForm.supportingInformation") 
+							 <input type="text" readonly="readonly" name="$!{status.expression}" value="$!{status.value}" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="licenseExpireDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="licenseExpireDate" value="" class="input_text_field" />
+							<script type="text/javascript">
+								jQuery.noConflict();
+								jQuery("#licenseExpireDate").datepicker({ 
+								showOn: "both", 
+								buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+								buttonImageOnly: true 
+							});
+							</script>
+                          </td>
+                         </tr>
+                      </table>
+                     </td>
+                    </tr>
+                    
+
+                </table>
+            </div>		
+
+				<!-- buttons -->
+					<div class="btn-div">
+						<div style="float:right; margin-top:15px;">
+						  <a onClick="document.manageMyLicense.submit()">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.mylicense.newLicense.step2.caption.btnSave")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>	
+						<div style="float:right; margin-top:15px;margin-right:5px;">
+							<a onClick="javascript:window.location='lrn_manageLicense.do?method=displayManageLicense';">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.mylicense.newLicense.step2.caption.btnCancel")</div>
+								  <div class="btn_end"></div>
+							</a>
+						</div>  
+					</div>	
+
+                   
+		
+
+	</div>
+	<!-- scrollable end -->
+</td>
+</tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+<td id="footer" colspan="2">#parse("snippets/learnerNewFooter.vm")</td></tr> 
+</table>
+<!-- Footer End -->	
+</body>
+</html>

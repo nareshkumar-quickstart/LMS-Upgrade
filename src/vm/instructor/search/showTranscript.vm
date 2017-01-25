@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+
+
+	
+</head>
+
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header ends -->
+
+        #springBind("insSearchForm.user")
+        #set($vuUser = $!{status.value})
+
+        #springBind("insSearchForm.learnerId")
+        #set($learnerId = $!{status.value})
+		</td></tr>
+		
+  	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <!-- Tabs Start -->
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td width="204">
+                            <a href="ins_searchLearner.do?method=showProfile&Id=$learnerId"><div class="tab">$brander.getBrandElement("lms.Instructor.caption.Profile")</div></a>
+                            <a href="ins_searchLearner.do?method=showTranscript&Id=$learnerId"><div class="tab_selected" style="border-right-style:solid;">$brander.getBrandElement("lms.Instructor.caption.Transcripts")</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td></table>
+            <!-- Tabs End -->
+
+<TD id="content" >
+	<div id="scrollable">
+
+                <!-- Page Description -->
+                <div id="pageDescription" class="page_description">
+                    <!-- Page Icon -->
+                    <div id="pageIcon" class="icon_search"></div>
+                    <!-- Page Heading -->
+                    <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.transcript.caption.LearnerTranscript")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.transcript.caption.TranscriptDesc")</div>
+                </div>
+
+                <div id="transcriptBox" class="search_box_result" style="overflow:auto; height:69%; width:97%; border:1px solid blue;">
+                    #springBind("insSearchForm.results")
+                    #set($courseDetails = $!{status.value})
+                    <div id="resultHeader" class="box_header" style="width:1700px;">
+                        <div class="box_heading">
+                            $brander.getBrandElement("lms.Instructor.transcript.caption.Performance")
+                        </div>
+                        <div class="result_left_side">
+                            <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.Instructor.transcript.caption.TotalResult") $courseDetails.size()</div>
+                        </div>
+                    </div>
+                    <div id="searchResult" style="width:1700px;">
+                        <form name="myform" style="padding:0; margin:0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                <tr bgcolor="#efefef" height="25">
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.CourseName")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.assignSurvey.searchSurvey.caption.SearchSurveyStatus")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.mycourses.courseProgress")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.FirstAccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.LastAccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.noacccess.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.coursedetails.coursestatistics.preAssessmentScore.label.text")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.coursedetails.coursestatistics.averageQuizScore.label.text")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.HighestPostScore")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.posttest.defaulttext")</span></td>
+                                    <td class="box_subheader"><span style="margin-left:5px;">$brander.getBrandElement("lms.Instructor.transcript.caption.CompletionDate")</span></td>
+                                    <td class="box_subheader" style="border-right:none;"><span style="margin-left:5px;">$brander.getBrandElement("lms.instructor.caption.timespent.defaulttext")</span></td>
+                                </tr>
+                                #set($index = 0)
+                                #foreach($pair in $courseDetails)
+                                    #if($index % 2 == 0)
+                                        #set($alternate = "row_1")
+                                    #else
+                                        #set($alternate = "row_2")
+                                    #end
+                                    <tr height="25">
+                                        <td class="$alternate">$!{pair.courseName}</td>
+                                        <td class="$alternate" style="width:70px;">$!{pair.courseStatus}</td>
+                                        <td class="$alternate">$!{pair.percentComplete}</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.firstAccessDate})} &nbsp;</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.lastAccessDate})} &nbsp;</td>
+                                        <td class="$alternate">$!{pair.numberQuizesTaken}</td>
+                                        <td class="$alternate">$!{pair.preTestScore}</td>
+                                        <td class="$alternate">$!{pair.averageQuizScore}</td>
+                                        <td class="$alternate">$!{pair.higestPostScore}</td>
+                                        <td class="$alternate">$!{pair.numberPostTestsTaken}</td>
+                                        <td class="$alternate">$!{date.format('MM/dd/yyyy',$!{pair.complitionDate})} &nbsp;</td>
+                                        <td class="$alternate" style="border-right:none;">$!{pair.totalTimeInSeconds} sec</td>
+                                    </tr>
+                                    #set($index = $index + 1)
+                                #end
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+           </td>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+        #parse("snippets/instructor/instructorFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+    </table>
+</body>
+</html>

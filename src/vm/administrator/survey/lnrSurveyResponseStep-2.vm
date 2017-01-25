@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/learnerNewHead.vm")
+        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+        <script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+        <script>
+            
+
+            $(document).ready(function() {
+                $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+                if ($('#right-pannel').height()<$('#content2a').height()) {
+                    $('#right-pannel').height($('#content2a').height());
+                }
+                $('#sideBar').height($('#right-pannel').height());
+            });
+        </script>
+    </head>
+
+    <body>
+        <form name="manageSurvey" method="post" action="adm_manageSyrvey.do">  
+            <div id="main-container">
+                <!-- header -->
+                #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                   #parse("snippets/adminHeader.vm")
+                #else
+                   #parse("snippets/managerHeader.vm")
+                #end   
+                <!-- header-end -->
+                <div id="content2a">
+                <!-- content-area -->
+                    <!-- sub-header+arrow -->
+                    <div  id="content3a"></div>
+                    <!-- sub-header+arrow-end -->
+                    <!-- left-pannel-content -->
+                    #parse("snippets/compliance/complianceLeftMenu.vm")
+                    <!-- left-pannel-content-end -->
+                    <!-- right-pannel-content -->
+                    <div id="right-pannel">
+                        <!-- Logo+Manage-User -->
+                        <div class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogoContainer")">
+                                <div id="e3" class="$brander.getBrandElement("lms.mycourses.cssClass.courseLogo2")"><img src="brands/default/en/images/pageicons/surveys.png" title="" /></div>
+                                <div id="e4" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.courseTitleDiv")">
+                                        <div id="e5" class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.courseTitle1")">$brander.getBrandElement("lms.administrator.searchMember.caption.surveyresponse")</div>
+                                        <div id="e6" class="$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.cssClass.courseDetails")">Click on the survey name to view response from  $!{context.user.getName()}</div>
+                                </div>
+                        </div>
+                        <!-- Logo+Manage-User-end -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.group-name2")">
+                            <div>$!{context.user.getName()}</div>
+                        </div>
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- User-list -->
+                        #if($!{context.surveyList.size()} > 0)
+                            #set($surveyListSize = $!{context.surveyList.size()} - 1)
+                            #if($surveyListSize >= 0)
+                                #foreach($index in [0..$surveyListSize])
+                                    <div id="searchResult" class="content-Block">
+                                        <div id="searchResult">
+                                            <table width="100%" cellpadding="0" cellspacing="0">
+                                                <tr bgcolor="#efefef">
+                                                    <td class="box_subheader">COURSE: $!{context.surveyList.get($index).courseName}</td>
+                                                    <td class="box_subheader" width="20%">$brander.getBrandElement("lms.enrollment.showEnrollments.listHeader.caption.status")</td>
+                                                </tr>
+                                                #foreach($survey in $!{context.surveyList.get($index).surveyItem})
+                                                    #if($velocityCount%2==0)
+                                                            #set($alternate="row_2")
+                                                    #else
+                                                            #set($alternate="row_1")
+                                                    #end
+                                                    <tr >
+                                                        <td class="$alternate">$!{survey.surveyName}</td>
+                                                        <td class="$alternate" width="20%">$!{survey.status}</td>
+                                                    </tr>
+                                                #end
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <!-- space -->
+                                    <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.manager-bottom-space")"></div>
+                                    <!-- space -->
+                                #end
+                            #end
+                        #end
+                        <!-- End-User-list -->
+                        
+                        <!-- space -->
+                        <!-- <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.manager-bottom-space")"></div> -->
+                        <!-- space -->
+                        
+                        <!-- button-div -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.managerBtn")">
+                           <div class="btn-right1">
+                                <!--<input type="button" value="$brander.getBrandElement("lms.manageUser.editLearner.caption.Update")" onclick="return saveSurveyCoursesAction();" class="btn-submit_n71" />-->
+                                <a class="button" onClick="javascript:window.location='adm_manageSyrvey.do?method=learnerSurveyResponseView';"><span class="button">Back</span></a>
+                            </div>
+                        </div>
+                    <!-- right-pannel-content-end -->
+                    </div>
+                <!-- content-area-end -->
+                </div>
+                <!-- footer -->
+                #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                   #parse("snippets/adminFooter.vm")
+                #else
+                   #parse("snippets/managerFooter.vm")
+                #end   
+                <!-- footer-end -->
+            </div>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+    <script type="text/javascript" language="javascript">
+         $(document).ready(function(){
+            $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("INPUT[type='checkbox'][name='chk']").click(
+               function(){
+                  $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
+               }
+            );
+            $('.numeric').numeric({allow:"."});
+        });
+    </script>
+</head>
+<body>
+<form name="addCourseConfigForm" method="post" action="acc_addCourseConfig.do" >
+    <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+            <div id="l-menu-back">
+            	 <div class="l-menu-back-text-h">Add Course Configuration<br> Wizard showing 3 of 11</div>
+            	 <div class="l-menu-back-text-acted">1.Summary</div>
+            	 <div class="l-menu-back-text-acted">2. Course Policy</div>
+				 <div class="l-menu-back-text-act">3. Course Completion</div>
+				 <div class="l-menu-back-text">4. Pre-Assessment Policy</div>
+				 <div class="l-menu-back-text">5. Quiz Policy</div>
+				 <div class="l-menu-back-text">6. Post Assessment Policy</div>
+				 <div class="l-menu-back-text" title="Special Post Assessment Validation" >7. Special Post Assessment ...</div>
+				 <div class="l-menu-back-text">8. Validation</div>
+				 <div class="l-menu-back-text">9. Disclaimar Options</div>
+				 <div class="l-menu-back-text">10. Max Seat Time Enforcement</div>
+				 <div class="l-menu-back-text">11. Min Seat Time Requirements</div>
+				 <div class="l-menu-back-text">12. Confirmation</div>
+
+            </div>
+     	 </div>
+	</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("courseConfigForm.*")
+            #if($status.error)  
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)         
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+		
+		 	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.AddCoursConfigurationTemplate")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.AddCourseConfiguation.caption.pagedescription_step3")</div>
+		</td>
+	</tr>
+</table>			  
+
+        	  <div class="search_box_result">
+        			 <div class="box_header"><span class="box_heading">Course Completion</span></div>
+                     <!-- ********************************************************** -->
+                     <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
+                            <tbody><tr>
+                                <td width="20px" height="5"></td>
+                                <td width="48%"></td>
+                                <td width="20px"></td>
+                                <td width="48%"></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.courseConfiguration.mustAttemptPostAssessment")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must Attempt Post Assessment</div></td>
+                                #springBind("courseConfigForm.courseConfiguration.mustViewEverySceneInTheCourse")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must View Every Scene in the Course</div></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.courseConfiguration.mustDemonstratePostAssessmentMastery")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must Demonstrate Post Assessment Mastery</div></td>
+                                #springBind("courseConfigForm.courseConfiguration.canOnlyBeCompleteAfterNumberOfCourseLaunches")
+                                <td>##<input type="checkbox" name="chk" #if ($!{status.value}) checked #end /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/>
+								</td>
+                                #springBind("courseConfigForm.numberOfCoursesLaunch")
+                                <td><div class="row_text">Can only be Complete After <input class="input_text_inline numeric"  name="$!{status.expression}" value="$!{status.value}" type="text" value="0" style="width:30px;"> Number of Course Launches</div></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.courseConfiguration.mustDemonstratePreAssessmentMastery")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must Demonstrate Pre Assessment Mastery</div></td>
+                                #springBind("courseConfigForm.minutesAfterFirstCourseLaunch")
+                                <td></td>
+                                <td><div class="row_text">Must Complete Within <input class="input_text_inline numeric"  name="${status.expression}" value="${status.value}" type="text" style="width:30px;"> 
+								
+								
+								#springBind("courseConfigForm.listOfUnitOfDaysOfRegistration")
+
+						#set($unitsOfDays=$status.value)
+						#springBind("courseConfigForm.unitOfTimeToComplete")
+						<select name="$status.expression" > 
+							 #foreach ($unit in $unitsOfDays)
+								#if($unit == $!{status.value})
+									<option value="$unit" selected>$unit</option>
+								#else
+									<option value="$unit">$unit</option>
+
+								#end
+							#end							
+
+						</select>
+								
+								
+								After First Course Launch</div></td>
+                            </tr>
+                            <tr>
+                                #springBind("courseConfigForm.courseConfiguration.mustDemonstrateQuizMastery")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must Demonstrate Quiz Mastery</div></td>
+                                #springBind("courseConfigForm.daysOfRegistraion")
+                                <td></td>
+                                <td><div class="row_text">Must Complete Within <input class="input_text_inline numeric"  name="${status.expression}" value="${status.value}" type="text" style="width:30px;">
+								Days of Registration
+
+</div>
+				</td>
+
+                            </tr>
+							
+							<tr>
+                                #springBind("courseConfigForm.courseConfiguration.respondToCourseEvaluation")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Respond to Course Evaluation</div></td>
+								<td></td>
+                                <td></td>
+								
+							</tr>
+                           #* <tr>
+                                #springBind("courseConfigForm.courseConfiguration.mustCompleteAnySurveys")
+                                <td><input type="checkbox" name="chk" #if ($!{status.value}) checked #end  /><input type="hidden" name="$!{status.expression}" value="$!{status.value}"/></td>
+                                <td><div class="row_text">Must Complete any Surveys</div></td>
+                                <td></td>
+                                <td></td>
+                            </tr>*#
+							
+                            <tr>
+                                <td height="5"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                     </tbody></table>	
+                     <!-- ********************************************************** -->
+        	  </div>
+
+        <input type="hidden" id="currentpage" name="_page" value="2" />
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target3');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Next</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target1');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		     
+       </div>
+	   
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

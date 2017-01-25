@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/jquery-1.8.3.js' ></script>
+<script language="javascript" type="text/javascript">
+    document.title="$brander.getBrandElement("lms.surveyPreview.caption.title")";
+    function printPage(){
+    	var printOption = window.print();
+    	window.close();
+    	
+    }
+</script>
+</head>
+<body onload="printPage()">
+<form name="previewSurveyForm" method="POST" action="mgr_SurveyQuestionPreview.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+         <tr id="main"> 
+             <TD id="content" >
+					
+                <!-- Logo+Manage-User -->
+                            <!-- Page Description -->
+                            <div id="pageDescription" class="page_description" >
+                                <!-- Page Icon -->
+                                <div id="pageIcon" class="icon_surveys"></div>
+                                <!-- Page Heading -->
+                                <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.surveyPreview.caption.title")</div>
+                                <!-- Page Description -->
+                                <div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.searchMember.caption.currentlypreviewing")</div>
+                            </div>
+                        
+                <!-- Logo+Manage-User-end -->
+
+                <div class="group-name">
+                     $brander.getBrandElement("lms.mycourses.dropdown.survey") : ${takeSurveyForm.survey.surveyRef.name}
+                </div>
+
+                <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")" style="width:98%;">
+
+                #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+                #set($questionNumber = $!{context.questionNo})
+                #if($questionCount > 0)
+                    #set($maxQuestionIndex = $questionCount - 1)
+                    #foreach($index in [0..$maxQuestionIndex])
+                        #set($surveyQuestion = ${takeSurveyForm.survey.questionList.get($index)})
+                        #set($prefix = "survey.questionList[$index]")
+                        #set($questionNumber = $questionNumber + 1)
+
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                            <div id="e12" style="border:0px solid red;float:left;width:100%; padding-bottom:10px;">
+                                <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="border:0px solid red; padding-left:15px;word-wrap:break-word; ">
+                                    #if(${surveyQuestion.surveyQuestionRef.required} != false) <div class="required_field"><font color="#FF0000">&nbsp;*</font></div> #end $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                                </div>
+                            </div>
+                            <div style="border:0px solid green;float:left;width:100%; padding-bottom:15px; ">
+                                $surveyQuestion.renderQuestion($prefix)
+                            </div>
+                        </div>
+                        <!-- End-User-left-right-list -->
+                    #end
+                #end
+
+                #if($!{context.nextPageIndex} == '0')
+                    #if(${context.showTerms} != "false")
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $brander.getBrandElement("lms.administrator.searchMember.caption.agreement")
+                            </div>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            <textarea readonly="true" style="margin-left:20px; margin-bottom:10px; margin-top:10px; background:white;" cols="88" rows="4">$!{context.showTerms}</textarea>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            <input type="checkbox" style="margin-left:22px;"></input> $brander.getBrandElement("lms.administrator.searchMember.caption.agree")
+                        </div>
+                    </div>
+                    #end
+
+                    #if(${context.showLinks} != "false")
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <div id="e12" style="border:0px solid red;float:left;width:100%; margin-bottom:10px;">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $brander.getBrandElement("lms.survey.caption.links")
+                            </div>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            #foreach($link in ${context.showLinks})
+                            <span style="color:blue; text-decoration:underline; cursor:pointer; margin-top:10px; margin-left:20px;">
+                               <a href="$link.urlName">$link.urlName</a><br>
+                            </span>
+                            #end
+                        </div>
+                        <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                    </div>
+                    #end
+                #end
+
+                </div>
+            
+        </td></tr><!-- content2a -->
+    </table><!-- main-container -->
+</form>
+</body>
+</html>

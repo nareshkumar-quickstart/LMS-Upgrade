@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<script type="text/javascript" language="javascript" src="javascript/js_admin.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+ <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+
+    document.title="Administrator - $context.title";
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.viewCustomerEntitlementForm.submit();
+    } 
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+$("INPUT[type='checkbox'][name='customfield']").click(function(){
+
+                $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+
+         });
+
+
+
+    });
+
+</script>
+
+    <style type="text/css">
+        /* Confirm Overlay */
+        #confirmModalOverlay {background-color:#eee; cursor:wait;}
+        /* Overlay */
+        #simplemodal-overlay {background-color:#eee; cursor:wait;}
+    </style>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content --><!-- <div class="leftmenu-top-shadow"></div> -->
+        #if( $context.type.equals("customer"))
+           #parse("snippets/adminCustomerLeftMenu.vm")
+        #elseif( $context.type.equals("reseller") )
+            #parse("snippets/adminDistributorLeftMenu.vm")
+        #end
+        <!-- left-pannel-content-end -->
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCustomer">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$context.title Deletion Summary</div>
+			    <div id="page-help">$context.description</div>
+			</td>
+		    </tr>
+		</table>            
+            
+            
+            <!-- Logo+Manage-User-end -->
+
+            <!--Group-Name-div -->
+            <div class="group-name">
+                <div>$!{context.selectedCustomer.Name}</div>
+            </div>
+
+            <!-- Group-Name-div -->
+            $pager.setItems($context.CustomerEntitlementsList)
+            #set($totalCount = $pager.total)
+            #if($pager.hasItems())
+                #set($pageFirstIndex = $pager.firstIndex)
+                #set($pageLastIndex = $pager.lastIndex)
+                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                #set($currentPageCount = $pageLastIndex + 1)
+            #else
+                #set($pageFirstIndex = 0)
+                #set($pageLastIndex = 0)
+                #set($currentPageSize = 0)
+                #set($currentPageCount = 0)
+            #end
+            <form name="manageCustomField" method="post" action="adm_manageCustomField.do">
+<input type="hidden" id="action" name="method" />
+<input type="hidden" id="entity" name="entity" value="$context.type"/>
+                 <!-- content-Block-new -->
+<!-- Result Header end -->
+
+
+
+
+
+
+
+                <!-- others-Information -->
+                <div class="content-Block-new" style="width:98%;overflow:auto;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                            <tr bgcolor="#efefef">
+                                <td class="box_subheader">S. No.</td>
+                                <td class="box_subheader">Custom Field Name</td>
+                                <td class="box_subheader">Status</td>
+                                <td class="box_subheader">Comments</td>
+
+                            </tr>
+#set( $velocityCounter = 0)
+                            #foreach($cd in $context.usedCustomFields )
+                                #if($velocityCounter%2==0)
+                                        #set($alternate="row_1")
+                                #else                                        
+#set($alternate="row_2")
+                                #end
+#set( $velocityCounter = $velocityCounter + 1 )
+                                <tr>
+<td class="$alternate">$velocityCounter</td>
+<td class="$alternate"> $!{cd.fieldLabel}</td>
+ <td class="$alternate">Unable to delete</td>
+
+<td class="$alternate">Already in use</td>
+</tr>
+#end
+                            #foreach($cd in $context.unUsedCustomFields )
+                                #if($velocityCounter%2==0)
+                                        #set($alternate="row_1")
+                                #else                                        
+#set($alternate="row_2")
+                                #end
+#set( $velocityCounter = $velocityCounter + 1 )
+                                <tr>
+<td class="$alternate">$velocityCounter</td>
+<td class="$alternate"> $!{cd.fieldLabel}</td>
+ <td class="$alternate">Deleted</td>
+
+<td class="$alternate">--</td>
+</tr>
+#end
+                        </table>
+                </div>
+
+
+
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- button-div -->
+
+               <div style="float:right; margin-top:3px;">
+				  <a  onClick="document.location='adm_manageCustomField.do?method=showCustomField&entity=$context.type';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">OK</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+               
+                <!-- scrollable-div -->
+
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+
+
+
+<!-- searchResult -->
+
+                 <!-- content-Block-new -->
+            </form>
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.administrator.entitlementView.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+        </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+<!-- *****************************************************-->
+ 
+
+</body>
+</html>

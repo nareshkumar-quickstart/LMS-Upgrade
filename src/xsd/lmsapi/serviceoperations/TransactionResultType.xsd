@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Chameleon Namespace Design:
+		This design approach says to give the "main" schema a targetNamespace, and the "supporting" schemas have no targetNamespace.
+		There are two things to note about this design approach:
+
+		First, a schema is able to access components in schemas that have no targetNamespace, using <include>. The User schema uses
+		the components in Address.xsd (and have no targetNamespace).
+
+		Second, note the chameleon-like characteristics of schemas with no targetNamespace:
+
+    	The components in the schemas with no targetNamespace get namespace-coerced. That is, the components "take-on" the 
+    	targetNamespace of the schema that is doing the <include>
+        For example, Address in Address.xsd gets implicitly coerced into the User targetNamespace. This is the reason that the 
+        Address element was able to reference Adress defined in Address.xsd in the default namespace using type="Address".
+
+		"Chameleon effect" ... This is a term coined by Henry Thompson to describe the ability of components in a schema with no 
+		targetNamespace to take-on the namespace of other schemas. This is powerful!
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xsd:simpleType name="TransactionResultType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Success"/>
+			<xsd:enumeration value="Failure"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

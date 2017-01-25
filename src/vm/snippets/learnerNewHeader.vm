@@ -1,0 +1,293 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+
+
+## Determine Learner Customer Type for contextual menu type. (Icon or Tabs)
+#set($learnerCustomerType = $userData.getLearner().getCustomer().getCustomerType())
+
+<!-- Customer Type is $learnerCustomerType -->
+<!-- Learner Header -->
+<div id="learner-header" class="page_header">
+    
+	<!-- logo -->
+	<div style="width:200px; float:left;">
+        <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+    </div>
+    <!-- logo-end -->
+    
+	
+	<!-- top-nav-right-menu -->
+	
+	
+	<!-- If Learner Customer is a B2B Customer, an Icon menu is distplayed. -->
+	#if(($learnerCustomerType == 'B2B') || ($learnerCustomerType == 'b2b'))
+        
+		<div style="float: right; width:700px;">
+		
+		 #if($userPermissionChecker.hasAccessToFeatureGroup("Launch Legacy Site", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0012", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="popup('lrn_launchLegacySite.do')" tabindex="2" href="#" #if($menu == "Launch Legacy Site") class="selected" #end>
+					   <img id="learner-launch-lagacy-site" alt="" src="brands/default/en/images/icon_launch_legacy_site_on.png" onmouseover="this.src='brands/default/en/images/icon_launch_legacy_site_hover.png'" onmouseout="this.src='brands/default/en/images/icon_launch_legacy_site_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Launch Legacy Site") class="selected" #end>
+					$brander.getBrandElement("lms.learner.mycourses.header.launchLegacySite")				
+					</td></tr>
+				</table>			
+           #end
+		    #if($userPermissionChecker.hasAccessToFeatureGroup("My Rewards", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0011", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('My Rewards','LMS-LRN-0011','lrn_myRewards.do')" href="#" tabindex="2" href="#" #if($menu == "My Rewards") class="selected" #end>
+					   <img id="learner-my-rewards" alt="" src="brands/default/en/images/icon_giftbox_on.png" onmouseover="this.src='brands/default/en/images/icon_giftbox_hover.png'" onmouseout="this.src='brands/default/en/images/icon_giftbox_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "My Rewards") class="selected" #end>
+					$brander.getBrandElement("lms.learner.mycourses.header.myrewards")					
+					</td></tr>
+				</table>			
+            #end
+            #if( $userPermissionChecker.hasAccessToFeatureGroup("My Profile", $userData, $ssn) && ($userPermissionChecker.hasAccessToFeature("LMS-LRN-0003", $userData, $ssn) 
+            	|| $userPermissionChecker.hasAccessToFeature("LMS-LRN-0004", $userData, $ssn) || $userPermissionChecker.hasAccessToFeature("LMS-LRN-0005", $userData, $ssn))) 
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					#if($userPermissionChecker.hasAccessToFeature("LMS-LRN-0003", $userData, $ssn))
+					<a onclick="submitForm('My Profile','LMS-LRN-0003','lrn_learnerProfile.do' )"
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-LRN-0004", $userData, $ssn))
+					<a onclick="submitForm('My Profile','LMS-LRN-0004','lrn_learnerPreferences.do' )"
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-LRN-0005", $userData, $ssn))
+					<a onclick="submitForm('My Profile','LMS-LRN-0005','lrn_myAlert.do' )"
+					#end
+						tabindex="1" href="#" #if($menu == "My Profile") class="selected" #end>
+					   <img id="learner-my-profile" alt="" src="brands/default/en/images/profiles_on.png"
+				                    onmouseover="this.src='brands/default/en/images/profiles_hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/profiles_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "My Profile") class="selected" #end>
+					$brander.getBrandElement("lms.learner.mycourses.header.myProfile")					
+					</td></tr>
+				</table>			
+            #end
+            #if($userPermissionChecker.hasAccessToFeatureGroup("My Transcripts", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0002", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('My Transcripts','LMS-LRN-0002','lrn_ManageReports.do')" href="#" tabindex="2" href="#" #if($menu == "My Transcripts") class="selected" #end>
+					   <img id="learner-my-transcripts" alt="" src="brands/default/en/images/reports_on.png"
+				                    onmouseover="this.src='brands/default/en/images/reports_hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/reports_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "My Transcripts") class="selected" #end>
+					$brander.getBrandElement("lms.learner.mycourses.header.myTranscripts")					
+					</td></tr>
+				</table>			
+            #end
+            
+            #if($userPermissionChecker.hasAccessToFeatureGroup("My Recommendations", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0008", $userData, $ssn))
+                <table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            <a onclick="submitForm('My Recommendations','LMS-LRN-0008','lrn_recommendedCourses.do')" tabindex="3" href="#" #if($menu == "My Recommendations") class="selected" #end>
+                                <img id="learner-my-recommendations" alt="" src="brands/default/en/images/headericons/recommendations_on.png"
+                                      onmouseover="this.src='brands/default/en/images/headericons/recommendations_hover.png'"
+                                      onmouseout="this.src='brands/default/en/images/headericons/recommendations_on.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td #if($menu == "My Recommendations") class="selected" #end>
+                            $brander.getBrandElement("lms.header.caption.myrecommendations")
+                        </td>
+                    </tr>
+                </table>
+            #end
+            
+            #if($userPermissionChecker.hasAccessToFeatureGroup("My Courses", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0001", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('My Courses','LMS-LRN-0001','lrn_myCourses.do')" tabindex="3" href="#" #if($menu == "My Courses") class="selected" #end>
+					   <img id="learner-my-courses" alt="" src="brands/default/en/images/training_on.png"
+				                    onmouseover="this.src='brands/default/en/images/training_hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/training_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "My Courses") class="selected" #end>
+					$brander.getBrandElement("lms.mycourses.header.MyCourses")					
+					</td></tr>
+				</table>	
+		
+			#end
+			
+            #if($userPermissionChecker.hasAccessToFeatureGroup("My Predict", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<a onclick="" href="#springUrl('/predict.do')">
+								<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td #if($menu == "Predict") class="selected" #end>
+								$brander.getBrandElement("lms.header.caption.Predict")
+						</td>
+					</tr>
+				</table>
+			#end
+			#if($userPermissionChecker.hasAccessToFeatureGroup("My Dashboard", $userData, $ssn) && $userPermissionChecker.hasAccessToFeature("LMS-LRN-0007", $userData, $ssn))
+			<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<a onclick="submitForm('My Dashboard','LMS-LRN-0007','lrn_widgetDashboard.do')" tabindex="3" href="#" #if($menu == "My Courses") class="selected" #end>
+								<img  alt="" src="brands/default/en/images/headericons/dashboard.png"
+				                    onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'"
+				                    onmouseout="this.src='brands/default/en/images/headericons/dashboard.png'"/>	
+						</a>
+						<!--
+						<a onclick="" href="#springUrl('/lrn_widgetDashboard.do')">
+							<img id="manager-dashboard" alt="" src="brands/default/en/images/headericons/dashboard.png" onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'" onmouseout="this.src='brands/default/en/images/headericons/dashboard.png'" />
+						</a>
+						-->
+					</td>
+				</tr>
+				<tr>
+					<td #if($menu == "My Dashboard") class="selected" #end>
+							$brander.getBrandElement("lms.header.caption.dashboard")
+					</td>
+				</tr>
+			</table>
+			#end
+			#set($ssn=$request.getSession(true))
+    		#set($isCASAuthenticated=$ssn.getAttribute("isCASAuthenticated"))
+    		#if($isCASAuthenticated)
+			<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<a onclick="javascript:goToLS360Dashboard()" tabindex="3" href="#" #if($menu == "SF Dashboard") class="selected" #end>
+								<img  alt="" src="brands/default/en/images/headericons/dashboard.png"
+				                    onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'"
+				                    onmouseout="this.src='brands/default/en/images/headericons/dashboard.png'"/>	
+						</a>
+						<!--
+						<a onclick="" href="#springUrl('/lrn_widgetDashboard.do')">
+							<img id="manager-dashboard" alt="" src="brands/default/en/images/headericons/dashboard.png" onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'" onmouseout="this.src='brands/default/en/images/headericons/dashboard.png'" />
+						</a>
+						-->
+					</td>
+				</tr>
+				<tr>
+					<td #if($menu == "SF Dashboard") class="selected" #end>
+							$brander.getBrandElement("lms.header.caption.ls360dashboard")
+					</td>
+				</tr>
+			</table>
+			#end
+			
+		
+    	</div>	
+		<!-- End Learner ICON menu. -->
+		
+		</div>
+		<!-- top-nav-right-menu-end -->
+
+	<!-- If Learner Customer is a B2C Customer, a TAB menu is distplayed. -->
+	#elseif(($learnerCustomerType == 'B2C') || ($learnerCustomerType == 'b2c'))
+    	
+		
+    		<!-- Niles Sample: This is where additional items can be added to B2C customers header.
+    		
+    			<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('My Courses','LMS-LRN-0001','lrn_myCourses.do')" tabindex="3" href="#" #if($menu == "My Courses") class="header_icon_selected" #end>
+					   <img id="learner-my-courses" alt="" src="brands/default/en/images/training_on.png"
+				                    onmouseover="this.src='brands/default/en/images/training_hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/training_on.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td class="<%=users%">
+					$brander.getBrandElement("lms.mycourses.header.MyCourses")					
+					</td></tr>
+				</table>	
+    		-->
+		
+    	</div>
+    	<!-- top-nav-right-menu-end -->
+		
+
+		
+		
+		
+		
+		<div id="navigation-bar" style="width:100%;">
+            
+			<table style="width:100%" id="navigation-tabs-table" border="0" cellpadding="0" cellspacing="0">
+				<tr id="navigation-row">
+					<td id="navigation-row-tabs">
+						<div id="tabs-container" style="width:800px; margin-left: auto ;margin-right: auto ;">
+    						#if( $userPermissionChecker.hasAccessToFeatureGroup("My Courses", $userData, $ssn) )
+                                <div #if( $menu == "My Courses" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Courses','LMS-LRN-0001','lrn_myCourses.do')" >$brander.getBrandElement("lms.mycourses.header.MyCourses")</div>
+                            #end
+                            #if( $userPermissionChecker.hasAccessToFeatureGroup("My Recommendations", $userData, $ssn) )
+                                <div style="width:150px;" #if( $menu == "My Recommendations" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Recommendations','LMS-LRN-0008','lrn_recommendedCourses.do')" tabindex="2">My Recommendations</div>
+                            #end
+                            #if( $userPermissionChecker.hasAccessToFeatureGroup("My Transcripts", $userData, $ssn) )
+                                <div #if( $menu == "My Transcripts" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Transcripts','LMS-LRN-0002','lrn_ManageReports.do')" tabindex="2">$brander.getBrandElement("lms.learner.mycourses.header.myTranscripts")</div>
+                            #end
+                            #if( $userPermissionChecker.hasAccessToFeatureGroup("My Profile", $userData, $ssn) ) 
+                                <div #if( $menu == "My Profile" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Profile','LMS-LRN-0003','lrn_learnerProfile.do' )" tabindex="1" style="border-right-style: solid;">$brander.getBrandElement("lms.learner.mycourses.header.myProfile")</div>
+							#end
+							#if( $userPermissionChecker.hasAccessToFeatureGroup("My Dashboard", $userData, $ssn) ) 
+                                <div #if( $menu == "My Dashboard" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Dashboard','LMS-LRN-0007','lrn_widgetDashboard.do')" tabindex="4" style="border-right-style: solid;">$brander.getBrandElement("lms.header.caption.dashboard")</div>
+							#end
+							#if( $userPermissionChecker.hasAccessToFeatureGroup("My Rewards", $userData, $ssn) ) 
+                                <div #if( $menu == "My Rewards" )class="tab_selected" #else class="tab" #end onclick="submitForm('My Rewards','LMS-LRN-0011','lrn_myRewards.do')" tabindex="4" style="border-right-style: solid;">$brander.getBrandElement("lms.learner.mycourses.header.myrewards")</div>
+							#end
+							#if( $userPermissionChecker.hasAccessToFeatureGroup("Launch Legacy Site", $userData, $ssn) ) 
+                                <div #if( $menu == "Launch Legacy Site" )class="tab_selected" #else class="tab" #end onclick="submitForm('Launch Legacy Site','LMS-LRN-0012','lrn_launchLegacySite.do')" tabindex="5" style="border-right-style: solid;">$brander.getBrandElement("lms.learner.mycourses.header.launchLegacySite")</div>
+							#end
+							#set($ssn=$request.getSession(true))
+                    		#set($isCASAuthenticated=$ssn.getAttribute("isCASAuthenticated"))
+                    		#if($isCASAuthenticated) 
+                                <div #if( $menu == "SF Dashboard" )class="tab_selected" #else class="tab" #end onclick="javascript:goToLS360Dashboard()" tabindex="5" style="border-right-style: solid;">$brander.getBrandElement("lms.header.caption.ls360dashboard")</div>
+							#end
+						</div>
+					</td>
+				</tr>
+			</table>
+			
+            #if($userPermissionChecker.hasAccessToFeatureGroup("My Predict", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<td>
+							<a onclick="" href="#springUrl('/predict.do')">
+								<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+							</a>
+						</td>
+					</tr>
+					<tr>
+						<td #if($menu == "Predict") class="selected" #end>
+								$brander.getBrandElement("lms.header.caption.Predict")
+						</td>
+					</tr>
+				</table>
+			#end
+			
+			<!--
+			#if( $userPermissionChecker.hasAccessToFeatureGroup("My Dashboard", $userData, $ssn) )
+        	<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<a onclick="submitForm('My Dashboard','LMS-LRN-0007','lrn_widgetDashboard.do')" tabindex="3" href="#" #if($menu == "My Courses") class="selected" #end>
+								<img  alt="" src="brands/default/en/images/headericons/dashboard.png"
+				                    onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'"
+				                    onmouseout="this.src='brands/default/en/images/headericons/dashboard.png'"/>	
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td #if($menu == "My Dashboard") class="selected" #end>
+							$brander.getBrandElement("lms.header.caption.dashboard")
+					</td>
+				</tr>
+			</table>
+        #end-->
+        </div> 
+    	<!-- End Learner TAB menu. -->
+	#end       
+#parse("snippets/infobar.vm")

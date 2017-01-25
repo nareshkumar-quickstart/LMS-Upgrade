@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructorHead46.vm")
+
+<head>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+
+function saveInformation(){
+        document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+function finishAction(){
+       // document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+$(document).ready(function()
+{
+    $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel-new').height()<$('#frame_body').height()) {
+        $('#right-pannel-new').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel-new').height());
+
+        $('#frame_body').scroll(function()
+        {
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		$("#enrolEndDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<form name="editSurveyInfoForm" method="POST" action="mgr_add-New-Survey-Information.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+	 </td></tr>
+   
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody><tr>
+                            <td width="192"><div class="tab_blank"></div></td>
+                            <td>&nbsp;</td>
+                            <td width="405">
+                                 <a href="ins_editCourseSchedule.do?method=viewScheduleSummary"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a></div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleScheduling"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleResources"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleInstructor"><div style="border-right-style: solid;" class="tab_selected">$brander.getBrandElement("lms.instructor.schedule.tabBar.instructors")</div></a>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody></table>
+                </table>
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			   #parse("snippets/instructorCourseLeftMenu.vm")
+			 </table></td>			
+                <!-- left-pannel-content-end -->
+
+                <!-- right-pannel-new-content -->
+<TD id="content" >
+	<div id="scrollable">
+                        #springBind("courseForm.*")
+                        #if($status.error)
+                        <!-- error-box -->
+                        <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                </div>
+                        #end
+                        </div>
+                        <!-- error-box -->
+                        #end
+
+                        <!-- Logo+Manage-User -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.instructor.scheduleTab.instructor.caption.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.instructor.scheduleTab.instructor.caption.subTitle")</div>
+		</td>
+	</tr>
+</table>
+
+                        <!-- Logo+Manage-User-end -->
+						
+			 <!-- search_box_result -->
+						<div class="search_box_result" id="resultBox">
+                        <!-- Result Header Start -->
+                        <div class="box_header" id="resultHeader">
+                            <!-- Result Heading -->
+                            <div style="float: left; height: 23px;">
+                                <div style="float: left; margin-top: 2px;">
+                                    <a href="add_schedule_instructor.jsp">
+                                        <div class="btn_start"></div>
+                                        <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.instructor.scheduleTab.instructor.caption.addInstructor")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                                <div style="float: left; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.instructor.scheduleTab.instructor.caption.deleteInstructor")</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                            </div>
+                            <div class="visible" style="float: left; height: 150px; width: 280px; left: 47%;" id="searchBox">
+                                Search Instructors<br><br><br>
+                                <div style="float: left;">First Name</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: left;">Last Name</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: left;">Instructor Type</div> <input type="text" style="font-size: 9px; float: right; margin-right: 15px; width: 170px;"><br><br>
+                                <div style="float: right; margin-top: 2px; margin-right: 15px;">
+                                    <div class="btn_start"></div>
+                                    <div onmousedown="showResult();" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Search</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                                <div style="float: right; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onmousedown="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Cancel</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                            </div>
+                            <div class="result_left_side">
+                                <!-- Result Description -->
+                                <div style="float: left; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onClick="showSearchBox(this);" onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmouseover="this.className='btn_over'" class="btn_normal">Search</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                                <!-- All Icon -->
+                                <div onmousedown="showResult();" onmouseout="hideTooltip();" onmouseover="showTooltip('Show All', event);" class="icon_all" id="showAll"></div>
+                                <!-- Next Icon -->
+                                <div onmouseout="hideTooltip();" onmouseover="showTooltip('Next', event);" class="icon_next" id="goNext"></div>
+                                <!-- Back Icon -->
+                                <div onmouseout="hideTooltip();" onmouseover="showTooltip('Back', event);" class="icon_back" id="goBack"></div>
+                                <!-- Showing Results -->
+                                <div class="box_description" id="resultDescription">Showing 1 - 5 of 5</div>
+                            </div>
+                        </div>
+
+                        <form style="margin-bottom: 0pt; margin-top: -1px; margin-left: 0pt;" name="myform">
+                            <div id="searchResult_2">
+                                <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 2px; border-top: 1px none;">
+                                    <tbody><tr bgcolor="#efefef">
+                                        <td width="17px" class="check_box_top"><input type="checkbox" style="margin-left: 3px;" onclick="checkAll(document.myform.row, this)" name="selectAll" id="check_box"></td>
+                                        <td width="50%" class="box_subheader"><div class="icon_up"></div>First Name</td>
+                                        <td width="25%" class="box_subheader"><div style="margin-left: 13px;">Last Name</div></td>
+                                        <td style="border-right: medium none;" class="box_subheader"><div style="margin-left: 13px;">Instructor Type</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_1"><a href="edit_instructor_schedule.jsp">Shuja</a></td>
+                                        <td class="row_1"><a href="edit_instructor_schedule.jsp">Rahman</a></td>
+                                        <td style="border-right: medium none;" class="row_1"><a href="edit_instructor_schedule.jsp">Lead</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_2">Jason</td>
+                                        <td class="row_2">Burns</td>
+                                        <td style="border-right: medium none;" class="row_2">Lead</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_1">Brian</td>
+                                        <td class="row_1">Paul</td>
+                                        <td style="border-right: medium none;" class="row_1">Lead</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_2">Jerry</td>
+                                        <td class="row_2">Monson</td>
+                                        <td style="border-right: medium none;" class="row_2">Moderator</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td style="border-bottom: medium none;" class="row_1">Mike</td>
+                                        <td style="border-bottom: medium none;" class="row_1">McMains</td>
+                                        <td style="border-right: medium none; border-bottom: medium none;" class="row_1">Teaching Assitant</td>
+                                    </tr>
+                                </tbody></table>
+                            </div>
+                        </form>
+                        <!-- Search Result End -->
+                    </div>
+				 <!-- search_box_result -->
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                        <!-- button-div -->
+						<div style="float: right; margin-top: 15px; margin-right: 15px;">
+						  <a onClick="saveInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					   </div>
+					  <div style="float: right; margin-top: 15px; margin-right: 10px;">
+						<div>
+						  <a onClick="cancelInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					  </div>
+				   </div>
+					<!-- button-div --> 
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-new-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/managerFooter.vm")
+#end   
+<!-- footer-end -->
+</td></tr>
+</table>
+</form>
+</body>
+</html>

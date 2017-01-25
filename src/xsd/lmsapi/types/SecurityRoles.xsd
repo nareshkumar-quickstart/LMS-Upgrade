@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://securityroles.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://securityroles.types.lmsapi.message.webservice.lms.vu360.softech.com" 
+	xmlns:orgGroup="http://orggroup.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+	
+	<!-- First, a schema is able to access components in schemas that have no targetNamespace, using <include>. Tthe SecurityRoles 
+	     schema uses the components in Vu360User.xsd and OrganizationGroup.xsd (and they have no targetNamespace). 
+	     
+	      Second, The components in the schemas with no targetNamespace get namespace-coerced. That is, the components "take-on" 
+	      the targetNamespace of the schema that is doing the <include>.
+          For example, Vu360Users in Vu360User.xsd gets implicitly coerced into the SecurityRoles targetNamespace. This is the 
+          reason that the Users element was able to reference Vu360Users in the default namespace using type="Vu360Users". Ditto
+          for the OrganizationalGroups in OrganizationGroup.xsd.
+	-->
+	
+	<xsd:include schemaLocation="Vu360User.xsd"/>
+	  
+	<xsd:include schemaLocation="../utility/utility.xsd"/>
+	<!--
+	 <xsd:include schemaLocation="/schemas/lmsapi/utility/utility.xsd"/> 
+	   -->
+	<xsd:import namespace="http://orggroup.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="OrganizationGroup.xsd"/>
+	 
+	<xsd:complexType name="UserSecurityRoles">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserSecurityRole" type="UserSecurityRole" minOccurs="1" maxOccurs="unbounded" />
+   		</xsd:sequence>  
+	</xsd:complexType>
+	
+	<xsd:complexType name="UserSecurityRole">  
+    	<xsd:sequence>  
+        	<xsd:element name="SecurityRoleName" type="xsd:string" minOccurs="1" maxOccurs="1" nillable="false" />
+        	<xsd:element name="Users" type="Vu360Users" minOccurs="1" maxOccurs="1" nillable="false" />
+        	<xsd:element name="OrganizationalGroups" type="orgGroup:OrganizationalGroups" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence> 
+    </xsd:complexType>
+    
+	 <!--  Security Role Response types --> 
+	<xsd:complexType name="ResponseUserSecurityRoles">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserSecurityRoleResponse" type="ResponseUserSecurityRole" minOccurs="1" maxOccurs="unbounded" />
+   		</xsd:sequence>  
+	</xsd:complexType>
+	
+	<xsd:complexType name="ResponseUserSecurityRole">  
+    	<xsd:sequence>  
+        	<xsd:element name="SecurityRoleName" type="xsd:string" minOccurs="0" maxOccurs="1" nillable="false" />
+        	<xsd:element name="AssignedSecurityRoleUsers" type="AssignedSecurityRoleUsers" minOccurs="0" maxOccurs="1" nillable="false" />
+        	<xsd:element name="UnassignedSecurityRoleUsers" type="UnassignedSecurityRoleUsers" minOccurs="0" maxOccurs="1" nillable="false" />
+        	<xsd:element name="AssignedOrganizationalGroups" type="orgGroup:AssignedOrganizationalGroups" minOccurs="0" maxOccurs="1" />
+        	<xsd:element name="UnassignedOrganizationalGroups" type="orgGroup:UnassignedOrganizationalGroups" minOccurs="0" maxOccurs="1" />
+    	</xsd:sequence> 
+    	<xsd:attribute name="errorCode" type="xsd:string" />
+	    <xsd:attribute name="errorMessage" type="xsd:string" />
+    </xsd:complexType>
+     
+	<xsd:complexType name="AssignedSecurityRoleUsers">  
+    	<xsd:sequence>  
+        	<xsd:element name="UserName" type="xsd:string" minOccurs="1" maxOccurs="unbounded" />
+   		</xsd:sequence>  
+	</xsd:complexType>
+    
+	<xsd:complexType name="UnassignedSecurityRoleUsers">
+  		<xsd:sequence>  
+    		<xsd:element name="UserName" type="valueWithError" minOccurs="1" maxOccurs="unbounded" />
+  		</xsd:sequence>
+	</xsd:complexType>
+	
+</xsd:schema>

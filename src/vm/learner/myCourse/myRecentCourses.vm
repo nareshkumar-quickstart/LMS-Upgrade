@@ -1,0 +1,116 @@
+#**
+----------------------------------------------------------------------------  
+@Author jason Apr 6, 2009
+@Modified by jason Apr 6, 2009
+---------------------------------------------------------------------------- 
+*#
+#parse("snippets/infobar.vm")
+
+#if($context.myCourseItems && $context.myCourseItems.size() > 0)
+<table id="course-list-alt" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid none #CCCCCC;border-bottom:none; margin-top:0px;">
+  <tr class="borderRow">
+  #if (!$context.search || $context.search.equals("Search") || $context.search.equals(""))
+  <td width="31" class="header"><img src="#if($courseGroup.courseGroupName.contains("Training Plan:"))$brander.getBrandElement("lms.pixel.iconTrainingPlan")#else $brander.getBrandElement("lms.pixel.iconCourseGroup") #end" class="icon" alt=""></td>
+  <td  class="header"><div style="float:left;margin-left:-8px;_margin-left:-4px;">$brander.getBrandElement("lms.mycourses.ShowMyRecentCourses.RecentlyAccessedCourses")</div></td>
+  <td  width="20%" class="header"><div style="float:right;margin-right:20px;">&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.mycourses.ShowMyRecentCourses.CourseStatus")</div></td></tr>
+  #else
+  <td width="31" class="header"><img src="$brander.getBrandElement("lms.pixel.iconSearchResult")" class="icon" alt=""></td>
+  <td  class="header"><div style="float:left;margin-left:-8px;_margin-left:-4px;">$brander.getBrandElement("lms.mycourses.ShowMyEnrolledCourses.caption.searchResultsfor") $context.search</div></td>
+  <td  width="20%" class="header"><div style="float:right;margin-right:20px;">&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.mycourses.ShowMyRecentCourses.CourseStatus")</div></td></tr>
+  #end
+  
+  #set ($evenOdd = 0)
+  #foreach ($course in ${context.myCourseItems})  
+#if(! $course.completionPercent)
+#set($remainingPct=100)
+#else
+#set($remainingPct=100-$!{course.completionPercent})
+#end
+  #if( $evenOdd == 0 )
+    #set( $evenOdd = 1 )
+
+    #else
+      #set( $evenOdd = 0 )
+ #end
+
+  <tr>
+   <td width="31" valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+   <img class="icon" src="$brander.getBrandElement("$course.get('courseIconToShow')")" /></td>
+ <td valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+
+	#if( $course.courseCompleted  &&  $course.courseCategoryType.equals("Legacy Course"))
+ 		<font color=#cccccc>#dotPaddingWithOutTitle($!{course.courseTitle}, 100)
+	#elseif(($course.enrollmentStatus.equalsIgnoreCase("active") || $course.enrollmentStatus.equalsIgnoreCase("expired") )&& $!dateComparisonTool.difference($dateComparisonTool,$course.enrollment.enrollmentEndDate).days <= 0)
+ 		<a class="expiredCourseTitle"><font color=#cccccc>#dotPaddingWithOutTitle($!{course.courseTitle}, 100)</a>
+		<span class="bodycourseTitle-ul-none">|</span><span class="course-expire">  Expired on $dateComparisonTool.format('full_date',$course.enrollment.enrollmentEndDate)</span>
+	#else
+		<a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" 
+			href=#if($course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || $course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))#if($course.syncInProgress == false)"#" #else "javascript:launchCourse('$!{course.courseID}','$!{course.learnerEnrollmentID}', '$!{course.courseCategoryType}')" #end #else "javascript:launchCourse('$!{course.courseID}','$!{course.learnerEnrollmentID}', '$!{course.courseCategoryType}')" #end>#dotPaddingWithOutTitle($!{course.courseTitle}, 100)</a> 	
+	#end
+	##LMS-15469
+	#if($course.reportingFieldMissing && $course.reportingFieldMissing.length()>0)
+		#if($!course.enrollment.skippedCourseApproval == 'true')
+		 ## do not show "missing Field" message, if Course Approval has skipped by learner. (LMS-15996) 
+		#else
+		<span class="bodycourseTitle-ul-none">|</span><span class="course-expire">$course.reportingFieldMissing</span>
+		#end	
+	#end
+		<br/><div style="margin-top:5px;">
+		<span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">$brander.getBrandElement("lms.mycourses.lastAccessed"): $formUtil.formatDateTimeMED($course.lastAccessDate, $locale) | </span>
+		#*#if($!{course.courseCreditHours} > 0)<span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">$brander.getBrandElement("lms.mycourses.hours"): $course.courseCreditHours | </span>#end*#
+		#*#if($!{course.courseDuration} > 0)<span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")">$brander.getBrandElement("lms.courseDesc.label.duration"): $course.courseDuration | </span>#end*#
+		<a class="view-details-ul-none" href=#if($course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || $course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) )"#springUrl("/lrn_courseDetails.do?learnerEnrollmentId=$!{course.learnerEnrollmentID}&show=$context.viewType")" #else"#springUrl("/lrn_courseDetails.do?learnerEnrollmentId=$!{course.learnerEnrollmentID}&show=$context.viewType")"#end>$brander.getBrandElement("lms.mycourses.viewDetails")</a> 
+
+		#if($course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")) || $course.courseCategoryType.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")) )<span class="bodycourseDetails">|</span> <a class="view-details-ul-none"  href="#springUrl("/lrn_viewSchedule.do?courseId=$!{course.courseID}&learnerEnrollmentId=$!{course.learnerEnrollmentID}&show=$!{context.viewType}&search=$!{context.search}")">$brander.getBrandElement("lms.learner.mycourses.caption.viewSchedule") </a>#end
+		#if($course.courseCategoryType.equals("Instructor Connect")) #if(!$nullTool.isNull($course.enrollment.synchronousClass))<span class="bodycourseDetails">|</span> <a class="view-details-ul-none"  href="#springUrl("/lrn_viewSchedule.do?courseId=$!{course.courseID}&learnerEnrollmentId=$!{course.learnerEnrollmentID}&show=$!{context.viewType}&search=$!{context.search}")">$brander.getBrandElement("lms.learner.mycourses.caption.viewSchedule") </a>#end#end
+		
+		#if($course.viewAssessmentResults == "1")
+		         <span class="bodycourseDetails">|</span>
+                       <a class="view-details-ul-none" href="#springUrl("/lrn_assessmentResults.do?learnerEnrollmentId=$!{course.learnerEnrollmentID}")">
+                           <div class="print-certificate">View Assessment</div></a>  
+        #end
+		
+		 $#if($course.courseCompleted) 
+		 #if( ! $course.courseCategoryType.equals("DFC") )
+		   
+		 <span class="bodycourseDetails">|</span>
+		 <a class="view-details-ul-none" href="javascript:printCertificate('$!{course.learnerEnrollmentID}')"><div class="print-certificate">$brander.getBrandElement("lms.learner.mycourses.caption.printCertificate")</div></a>  
+		   #end #end</div>
+</td>
+  <td align="center" valign="middle" width="20%;" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end> 
+  <div style="float:center;margin-left:100px;">
+  
+		#if($course.syncInProgress == true)
+		
+			<span id="c23" class="text-red">$brander.getBrandElement("lms.learner.mycourses.caption.currentlyInSession")</font></span>
+		
+		#elseif( $course.courseStatus.equals("notstarted"))
+			
+			<span class="text-blue">$brander.getBrandElement("lms.mycourses.notStarted")</span>
+		
+		#elseif( $course.courseCompleted 
+		|| $course.courseStatus == "affidavitpending" 
+		|| $course.courseStatus == "reportingpending" 
+		|| $course.courseStatus == "affidavitdisputed"
+		|| $course.courseStatus == "affidavitreceived"
+		|| $course.courseStatus == "userdeclinedaffidavit")
+		
+			<span id="c23" class="text-green">$brander.getBrandElement("lms.mycourses.status.${course.courseStatus.toLowerCase()}")</span>
+		
+		#else
+			<img src="$brander.getBrandElement("lms.pixel.statusBarStartJpg")"><img src="$brander.getBrandElement("lms.pixel.progressBarJpg")" width="$!{course.completionPercent}" alt="$math.round($!{course.completionPercent})%" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarsJpg")" width="$remainingPct" alt="$math.round($!{course.completionPercent})%" height='11'><img src="$brander.getBrandElement("lms.pixel.statusBarEndJpg")">
+		
+		#end 
+</td></div></tr>
+#end
+
+#else
+  <table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">
+		  <tbody>
+		<tr class="borderRow"><td colspan="2"><span class="headerRow">$brander.getBrandElement("lms.mycourses.dropdown.recent")</span></td><td>&nbsp;</td></tr>
+		<tr class="borderRow-alt"><td width="80%" colspan="3" align="center" valign="top">$brander.getBrandElement("lms.learner.mycourses.caption.noRecentCourses") <a href="#springUrl("/lrn_myCourses.do?show=enrolled")">$brander.getBrandElement("lms.learner.mycourses.caption.clickEnrollCourses")</a>.</td></tr>
+		</tbody>
+		</table>
+ 
+  #end
+</table>

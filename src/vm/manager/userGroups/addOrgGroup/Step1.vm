@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+ 
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+    $(document).ready(function(){
+       	
+    });
+    
+      function doEnter(event){
+            if(event==null){
+                event = window.event;
+            } 
+            if (isEnterKeyPressed(event)){
+            	submitButtonForm(document.addOrgGroup,'wizardSubmitter','_target1');
+            }
+      }
+      
+      function isEnterKeyPressed(e) {
+			if (e != null)
+			{
+			    if (e.which || e.keyCode) {
+			        if ((e.which == 13) || (e.keyCode == 13)) {			            
+			            return true;
+			        }
+			    }
+			}
+		    return false;
+	  }
+      
+</script>
+</head>
+#macro( treeAddOrgGroupStep1 $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        
+        #set ($val=0)
+
+        $arrParent.add($node.depth,$node.value.id)
+        
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}" style="height:30px;">
+            <div class="icon_blank" style="padding-top:3px;">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2" style="padding-top:3px;"></div>
+                #end
+            #end
+            
+            #if(${node.isLeaf()})
+             <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+             <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+
+            <div class="org_checkbox"><input type="radio" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end /></div>
+			<div style="text-align:justify;padding-top:3px;">${node.value.name}</div>
+        </div>
+
+    #end
+#end
+<body>
+    <form name="addOrgGroup" action="mgr_addOrgGroup.do" method="POST" >
+     <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+			</td>
+		</tr>
+		
+	   <tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <!-- content-area -->
+                <div><!-- left-pannel-content -->
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.manager.addOrgGroup.caption.Add-New-Organization-Group-Wizard") <br />$brander.getBrandElement("lms.manager.addOrgGroup.caption.Step-1-of-2")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.administrator.editDistributorGroup.caption.group-Name")</div>
+                        <div class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollmentSummary.caption.header")</div>
+                    </div>
+                </div><!-- left-menu-content-end -->
+				</table>
+			</td>
+				
+             <TD id="content">
+			 	 <div id="scrollable">
+                    #springBind("addOrgGroupForm.groups")
+                    #if($status.error)
+                        <div id="message_box" style="width:95%;"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                        </div><!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+            		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	    		    <tr>
+	    			<td id="page-icon" class="page-icon-users">
+	    			    &nbsp;
+	    			</td>
+	    			<td id="page-description">
+	    			    <div id="page-heading">$brander.getBrandElement("lms.manager.addOrgGroup.caption.Add-Organization-Group")</div>
+	    			    <div id="page-help">$brander.getBrandElement("lms.manager.addOrgGroup.caption.description")</div>
+	    			</td>
+	    		    </tr>
+	    		</table> 
+                    <!-- Logo+Manage-User-end -->
+
+                    <div class="content-Block"><!-- Invitation-Summary -->
+                        <div id="e12" class="Block-Contain-header">
+                            <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.administrator.editDistributorGroup.caption.group-Name")</div>
+                        </div>
+                        <div id="e7b" class="$brander.getBrandElement("lms.manager.editTrainingPlan.cssClass.Search-inputfield-box")"><!-- User-left-right-list -->
+                            <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                            <!-- 1 -->
+                            #springBind("addOrgGroupForm.groups")
+                            <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                                <div #if($status.error)class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end >$brander.getBrandElement("lms.administrator.editDistributorGroup.caption.group-Name")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div>
+                                #springBind("addOrgGroupForm.newGroupName")
+                                <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-f")"><input type="text" maxlength="255" name="${status.expression}" value="${status.value}" class="input_field"  onkeypress="doEnter(event);"/></div>
+                            </div>
+                            <!-- 10 -->
+                            <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        </div><!-- End-User-left-right-list -->
+                    </div> <!-- End-Invitation-Summary -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+                    <div class="content-Block-new"><!-- content-Block -->
+                        <div class="Block-Contain-header">
+                            <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.viewLearnerGroupMembers.caption.OrganizationalGroup")</div>
+                        </div>
+                        #treeAddOrgGroupStep1(${orgGroupTreeAsList})
+                    </div><!-- content-Block -->
+                    <!-- button-div -->
+                    <div class="buttonContainer">
+                    <input type="hidden" id="currentpage" name="_page" value="0"/>
+                    <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />                    
+					<div style="float:right; margin-top:3px;">
+					  <a onClick="submitButtonForm(document.addOrgGroup,'wizardSubmitter','_target1');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Next</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:3px;">
+					  <a onClick="submitButtonForm(document.addOrgGroup,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Cancel</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>	
+                    </div>
+                    <!-- button-div -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </td><!-- content2-area-end -->
+			
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+               <!-- footer -->
+               #parse("snippets/managerFooter.vm")
+               <!-- footer-end -->
+			</td>
+		</tr>
+        </table><!-- main-container -->
+    </form>
+</body>
+</html>

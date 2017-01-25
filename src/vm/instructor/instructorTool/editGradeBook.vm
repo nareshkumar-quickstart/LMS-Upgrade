@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <script language="javascript" type="text/javascript">
+
+            $(document).ready(function(){
+               $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+				if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+				}
+				$('#sideBar').height($('#right-pannel').height());    
+            });
+
+            function sortLearner(sortColumnIndex,sortDirection,pageIndex,showAll){
+                 document.getElementById('sortColumnIndex').value=sortColumnIndex;
+                 document.getElementById('sortDirection').value=sortDirection;
+                 document.getElementById('showAll').value=showAll;
+                 document.getElementById('pageIndex').value=pageIndex;
+                 document.getElementById('actionmethod').value='editGradebookCourseActivityView';
+                 document.editGrdBkForm.submit();
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="editGrdBkForm" id="editGrdBkForm" method="post" action="ins_mngGradeBook.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+  	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+			</td></tr>
+			
+                <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+		<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            #parse("snippets/instructorResourcesLeftMenu.vm")
+		</table></td>
+
+		<TD id="content" >
+			<div id="scrollable">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:10px;">
+                            <tr>
+                                <td colspan="2">
+                                  <!-- Page Description -->
+                                          	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                          		    <tr>
+                          			<td id="page-icon" class="page-icon-tools">
+                          			    &nbsp;
+                          			</td>
+                          			<td id="page-description">
+                          			    <div id="page-heading">$brander.getBrandElement("lms.Instructor.PageTitle.caption.editGradebook")</div>
+                          			    <div id="page-help">
+										This is the main page for the gradebook. Click any activity name to drill down into that activity and enter student data. To add, delete, or change activities, return to the Manage Gradebooks page and click the Edit Activities link for this gradebook.
+										</div>
+                          			</td>
+                          		    </tr>
+                          		</table>  
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="selected_object">
+                                    
+                                        #springBind("gradeBookForm.synClassName")
+                                        $!{status.value}
+                                   
+                                </td>
+                                <td>
+                                     <div style="float:right; margin-top:10px;*margin-right:15px;">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal" onClick="window.print();">$brander.getBrandElement("lms.Instructor.button.print")</div>
+                                        <div class="btn_end"></div>
+                                     </div>
+                                     <div style="float:right; margin-top:10px;margin-right:5px;">
+                                        <a onclick="location.href='ins_mngGradeBook.do?method=searchGradeBook';">
+                                            <div class="btn_start"></div>
+                                            <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Back")</div>
+                                            <div class="btn_end"></div>
+                                        </a>
+                                     </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="resultBox" class="search_box_result">
+                            <div id="resultHeader" class="box_header">
+                                <div class="box_heading">
+                                     $brander.getBrandElement("lms.instructor.addActv.caption.stu")
+                                </div>
+                            </div>
+                            #springBind("gradeBookForm.activityList")
+                            #set($activityList = $!{status.value})
+                            $pager.setItems($!{status.value})
+                            #set($totalCount = $pager.total)
+                            #if($pager.hasItems())
+                                    #set($pageFirstIndex = $pager.firstIndex)
+                                    #set($pageLastIndex = $pager.lastIndex)
+                                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                    #set($currentPageCount = $pageLastIndex + 1)
+                                    #set($pageCurrIndex = $pager.index)
+                            #else
+                                    #set($pageFirstIndex = 0)
+                                    #set($pageLastIndex = 0)
+                                    #set($currentPageSize = 0)
+                                    #set($currentPageCount = 0)
+                                    #set($pageCurrIndex = 0)
+                            #end
+                            <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                                    <input type="hidden" id="paging" name="paging" value="" />
+                                    <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                                    <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                                    <input type="hidden" id="showAll" name="showAll" value="false" />
+                                    <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+                            #if($!{context.showAll})
+                                #set($showAll=${context.showAll})
+                            #else
+                                #set($showAll=false)
+                            #end
+                            <div id="searchResult">
+                                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="box_subheader" width="120px" ><div style="margin-left:5px;"><div #if($context.sortDirection == 0) onclick="sortLearner(0,1,$pageCurrIndex,$showAll);" #else onclick="sortLearner(0,0,$pageCurrIndex,$showAll);" #end ><div id="nameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div></div></td>
+                                        <td class="box_subheader" ><div class="table_column" style="margin-left:5px;"><div #if($context.sortDirection == 0) onclick="sortLearner(1,1,$pageCurrIndex,$showAll);" #else onclick="sortLearner(1,0,$pageCurrIndex,$showAll);" #end ><div id="jurisdictionSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div></div></td>
+                                        #springBind("gradeBookForm.courseActivities")
+                                        #set($activities = $!{status.value})
+                                        #foreach($activity in $activities)
+                                            <td class="box_subheader" width="100px">
+                                                
+                                                <a onclick="window.location.href='ins_mngGradeBook.do?method=editGrade&caId=$!{activity.id}'">
+							<!-- Note: Commented as per issue LMS-7969 [Remove the wranch from the screen] -->
+                                                    <!-- <div class="icon_change" style="float:right;"></div> -->
+						    <div class="table_column" style="float:left;padding-top:2px;margin-left:5px;cursor:pointer;"> <u>$!{activity.activityName}</u> </div>
+                                                </a>
+                                            </td>
+                                            <!--<td class="box_subheader" width="80px"><div class="table_column">Test 2</div><a href="#"><div class="icon_change"></div></a></td>-->
+                                        #end
+                                    </tr>
+                                    #set($loopIndex = 0)
+                                    #foreach($activity in $activityList)
+                                        #if($loopIndex%2 == 0)
+                                            #set($alternate="row_1")
+                                        #else
+                                            #set($alternate="row_2")
+                                        #end
+
+                                        #set($activitySize = $activities.size() )
+                                        #set($activitySize = $activitySize - 1 )
+                                        #set( $lastIndex = $activityList.size() - 1 )
+
+                                        #if($loopIndex == $lastIndex)
+                                            <tr>
+                                                <td class="$alternate"  height="20px" style="border-bottom:none;">$!{activity.learner.vu360User.firstName}</td>
+                                                <td class="$alternate" style="border-bottom:none;">$!{activity.learner.vu360User.lastName}</td>
+
+                                                #foreach($index in [0..$activitySize])
+                                                     #set ($data="&nbsp;")
+                                                          #if($!{activity.types.get($index)}== "Self Study Course")
+                                                               #set($data=$!{activity.learnerCourseActivities.get($index).overrideScore})
+                                                          #elseif($!{activity.types.get($index)}== "Final Score Course")
+                                                                #set($data=$!{activity.learnerCourseActivities.get($index).finalRawScore})
+                                                          #elseif($!{activity.types.get($index)}== "ASSIGNMENT_COURSE")
+                                                                #set ($data="&nbsp;")
+                                                          #elseif($!{activity.types.get($index)}== "LECTURE_COURSE")
+                                                                #set ($data="&nbsp;")
+                                                          #end
+                                                          #if($index<$activitySize)
+                                                             <td class="$alternate" style="border-bottom:none;">$data</td>
+                                                          #else
+                                                             <td class="$alternate" style="border-bottom:none;border-right:none;">$data</td>
+                                                          #end
+                                                #end
+                                            </tr>
+                                        #else
+                                            <tr>
+                                                <td class="$alternate"  height="20px" >$!{activity.learner.vu360User.firstName}</td>
+                                                <td class="$alternate" >$!{activity.learner.vu360User.lastName}</td>
+
+                                                #foreach($index in [0..$activitySize])
+                                                     #set ($data="&nbsp;")
+                                                          #if($!{activity.types.get($index)} == "Self Study Course")
+                                                                #set($data = $!{activity.learnerCourseActivities.get($index).overrideScore})
+                                                          #elseif($!{activity.types.get($index)} == "Final Score Course")
+                                                                #set($data=$!{activity.learnerCourseActivities.get($index).finalRawScore})
+                                                          #elseif($!{activity.types.get($index)} == "ASSIGNMENT_COURSE")
+                                                                #set ($data="&nbsp;")
+                                                          #elseif($!{activity.types.get($index)} == "LECTURE_COURSE")
+                                                                #set ($data="&nbsp;")
+                                                          #end
+                                                          #if($index<$activitySize)
+                                                             <td class="$alternate" >$data</td>
+                                                          #else
+                                                             <td class="$alternate" style="border-right:none; ">$data</td>
+                                                          #end
+                                                #end
+                                            </tr>
+                                        #end
+                                        #set($loopIndex = $loopIndex + 1)
+                                    #end
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </td></tr>
+
+                <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+                <!-- Footer Start -->
+                #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+	</td></tr>				
+            </table>
+        </form>
+    </body>
+</html>

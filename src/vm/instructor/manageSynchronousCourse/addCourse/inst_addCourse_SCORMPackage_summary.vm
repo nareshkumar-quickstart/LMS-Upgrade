@@ -1,0 +1,490 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" language="javascript">
+function collapseExpand(id,count){
+        if($("#course-summary-"+count).css("height") == "24px"){
+            $("#course-summary-"+count).css("height", "auto")
+            $("#icon-"+count).attr("class", "icon_down");
+        }else{
+            $("#course-summary-"+count).css("height", "24px")
+            $("#icon-"+count).attr("class", "icon_right");
+        }
+    }   
+   
+$(document).ready(function()
+{
+
+ $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel').height()<$('#frame_body').height()) {
+        $('#right-pannel').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel').height());
+	
+	$('#frame_body').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+});
+
+ 
+
+function submitFormWithDescriptionData(textAreaId)
+{	
+	for(i=1;i <= $courseForm.scormCourses.size();i++){
+	
+	updateTextArea("description"+i);
+	updateTextArea("overview"+i);
+	updateTextArea("prerequisites"+i);
+	updateTextArea("objectives"+i);
+	updateTextArea("quiz"+i);
+	updateTextArea("final"+i);
+	updateTextArea("eoci"+i);	
+	}
+	submitButtonForm(document.addCustomCourses,'wizardSubmitter','_finish');
+	}
+</script> 
+</head>
+<body >
+<form name="addCustomCourses" method="post" action="ins_addCourse.do" >   
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+ 		 #parse("snippets/managerWizardHeader.vm")
+		 </td></tr>
+		 
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-pannel-content -->
+		<div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.title")$brander.getBrandElement("lms.instructor.addCourse.leftPanel.showing3of3")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step1")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step2.scorm")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.instructor.addCourse.leftPanel.caption.step3.scorm")</div>
+                    </div>
+                </div>
+		</table></td>
+		<!-- left-pannel-content-end -->
+
+		<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+				#springBind("courseForm.*")
+				#if($status.error)
+				<!-- error-box -->
+				 <div id="message_box">
+					<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					#foreach($errorCode in $status.errorCodes)
+				#set ($error = $brander.getBrandElement($errorCode))
+				<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+					</div>
+					#end
+				</div>
+				<!-- error-box -->
+				#end
+
+            <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCourses">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addSCORMPackage.summary.caption.courseTitle")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.addSCORMPackage.summary.caption.courseDesc")</div>
+			</td>
+		    </tr>
+		</table>
+            <!-- Logo+Manage-User-end -->
+			
+			
+			<!-- need to loop through the courses in form.scormCourses.-->
+			#set($index = 0)
+			#foreach($scormCourse in ${courseForm.scormCourses})
+			#springBind("courseForm.scormCourses[$index].courseName")
+			<div class="search_box_result" id="course-summary-$velocityCount">
+			 <div class="box_header" id="course-summary-header-$velocityCount" onclick="collapseExpand(this,$velocityCount)">
+                 <div style="margin-top: 7px;" class="icon_down" id="icon-$velocityCount"></div>
+				 
+                 <span class="box_heading">$brander.getBrandElement("lms.instructor.courseSummary.caption.summary") - $!{scormCourse.courseName}</span>
+             </div>
+			 <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                    <tbody><tr>
+                        <td height="30" width="150"><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.courseName")</span></td>
+    					<td>
+                            <div id="survey-name-required">
+                                <div class="required_field">*</div>
+                            </div>
+							
+                            <input type="text" value="$!{status.value}" name="$!{status.expression}" style="width: 500px;" id="field_name1" class="input_text_field">
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.courseID")</span></td>
+    					<td>
+						<div id="survey-name-required">
+                                <div class="required_field" style="visibility:hidden">*</div>
+                            </div>
+						#springBind("courseForm.scormCourses[$index].courseID")
+                            <input type="text" value="$!{status.value}" name="$!{status.expression}" style="width: 500px;" id="field_id1" class="input_text_field" maxlength='50'>
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.keywords")</span></td>
+    					<td>
+						<div class="required_field">*</div>
+						#springBind("courseForm.scormCourses[$index].keywords")
+                            <input type="text" value="$!{status.value}" name="$!{status.expression}" style="width: 500px;" id="field_keywords1" class="input_text_field" maxlength='1000'>
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.creditHours")</span></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].creditHours")
+                            <input type="text" value="$!{status.value}" name="$!{status.expression}" style="width: 35px; margin-left: 14px;" id="field_hours1" class="input_text_field" maxlength='50'><div style="float: left; margin-left: 8px; margin-top: 2px;">$brander.getBrandElement("lms.instructor.courseSummary.caption.creditHoursUnit")</div>
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.version")</span></td>
+    					<td>
+							#springBind("courseForm.scormCourses[$index].version")
+                            <input type="text" value="$!{status.value}" name="$!{status.expression}" style="width: 35px; margin-left: 14px;" id="field_version1" class="input_text_field" maxlength='50'>
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.businessUnit")</span></td>
+    					<td>
+                           #springBind("courseForm.scormCourses[$index].businessUnit")
+						<select name="$!{status.expression}" style="width: 150px; margin-left: 14px; border: 1px solid rgb(222, 221, 221);">
+						#foreach($businessUnit in $businessUnits)
+								<option value="$businessUnit" #if($businessUnit == $!{status.value}) selected #end>$businessUnit</option>
+						#end
+
+						</select>
+                        </td>
+					</tr>
+			 		<tr height="20px">
+                        <td><span class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.language")</span></td>
+    					<td>
+                           #springBind("courseForm.scormCourses[$index].language")
+						<select name="$!{status.expression}" style="width: 150px; margin-left: 14px; border: 1px solid rgb(222, 221, 221);">
+						  #foreach($language in $languages)
+							<option value="1" #if($language == $!{status.value}) selected #end>$language</option><!-- need to change this to become dynamic... can be done when service is present-->
+							#end
+						</select>
+                        </td>
+					</tr>
+					<tr>
+    					<td valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.courseSummary.caption.description")</div></td>
+                        <td>
+						<div style="margin-left:14px;">
+							 #springBind("courseForm.scormCourses[$index].description")	  
+						   <textarea id="description$velocityCount" name="$!{status.expression}" >$!{status.value}</textarea>
+						   <script language="JavaScript">
+						   generate_wysiwyg('description$velocityCount');
+							   </script>
+					   </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+			 </tbody></table>
+            <div class="box_header">
+                 <span class="box_heading">$brander.getBrandElement("lms.instructor.courseOverview.caption.courseOverview")</span>
+            </div>
+			 <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+					<tbody><tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.courseOverview.caption.courseGuide")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.scormCourses[$index].courseGuide")	 
+                               <textarea id="overview$velocityCount" name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('overview$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.courseOverview.caption.Prerequisites")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.scormCourses[$index].preRequisites")	 
+                               <textarea id="prerequisites$velocityCount" name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('prerequisites$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+			 </tbody></table>
+            <div class="box_header">
+                 <span class="box_heading">$brander.getBrandElement("lms.instructor.examOverview.caption.examOverview")</span>
+            </div>
+			 <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+					<tbody><tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.learningObjectives")</div></td>
+                        <td>
+                           <div style="margin-left: 14px;">
+                            	#springBind("courseForm.scormCourses[$index].learningObjectives")	
+                               <textarea id="objectives$velocityCount" name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('objectives$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.quizInformation")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            	#springBind("courseForm.scormCourses[$index].quizInformation")	
+                               <textarea id="quiz$velocityCount" name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							 <script language="JavaScript">
+                                   generate_wysiwyg('quiz$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.finalExamInformation")</div></td>
+                        <td>
+                             <div style="margin-left: 14px;">
+                            	#springBind("courseForm.scormCourses[$index].finalExamInformation")	
+                               <textarea id="final$velocityCount"  name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('final$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td width="150" valign="top"><div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.examOverview.caption.endOfCourseInstructions")</div></td>
+                        <td>
+                            <div style="margin-left: 14px;">
+                            #springBind("courseForm.scormCourses[$index].endOfCourseInstructions")	
+                               <textarea id="eoci$velocityCount" name="$!{status.expression}" style="display: none;">$!{status.value}</textarea>
+							   <script language="JavaScript">
+                                   generate_wysiwyg('eoci$velocityCount');
+                               </script>
+                           </div>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+			 </tbody></table>
+            <div class="box_header">
+                 <span class="box_heading">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.aditionalDetails")</span>
+            </div>
+			 <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+					<tbody><tr>
+    					<td height="30" width="150" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.deliveryMethod")</div></td>
+							
+    					<td>
+						 #springBind("courseForm.scormCourses[$index].deliveryMethod")	
+                            <input type="text" name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="delivery_method" class="input_text_field" maxlength='510'>
+                        </td>
+                    </tr>
+					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.MSRP")</div></td>
+    					<td>
+						 #springBind("courseForm.scormCourses[$index].msrp")	
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="msrp" class="input_text_field" maxlength='9'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.CourseCode")</div></td>
+    					<td>
+						 #springBind("courseForm.scormCourses[$index].courseCode")	
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="course_code" class="input_text_field" maxlength='50'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.approvedCourseHours")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].approvedCourseHours")	
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}"  style="width: 500px; margin-left: 14px;" id="approved_hours" class="input_text_field" maxlength='8'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.approvalNumber")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].approvalNumber")
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}"  style="width: 500px; margin-left: 14px;" id="approval_number" class="input_text_field" maxlength='255'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.currency")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].currency")
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="currency" class="input_text_field" maxlength='50'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.productPrice")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].productPrice")
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="product_price" class="input_text_field" maxlength='8'> 
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.wholeSalePrice")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].wholeSalePrice")
+                            <input type="text"   name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="whole_price" class="input_text_field" maxlength='8'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.royaltyPartner")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].royaltyPartner")
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="royalty_partner" class="input_text_field" maxlength='255'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.royaltyType")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].royaltyType")
+                            <input type="text"  name="$!{status.expression}" value="$!{status.value}"  style="width: 500px; margin-left: 14px;" id="product_price" class="input_text_field"  maxlength='20'>
+                        </td>
+                    </tr>
+					<tr>
+    					
+    					<td height="30" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.regulatoryRequirement")</div></td>
+    					<td>
+						#springBind("courseForm.scormCourses[$index].regulatoryRequirement")
+                             <select name="$!{status.expression}" style="width: 150px; margin-left: 14px; border: 1px solid rgb(222, 221, 221);">
+							#foreach($regulatoryRequirement in $regulatoryRequirements)
+								<option value="$regulatoryRequirement" #if($regulatoryRequirement == $!{status.value}) selected #end>$regulatoryRequirement</option>
+								#end
+                                    </select>
+                        </td>
+                    </tr>
+					<tr>
+						
+    				<td width="150" valign="top"><div style="margin-top: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.editCourseDetails.caption.termsofServices")</div></td>
+                        <td>
+						#springBind("courseForm.scormCourses[$index].termsOfService")
+                           <input type="text"  name="$!{status.expression}" value="$!{status.value}" style="width: 500px; margin-left: 14px;" id="product_price" class="input_text_field" maxlength='4'>
+                        </td>
+					</tr>
+                    <tr>
+                        <td height="3" colspan="2">
+                            &nbsp;
+                        </td>
+                    </tr>
+             </tbody></table>
+			</div>
+			#set($index = $velocityCount)
+			
+			#end
+						
+			
+			<!-- button-div -->
+			#*<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.managerBtn")">
+			<input type="hidden" id="currentpage" name="_page" value="0"/>
+			<div class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.btn-left")"><input type="image" src="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.pixel.cancel.gif")" width="66" height="30" id="cancel" name="_cancel" title="Cancel" align="top" /></div>
+			<div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.btn-right")"><input type="image" src="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.pixel.finish.gif")" width="66" height="29" id="finish" name="_finish" title="Finish" align="top"/></div>
+			</div>*#
+
+			<input type="hidden" id="currentpage" name="_page" value="3"/>
+			<div style="float: right; margin-top: 15px;">
+              <a onClick="submitFormWithDescriptionData('description1');">
+                  <div class="btn_start"></div>
+                  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnFinish")</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>	 
+            <div style="float: right; margin-top: 15px; margin-right: 10px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_target2');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnPrevious")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+			<div style="float: left; margin-top: 15px; margin-left: 10px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addCustomCourses,'wizardSubmitter','_cancel');">
+                      <div class="btn_start"></div>
+                     <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+
+			<!-- scrollable-div -->
+			<input type="hidden" id="currentpage" name="_page" value="3" />
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />		
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content-area-end -->
+	</td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	</td></tr>	
+	<!-- footer-end -->
+</table>
+</form>
+</body>
+</html>

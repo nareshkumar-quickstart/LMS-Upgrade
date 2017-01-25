@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+    
+
+    function showCommentDiv(divId) {
+        var obj = document.getElementById(divId);
+        if ($(obj).is(":hidden")) {
+            $(obj).animate({ height: "show" }, 700, "");
+          } else {
+            $(obj).animate({ height: "hide" }, 700, "");
+          }
+    }
+
+    function saveResponse(userId) {
+        document.getElementById('actionmethod').value='saveSurveyAnalizeResponse';
+        document.getElementById('vuId').value = userId;
+        document.surveyResponseForm.submit();
+    }
+    function cancelResponse() {
+        document.getElementById('actionmethod').value='cancelSurveyAnalizeResponse';
+        document.surveyResponseForm.submit();
+    }
+    
+</script>
+</head>
+
+<body>
+    <form name="surveyResponseForm" method="POST" action="mgr_manageSurveys.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="vuId" name="vuId" value="" />
+
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+           <!-- header -->
+		#parse("snippets/managerHeader.vm")
+           <!-- header-end -->
+		   </td>
+		 </tr>
+		 
+       <tr id="main"> <!-- SECOND BLOCK -->
+				<td id="left-navigation" valign="top">
+					 <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                     <!-- left-pannel-content -->
+                     #parse("snippets/compliance/complianceLeftMenu.vm")
+                     <!-- left-pannel-content-end -->
+					 </table>
+				</td>
+				
+              <TD id="content" >
+					<div id="scrollable">
+
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                      <td style="padding-right:10px;">
+                        <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">Survey Response</div>
+
+                  <div id="detailsHolder">You are currently previewing a survey. All survey questions and their possible responses are listed below. Any responses entered on this preview will not be saved.</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+                      </td>
+                </tr>
+                <tr>
+                      <td>
+						<div style="float:right; margin-top:3px;margin-right:20px;">
+						  <a onclick="window.print();return false;" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Print</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:3px;margin-right:5px;">
+						  <a onClick="cancelResponse();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Back</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                      </td>
+                </tr>
+            </table>
+
+            <h3><div class="group-name" style="clear:both; padding-left:5px">${manageSurveyForm.survey.surveyRef.name}</div></h3>
+
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")" style="width:107%;">
+
+            #set($questionCount = ${manageSurveyForm.survey.questionList.size()})
+            #set($questionNumber = $!{context.questionNo})
+            #set($surveyResultAnswer = ${context.surveyResultAnswers})
+            #if($questionCount > 0)
+
+                #set($maxQuestionIndex = $questionCount - 1)
+                #foreach($qInd in [0..$maxQuestionIndex])
+
+                    #set($surveyQuestion = ${manageSurveyForm.survey.questionList.get($qInd)})
+                    #set($prefix = "survey.questionList[$qInd]")
+                    #set($questionNumber = $questionNumber + 1)
+
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <!-- s -->
+                        <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <!-- s -->
+                        <div id="e12" style="float:left;width:100%;">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                            </div>
+                            
+                           		#if(${context.surveyResultAnswers.get(${surveyQuestion.surveyQuestionRef.id})})
+                           			<div>
+                           				<img src="brands/default/en/images/icon-mini-notes.png" onClick="showCommentDiv('feedback-$qInd');" />
+                       				</div>
+                           		#end
+                            	
+                        </div>
+                        <div style="float:left;width:100%;">
+                            $surveyQuestion.renderQuestion($prefix)
+                        </div>
+                        <div id="feedback-$qInd" style="display:none;float:left;width:100%;padding-bottom:10px;">
+                            <div class="User_coll_1"></div>
+                            #springBind("manageSurveyForm.survey.questionList[$qInd].comment")
+                            <textarea rows="" cols="" class="inputfield-box-L2-in-a" name="$!{status.expression}" >$!{status.value}</textarea>
+                        </div>
+                    </div>
+                    <!-- End-User-left-right-list -->
+                #end
+            #end
+        	#set($userId = $request.getParameter("vuId"))
+
+            </div>
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="saveResponse($userId);" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="cancelResponse();" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>			          
+
+            </div><!-- right-pannel -->
+
+        </td></tr><!-- content2a -->
+		<tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+        <!-- footer -->
+       #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+		</td>
+		</tr>
+    </table><!-- main-container -->
+</form>
+</body>
+</html>

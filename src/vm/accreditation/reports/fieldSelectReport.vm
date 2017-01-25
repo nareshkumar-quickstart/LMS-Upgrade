@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+#set($currentReport=$reportForm.getCurrentReport())
+<script language="javascript">
+    function saveReportFields(){
+    document.getElementById("action").value = "saveReportFields";
+    document.reportFieldsForm.submit();
+    }
+
+   function cancelReportFields(){
+    document.getElementById("action").value = "cancelReportFields";
+    document.reportFieldsForm.submit();
+   }
+
+   function setVisibilityStatus(chkBox, hiddenId){
+    document.getElementById(hiddenId).value = chkBox.checked;
+   }
+
+    function selectAllCheckBoxes(countCheckBoxes)
+    {
+        var objCheckAll=document.getElementById("chkAll");
+
+        if (objCheckAll.checked) {
+            for(var i = 0; i <= countCheckBoxes; i++){
+				var hiddenVarName = "reportFieldsEdit["+i+"].visible";
+				var hiddenVar = document.getElementById(hiddenVarName);
+                var objCheckBox=document.getElementById("fldChk_"+i);
+                objCheckBox.checked=true;
+				hiddenVar.value="true";
+            }
+            
+        }else{
+            for(var i = 0; i <= countCheckBoxes; i++){
+				var hiddenVarName = "reportFieldsEdit["+i+"].visible";
+				var hiddenVar = document.getElementById(hiddenVarName);
+                var objCheckBox=document.getElementById("fldChk_"+i);
+                objCheckBox.checked=false;
+				hiddenVar.value="false";
+            }
+            
+        }
+    }
+
+</script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+});
+</script>
+</head>
+
+<body>
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+        <!-- Header Row -->
+		<tr>
+            <td id="header" colspan="2">
+    <!-- header -->
+    #parse("snippets/accreditation/accreditationReportHeader.vm")
+    <!-- header-end -->
+</td>
+		</tr>
+		<!-- TopBar Start -->
+		<tr id="row-tabs">
+            <td id="blank-tab">
+                &nbsp;
+            </td>
+            <td id="tabs" align="center">
+                <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+    						<a href="#springUrl('/acc_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+    					</td>
+                        <td class='selected'>
+    						<a href="#springUrl('/acc_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a>
+    					</td>
+                        <td id='last'>
+    						<a href="#springUrl('/acc_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a>
+    					</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <!-- TopBar End -->
+		
+		<!-- Page -->
+        <tr id="main">
+			
+			<!-- Page Sidebar -->
+			<td id="left-navigation"  valign="top">
+				
+				<div id="sidebar-scroller" style="overflow-x: hidden;">
+                    #parse("snippets/reportLeftMenu.vm")
+                </div>
+        
+			</td>
+			
+			<!-- Page Content -->
+			<td id="content">
+				
+				<!-- Page Scrollable Area -->
+				<div id="scrollable">
+            
+
+                #springBind("reportForm.*")
+                #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                    </div>
+                    #end
+                </div>
+                <!-- error-box -->
+                #end
+
+                <!-- Logo+Manage-User -->
+			<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+					    <tr>
+							<!-- Page Content Icon -->
+					        <td id="page-icon" class="reportLogo">
+					            &nbsp;
+					        </td>
+							<!-- Page Content Description -->
+					        <td id="page-description">
+					            <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.reportFields")</div>
+					            <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.reportFields.fieldPageDescription")</div>
+					        </td>
+					    </tr>
+					</table>				
+   
+                <!-- Logo+Manage-User-end -->
+
+                <form name="reportFieldsForm" action="#springUrl('/acc_ManageReports.do')" method="POST">
+                    <input type="hidden" id="action" name="method" value=""/>
+                    <!-- User-profile -->
+                    
+                
+                #if($null.isNotNull($currentReport))
+                    <div class="content-Block">
+                        <div id="e12" class="Block-Contain-header">
+                            <div id="e13" class="Search-Containerheaderleft" style="width:90%">#dotPadding($reportForm.currentReport.title,90)</div>
+                        </div>
+						
+                        #if($reportForm.reportFieldsEdit)
+                            #set($fieldListSize = $reportForm.reportFieldsEdit.size())
+                            #if($fieldListSize > 0)
+                            #set($fieldListSize = $fieldListSize - 1)
+    
+                            <div id="e7c" class="User-checkbox-box">
+                                <div id="e15" class="User-checkbox-row-h" style="border-bottom:1px solid #CCCCCC;margin:0px 0px 0px 0px;">
+                                    <div class="User_coll_H1"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes($fieldListSize);"/></div>
+                                    <div class="User_coll_H1"><b>FIELDS</b></div>
+                                </div>
+    
+    							#set($counter=0)
+    
+    							#foreach($index in [0..$fieldListSize])
+    								#if($counter==0) #set($counter=1) #else #set($counter=0) #end            
+    									<div id="e16_$index" class="search-content-row" style="margin: 0px 0px 0px 0px;#CCCCCC;border-bottom:1px solid #CCCCCC;background-color:#if($counter==0)#F4F4F4;#else#FFFFFF#end;">
+    										#springBind("reportForm.reportFieldsEdit[$index].visible")
+    										<div class="User_coll_1"><input type="checkbox" id="fldChk_$index" value="true" #if($!{status.value}) checked #end onclick="setVisibilityStatus(this,'$status.expression');"/></div>
+    											<input type="hidden" id="$status.expression" name="$status.expression" value="$!{status.value}"/>
+    											#springBind("reportForm.reportFieldsEdit[$index].id")
+    											<input type="hidden" name="$status.expression" value="$!{status.value}"/>
+    											#springBind("reportForm.reportFieldsEdit[$index].displayName")
+    											<div class="User_coll_1" style="text-align:left;width:350px;border-left:1px solid #CCCCCC;">&nbsp;$!{status.value}</div>
+    									</div>
+    							#end
+							#end
+						#end
+                        </div>
+                    </div>
+                    <!-- User-profile-end -->
+        
+					<div class="managerBtn">
+						
+						#if(!$currentReport.systemOwned)
+							<div style="float:right; margin-top:3px;margin-left:5px;">
+							  <a onclick="saveReportFields();" style="text-decoration:none;"> 
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">Save</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>	
+						#end
+						
+						   <div style="float:right; margin-top:3px;">
+								<a onclick="cancelReportFields();" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">Cancel</div>
+									  <div class="btn_end"></div>
+								</a>
+							</div>  
+					</div>	
+						
+						<!-- bottom-space -->
+						<div class="manage-bottom-space"></div>
+						<!-- bottom-space -->	
+#end
+
+                </form>
+
+        </div>
+    <!-- content-area-end -->
+    </td>
+			</tr>
+			<!-- Page END-->
+			
+			<!-- Page Footer-->
+			<tr>				
+				<td id="footer" colspan="2">
+					#parse("snippets/accreditation/accreditationDefaultFooter.vm")
+				</td>
+			</tr>
+		</table>
+
+</body>
+</html>

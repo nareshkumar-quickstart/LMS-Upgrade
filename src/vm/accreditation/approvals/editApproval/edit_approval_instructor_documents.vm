@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+  
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='document']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='document']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+        });
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer', 
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteDocument(){
+            if ($("INPUT[type='checkbox'][name='document']:checked").length>0) {
+                confirm("Are you sure?", function () {
+                    document.getElementById('actionmethod').value='deleteInstructorDocument';
+                    document.manageApprovalForm.submit();
+                });
+            }else {
+                $('#selectDocument').modal({close:false,position: ["40%",]});
+            }
+        }
+
+        function changeRowColor(checkbox) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+
+            } else {  
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+            }
+        }
+
+        function sortDocument(sortColumnIndex,sortDirection,pageIndex,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('showAll').value=showAll;
+            document.getElementById('pageIndex').value=pageIndex;
+            document.getElementById('actionmethod').value='showInstructorApprovalDocuments';
+            document.manageApprovalForm.submit();
+        }
+
+    </script>
+</head>
+<body>
+<form name="manageApprovalForm" method="post" action="acc_manageApproval.do">
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!--Header Start -->
+            #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header End -->
+			 </td></tr>
+<!-- Tabs Start -->
+	<td  id="row-tabs" class="tab_bar" colspan="2">
+	 	 
+		 <table width="100%" cellpadding="0" cellspacing="0" border="0">
+		 		<tr>
+					<td width="180"><div class="tab_blank"></div></td>
+					<td>&nbsp;</td>
+					<td width="600">
+                        <a onClick="javascript:window.location='acc_manageApproval.do?method=showInstructorApprovalSummary';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Summary")</div></a>
+                        
+                        <!-- <a onClick="javascript:window.location='acc_manageApproval.do?method=showApprovalRegulatorCategories';"><div class="tab" style="width:150px;">$brander.getBrandElement("lms.accraditation.editApproval.caption.RegulatorCategories")</div></a>-->
+                        <!-- <a onClick="javascript:window.location='acc_manageApproval.do?method=showInstructorApprovalInstructor';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Instructor")</div></a>
+                        <a onClick="javascript:window.location='acc_manageApproval.do?method=showInstructorApprovalCourse';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Course")</div></a>
+                        <a onClick="javascript:window.location='acc_manageApproval.do?method=showProviderForInstructorApproval';"><div class="tab" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Provider")</div></a> -->
+                        <a href="#"><div class="tab_selected" >$brander.getBrandElement("lms.accraditation.editApproval.caption.Documents")</div></a>
+                        <a onClick="javascript:window.location='acc_manageApproval.do?method=showInstructorApprovalCustomField';"><div class="tab" style="border-right-style:solid;">$brander.getBrandElement("lms.accraditation.editApproval.caption.Custom-Fields")</div></a>
+					</td>
+					<td>&nbsp;</td>
+				</tr>
+		</table>
+
+	</td>
+	<!-- Tabs End -->
+<!-- Body Start -->
+   <tr id="main"> <!-- SECOND BLOCK -->
+   
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+	        #parse("snippets/accreditation/sidebar_approval.vm")
+		</table></td>
+			
+   <TD id="content" >
+	<div id="scrollable">
+		
+		 	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.summary.title")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.editInstructorApproval.caption.document.subTitle")</div>
+		</td>
+	</tr>
+</table>
+		
+		 	  <!-- Page Description -->
+		 	
+			  
+		       <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                    #springBind("approvalForm.appId")
+                    <div style="float:left;">
+                        <a onClick="javascript:window.location='acc_editReg_addDoc.do?id=$!{status.value}&entity=Instructor';" >
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'">$brander.getBrandElement("lms.accraditation.editApproval.addDocument.caption.Add-Document")</div>
+                            <div class="btn_end"></div>
+						</a>
+                     </div>
+                    <div style="float:left;" onClick="deleteDocument();">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmousedown="this.className='btn_down'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >$brander.getBrandElement("lms.accraditation.editApproval.addDocument.caption.Delete-Document")</div>
+                        <div class="btn_end"></div>
+                     </div>
+                </div>
+                <div id="searchBox" style="float:left; height:120px; width:300px; left:37%;" class="visible">
+                    $brander.getBrandElement("lms.accraditation.editApproval.addDocument.caption.Search-Documents")<br/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.editApproval.addDocument.caption.Name")</div> <input type="text" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/><br/><br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" >$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>            
+                #springBind("approvalForm.documents")
+                $pager.setItems($!{status.value})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                        #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                 #end
+                <div class="result_left_side">
+                    <!-- Result Description -->
+                    <!-- <div style="float:left; margin-top:2px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="showSearchBox(this);">$brander.getBrandElement("lms.accreditation.caption.Search")</div>
+                        <div class="btn_end"></div>
+                    </div> -->
+                    <!-- All Icon -->
+                    <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageApproval.do?method=searchProviderApprovalDocuments&showAll=true';" ></div>
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageApproval.do?method=searchProviderApprovalDocuments&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageApproval.do?method=searchProviderApprovalDocuments&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            <div id="searchResult_1">
+                
+                    #springBind("approvalForm.documents")
+                    #if($!{status.value.size()} > 0)
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                            <td class="box_subheader" width="40%"><div #if($context.sortDirection == 0) onclick="sortDocument(0,1,$pageCurrIndex,$showAll);" #else onclick="sortDocument(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.editApproval.caption.Name")</div></td>
+                            <td class="box_subheader" style="border-right:none;"><div #if($context.sortDirection == 0) onclick="sortDocument(1,1,$pageCurrIndex,$showAll);" #else onclick="sortDocument(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #else class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.editApproval.document.caption.Description")</div></td>
+                        </tr>
+                        #foreach($document in $!{status.value})
+                            #if($velocityCount%2 == 0)
+                                #set($alternate="row_2")
+                            #else
+                                #set($alternate="row_1")
+                            #end
+                             #if($loopIndex == $pageLastIndex)
+                                 <tr>
+                                <td class="$alternate" width="17px"  style="border-bottom:none;"><input type="checkbox" name="document" value="$!{document.id}" onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+                                <td class="$alternate" style="border-bottom:none;"><a href="acc_manageApproval.do?method=editProviderApprovalDocuments&docId=$document.id">$!{document.fileName}</a></td>
+                                <td class="$alternate" style="border-bottom:none;">$!{document.description}</td>
+                            </tr>
+                             #else
+                                  <tr>
+                                    <td class="$alternate" width="17px"><input type="checkbox" name="document" value="$!{document.id}" onclick="changeRowColor(this);" style="margin-left:-2px"/></td>
+                                    <td class="$alternate"><a href="acc_manageApproval.do?method=editApprovalDocuments&docId=$document.id&docEntity=InstructorDoc">$!{document.name}</a></td>
+                                    <td class="$alternate" style="border-bottom:none; border-right:none;">$!{document.description}</td>
+                                </tr>
+                             #end
+                           
+                        #end
+                         </table>
+                    #else
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="chkAll" style="margin-left:3px"/></td>
+                                <td class="box_subheader" width="40%"><a onmousedown="switchSort('firstNameSort')"><div id="firstNameSort" class="icon_up" ></div>Name</a></td>
+                                <td class="box_subheader" style="border-right:none;"><a onmousedown="switchSort('accountSort')"><div id="accountSort" class="icon_up" ></div>Description</a></td>
+                            </tr>
+                           </table>  
+                            <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                    #end
+               
+            </div>
+            <!-- Result Subheader End -->
+        </div>
+
+       </div>
+       </td></tr>
+        <!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+        #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+    </table>
+    <div id="selectDocument" style="display:none" class="message_box">
+        <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+        <div class="message_box_icon"></div>
+        <div class="message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:132px; margin-top:20px;" class="simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+
+    <div id="deleteConfirmation" style="display:none" class="message_box">
+        <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+        <div class="message_box_icon"></div>
+        <div class="message_box_text"></div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:120px; margin-top:20px;" class="no simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+            </div>
+            <div id="btn_ok_select" style="margin-left:15px;" class="yes">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+</form>
+</body>
+</html>

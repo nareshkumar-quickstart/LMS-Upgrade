@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+      #parse("snippets/instructor/instructorHead.vm")
+      <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+      <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+      <script language="javascript" type="text/javascript">
+
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='location']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='location']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+        });
+
+        function changeRowColor(checkbox) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                }
+            } else {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                }
+            }
+        }
+
+        function search() {
+            document.getElementById('actionmethod').value='searchLocation';
+            document.getElementById('showAll').value=false;
+            document.manageLocationForm.submit();
+        }
+
+        function editResources() {
+            document.getElementById('actionmethod').value='editLocation';
+            document.manageLocationForm.submit();
+        }
+
+        function confirm(message, callback) {
+            $('#deleteConfirmation').modal({
+                close:false,
+                position: ["40%",],
+                overlayId:'confirmModalOverlay',
+                containerId:'confirmModalContainer',
+                onShow: function (dialog) {
+                    dialog.data.find('.message_box_text').append(message);
+                    // if the user clicks "yes"
+                    dialog.data.find('.yes').click(function () {
+                        // call the callback
+                        if (jQuery.isFunction(callback)) {
+                            callback.apply();
+                        }
+                        // close the dialog
+                        jQuery.modal.close();
+                    });
+                }
+            });
+        }
+
+        function deleteLocation(){
+            if ($("INPUT[type='checkbox'][name='location']:checked").length>0) {
+                confirm("$brander.getBrandElement("error.manageLocation.DeleteConfirmation")", function () {
+                    document.getElementById('actionmethod').value='deleteLocation';
+                    document.manageLocationForm.submit();
+                });
+            }else {
+                $('#selectLocation').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+            }
+        }
+
+        function sortLocations(sortColumnIndex,sortDirection,pageIndex,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('showAll').value=showAll;
+            document.getElementById('pageIndex').value=pageIndex;
+            document.getElementById('actionmethod').value='searchLocation';
+            document.manageLocationForm.submit();
+        }
+
+        function checkAll( countCheckBoxes ) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    changeRowColor(objCheckBox);
+                }
+            }else{
+                for(var i = 0; i < countCheckBoxes; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    changeRowColor(objCheckBox);
+                }
+            }
+        }
+
+        var stateMap;
+        var arrState;
+        var countryMap = new Object();
+
+        #set($countryList=$brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+        #foreach ($country in $$countryList)
+            #if(${country.value}=='US')
+                #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+            #else
+                #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.${country.value}.State") )
+            #end
+            #set($i=0)
+            arrState=new Array();
+            #foreach ($StateObj in $State)
+                stateMap= new Object();
+                stateMap.key='${StateObj.value}';
+                stateMap.value='${StateObj.label}';
+                arrState[$i]=stateMap;
+                #set($i= $i + 1)
+            #end
+            countryMap.${country.value}=arrState;
+        #end
+
+        function changeStateCombo(obCountry,obState){
+            var val=obCountry.value;
+            var stateList=new Array();
+            stateList=countryMap[val];
+            clearDropDown(obState);
+            for(i=0;i<stateList.length;i++){
+                var opt = document.createElement("option");
+                opt.text = stateList[i].value;
+                opt.value = stateList[i].key;
+                obState.options.add(opt);
+            }
+        }
+
+        function clearDropDown(drpdnOb) {
+        var numberOfOptions = drpdnOb.options.length;
+            for (i=0; i<numberOfOptions; i++) {
+                drpdnOb.remove(0);
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+<form name="manageLocationForm" method="post" action="mgr_mngLocations.do">
+<input type="hidden" id="actionmethod" name="method"/>
+
+    <div id="main-container">
+
+					<!-- header -->
+	#parse("snippets/managerCourseHeader.vm")
+	<!-- header-end -->
+
+    <!-- Body Start -->
+    <div id="frame_body">
+
+      <!-- left-menu-content -->
+			#parse("snippets/entitlementLeftMenu.vm")
+			<!-- left-menu-content-end -->
+			
+        <div class="scrollable" style="height:85%;" >
+
+        <div id="pageDescription" class="page_description">
+            <div id="pageIcon" class="icon_resources"></div>
+            <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.Instructor.PageHeading.caption.ManageLocations")</div>
+            <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.ManageLocations")</div>
+        </div>
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+
+                <!-- Result Heading -->
+
+                <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="window.location.href='mgr_addLocation.do'">$brander.getBrandElement("lms.Instructor.PageHeading.caption.AddLocations")</div>
+                        <div class="btn_end"></div>
+                </div>
+
+                <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="deleteLocation();">$brander.getBrandElement("lms.Instructor.caption.DeleteLocation.ManageResources")</div>
+                        <div class="btn_end"></div>
+                </div>
+
+                </div>
+                <div id="searchBox" style="float:left; height:190px; width:300px; left:45%;" class="visible">
+                    $brander.getBrandElement("lms.Instructor.caption.searchLocation.ManageResources")<br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.Instructor.caption.locationName.ManageResources")</div> <input type="text" onkeypress="doEnter(event);" name="locationName" value="$!{context.locationName}" style="font-size:9px; float:right; margin-right:15px; width:170px;"/><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.city")</div> <input type="text" onkeypress="doEnter(event);" name="city" value="$!{context.city}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/><br/>
+                    <div style="float:left">Country</div>
+                    #set($countryList=$brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+                    <select id="country" name="country" style="font-size:9px; float:right; margin-right:15px; width:175px;height:18px;" onChange="changeStateCombo(this,document.getElementById('state'))">
+                            <option value="" #if($!{context.country}=="")selected #end>All</option>
+                        #foreach ($country in $countryList)
+                            #if($country.value=="$!{context.country}")
+                            <option value="$country.value" selected>$country.label</option>
+                            #else
+                            <option value="$country.value" >$country.label</option>
+                            #end
+                        #end
+                    </select><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorState")</div>
+                    #if($!{context.country}=='US')
+                        #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+                    #else
+                        #set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.$!{context.country}.State") )
+                    #end
+                    <select id="state" style="font-size:9px; float:right; margin-right:15px; width:175px;height:18px;" name="state">
+                        #if((! ${context.country}) ||(${context.country}==""))
+                        #else
+                            <option value="" >$brander.getBranderElement("lms.manageLocations.select_state")</option>
+                            #foreach ($StateObj in $State)
+                                #if($StateObj.value==$!{context.state})
+                                <option value="$StateObj.value" selected>$StateObj.label</option>
+                                #else
+                                <option value="$StateObj.value" >$StateObj.label</option>
+                                #end
+                            #end
+                        #end
+                    </select><br/><br/>
+                    <div style="float:left">$brander.getBrandElement("lms.accraditation.addRegulator.caption.addRegulatorZip")</div> <input type="text" onkeypress="doEnter(event);" name="zip" value="$!{context.zip}" style="font-size:9px;float:right; margin-right:15px; width:170px"/><br/>
+                    <br/>
+                    <div style="float:right; margin-top:2px; margin-right:15px;">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onmousedown="search();">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                    <div style="float:right; margin-top:2px; ">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onclick="showSearchBox(this);">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.cancel")</div>
+                        <div class="btn_end"></div>
+                    </div>
+                </div>
+
+                <div class="result_left_side">
+                    <!-- Result Description -->
+
+                $pager.setItems($!{context.locationList})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                         #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="0" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                  #end
+
+                    <div style="float:left; margin-top:2px;" >
+                        <div class="btn_start"></div>
+                        <div class="btn_normal" onmouseover="this.className='btn_over'" onmouseup="this.className='btn_normal'" onmouseout="this.className='btn_normal'" onClick="showSearchBox(this);document.manageLocationForm.locationName.focus();">$brander.getBrandElement("lms.accraditation.manageRegulator.caption.search")</div>
+                        <div class="btn_end"></div>
+                    </div>
+
+                    <!-- All Icon -->
+                    #if($totalCount > 10)
+                        <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='mgr_mngLocations.do?method=searchLocation&showAll=true';" ></div>
+                    #end
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='mgr_mngLocations.do?method=searchLocation&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled"></div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='mgr_mngLocations.do?method=searchLocation&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled"></div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description" #if($totalCount<11) style="margin-right:-22px;" #end > $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description" style="margin-right:-22px;" > $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                    <td class="box_subheader" style="padding-left:5px;" width="60%"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>$brander.getBrandElement("lms.manageLocations.location_name")</td>
+                    <td class="box_subheader" style="padding-left:5px;"><div #if($context.sortColumnIndex==1) class="icon_up"#end ></div>$brander.getBrandElement("lms.editLocation.city")</td>
+                    <td class="box_subheader" style="padding-left:5px; border-right:none;"><div #if($context.sortColumnIndex==2)class="icon_up" #end></div>$brander.getBrandElement("lms.manageLocations.state")</td>
+                  </tr>
+                </table>
+                  <div class="result_blank">$brander.getBrandElement("lms.searchLearner.caption.noRecordFound")</div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+            <!-- Search Result Start -->
+            <div id="searchResult_2">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader" width="50%" style="padding-left:5px;"><div #if($context.sortDirection == 0) onclick="sortLocations(0,1,$pageCurrIndex,$showAll);" #else onclick="sortLocations(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down"#end></div>$brander.getBrandElement("lms.manageLocations.location_name")</div></td>
+                        <td class="box_subheader" style="padding-left:5px;"><div #if($context.sortDirection == 0) onclick="sortLocations(1,1,$pageCurrIndex,$showAll);" #else onclick="sortLocations(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down"#end></div>$brander.getBrandElement("lms.editLocation.city")</div></td>
+                        <td class="box_subheader" style="padding-left:5px; border-right:none;"><div #if($context.sortDirection == 0) onclick="sortLocations(2,1,$pageCurrIndex,$showAll);" #else onclick="sortLocations(2,0,$pageCurrIndex,$showAll);" #end ><div id="userNameSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.manageLocations.state")</div></td>
+                    </tr>
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                        #set($location = $context.locationList.get($loopIndex))
+                        #if($loopIndex%2 == 0)
+                            #set($alternate="row_1")
+                        #else
+                            #set($alternate="row_2")
+                        #end
+                        #if($loopIndex == $pageLastIndex)
+                            <tr>
+                                <td class="$alternate" width="17px" style="border-bottom:none;"><input type="checkbox" id="chk$loopIndex" name="location" value="${location.id}" style="margin-left:-2px" onclick="changeRowColor(this);"/></td>
+                                <td class="$alternate" style="border-bottom:none;"><div onclick="window.location.href='mgr_mngLocations.do?method=editLocation&id=$location.id'"><u>$!{location.name}</u> &nbsp;</div></td>
+                                <td class="$alternate" style="border-bottom:none;">$!{location.city}&nbsp;</td>
+                                <td class="$alternate"style="border-bottom:none; border-right:none;">$!{location.state}&nbsp;</td>
+                            </tr>
+                         #else
+                            <tr>
+                                <td class="$alternate" width="17px"><input type="checkbox" id="chk$loopIndex" name="location" value="${location.id}" style="margin-left:-2px" onclick="changeRowColor(this);"/></td>
+                                <td class="$alternate"><div onclick="window.location.href='mgr_mngLocations.do?method=editLocation&id=$location.id'"><u>$!{location.name}</u> &nbsp;</div></td>
+                                <td class="$alternate">$!{location.city}&nbsp;</td>
+                                <td class="$alternate" style="border-right:none;">$!{location.state}&nbsp;</td>
+                            </tr>
+                        #end
+                    #end
+                </table>
+            </div>
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Space -->
+        <div style="height:25px;"></div>
+        </div>
+    </div>
+    <!-- Body End -->
+
+    <!-- Footer starts -->
+    #parse("snippets/managerFooter.vm")
+    <!-- Footer ends -->
+
+    
+    </div>
+
+    <div id="selectLocation" style="display:none" class="message_box">
+        <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Warning")</div>
+        <div class="message_box_icon"></div>
+        <div class="message_box_text">$brander.getBrandElement("lms.accreditation.caption.Please-select-0ne")</div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:132px; margin-top:20px;" class="simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+
+    <div id="deleteConfirmation" style="display:none" class="message_box">
+        <div class="message_box_title">$brander.getBrandElement("lms.accreditation.caption.Please-Confirm")</div>
+        <div class="message_box_icon"></div>
+        <div class="message_box_text"></div>
+        <center>
+            <div id="btn_ok_select" style="margin-left:120px; margin-top:20px;" class="no simplemodal-close">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.Cancel")</div><div class="btn_end"></div>
+            </div>
+            <div id="btn_ok_select" style="margin-left:15px;" class="yes">
+                <div class="btn_start"></div><div class="btn_normal">$brander.getBrandElement("lms.accreditation.caption.OK")</div><div class="btn_end"></div>
+            </div>
+        </center>
+    </div>
+
+</form>
+</body>
+</html>

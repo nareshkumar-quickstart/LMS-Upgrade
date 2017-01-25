@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type='text/javascript' >
+
+        $(document).ready(function(){
+           
+        });
+
+        function changeRowColor(checkbox,id) {
+            var tr = checkbox.parentNode.parentNode;
+            var tdarr = $(tr).find("td");
+            if (checkbox.checked) {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                }
+            } else {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                }
+            }
+            document.getElementById(id).value = checkbox.checked;
+        }
+
+        function selectAllCheckBoxes(pageFirstIndex,pageLastIndex) {
+            var objCheckAll=document.getElementById("chkAll");
+            if (objCheckAll.checked) {
+                for(var i = pageFirstIndex; i <= pageLastIndex; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = true;
+                    var hiddenid = "resources[" + i + "].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            } else {
+                for(var i = pageFirstIndex; i <= pageLastIndex; i++){
+                    var objCheckBox=document.getElementById("chk"+i);
+                    objCheckBox.checked = false;
+                    var hiddenid = "resources[" + i + "].selected";
+                    changeRowColor(objCheckBox, hiddenid);
+                }
+            }
+        }
+
+        function onAllSearch() {
+            document.getElementById('pageIndex').value=0;
+            document.getElementById('paging').value="";
+            document.getElementById('showAll').value="true";
+            document.getElementById('action').value="showing";
+            document.schResourceForm.submit();
+        }
+
+        function onNextPage(nextIndex) {
+            document.getElementById('pageIndex').value=nextIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            document.getElementById('action').value="showing";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+            document.schResourceForm.submit();
+        }
+
+        function onPreviousPage(prevIndex) {
+            document.getElementById('pageIndex').value=prevIndex;
+            document.getElementById('paging').value='paging';
+            document.getElementById('showAll').value="false";
+            document.getElementById('action').value="showing";
+            var itemNo= document.getElementById('pageCurrIndex').value
+            var items=$pager.itemsPerPage;
+            document.getElementById('pageCurrIndex').value=parseInt(items) -  parseInt(itemNo);
+            document.schResourceForm.submit();
+        }
+
+        function sortResources(sortColumnIndex, sortDirection,showAll){
+            document.getElementById('sortColumnIndex').value=sortColumnIndex;
+            document.getElementById('sortDirection').value=sortDirection;
+            document.getElementById('gridShowAll').value=showAll;
+            document.getElementById('gridAction').value="sort";
+            document.resultForm.submit();
+        }
+
+        function nowValidate() {
+            document.getElementById('gridAction').value="validate";
+        }
+    </script>
+</head>
+
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+       #parse("snippets/managerWizardHeader.vm")
+	   		</td></tr>
+	   
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.wizardHead1")</div>
+            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.step1")</div>
+            <div class="l-menu-back-text">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.step2")</div>
+          </div>
+        </div>
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("schResourceForm.resources")
+            #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AddResource")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.helpText")</div>
+			</td>
+		    </tr>
+		</table>
+
+            <div id="resultBox" class="search_box_result">
+
+                <div id="resultHeader" class="box_header">
+                <form name="schResourceForm" method="post" action="mgr_addResourceToSchedule.do">
+
+                    <div class="box_heading">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.SelectResources")</div>
+                    <div class="result_left_side">
+                    <!-- Result Description -->
+                        #springBind("schResourceForm.resources")
+                        $pager.setItems($!{status.value})
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                                #set($pageFirstIndex = $pager.firstIndex)
+                                #set($pageLastIndex = $pager.lastIndex)
+                                #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                                #set($currentPageCount = $pageLastIndex + 1)
+                                #set($pageCurrIndex = $pager.index)
+                        #else
+                                #set($pageFirstIndex = 0)
+                                #set($pageLastIndex = 0)
+                                #set($currentPageSize = 0)
+                                #set($currentPageCount = 0)
+                                #set($pageCurrIndex = 0)
+                        #end
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                        #springBind("schResourceForm.action")
+                        <input type="hidden" id="action" name="action" value="" />
+                        #springBind("schResourceForm.showAll")
+                        #if($!{status.value})
+                            #set($showAll=$!{status.value})
+                        #else
+                           #set($showAll=false)
+                        #end
+                        <!-- All Icon -->
+                        #if($totalCount> 10)
+                            <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onclick="return onAllSearch();"></div>
+                        #end
+                        <!-- Next Icon -->
+                        #if($pager.nextIndex)
+                            <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="return onNextPage($pager.nextIndex);"></div>
+                        #else
+                            <div id="goNext" class="icon_disabled"></div>
+                        #end
+                        <!-- Back Icon -->
+                        #if ($pager.prevIndex)
+                            <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"onclick="return onPreviousPage($pager.prevIndex);"></div>
+                        #else
+                            <div id="goBack" class="icon_disabled"></div>
+                        #end
+                        <!-- Showing Results -->
+                        #if($totalCount>1)
+                            <div id="resultDescription" class="box_description" #if($totalCount<11) style="margin-right:-24px;" #end > $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                        #else
+                            <div id="resultDescription" class="box_description" style="margin-right:-24px;" > $brander.getBrandElement("lms.accreditation.caption.Showing") 0 - $totalCount of $totalCount</div>
+                        #end
+                    </div>
+                </form>
+                </div>
+
+                <form name="resultForm" method="post" action="mgr_addResourceToSchedule.do">
+                #springBind("schResourceForm.sortColumnIndex")
+                #set($sortColumnIndex = $status.value)
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$status.value" />
+                #springBind("schResourceForm.sortDirection")
+                #set($sortDirection = $status.value)
+                <input type="hidden" id="sortDirection" name="sortDirection" value="$status.value" />
+                <input type="hidden" id="gridShowAll" name="showAll" value="" >
+                #springBind("schResourceForm.action")
+                <input type="hidden" id="gridAction" name="action" value="" />
+
+                #if($currentPageSize > 0)
+
+                    <div id="searchResult_2" style="border:1px solid white; margin-top:-18px;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                          <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" onClick="selectAllCheckBoxes($pageFirstIndex,$pageLastIndex);" style="margin-left:3px"/></td>
+                            <td class="box_subheader" ><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 0) "sortResources('0','1',$showAll);" #else "sortResources('0','0',$showAll);" #end ><div id="firstNameSort" #if($sortColumnIndex == 0 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceName")</a></td>
+                            <td class="box_subheader"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 1) "sortResources('1','1',$showAll);" #else "sortResources('1','0',$showAll);" #end ><div id="accountSort" #if($sortColumnIndex == 1 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 1) class="icon_down" #end ></div>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceType")</a></td>
+                            <td class="box_subheader" style="border-right:none;"><a onclick=#if($sortDirection == 0 && $sortColumnIndex == 2) "sortResources('2','1',$showAll);" #else "sortResources('2','0',$showAll);" #end ><div id="accountSort" #if($sortColumnIndex == 2 && $sortDirection == 0) class="icon_up" #elseif($sortColumnIndex == 2) class="icon_down" #end ></div>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AssetTagNum")</a></td>
+                          </tr>
+                            #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                              #if($loopIndex%2 == 0)
+                                  #set($alternate="row_1")
+                              #else
+                                  #set($alternate="row_2")
+                              #end
+                              <tr>
+                                <td class="$alternate" width="17px" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end >
+                                    #springBind("schResourceForm.resources[$loopIndex].selected")
+                                    <input type="checkbox" id="chk$loopIndex" #if(${status.value}) checked #end onclick="changeRowColor(this,'${status.expression}');" style="margin-left:-2px" />
+                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+                                </td>
+                                #springBind("schResourceForm.resources[$loopIndex].resource.name")
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end >$!{status.value}</td>
+                                #springBind("schResourceForm.resources[$loopIndex].resource.resourceType.name")
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none;" #end >$!{status.value}</td>
+                                #springBind("schResourceForm.resources[$loopIndex].resource.assetTagNumber")
+                                <td class="$alternate" #if($loopIndex == $pageLastIndex) style="border-bottom:none; border-right:none;" #else style="border-right:none;" #end >$!{status.value}</td>
+                              </tr>
+                          #end
+                        </table>
+                    </div>
+
+                #else
+
+                    <div id="searchResult_1" style="border:1px solid white; margin-top:-18px;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                                <td class="box_subheader"><div></div>&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceName")</td>
+                                <td class="box_subheader"><div></div>&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceType")</td>
+                                <td class="box_subheader" style="border-right:none;"><div></div>&nbsp;$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AssetTagNum")</td>
+                            </tr>
+                        </table>
+                        <div class="result_blank">$brander.getBrandElement("lms.instructor.caption.No-records-found-NoSearch")</div>
+                    </div>
+
+                #end
+
+            </div>
+
+            <input type="hidden" id="currentpage" name="_page" value="0" />
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+            <div style="float:right; margin-top:25px; margin-right:0px;">
+                <div class="btn_start"></div>
+                <div class="btn_normal" onClick="nowValidate();submitButtonForm(document.resultForm,'wizardSubmitter','_target1');"><span class="button_wizard">$brander.getBrandElement("lms.Instructor.button.Next")</span></div>
+                <div class="btn_end"></div>
+            </div>
+
+            <div style="float:left; margin-top:25px; margin-left:15px;">
+                <div class="btn_start"></div>
+                <div class="btn_normal" onClick="submitButtonForm(document.resultForm,'wizardSubmitter','_cancel');"><span class="button_wizard">$brander.getBrandElement("lms.Instructor.button.Cancel")</span></div>
+                <div class="btn_end"></div>
+            </div>
+
+            </form>
+       </div>
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    #parse("snippets/managerFooter.vm")
+	</td></tr>
+    </table>
+</body>
+</html>

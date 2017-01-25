@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    
+<style type="text/css">
+input.file2 {
+    position: relative;
+    text-align: right;
+    z-index: 2;
+    *text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    height: 22px;
+    width: 92%;
+    cursor:pointer
+}
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+
+
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+
+            var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+            function initFileUploads() {
+                if (!W3CDOM) return;
+                var fakeFileUpload = document.createElement('div');
+                fakeFileUpload.className = 'fakefile';
+                fakeFileUpload.style.cssText="width:100%;";
+                var fakeinput = document.createElement('input');
+                fakeinput.className="search_field";
+                fakeinput.style.cssText="width:80%;float:left";
+                fakeFileUpload.appendChild(fakeinput);
+                var image = document.createElement('a');
+                image.className="browsbutton";
+                var span=document.createElement('span');
+                span.className="browsbutton";
+                span.innerHTML="Browse";
+                span.style.cssText="cursor:pointer;";
+                image.style.cssText="cursor:pointer;";
+                image.appendChild(span);
+        
+                //image.src='brands/default/en/images/btn-Browse_n.gif';
+                fakeFileUpload.appendChild(image);
+                var x = document.getElementsByTagName('input');
+                for (var i=0;i<x.length;i++) {
+                    if (x[i].type != 'file') continue;
+                    if (x[i].parentNode.className != 'fileinputs') continue;
+                    x[i].className = 'file2';
+                    var clone = fakeFileUpload.cloneNode(true);
+                    x[i].parentNode.appendChild(clone);
+                    x[i].relatedElement = clone.getElementsByTagName('input')[0];
+                    x[i].onchange = x[i].onmouseout = function () {
+                        this.relatedElement.value = this.value;
+                    }
+                }
+            }
+
+            $(document).ready(function(){
+                $('#frame_body').height($(window).height() - ($('#frame_header').height()+$('#footer').height()));
+                if ($('#right-pannel').height()<$('#frame_body').height()) {
+                    $('#right-pannel').height($('#frame_body').height());
+                }            
+                $('#sideBar').height($('#right-pannel').height());
+                initFileUploads();
+                $('#content2a').scroll(function()   {
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+			
+                $("#toggleIconDocument").click(function() {
+                    toggleView('toggleIconDocument', 'collapsibleDocument');
+                });
+            });
+
+        </script>
+    </head>
+
+    <body>
+        <form name="regulatorForm" method="post" action="acc_editReg_addDoc.do" enctype="multipart/form-data">
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+                <tr> <!-- First Block -->
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        <!-- Header starts -->
+                        #parse("snippets/managerWizardHeader.vm")
+                        <!-- Header ends -->
+                    </td></tr>
+
+                <!-- Body Start -->
+                <tr id="main"> <!-- SECOND BLOCK -->
+                    <td id="left-sidebar" valign="top">
+                        <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                            <div>
+                                <div id="l-menu-back">
+                                    <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.document.caption.addDocument.title")<br>$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.showing1of2")</div>
+                                    <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.summary")</div>
+                                    <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.editRegulator.addContact.leftmenu.confirmation")</div>
+                                </div>
+                            </div>
+                        </table></td>
+
+                    <TD id="content" >
+                        <div id="scrollable" style="position: relative;">
+                            #springBind("documentUploadForm.*")
+                            #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                     #foreach($errorCode in $status.errorCodes)
+                                     #set ($error = $brander.getBrandElement($errorCode))
+                                     <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$error</div>
+                                    </div>
+                                    #end
+                            </div>
+                            <!-- error-box -->
+                            #end
+                            <!-- Page Description -->
+                            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                                <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                    <td id="page-description">
+                                        <div id="page-heading">$brander.getBrandElement("lms.accraditation.document.caption.addDocument")</div>
+                                        <div id="page-help">$brander.getBrandElement("lms.accraditation.manageRegulator.addDocument.descriptionStep1")</div>
+                                    </td>
+                                </tr>
+                            </table>				
+
+
+                            <div class="search_box_result">
+                                <div class="box_header">
+                                    <div id="toggleIconDocument" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                    <span class="box_heading">Document</span>
+                                </div>
+                                <div id="collapsibleDocument">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                     <tr>
+                                            <td width="20%">&nbsp;</td>
+                                            <td style="width:15px;">&nbsp;</td>
+                                            <td>&nbsp;</td>
+                                           
+                                        </tr>
+                                        
+                                        
+                                        <tr>
+                                            #springBind("documentUploadForm.file")
+                                            <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.file")</span></td>
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                            <td>
+                                               
+
+                                                    <div class="input_field_browse" style="width: 100%">
+                                                        <div class="fileinputs"><input type="file" name="file" value="" id="impFile" class="file2"/></div>
+                                                    </div>
+                                                
+
+                                            </td>
+                                           
+                                        </tr>
+                                        <tr>
+                                            <td width="20%"><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.name")</span></td>
+                                            #springBind("documentUploadForm.document.name")
+                                            <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+
+                                            <td align="left"><input type="text" class="input-lrg" name="${status.expression}" value="$!{status.value}" maxlength="249"></input></td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <td width="20%" valign="top"><span class="row_text">$brander.getBrandElement("lms.accraditation.addDocument.caption.description")</span></td>
+                                            <td style="width:15px;"></td>
+                                            #springBind("documentUploadForm.document.description")
+                                            <td  align="left"><textarea class="textarea-lrg" name="${status.expression}" >$!{status.value}</textarea></td>
+                                            
+                                        </tr>                        
+                                        <tr>
+                                            <td height="20px;">&nbsp;</td>
+                                            <td></td><!--<input type="checkbox" style="margin-left:0px; float:left;"></input><div style="float:left; margin-left:3px; margin-top:3px;">Overwrite existing file</div></td> -->
+                                            <td></td>
+                                            
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <input type="hidden" id="currentpage" name="_page" value="0" />
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                            <!-- ************************************************* -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onClick="submitButtonForm(document.regulatorForm,'wizardSubmitter','_target1');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                    <a onClick="submitButtonForm(document.regulatorForm,'wizardSubmitter','_cancel');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->
+
+                        </div>
+                    </td></tr>
+                <!-- Body End -->
+                <tr> <!-- Footer BLOCK -->
+                    <td id="footer" colspan="2">
+                        <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                        <!-- Footer End -->
+                    </td></tr>
+            </table>
+        </form>
+    </body>
+</html>

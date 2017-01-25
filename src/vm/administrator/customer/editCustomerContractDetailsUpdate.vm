@@ -1,0 +1,453 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function() {
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()+$('#tabBar').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $('#content2a').scroll(function() {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+
+        $("#startDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+
+        $("#endDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+
+        $("INPUT[type='checkbox'][name='groups']").click(function(){			
+            $("#"+$("#"+this.id).attr("enrollTextboxid")).attr("disabled", !$("#"+this.id).is(':checked')).val("").focus();
+            
+        	fillOrgGroupEntitlementArray();            
+        });
+    });
+
+function fillOrgGroupEntitlementArray() {
+	var items = [];
+	$("input[name='groups']:checked").each(function(){items.push($(this).val());});
+	$("[name='orgGroupEntitlementArray']").val(items);
+}
+
+function setCourseSelection(checkbox){
+		document.getElementById(checkbox.id).value = checkbox.checked;
+	}
+    function testUnlimitedEnable(){
+        var test =document.getElementById('maximumEnrollments');
+        test.readOnly=false;
+    }
+    function testUnlimitedDisable(){
+        var test =document.getElementById('maximumEnrollments');
+        test.readOnly=true;
+    }
+    function FormSubmit() {
+		
+		var isChecked = false;		
+		if (document.manageform.groups.checked) {
+			isChecked = true;			
+		}
+		else {		
+			for(var i = 0; i < document.manageform.groups.length; i++) { 
+				if(document.manageform.groups[i].checked) {
+					isChecked = true;					
+				}
+			}
+		}
+		if (isChecked) {						
+			fillOrgGroupEntitlementArray();		
+		}
+		
+        document.getElementById('method').value="updateCustomerEntitlement";
+        document.manageform.submit();
+    }
+    function cancelForm() {
+        document.getElementById('method').value="cancelCustomerEntitlement";
+        document.manageform.submit();
+    }
+    function MakeUrl(){
+        if(document.getElementById('EntitlementTypeCG').checked == true){
+            popup('adm_SearchCourse.do?courseGroup=true');
+        }
+        else if(document.getElementById('EntitlementTypeC').checked == true){
+            popup('adm_SearchCourse.do?course=true');
+        }
+        return true;
+    }
+</script>
+</head>
+#macro( treeviewEntitlementDetails $treeNodes $nullTool)
+    #set($lastDepth = 0)
+    #set($arrParent = [])
+    #set($index = 0)
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+                #foreach($i in [1..${node.depth}])
+                    #if ($!{node.depth}>0)
+                        <div class="icon_blank2"></div>
+                    #end
+                #end
+                #if(${node.isLeaf()})
+                    <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+                #else 
+                    <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${context.orgGroupTreeAsList.size()});" nodeid="$node.value.organisationalGroupId"></div>
+                #end
+                <div class="org_checkbox"><input type="checkbox" id="_orgGroup$node.value.organisationalGroupId" name="groups" value="$node.value.organisationalGroupId" #if(!$nullTool.isNull(${context.countmap.get($node.value.organisationalGroupId)})) #if(${context.countmap.get($node.value.organisationalGroupId)} >0) checked #end #end  enrollTextboxid="enrollTextboxid$node.value.organisationalGroupId"/>
+            </div>
+            #set ($padLimit=60-$node.depth*5)
+            <div class="row_title">#dotPadding(${node.value.organisationalGroupName},$padLimit)</div>
+            <div class="head_1b-e-1-admin-tree" style="padding-right:25px;"  >
+                #if(!$nullTool.isNull(${context.countmap.get(${node.value.organisationalGroupId})}) && ${context.countmap.get(${node.value.organisationalGroupId})} > 0)
+                    <input type="text" id="enrollTextboxid${node.value.organisationalGroupId}" value="$!{context.countmap.get(${node.value.organisationalGroupId})}" name="$!{node.value.organisationalGroupName}" class="search_field" #if($!{context.countmap.get($value1)}) #if($!{context.countmap.get($value1)} >0) disabled #end #end />
+                #else
+                    <input type="text" id="enrollTextboxid${node.value.organisationalGroupId}" value="" id="${node.value.organisationalGroupName}" name="$!{node.value.organisationalGroupName}" class="search_field" disabled />
+                #end
+            </div>
+        </div>
+        #set($index = $index + 1)
+    #end
+#end
+
+<body>
+<form name="manageform" method="post" action="adm_editCustomerContract.do">
+<input type="hidden" id="method" name="method" value=""/>
+<input type="hidden" id="orgGroupEntitlementArray" name="orgGroupEntitlementArray" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+<!-- header -->
+#parse("snippets/adminHeader.vm")
+		</td></tr>
+		
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td width="270"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="304">
+					#springBind("summaryForm.customerEntitlement.id")
+					#set ($entId=$status.value)
+					#springBind("summaryForm.enrollmentType")
+						#set($contractType = $status.value)
+						#if ($contractType == 'CourseGroup')
+							#set($contractType = 'Course Groups')
+						#end
+                            <a href="adm_editCustomerContract.do?method=viewCustEntitlementDetails&contractId=$entId"><div class="tab_selected">Summary</div></a>
+                            <a href="adm_showContractItems.do?method=showContractItems&contractId=$entId"><div style="border-right-style: solid;" class="tab">$contractType</div></a>
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody></table>
+            </td>
+<!-- header-end -->
+
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+<!-- content-area -->
+        <!-- left-pannel-content -->
+        #parse("snippets/adminCustomerLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+		</table></td>
+    <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+   #springBind("summaryForm.*") 
+    #if($status.error)
+    <!-- error-box -->
+     <div id="message_box">
+        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+        #foreach($errorCode in $status.errorCodes)
+    #set ($error = $brander.getBrandElement($errorCode))
+    <div class="width40pct">
+        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+        <div class="message_box_align">$error</div>
+        </div>
+        #end
+    </div>
+    <!-- error-box -->
+    #end
+        <!-- Logo+Manage-User -->
+        	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+					    <tr>
+						<td id="page-icon" class="courseLogoCustomer">
+						    &nbsp;
+						</td>
+						<td id="page-description">
+						    <div id="page-heading">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.subtitle")</div>
+						    <div id="page-help">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.subtitle1")</div>
+						</td>
+					    </tr>
+				</table> 
+
+        <!-- Logo+Manage-User-end -->
+
+            <!-- button-div -->
+            <div class="buttonContainereditmessage">
+                <div style="float:right; margin-top:3px;">
+				  <a onClick="javascript:window.location='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementView.BackButton")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+            </div>
+            <!-- button-div -->
+            <!-- Entitlements-Details -->
+            <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.content-Block")">
+                <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Block-Contain-header")">
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.updateEntitlements.colHeader.entitlementsDetails")</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.Search-inputfield-box")">
+                    <!-- 1 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                       #springBind("summaryForm.contractName")
+                        <div #if($status.error) class="block_text_in2-red" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.block_text_in2")" #end>$brander.getBrandElement("lms.administrator.addCustomerContract.ContractName")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">
+                                    <img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end/>
+                        </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-f")">
+                            <input type="text" value="$!{status.value}" name="${status.expression}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")" maxlength="50" />
+                        </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">
+                            #*#if($!{context.validateName})
+                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                            $brander.getBrandElement($!{context.validateName})
+                            #end*#
+                        </div>
+                    </div>
+                    <!-- 2 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.addCustomerContract.MaximumEnrollments")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                       #springBind("summaryForm.maximumEnrollmentsUnLimited")
+                        <div class="btn_radio1aNew"><input type="radio" class="noPadding" name="${status.expression}" onclick="testUnlimitedDisable();" id="unlimited" value="true" #if(${status.value} == "true") checked #end />$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.Unlimited")</div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1c")"><input type="radio" name="${status.expression}" onclick="testUnlimitedEnable();" id="notUnlimited" value="false" #if(${status.value} == "false") checked #end /></div>
+
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")">
+                       #springBind("summaryForm.maximumEnrollmentsLimitedValue")
+                            <input type="text" id="maximumEnrollments" value="$!{status.value}" maxlength="8" name="${status.expression}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")"/>
+                        </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">
+                            #*#if($!{context.validateMaximumEnrollments})
+                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                            $brander.getBrandElement($!{context.validateMaximumEnrollments})
+                            #end
+                            #if($!{context.validateMaximumEnrollmentsNumericField})
+                            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                            $brander.getBrandElement($!{context.validateMaximumEnrollmentsNumericField})
+                            #end*#
+                        </div>
+                    </div>
+                    <!-- 3 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                        	#springBind("summaryForm.allowSelfEnrollment")
+                        <div class="btn_radio1aNew"><input type="radio" class="noPadding" name="${status.expression}" id="" value="true" #if(${status.value} == "true") checked #end />$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment.Yes") </div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")"><input type="radio" name="${status.expression}" id="" value="false" #if(${status.value} == "false") checked #end />$brander.getBrandElement("lms.administrator.addCustomerContract.AllowSelfEnrollment.No")  </div>
+                    </div>
+                    <!-- 4 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.addCustomerContract.EnrollmentType")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                        #springBind("summaryForm.enrollmentType") 
+						 <div class="btn_radio1aNew"><input type="radio" class="noPadding" name="${status.expression}" value="CourseGroup" #if(${status.value} == "CourseGroup") checked #end disabled="true"/>Course Group</div>
+						<div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.btn_radio1b")"><input type="radio"  name="${status.expression}" value="Course" #if(${status.value} == "Course") checked #end disabled="true"/>Courses</div>
+                    </div>
+                    <!-- 5 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.addCustomerContract.ContractType.StartDate")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")" >
+                           #springBind("summaryForm.startDate")
+                                <input type="text" style="width:100px;" id="startDate" date:closeAtTop="false" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                            <script type="text/javascript">
+                                #springBind("summaryForm.maximumEnrollmentsUnLimited")
+                                if($!{status.value}){
+                                    var test =document.getElementById('maximumEnrollments');
+                                    test.readOnly=true;
+                                }else{
+                                    var test =document.getElementById('maximumEnrollments');
+                                    test.readOnly=false;
+                                }
+                            </script>
+                        </div>
+                    </div>
+                    <!-- 6 -->
+				#springBind("summaryForm.customerEntitlement")
+				#set($ent = $!{status.value})
+                    #set($fixedEndDate = $ent.endDate)
+                    <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div #springBind( "summaryForm.termsOfServicesValue" ) #if($status.error) class="block_text_in2-red" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.block_text_in2")" #end>$brander.getBrandElement("lms.administrator.addCustomerContract.TermsofServices")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")">
+                            <img #if($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #end/>
+                        </div>
+                        <div class="btn_radio1aNew" >
+                            <table cellpadding="0px" width="50%">
+							 <tr><td>
+							 #springBind("summaryForm.termsOfServices")
+                            <input type="radio" class="noPadding" name="${status.expression}" value="true" #if($fixedEndDate) #else checked #end/>
+							 </td>
+							 
+							 <td>
+							  #springBind("summaryForm.termsOfServicesValue")
+							  #set($days = $!{status.value})
+                            <input type="text" #if($fixedEndDate) value="" #else value="$!{status.value}" #end name="${status.expression}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")" style="width:65px;"/>
+							 </td>
+							 <td>$brander.getBrandElement("lms.administrator.addCustomerContract.Days")</td>
+							 
+							 </tr>
+							 </table>
+							
+						</div>
+						
+						<div class="input_field_area-user-f" style="width:50%">
+                         #springBind("summaryForm.termsOfServices")
+                        <input type="radio" id="" name="${status.expression}" value="false" #if($fixedEndDate) checked #end />
+						
+                         $brander.getBrandElement("lms.updateEntitlements.fixedEndDate")
+                       
+						#springBind("summaryForm.fixedEndDate")
+						<input type="text" style="width:80px" id="endDate" date:closeAtTop="false" name="${status.expression}" #if($fixedEndDate) value="$!{status.value}" #else value="" #end class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field")"/>
+                        </div>
+                                    #*#if($!{context.validateTermsofServices})
+                                    <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                $brander.getBrandElement($!{context.validateTermsofServices})
+                                #end
+                                #if($!{context.validateTermsofServicesInDate})
+                                    <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                $brander.getBrandElement($!{context.validateTermsofServicesInDate})
+                                #end
+                                #if($!{context.validateTermsofServicesNumericField})
+                                    <div class="$brander.getBrandElement("lms.administrator.addNewDistributorProfile.cssClass.com-star-r-t")">*</div>
+                                $brander.getBrandElement($!{context.validateTermsofServicesNumericField})
+                                #end*#
+                    </div>
+                    #springBind("summaryForm.transactionAmount")
+					<div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+						<div #if($status.error) class="block_text_in2-red" #else class="$brander.getBrandElement("lms.administrator.addNewDistributorSummary.cssClass.block_text_in2")" #end>$brander.getBrandElement("lms.administrator.adddistributorentitlement.caption.TrannsactionAmount")</div>
+						<div #if($status.error) style="color: #F30000;float:left;padding:0 8px;" #else style="float:left;padding:0 8px;" #end>$</div>
+						<div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-f")">
+                           	<input type="text" value="$!{status.value}" name="${status.expression}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")" maxlength="25" style="width: 85px" />
+                        </div>
+					</div>
+                    
+                    <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.SeatsUsed")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")">
+                        #springBind("summaryForm.seatUsed")
+                            <input type="text" disabled="true" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")" style="width: 85px"/></div>
+                    </div>
+                    <!-- 6 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.block_text_in2")">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.SeatsRemaining")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.com-star-r-t")"></div>
+                        <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field_area-user-fss")">
+                        #springBind("summaryForm.seatRemaining")
+                            <input type="text" disabled="true" name="${status.expression}" value="$!{status.value}" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.input_field")" style="width: 85px"/></div>
+                    </div>
+                    <!-- 00 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space3")"></div>
+                    <!--  -->
+
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- End-Entitlements-Details -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.administrator.entitlementUpdate.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- tree -->
+            <div class="content-Block-new">
+                <div class="Block-Contain-header">
+                    <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.manageOrganizationGroup.caption.OrgGroup")</div>
+                    <div class="head_1a-a1"></div>
+                    <div class="head_1b-e-tree-adim" style="width: 21%;">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.MaxEnrollments")</div>
+                </div>
+				
+               #treeviewEntitlementDetails ($!{summaryForm.treeAsList} $nullTool)
+			   
+			   
+            </div>
+            <!-- tree-end -->
+
+        <!-- space -->
+        <div class="manager-bottom-space"></div>
+        <!-- space -->
+
+
+           <!-- scrollable-div -->
+            <!-- button-div -->
+            <div class="btn-div">
+                <div style="float:right; margin-top:3px;margin-right:10px;">
+				  <a onClick="FormSubmit();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Save</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:right; margin-top:3px;margin-right:5px;">
+				  <a onClick="javascript:window.location='adm_SearchEntitlements.do?action=ShowAllCustomerEntitlement';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Cancel</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+
+                <input type="hidden" id="action" name="action" />
+                <div class="manager-bottom-space"></div>
+            </div>
+           <!-- right-pannel-content-end -->
+        </div>
+	
+    <!-- content2-area-end -->
+    </td></tr>
+    
+    
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

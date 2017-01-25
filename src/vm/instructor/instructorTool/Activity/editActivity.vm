@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/instructor/instructorHead.vm")
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script language="javascript" type="text/javascript">
+
+            $(document).ready(function(){
+                $('#content2a').scroll(function(){
+                    $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+                });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                       opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+            });
+
+            function saveActivity() {
+                document.getElementById('actionmethod').value='saveActivity';
+                document.manageActivityForm.submit();
+            }
+        </script>
+    </head>
+
+    <body>
+        <form name="manageActivityForm" id="manageActivityForm" method="post" action="ins_mngActivity.do">
+            <input type="hidden" id="actionmethod" name="method" value=""/>
+
+            <div id="main-container">
+                <!--Header Start -->
+                #parse("snippets/instructorHeader.vm")
+                <!-- Header End -->
+                <!-- Body Start -->
+                <div id="frame_body">
+
+                    <div id="sideBar" class="side_bar">
+                        <!-- Manage Gradebooks Start -->
+                        <a onclick="location.href='ins_mngGradeBook.do';">
+                            <div class="side_band_normal" onmouseover="this.className='side_band_over'" onmouseout="this.className='side_band_normal'" onmousedown="this.className='side_band_down'" onmouseup="this.className='side_band_over'">
+                                <img src="brands/default/en/images/icon_users_mini.gif" class="band_image">
+                                <div class="band_image">$brander.getBrandElement("lms.Instructor.PageTitle.caption.ManageGradeBook")</div>
+                            </div>
+                        </a>
+                        <!-- Manage Gradebooks End -->
+                    </div>
+
+                    <div>
+                        #springBind("activityForm.*")
+                        #if($status.error)
+                            <!-- error-box -->
+                            <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                    #set ($error = $brander.getBrandElement($errorCode))
+                                    <div class="width40pct">
+                                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                        <div class="message_box_align">$!error</div>
+                                    </div>
+                                #end
+                            </div>
+                            <!-- error-box -->
+                        #end
+
+                        <table border="0" cellpadding="0" cellspacing="0" width="80%" style="margin-bottom:10px;margin-right:10px">
+                            <tr>
+                                <td>
+                                    <!-- Page Description -->
+                                    <div id="pageDescription" class="page_description">
+                                        <!-- Page Icon -->
+                                        <div id="pageIcon" class="icon_tools"></div>
+                                        <!-- Page Heading -->
+                                        <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.instructor.editActivity.editActv")</div>
+                                        <!-- Page Description -->
+                                        <div id="pageDescriptionText">
+											You may rename this activity or edit the description text here. Activity type cannot be changed once saved. To replace this activity with an activity of a different type, delete this activity and create a new one of the desired type.
+										</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+									#springBind("activityForm.courseActivity.gradeBook.synchronousClass.sectionName")
+                                    <div class="selected_object">$!{status.value}</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div class="search_box_result" style="margin-right: 15px">
+                             <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.assignEnrollmentSummary.caption.header")</span></div>
+                             <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                    <tr>
+                                        <td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.editActivity.actvName")</span></td>
+                                        #springBind("activityForm.activityName")
+                                        <td style="width:15px;"><div class="com-star-r-t"><img #if(! $status.value) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($status.error) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end style="background-color: #66FF00"/></div></td>
+                                        <td width="50%">
+                                            <input type="text" id="field_activity_name" class="input_text_field" name="${status.expression}" value="$!{status.value}" tabIndex="1"/>
+                                        </td>
+                                        <td width="30%"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="25%"><span class="row_text">$brander.getBrandElement("lms.instructor.editActivity.actvType")</span></td>
+                                        <td style="width:15px;"></td>
+                                        <td width="50%">
+                                            #springBind("activityForm.type")
+                                            <input type="text" id="field_activity_name" class="input_text_field" name="${status.expression}" value="$!{status.value}"  disabled />
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top"><span class="row_text">$brander.getBrandElement("lms.manager.addTrainingPlans.Description")</span></td>
+                                        <td style="width:15px;"></td>
+                                        <td>
+                                            #springBind("activityForm.description")
+                                            <textarea class="input_text_area" name="${status.expression}" tabIndex="2">$!{status.value}</textarea>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                             </table>
+                        </div>
+
+                        <div style="float:right; margin-top:15px; margin-right: 15px;" tabIndex="4">
+                            <a onClick="saveActivity();">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Save")</div>
+                                <div class="btn_end"></div>
+                            </a>
+                        </div>
+
+                        <div style="float:right; margin-top:15px; margin-right:5px;" tabIndex="3">
+                            <a onclick="location.href='ins_mngActivity.do?method=searchActivity';">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                                <div class="btn_end"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body End -->
+
+                <!-- Footer Start -->
+               #parse("snippets/instructor/instructorFooter.vm")
+                <!-- Footer End -->
+
+              
+            </div>
+        </form>
+    </body>
+</html>

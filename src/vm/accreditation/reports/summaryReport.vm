@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+##parse("snippets/reportManagerHead.vm")
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+<script type="text/javascript">
+    
+    function submitLogoContainer(value){
+        document.frmLogoContainer.method.value=value;
+        document.frmLogoContainer.submit();
+    }
+	
+	 $(document).ready(function() {
+
+	});
+	
+</script>
+</head>
+<body>
+#set($currentReport=$reportForm.getCurrentReport())
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="header" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultHeader.vm")
+		</td>
+    </tr>
+    <!-- TopBar Start -->
+    <tr id="row-tabs">
+        <td id="blank-tab">
+            &nbsp;
+        </td>
+        <td id="tabs" align="center">
+            <table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class='selected'>
+						<a href="#springUrl('/acc_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a>
+					</td>
+                    <td>
+						<a href="#springUrl('/acc_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a>
+					</td>
+                    <td id='last'>
+						<a href="#springUrl('/acc_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a>
+					</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- TopBar End -->
+
+    <tr id="main" style="background:none;">
+        <td valign="top" id="left-navigation">
+            <script type="text/javascript">
+                 
+            </script>
+
+            <div id="sidebar-scroller" style="overflow-x: hidden;">
+                 #parse("snippets/reportLeftMenu.vm")
+            </div>
+        </td>
+        <td id="content">
+            <div id="scrollable">
+                <!-- for center-align-div -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.right-pannel-report")">
+    
+                <!-- form for logo container -->
+                <form name="frmLogoContainer" action="acc_ManageReports.do" method="POST">
+                   <input type="hidden" name="method" value="" >
+                        
+    					#if($null.isNull($currentReport)) <!-- Do Nothing -->
+    					
+    					#else
+    					<div style="float: right; padding-top: 20px;" class="wizard-left-button">
+                          <a style="text-decoration:none;" onclick="submitLogoContainer('selectReportForEdit');">
+                                <div class="btn_start"></div>
+                                <div class="btn_normal">$brander.getBrandElement("lms.reports.summaryReport.save.copy.and.edit")</div>
+                                <div class="btn_end"></div>
+                            </a>
+                            <img style="cursor:pointer;" onClick="submitLogoContainer('setFavouriteReport');" #if($currentReport.favorite) src="brands/default/en/images/star-acti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteRemove")"/> #else src="brands/default/en/images/star-inacti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteAdd")"/>#end
+                        </div>
+    					#end
+    					<!-- Logo+Manage-User -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr>
+                                <td id="page-icon" class="reportLogo">
+                                    &nbsp;
+                                </td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.topHeading")</div>
+                                    <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.description")</div>
+                                </td>
+                            </tr>
+                        </table>
+    					
+    					
+                        <!-- Logo+Manage-User-end -->
+                </form>
+    
+                <!-- User-profile -->
+    					#if($null.isNull($currentReport))
+    						<div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+    							No Reports Found
+    						</div>
+                        #else
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                    <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                        <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$currentReport.title</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                        <!-- s -->
+                        <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <!-- 1 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                            <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table1Description")</div>
+                        </div>
+                        <!-- 2 -->
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+    						<div style="float:left;">
+    							<a onclick="submitLogoContainer('executeReport');" style="text-decoration:none;">
+    								<div class="btn_start" style="margin-left:0px;"></div>
+    								<div class="btn_normal">Execute Report</div>
+    								<div class="btn_end"></div>
+    							</a>
+    						</div>						
+                        </div>
+                        <!-- 0 -->
+                        <!-- space -->
+                        
+                        <!-- space -->
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- User-profile-end -->
+    #end
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+                
+    #set($lastExecutionSummary=$reportForm.getCurrentReportLastExecutionSummary())
+    
+    #if($null.isNull($lastExecutionSummary))
+                            <!-- No Execution Summary -->
+    #else
+                <!-- User-profile -->
+                <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                    <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                        <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2ViewResults") |<span class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft3")"> $brander.getBrandElement("lms.reports.summaryReport.caption.table2LastRunOn") $lastExecutionSummary.executionDate</span></div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                        <!-- s -->
+                        <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <!-- 1 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                            <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table2Description")</div>
+                        </div>
+                        <!-- 2 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-btn-row")">
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsHTML');" src="brands/default/en/images/ico-html.gif" width="35" height="41" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2HTML")</div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsCSV');" src="brands/default/en/images/ico-excel.gif" width="35" height="41" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2EXCEL")</div>
+                        </div>
+                        <!-- 0 -->
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- User-profile-end -->
+                <!-- space -->
+                <div class="manager-bottom-space"> </div>
+                <!-- space -->
+    #end 
+            </div>
+        </td>
+    </tr>
+    <!-- content-area-end -->
+    <tr>
+    <!-- Footer BLOCK -->
+        <td id="footer" colspan="2">
+			#parse("snippets/accreditation/accreditationDefaultFooter.vm")
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

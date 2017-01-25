@@ -1,0 +1,360 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#* Preview Affidavit location *#
+#set($previewAffidavitFormAction = "acc_manageUserStatus.do") 
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+   
+	<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+	<script type="text/javascript" src="javascript/jquerySlider.js"></script>
+	<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	
+    <script language="javascript" type="text/javascript">
+    	
+    $(document).ready(function(){   
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='selectReseller']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectReseller']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectReseller']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+
+        
+    function save(buttonclick) {
+		if ($("INPUT[type='checkbox'][name='selectReseller']:checked").length>0) {
+		    document.getElementById('action').value=buttonclick;
+		    document.editDistributorAddAdminstratorForm.submit();
+		}else {
+		    $('#selectDistributor').modal({close:false,position: ["40%",]});
+		}
+    }
+ 
+    function sortReseller(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('action').value='selectReseller';
+        document.editDistributorAddAdminstratorForm.submit();
+    }
+    
+    function save(buttonclick) {
+		if ($("INPUT[type='checkbox'][name='selectReseller']:checked").length>0) {
+		    document.getElementById('action').value=buttonclick;
+		    document.editDistributorAddAdminstratorForm.submit();
+		}else {
+		    $('#selectDistributor').modal({close:false,position: ["40%",]});
+		}
+    }
+
+    function onPreviousPage(previousIndex, sortColumnIndex, sortDirection) {
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('action').value="selectReseller";
+        document.getElementById('showAll').value="false";
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.editDistributorAddAdminstratorForm.submit();
+    }
+
+
+ 	function onNextPage(nextIndex, sortColumnIndex, sortDirection ){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('action').value="selectReseller";
+        document.getElementById('showAll').value="false";
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.editDistributorAddAdminstratorForm.submit();
+    }
+
+    
+    function onAllSearch(sortDirection, sortColumnIndex){
+        document.getElementById('action').value='selectReseller';
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('showAll').value=true;
+        document.editDistributorAddAdminstratorForm.submit();
+    }
+    
+     function previous(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.editDistributorAddAdminstratorForm.submit();
+    }
+    
+    </script>
+    
+    
+    
+    
+    <style type="text/css">  
+    
+    
+    .row_new1 {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #FFFFFF;
+    border-bottom-color: #DFDFDF !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    background-color: #FFFFFF;
+    border-left-color: #DFDFDF !important;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-color: #DFDFDF !important;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-color: #DFDFDF !important;
+    border-top-style: none;
+    border-top-width: 0;
+    height: 30px;
+    padding-left: 4px;
+    font-size: 11px;
+}
+
+
+
+
+ .row_new2 {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #F4F4F4;
+    border-bottom-color: #DFDFDF !important;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+     border-left-color: #DFDFDF !important;
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-color: #DFDFDF !important;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-color: #DFDFDF !important;
+    border-top-style: none;
+    border-top-width: 0;
+    height: 30px;
+    padding-left: 4px;
+    font-size: 11px;
+}
+
+</style>
+
+</head>
+
+<body>
+<form name="editDistributorAddAdminstratorForm" method="post" action="">
+
+	<!-- selected LMSAdministrator -->
+	#set($alladmin = $context.selectedLMSAdministrator)
+	#foreach( $adu in $alladmin )
+	   <input type="hidden" id="selectAdminstrator" name="selectAdminstrator" value="$adu" />
+	#end
+
+<input type="hidden" id="firstname" name="firstname" value="$!{context.firstname}" />
+<input type="hidden" id="lastname" name="lastname" value="$!{context.lastname}" />
+<input type="hidden" id="emailaddress" name="emailaddress" value="$!{context.emailaddress}" />
+
+<input type="hidden" id="action"  name="action" value="" />
+
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+   		 #parse("snippets/adminHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+		<!-- Body Start -->
+		<tr id="main"> <!-- SECOND BLOCK -->
+			<td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		       		 #parse("snippets/adminDistributorLeftMenu.vm")
+				</table></td>
+				
+		<TD id="content" >
+			<div id="scrollable">
+		        <!-- Page Description -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+			<tr><td id="page-icon" class="courseLogoDistributor">&nbsp;</td>
+				<td id="page-description">
+				    <div id="page-heading">$brander.getBrandElement("lms.administrator.caption.selectDistributor.title")</div>
+				    <div id="page-help">$brander.getBrandElement("lms.administrator.caption.addAdminstrator.title.desc")</div>
+				</td>
+			</tr>
+		</table>
+
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- "Change Course Status" Div end here -->
+                    <!-- Result Description -->
+
+                $pager.setItems($!{context.listOfReseller})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                         #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                 #end
+
+                    <!-- All Icon -->
+                    <!-- <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageUserStatus.do?method=searchUserStatus&showAll=true';" ></div> -->
+					<div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="onAllSearch($context.sortDirection, $context.sortColumnIndex);" ></div>                    
+                    
+                    
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="onNextPage($pager.nextIndex, $context.sortColumnIndex,  $context.sortDirection);" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="onPreviousPage($pager.prevIndex,  $context.sortColumnIndex,  $context.sortDirection)" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                    <td style="min-width:101px" class="box_subheader"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>$brander.getBrandElement("lms.distributorGroup.addreseller.caption.text")</td>
+                  </tr>
+                </table>
+                #set($reselerId1 = $context.distributorGroup.id)
+                  <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                  <div class="btn-left2">
+                        <a class="button" onClick="javascript:window.location='adm_editDistributorViewAdministrator.do?Id=$reselerId1';"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Cancel")</span></a>
+                  </div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+            <!-- Search Result Start -->
+            <div id="searchResult_2" style="overflow: auto; border-left: 2px; ">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px; border-left:1px; overflow: scroll; ">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:10px"/></td>
+                        <td class="box_subheader">
+                        	<div #if($context.sortDirection == 0) onclick="sortReseller(0,1,$pageCurrIndex,$showAll);" #else onclick="sortReseller(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>$brander.getBrandElement("lms.distributorGroup.addreseller.caption.text")</div>
+                       	</td>
+                    </tr>
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                    #set($lmsReseller = $context.listOfReseller.get($loopIndex))
+                    #if($loopIndex%2 == 0)
+                        #set($alternate="row_new1")
+                    #else
+                        #set($alternate="row_new2")
+                    #end
+                    #if($loopIndex == $pageLastIndex)
+                        <tr>
+                            <td class="$alternate" width="30px" >
+								<input type="checkbox" id="chk$loopIndex" name="selectReseller" value=$!{lmsReseller.Id} style="margin-left:5px"/>
+							</td>
+                            <td style="min-width:100px" class="$alternate" >&nbsp;&nbsp;$!{lmsReseller.name}&nbsp;</td>
+                        </tr>
+                     #else
+                        <tr>
+                            <td class="$alternate"  >
+								<input type="checkbox" id="chk$loopIndex" name="selectReseller" value=$!{lmsReseller.Id} style="margin-left:5px"/>
+							</td>
+                            <td style="min-width:100px" class="$alternate" >&nbsp;&nbsp;$!{lmsReseller.name}&nbsp;</td>
+                        </tr>
+
+                    #end
+                    #end
+                </table>
+            </div>
+            #set($reselerId = $context.distributorGroup.id)
+            <!-- Buttons Div start here -->
+               <div class="$brander.getBrandElement("lms.administrator.editDistributorViewAdmin.cssClass.managerBtn")">
+                    <div class="btn-right1">
+                        <a class="button" onClick="save('save');"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Save")</span></a>
+                    </div>
+                    <div class="btn-right1">
+                        <a class="button" onClick="previous('advanceSearch');"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Previous")</span></a>
+                    </div>
+                    <div class="btn-left2">
+                        <a class="button" onClick="javascript:window.location='adm_editDistributorViewAdministrator.do?Id=$reselerId';"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Cancel")</span></a>
+                    </div>
+                </div>	
+            
+			<!-- Buttons Div end here -->
+            #end
+            <!-- Search Result End -->
+            
+        </div>
+        <!-- Search Result End -->
+        </div>
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+</form>
+<div id="selectDistributor" style="display:none">
+<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+<div class="alert_message_box_icon"></div>
+<div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+<br style="clear:both" />
+<div class='buttons'>
+    <div class='no simplemodal-close'>
+        <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean id="vu360UserServiceLmsApi" class="com.softech.vu360.lms.service.impl.lmsapi.VU360UserServiceImplLmsApi">
+	    <property name="vu360UserService" ref="userDetailsService" />
+	</bean>
+	
+	<bean id="orgGroupServiceLmsApi" class="com.softech.vu360.lms.service.impl.lmsapi.OrgGroupServiceImplLmsApi">
+	    <property name="vu360UserServiceLmsApi" ref="vu360UserServiceLmsApi" />
+		<property name="orgGroupLearnerGroupService" ref="orgGroupLearnerGroupService" />
+		<property name="learnerService" ref="learnerService" />
+		<property name="entitlementService" ref="entitlementService"/>
+	</bean>
+	
+	<bean id="userGroupServiceLmsApi" class="com.softech.vu360.lms.service.impl.lmsapi.UserGroupServiceImplLmsApi">
+		<property name="orgGroupServiceLmsApi" ref="orgGroupServiceLmsApi" />
+		<property name="learnerService" ref="learnerService" />
+		<property name="orgGroupLearnerGroupService" ref="orgGroupLearnerGroupService" />
+	</bean>
+  
+	<bean id="securityAndRolesServiceLmsApi" class="com.softech.vu360.lms.service.impl.lmsapi.SecurityAndRolesServiceImplLmsApi">
+		<property name="vu360UserService" ref="userDetailsService" />
+		<property name="vu360UserServiceLmsApi" ref="vu360UserServiceLmsApi" />
+		<property name="orgGroupServiceLmsApi" ref="orgGroupServiceLmsApi" />
+		<property name="learnerService" ref="learnerService" />
+	</bean>
+	
+	<bean id="lmsApiDistributorService" class="com.softech.vu360.lms.service.impl.lmsapi.LmsApiDistributorServiceImpl">
+		<!-- <property name="lmsApiDistributorDao" ref="lmsApiDistributorDao" /> -->
+	</bean>
+	
+	<bean id="lmsApiCustomerService" class="com.softech.vu360.lms.service.impl.lmsapi.LmsApiCustomerServiceImpl">
+		<!-- <property name="lmsApiCustomerDao" ref="lmsApiCustomerDao" /> -->
+	</bean>
+	
+</beans>

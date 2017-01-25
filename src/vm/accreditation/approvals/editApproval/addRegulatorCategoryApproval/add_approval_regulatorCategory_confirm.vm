@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#springBind("approvalForm.entity")
+
+#if(${status.value} == "Course" )
+	#set($approval = "approvalForm.courseApproval")
+#elseif(${status.value} == "Provider" )
+	#set($approval = "approvalForm.providerApproval")
+#elseif(${status.value} == "Instructor" )
+	#set($approval = "approvalForm.instructorApproval")
+#end
+
+#springBind("$!{approval}")
+#set($regulatorCategory = ${approvalForm.regulatorCategory})
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+<body>
+<form name="addRegulator" method="post" action="acc_addApprovalRegulatorCategory.do" >
+    <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">            <!--Header Start -->
+                #parse("snippets/managerWizardHeader.vm")
+            <!-- Header End -->
+			</td</tr>
+			
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div>
+            
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.editApproval.addRegulatorCategory.caption.Add-Regulators-Wizard")<br>$brander.getBrandElement("lms.accraditation.editApproval.addRegulator.caption.showing-2-of-2")</div>
+            <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.editApproval.addRegulatorCategory.caption.Select-Regulators")</div>
+			<div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.editApproval.addRegulatorCategory.caption.Confirmation")</div>
+          </div>
+        </div>
+     </table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+    	    	  <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.addRegulatorCategory.caption.addRegulatorTitle")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.editApproval.editapprovalAddRegulatorCategory.caption.titlesubtitleS2")</div>
+		</td>
+	</tr>
+</table>					  
+			  
+		<div class="search_box_result">
+			
+			 <div class="box_header">
+			 	  <span class="box_heading">$brander.getBrandElement("lms.accraditation.editApproval.addRegulator.caption.Summary")</span>
+ 		     </div>
+			 
+			 <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+			 		<tr>
+    					<td height="5"></td>
+    					<td></td>
+    					<td></td>
+    					<td></td>
+					</tr>
+                    <tr>
+                        <td width="20%"><span class="row_text"><b>$brander.getBrandElement("lms.accraditation.editApproval.addRegulatorCategory.caption.categoryName")</b></span></td>
+                        <td><span class="row_text">$!{regulatorCategory.displayName}</span></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+					<tr>
+    					<td height="5"></td>
+    					<td></td>
+    					<td></td>
+    					<td></td>
+					</tr>
+			 </table>	
+			 		 
+	     </div>	
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.addRegulator,'wizardSubmitter','_finish');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextFinish")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.addRegulator,'wizardSubmitter','_target0');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.addRegulator,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		
+		<input type="hidden" id="currentpage" name="_page" value="1"/>
+        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+        </div>
+    </td></tr>
+<!-- Body End -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer Start -->
+            #parse("snippets/managerFooter.vm")
+        <!-- Footer End -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

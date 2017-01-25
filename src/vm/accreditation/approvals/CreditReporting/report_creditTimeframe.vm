@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+#parse("snippets/accreditation/accreditationDefaultHead.vm")
+   
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+            $("#expirationDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+               buttonImageOnly: true 
+            });
+            $("#expirationDate2").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")",
+               buttonImageOnly: true 
+            });
+        });
+    </script>
+</head>
+
+<body>
+<form name="creditReportForm" method="post" action="acc_addCreditReport.do">
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/managerWizardHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-sidebar" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <div>
+        <div id="l-menu-back">
+                <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.showing27")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.selCourses")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.setTime")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.selOption")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.selStudent")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.options")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.settings")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.accraditation.creditReport.leftMenu.success")</div>
+                </div>
+        </div>
+
+       		</table></td>
+				
+<TD id="content" >
+	<div id="scrollable">
+
+        #springBind("creditReportForm.*")
+        #if($status.error)
+                #set($errorCodes = [])
+                #set($temp = true)
+                #springBind("creditReportForm.toDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #springBind("creditReportForm.fromDate")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+            #if($errorCodes.size() > 0)
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$!error</div>
+                    </div>
+                #end
+            </div>
+            #end
+            <!-- error-box -->
+          #end
+
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_approvals">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.creditReport.caption.creditReporting")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.creditReport.caption.description2")</div>
+		</td>
+	</tr>
+</table>		
+
+
+       <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- Result Heading -->
+                <div style="float:left; height:23px;">
+                        <div style="margin-top:3px; margin-left:4px; font-size:13px;text-transform:uppercase;"><b>$brander.getBrandElement("lms.accraditation.creditReport.caption.setTimeFrame")</b></div>
+                </div>
+            </div>
+            <!-- Result Header End -->
+                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+                                <td width="10%"><div class="row_text">$brander.getBrandElement("lms.accraditation.creditReport.caption.from")</div></td>
+                                #springBind("creditReportForm.fromDate")
+                                <td width="25%"><input type="text" style="width:150px" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="fromDate" value="$!{status.value}" tabindex="39" class="input_text_field"/></td>
+                                <td width="10%"><div class="row_text">$brander.getBrandElement("lms.accraditation.creditReport.caption.time")</div></td>
+                                #springBind("creditReportForm.fromTimeHour")
+                                <td ><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" style="width:20px; margin-right:5px;"><div style="float:left;">:</div>
+                                #springBind("creditReportForm.fromTimeMinute")
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" style="width:20px; margin-left:4px;">
+                                #springBind("creditReportForm.fromTimePhase")
+                                <select name="fromTimePhase" style="width:40px; height:18px; margin-left:5px; font-size:10px;">
+                                        <option #if($!{status.value} == "AM" ) selected #end >$brander.getBrandElement("lms.accraditation.creditReport.caption.am")</option>
+                                        <option #if($!{status.value} == "PM" ) selected #end >$brander.getBrandElement("lms.accraditation.creditReport.caption.pm")</option>
+                                </select>
+                                </td>
+                        </tr>
+                        <tr>
+                                <td><div class="row_text">$brander.getBrandElement("lms.accraditation.creditReport.caption.to")</div></td>
+                                #springBind("creditReportForm.toDate")
+                                <td><input type="text" style="width:150px" id="expirationDate2" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.addLearner.calender.tooltip")" name="toDate" value="$!{status.value}" tabindex="39" class="input_text_field"/></td>
+                                <td><div class="row_text">$brander.getBrandElement("lms.accraditation.creditReport.caption.time")</div></td>
+                                #springBind("creditReportForm.toTimeHour")
+                                <td><input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" style="width:20px; margin-right:5px;"><div style="float:left;">:</div>
+                                #springBind("creditReportForm.toTimeMinute")
+                                <input type="text" class="input_text_field" name="${status.expression}" value="$!{status.value}" style="width:20px; margin-left:4px;">
+                                #springBind("creditReportForm.toTimePhase")
+                                <select name="toTimePhase" style="width:40px; height:18px; margin-left:5px; font-size:10px;">
+                                        <option #if($!{status.value} == "AM" ) selected #end >$brander.getBrandElement("lms.accraditation.creditReport.caption.am")</option>
+                                        <option #if($!{status.value} == "PM" ) selected #end >$brander.getBrandElement("lms.accraditation.creditReport.caption.pm")</option>
+                                </select>
+                                </td>
+                        </tr>
+                </table>
+        </div>
+
+            <input type="hidden" id="currentpage" name="_page" value="1" />
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+        <!-- *********************************************** -->
+		<div class="btn-div">
+			<div style="float:right; margin-top:15px;">
+			  <a onClick="submitButtonForm(document.creditReportForm,'wizardSubmitter','_target2');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>	
+			
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="submitButtonForm(document.creditReportForm,'wizardSubmitter','_target0');">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+			<div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="submitButtonForm(document.creditReportForm,'wizardSubmitter','_cancel');">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>  
+		</div>	
+		
+		<!-- bottom-space -->
+		<div class="manage-bottom-space"></div>
+		<!-- bottom-space -->
+		</div>
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- Footer starts -->
+         #parse("snippets/managerFooter.vm")
+        <!-- Footer ends -->
+	</td></tr>
+	
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,213 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script language="javascript" type="text/javascript">
+    var launchWindow;
+    function launchSurvey(surveyId,courseId) {
+        var url = "#springUrl("/lrn_takeSurvey.do")";
+        var params = "?method=showSurveyView&surveyId="+surveyId+"&launch=0&courseId="+courseId;
+        if ( launchWindow != null ) {
+            launchWindow.close();
+        }
+        window.location=url+params;
+    }
+    /*This script helps to show the tooltip on the text element.*/
+    function showToolTip(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+    function hideToolTip(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+    function changeOption() {
+        document.getElementById('action').value = "changeOption";
+		 document.getElementById('search').value = "changeOption";
+        document.SurveyForm.submit();
+    }
+    $(document).ready(function(){
+        
+    });
+	
+	function searchSubmit(e)
+	{
+	var keycode;
+	if (window.event) keycode = window.event.keyCode;
+	else if (e) keycode = e.which;
+	else return true;
+
+	if (keycode == 13)
+	   {
+		document.SurveyForm.submit();
+	   return false;
+	   }
+	else
+	   return true;
+	}
+
+	function searchSubmitOnClick()
+	{
+		document.SurveyForm.submit();
+	}
+	
+</script>
+</head>
+<body>	
+	 <form name="SurveyForm"  method="post" action="lrn_mySurveys.do">
+		<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+        
+		<!-- Header Row -->
+		<tr id="singleColumn-header">
+            <td id="header" colspan="2">
+				#parse("snippets/learnerNewHeader.vm")
+				
+				
+				<div id="page-searchbar">
+				
+						<input type="hidden" id="action" name="method" value="displaySurveys"/>
+				
+                        <div id="searchbar-left"></div>
+        				
+        				<div id="searchbar-searchfield">
+							
+							<div id="searchbar-curve"></div>
+							
+							<div class="searchfield-start"></div>
+							
+							<div class="searchfield-stem">
+								<input type="hidden" value="" id="originalVal"/>
+								<input type="text" onblur="storeValue();" onfocus="this.value=''" value="Search" onKeyPress="return searchSubmit(event);" id="search" name="search"/>
+                    		</div>
+							
+							<!--return searchSubmit(event);-->
+							<div id="searchbar-button" class="searchfield-end" onclick="return searchSubmitOnClick();" style="height:25px; float:right;"></div>
+							
+						</div>
+					</div>
+			</td>
+		</tr>
+		
+		
+		<!-- Page -->
+        <tr id="main">
+			
+			<!-- Page Content -->
+			<td id="content">
+				
+				<!-- Page Scrollable Area -->
+				<div id="scrollable">	
+
+                    <!-- Logo+Manage-User -->
+                    <div class="logoContainer" id="logomainContainer" style="margin-left:0px;">
+                     <div id="logoHolder" class="courseLogoCourses"></div>
+                        <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.mycourses.mySurveys")</div>
+                        <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.mycourses.surveyHelpText")</div>
+                     </div>
+                    <!-- Logo+Manage-User-end -->
+
+                    <!-- drop-down-div -->
+                    <div style="width:99%; height:15px; padding-top:3px;" >
+                    	<div id="a7" style="padding-left:80px; padding-right:8px;float:left;padding-top: 23px;">$brander.getBrandElement("lms.mycourses.show")&nbsp;</div>
+                        <div style="font-size: 11px;font-weight: normal; width:75px; height:30px; float:left; padding-top: 23px;">
+                            #springBind("mySurveyForm.show")
+                            <select  id="show" name="show" tabindex="5" style="width:170px;height:65%;min-height:65%;font-size: 10px;font-weight: normal; float:left;border:1px solid #ccc;" onChange="changeOption();">
+                                <option  value="recent">$brander.getBrandElement("lms.mycourses.dropdown.recent")</option>
+                                <option  value="enrolled">$brander.getBrandElement("lms.mycourses.dropdown.enrolled")</option>
+                                <option  value="coursecatalog">$brander.getBrandElement("lms.mycourses.dropdown.indx1")</option>
+                                <option  value="completedCourses">$brander.getBrandElement("lms.mycourses.dropdown.indx2")</option>
+								<option  value="expiredCourses">$brander.getBrandElement("lms.mycourses.dropdown.indx4")</option>
+								<option  value="coursesAboutToExpire">$brander.getBrandElement("lms.mycourses.dropdown.indx7")</option>
+								<option selected value="survey">$brander.getBrandElement("lms.mycourses.dropdown.survey")</option>
+								<option value="subscription">My Subscription</option>
+								
+                            </select>
+                        </div>
+                    </div>
+            		    #set( $surveyRecordFound = 0)
+                		    #set( $surveyRecordCount = 0)
+                                #springBind("mySurveyForm.surveyList")
+                                #if($!{status.value.size()} > 0)
+            			#set( $surveyRecordFound = 100)
+            			<table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">    
+                                            <tr class="borderRow">
+                                                <td colspan="2"><span class="headerRow">&nbsp;</span></td>
+                                            </tr>            
+            			</table>	
+            			#foreach ($survey in $!{status.value})
+                            #if($survey.event.equals("survey.event.manual"))
+                			<table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">   
+                			
+                				#if( $surveyRecordCount % 2 != 0 )
+                					#set( $row-color = "borderRow" )
+                				#else						
+                					#set( $row-color = "borderRow-alt" )
+                				#end
+                				
+                				<tr class="$row-color">
+                				    <td colspan=2  valign="top"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href="javascript:launchSurvey('$!{survey.id}','-1');" >$!{survey.name}</a></td>
+                				</tr>
+    				
+                                #set( $surveyRecordCount = $surveyRecordCount + 1 )  
+							</table>	
+							#end
+                        #end                        
+                        <br/>					
+                     #end
+			
+                    #springBind("mySurveyForm.mySurveyCourseList")
+                    #if($!{status.value.size()} > 0)
+						#set( $surveyRecordFound = 100)
+                        #foreach ($surveyCourse in $!{status.value})
+                            <table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">    
+                                <tr class="borderRow">
+                                    <td colspan="2"><span class="headerRow">$surveyCourse.course.courseTitle</span></td>
+                                </tr>
+                                #set ($evenOdd = 0)
+                                #foreach ($survey in $surveyCourse.surveys)
+                                    #if( $evenOdd == 0 )
+                                        #set( $evenOdd = 1 )	
+                                        <tr class="borderRow-alt">
+                                            
+                                            <td colspan=2 valign="top"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href="javascript:launchSurvey('$!{survey.id}','$surveyCourse.course.id');" >$!{survey.name}</a></td>
+                                        </tr>
+                                    #else
+                                        #set( $evenOdd = 0 )
+                                        <tr class="borderRow">
+                                           
+                                            <td colspan=2  valign="top"><a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href="javascript:launchSurvey('$!{survey.id}','$surveyCourse.course.id');" >$!{survey.name}</a></td>
+                                        </tr>
+                                    #end
+                                #end
+                              </table>
+                              <br/>
+                        #end
+                    #elseif( $surveyRecordFound == 0 )
+                        <table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="margin-top:40px;border:1px solid #CCCCCC;border-bottom:none;">
+                            <tbody>
+                                <tr class="borderRow-alt">
+                                    <td colspan="3" align="center" valign="top">$brander.getBrandElement("lms.learner.mySurveys.caption.infoText") </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    #end
+		    
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+
+                </div>
+            	<!-- END: Page Scrollable Area -->				
+            </td>
+        </tr>
+		<!-- END: Page-->
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+	</table>
+		
+    </form>
+</body>
+</html>

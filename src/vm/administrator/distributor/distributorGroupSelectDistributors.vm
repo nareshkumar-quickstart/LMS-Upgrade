@@ -1,0 +1,350 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+<script language="javascript" type="text/javascript">
+    function changeRowColor(checkbox, id) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+          if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+              }
+          } else {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].removeAttribute("style");
+              }
+          }
+          document.getElementById(id).value = checkbox.checked;
+    }
+
+    function selectAllCheckBoxes(countCheckBoxes) {
+        var objCheckAll=document.getElementById("chkAll");
+        if (objCheckAll.checked) {
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = true;
+                var hiddenid = "distributors[" + i + "].selected";
+                changeRowColor(objCheckBox, hiddenid);
+            }
+        }else{
+            for(var i = 0; i < countCheckBoxes; i++){
+                var objCheckBox=document.getElementById("chk"+i);
+                objCheckBox.checked = false;
+                var hiddenid = "distributors[" + i + "].selected";
+                changeRowColor(objCheckBox, hiddenid);
+            }
+        }
+    }
+
+    function showSearchBox(){
+        var searchBox = document.getElementById('searchBox');
+        if(searchBox.className == "visible"){
+            searchBox.className = "search_box40";
+            $('#searchBox input[type="text"]:first').focus();
+        }else{
+            searchBox.className = "visible";
+        }
+    }
+
+    function search() {
+        document.getElementById('action').value="search";
+        document.getElementById('searchType').value="simpleSearch";
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('gridShowAll').value="false";
+        document.distributorGroupForm.submit();
+        return true;
+    } 
+
+    function search1() {        
+        document.getElementById('action').value="search";
+        document.getElementById('searchType').value="simpleSearch";
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('gridShowAll').value="false";
+        document.distributorGroupForm.submit();
+        return true;
+    } 
+
+    function onAllSearch(){
+        document.getElementById('searchType').value='allSearch';
+        document.getElementById('sortDirection').value=1;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('action').value="search";
+        document.getElementById('gridShowAll').value="true";
+        return true;
+    }
+
+    function onNextPage(nextIndex){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('action').value="search";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+
+    function onPreviousPage(previousIndex){
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('action').value="search";
+        document.getElementById('gridShowAll').value="false";
+        return true;
+    }
+
+    function setAction() {
+        document.getElementById('action').value="";
+    }
+
+    $(document).ready(function(){
+        $('#content2a').scroll(function() {
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+    
+</script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #parse("snippets/adminWizardHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+  <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+  <!-- content-area -->
+        <!-- left-pannel-content -->
+        <div >
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.addNewDistributorGroup")<br />$brander.getBrandElement("lms.administrator.addDistGroup.caption.Step-2-of-3")</div>
+                <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.distributorGroupName")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.distributor")</div>
+                <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.summary")</div>
+            </div>
+        </div>
+		</table></td>
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+        #springBind("distributorGroupForm.*")
+        #if($status.error)
+        <!-- error-box -->
+        <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                        </div>
+                #end
+        </div>
+        <!-- error-box -->
+        #end
+
+            <!-- Logo+Manage-User -->
+            		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	    		    <tr>
+	    			<td id="page-icon" class="courseLogoDistributor">
+	    			    &nbsp;
+	    			</td>
+	    			<td id="page-description">
+	    			    <div id="page-heading">$brander.getBrandElement("lms.addDistributorGroup.caption.addNewDistributorGroup")</div>
+	    			    <div id="page-help">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.description")</div>
+	    			</td>
+	    		    </tr>
+	    		</table>
+
+
+            <!-- Logo+Manage-User-end -->
+
+            <form name="distributorGroupForm" method="POST" action="adm_distributorGroup.do">
+                #springBind("distributorGroupForm.distributors")
+                $pager.setItems($status.value)
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                    #set($pageFirstIndex = $pager.firstIndex)
+                    #set($pageLastIndex = $pager.lastIndex)
+                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                    #set($currentPageCount = $pageLastIndex + 1)
+                #else
+                    #set($pageFirstIndex = 0)
+                    #set($pageLastIndex = 0)
+                    #set($currentPageSize = 0)
+                    #set($currentPageCount = 0)
+                #end
+                #springBind("distributorGroupForm.sortColumnIndex")
+                #set($sortColumnIndex = $status.value)
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$status.value" />
+                #springBind("distributorGroupForm.sortDirection")
+                #if($status.value > 0) 
+                #set($sortDirection = 0)
+                #else
+                #set($sortDirection = 1) 
+                #end
+                <input type="hidden" id="sortDirection" name="sortDirection" value="$status.value" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="$pager.index" />
+                #springBind("distributorGroupForm.searchType")
+                #set($searchType = $!{status.value})
+                <input id="searchType" type="hidden" name="${status.expression}" value="${status.value}" />
+                <input id="gridShowAll" type="hidden" name="showAll" value=#if($searchType == "allSearch") "true" #else "false" #end />
+
+                #springBind("distributorGroupForm.action")
+                <input id="action" type="hidden" name="${status.expression}" value="${status.value}" />
+                <input type="hidden" id="searchpage" name="_page" value="1" />
+
+                <div id="resultBox" class="content-Block-new"><!-- Search resultBox -->
+                    <div id="searchBox" class="visible"><!-- Search input window -->
+                        <div style="padding: 5px">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.searchDistributor")</div>
+                        #springBind("distributorGroupForm.searchDistributorGroupName")
+                        <div style="padding: 5px">
+                            <div style="width:75px; float:left">$brander.getBrandElement("lms.distributorGroupSelectDistributors.caption.distributorName") </div> <div style="float:left"> <input type="text" name="${status.expression}" value="$!{status.value}" class="search_field" onKeyPress="doEnter(event);" style="font-size:9px; width:170px"/></div><br style="clear:both" />
+                        </div>
+                        <div style="padding: 5px;margin-left:40px;margin-right:40px;height:20px">
+                            <a class="button" onclick="showSearchBox();"><span class="button">$brander.getBrandElement("lms.enrollment.swapEnrollments.button.caption.cancel")</span></a>
+                            <a class="button" onclick="search1();"><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</span></a>
+                            <!-- <div class="btn_start">&nbsp;</div>
+                            <div class="btn_new_normal" onclick="showSearchBox();">$brander.getBrandElement("lms.enrollment.swapEnrollments.button.caption.cancel")</div>
+                            <div class="btn_end">&nbsp;</div>
+                            <div class="btn_start">&nbsp;</div>
+                            <div class="btn_new_normal" name="qsearch" onclick="search();" >$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+                            <div class="btn_end">&nbsp;</div> -->
+                        </div>
+                    </div><!-- Search input window -->
+                    <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                        <div style="float:left; height:23px;width:200px;" >
+                            <div id="e13" class="Search-Containerheaderleft">Reseller List</div>
+                        </div>
+                        <div class="result_left_side">
+                            <div style="float:left; margin-top:2px;">
+							  <a onclick="showSearchBox();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+                            <!-- Search button -->
+                            <!-- Pagination -->
+                            <div id="e14d" class="ContainerheaderRight-ico"><input type="image" title="Show All" value="Search" name="_target1" onclick="return onAllSearch();" src="$brander.getBrandElement("lms.pixel.checkboxGif")" /></div> <!-- onclick="return onAllSearch();" -->
+                            <div id="e14c" class="ContainerheaderRight-ico">
+                            #if( $pager.nextIndex ) 
+                            <input type="image" value="Search" name="_target1" onclick="return onNextPage($pager.nextIndex);" src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" />
+                            #else <div class="icon_disabled">&nbsp;</div> #end
+                            </div>
+                            <div id="e14b" class="ContainerheaderRight-ico">
+                            #if( $pager.prevIndex ) 
+                            <input type="image" value="Search" name="_target1" onclick="return onPreviousPage($pager.prevIndex);" src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/>
+                            #else <div class="icon_disabled">&nbsp;</div> #end
+                            </div>
+                            <div id="e14a" class="Search-ContainerheaderRight">Showing $currentPageCount of $totalCount</div>
+                            <!-- Pagination -->
+                        </div>
+                    </div><!-- Result Header End -->
+                    <div id="searchResult"><!-- searchResult -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" style="width:17px;"><input type="checkbox" id="chkAll" name="selectedLearner" onClick="selectAllCheckBoxes($currentPageSize);"/></td>
+                                <td class="box_subheader">$brander.getBrandElement("lms.administrator.searchMember.caption.DistributorName")</td>
+                                <td class="box_subheader" style="border-right:none;width:100px">$brander.getBrandElement("lms.administrator.searchMember.caption.Status")</td>
+                            </tr>
+                            ##springBind("distributorGroupForm.selectedDistributors")
+                            ## ====================================================
+                            ##  $currentPageSize == $pageFirstIndex - $pageLastIndex
+                            ## ====================================================
+                            #if($currentPageSize > 0)
+                                #set($count = 0)
+                                #foreach($loopindex in [$pageFirstIndex..$pageLastIndex])
+                                    #if($count%2 == 0)
+                                        #set($alternate="row_1")
+                                    #else
+                                        #set($alternate="row_2")
+                                    #end
+                                    #set($index = $loopindex - $pageFirstIndex)
+                                    #springBind("distributorGroupForm.distributors[$index].selected")
+                                    <tr>
+                                        <td class="$alternate" width="17">
+                                            <input type="checkbox" id="chk$index" #if(${status.value}=="true") checked #end name="chkdistributor" onclick="changeRowColor(this,'${status.expression}');"/>
+                                            <input type="hidden" id="${status.expression}" name="${status.expression}" value="$!{status.value}"/>
+                                        </td>
+                                        <td class="$alternate">#springBind("distributorGroupForm.distributors[$index].distributor.name") $!{status.value} </td>
+                                        <td class="$alternate" style="border-right:none;width:100px">#springBind("distributorGroupForm.distributors[$index].distributor.active") #set($stat = $!{status.value}) #if($stat == "true") Active #else Inactive #end</td>
+                                    </tr>
+                                    #set($count = $count+1)
+                                #end
+                            #else
+                            <tr>
+                                <td style="border-bottom:1px solid;border-color:#dfdfdf;width:17px;">&nbsp;</td>
+                                <td style="border-bottom:1px solid;border-color:#dfdfdf;">
+                                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                </td>
+                                <td style="border-bottom:1px solid;border-color:#dfdfdf;">&nbsp;</td>
+                            </tr>
+                    #end
+                        </table>
+                    </div><!-- searchResult -->
+                </div><!-- Search resultBox -->
+
+                <!-- button-div -->
+                <div class="$brander.getBrandElement("lms.manageUser.viewOrganizationGroup.cssClass.managerBtn")">
+                    <input type="hidden" id="currentpage" name="_page" value="1"/>
+                    <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                    <!-- <div class="btn-left2"><input type="image" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-cancel_n.gif")" width="71" height="19" alt="Cancel" name="_cancel" id="cancel" align="top" /></div>
+                    <div class="btn-right1"><input type="image" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-next_n.gif")" width="71" height="19" alt="Next" name="_target2" onClick="return setAction();" id="next" align="top"/></div>
+                    <div class="btn-right1"><input type="image" src="$brander.getBrandElement("lms.learner.registration.pixel.btn-previous_n.gif")" width="71" height="19" alt="Previous" name="_target0" id="previous" align="top"/></div> -->
+					<div style="float:right; margin-top:3px;">
+					  <a onClick="submitButtonForm(document.distributorGroupForm ,'wizardSubmitter','_target2');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Next</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:3px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.distributorGroupForm ,'wizardSubmitter','_target0');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">Previous</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:3px;">
+						<a onClick="submitButtonForm(document.distributorGroupForm ,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							<div class="btn_start"></div>
+							<div class="btn_normal">Cancel</div>
+							<div class="btn_end"></div>
+						</a>
+					</div>	
+                </div>
+                <!-- button-div -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+            </form>
+
+        </div><!-- right-pannel-content-end -->
+
+    </td></tr><!-- content-area-end -->
+
+    
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+</body>
+</html>

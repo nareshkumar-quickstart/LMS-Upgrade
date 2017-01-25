@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+    <head>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/js_survey.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+        <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+        
+        <script type='text/javascript'>
+            $(document).ready(function()
+            {
+            	$('#close_message').click(function(){
+				$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+				});
+            });
+            
+        </script>
+    </head>
+    <body>
+        <form name="addTriggerForm" method="post" action="mgr_addTriggerFilter.do">
+            <input type="hidden" id="action" name="method" value=""/>
+            #springBind("addTriggerFilterForm.triggerId")
+            <input type="hidden" id=""  name="${status.expression}" value=$request.getParameter("triggerId") />
+
+             <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                        #parse("snippets/managerWizardHeader.vm")
+                    </td>
+                </tr>  
+                <tr id="main">
+                    <td id="left-navigation">
+                        <div id="l-menu-back">
+                            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilterWizard")<br/> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.showingOf")</div>
+                            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.filterSummary")</div>
+                            <div class="l-menu-back-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectFilterType")</div>
+                            <div class="l-menu-back-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectFilters")</div>
+                            <div class="l-menu-back-text">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.confirmation")</div>
+                        </div>
+                    </td>
+                    <td id="content">
+                        <div id="scrollable">
+                            <div id="error-message-box" style="display:none;">
+                                <div class="error_box">
+                                    <div id="errors"></div>
+                                    <div id="close-errors" class="close_icon"></div>
+                                </div>
+                            </div>
+                            
+                            #springBind("addTriggerFilterForm.*")
+                            #if($status.error)
+                                <div id="message_box">
+                                <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                                #foreach($errorCode in $status.errorCodes)
+                                #set ($error = $brander.getBrandElement($errorCode))
+                                <div class="width40pct">
+                                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                    <div class="message_box_align">${error}</div>
+                                </div>
+                                #end
+                                </div>
+                            #end
+                         <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;">
+						    <tr>
+							<td id="page-icon" class="icon_surveys">
+							    &nbsp;
+							</td>
+							<td id="page-description">
+							    <div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+							    <div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+							</td>
+						    </tr>
+						</table>  
+                            
+                            <table id="table-content" border="0" cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                                <tr>
+                                    <td>
+                                        <table class="content-table" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td class="table-heading" colspan="2">
+                                                    $brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.summary")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="table-text" STYLE="width:180px;font-size:11px;"><div style="padding-top:3px">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.filterName")</div></td>
+                                                <td STYLE="width:100%;">
+                                                    <div id="survey-name-required">
+                                                        <div class="required_field">*</div>
+                                                    </div>
+                                                    #springBind("addTriggerFilterForm.filterName")
+                                                    <input type="text" class="input_text_field" id="field_name" name="${status.expression}" value="${status.value}"/></input>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                            <input type="hidden" id="currentpage" name="_page" value="0"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                            <div style="float:right; margin-top:15px;">
+                                <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_target1');" style="text-decoration:none;">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+                            <div style="float:left; margin-top:15px;">
+                                <a onClick="submitButtonForm(document.addTriggerForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+                                    <div class="btn_start"></div>
+                                    <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+                                    <div class="btn_end"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="footer" colspan="2">
+                        #parse("snippets/managerFooter.vm")
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
+
+
+            

@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    #parse("snippets/compliance/complianceHead.vm")
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/js_survey.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+<script type='text/javascript'>
+
+    
+
+
+	$(document).ready(function() {
+
+
+		$('#chkAll').click(
+			   function(){
+
+				  $("INPUT[type='checkbox'][name='learnerGroup']").attr('checked', $('#chkAll').is(':checked'));
+				  $("INPUT[type='checkbox'][name='learnerGroup']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+			   }
+			)
+
+
+        $('#sideBar').height($('.scrollable').height());
+    });
+   
+
+   
+
+
+	  function selectAllCheckBoxes() {
+	  first=1;
+	  countCheckBoxes=document.getElementById("count").value;
+	  //alert(countCheckBoxes);
+                var objCheckAll=document.getElementById("chkAll");
+                if (objCheckAll.checked) {
+                    for(var i = first; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=true;
+                        onLearnerGroupSelection(objCheckBox,i);
+                    }
+                }else{
+                    for(var i = first; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=false;
+                        onLearnerGroupSelection(objCheckBox,i);
+                    }
+                }
+            }
+
+			function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                  }
+              }
+        }
+
+
+</script>
+    </head>
+    <body>
+        <form name="addFilterLearnerGroupForm" method="post" action="mgr_addFilterLearnerGroup.do?filterId=$request.getParameter('filterId')">
+        <input type="hidden" id="action" name="method" value=""/>
+        #parse("snippets/managerWizardHeader.vm")
+            <div id="frame_body" style="height:auto;">
+                <div id="sideBar" class="side_bar"> 
+									<div id="l-menu-back"> 
+										<div class="l-menu-back-text-h">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addLearnerWizard")<br/> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.showing")</div> 
+										 
+										<div class="l-menu-back-text-act"> $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.selectLearners")</div> 
+										
+									</div> 
+								</div> 
+                <div class="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+							    <tr>
+								<td id="page-icon" class="icon_surveys">
+								    &nbsp;
+								</td>
+								<td id="page-description">
+								    <div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.addFilter")</div>
+								    <div id="page-help">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.inlineDescriptive")</div>
+								</td>
+							    </tr>
+							</table>   
+
+                    <div id="table-frame" class="table-frame" style="margin-bottom:20px;">
+
+					
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                            
+
+                                <tr bgcolor="#efefef">
+                                    <td class="table-first-column-heading" style="border-top:0">
+                                        <input type="checkbox" name="row"  id="chkAll" />
+                                    </td>
+                                    <td class="table-last-column-heading" style="border-top:0">
+
+                                        $brander.getBrandElement("lms.manager.manageAlert.manageFilter.caption.learnerGroups")
+                                    </td>
+                                </tr>
+								#set($i=1)
+								#springBind("addFilterLearnerGroupForm.learnerGroupListFromDB")
+								#foreach($learnerGroup in $!{status.value})
+								#set($i=$i+1)
+									<tr bgcolor="#FFFFFF">
+										<td class="table-first-column-text">
+											<input type="checkbox" name="learnerGroup"  id="chk$i" value="$learnerGroup.id"  onclick="changeRowColor(this);"/>
+										</td>
+										<td class="table-last-column-text">
+											$learnerGroup.name
+										</td>
+
+								#end
+									</tr>
+                              
+                            
+
+                        </table>
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="0" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					 <div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addFilterLearnerGroupForm,'wizardSubmitter','_finish');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addFilterLearnerGroupForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>			
+							
+                </div>
+            </div>
+           #parse("snippets/managerFooter.vm")
+
+        </div>
+        </form>
+    </body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+#**
+----------------------------------------------------------------------------  
+@Author jason Apr 6, 2009
+@Modified by Faisal and MK aug 11, 2010
+---------------------------------------------------------------------------- 
+*#
+#if($context.courseGroupList && $context.courseGroupList.size() > 0)
+#if (!$context.search || $context.search.equals("Search") || $context.search.equals(""))
+   #foreach ($courseGroup in ${context.courseGroupList})
+      #set ($courseCounter = 0)
+  <table id="course-list-alt" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid none #CCCCCC;border-bottom:none; margin-top:0px;">
+  <tr class="borderRow">
+  <td width="31" class="header"><img src="#if($courseGroup.groupName.contains("TrainingPlan: "))$brander.getBrandElement("lms.pixel.iconTrainingPlan")#else $brander.getBrandElement("lms.pixel.iconCourseGroup") #end" class="icon" alt=""></td>
+  <td class="header"><div style="float:left;margin-left:-8px;_margin-left:-4px;">#if($courseGroup.groupName.contains("TrainingPlan: ")) $courseGroup.groupName.substring(14) #else $courseGroup.groupName #end</div></td>
+  <td width="20%" class="header"><div style="float:right;margin-right:20px;"></div></td></tr>
+  
+      #set ($evenOdd = 0)
+      #foreach ($course in ${courseGroup.getCourses()})
+		
+  	     
+            #set ($courseCounter = $courseCounter+1)
+	        #if(! $course.completionPercent)
+		       #set($remainingPct=100)
+	        #else
+		       #set($remainingPct=100-$!{course.completionPercent})
+	        #end
+  	
+  	        #if( $evenOdd == 0 )
+  	           #set( $evenOdd = 1 )
+		 #else
+			#set($evenOdd = 0 )	
+		#end
+               <tr>
+			   <td  width="31" valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+				<img class="icon" src="$brander.getBrandElement("$course.get('courseIconToShow')")"></td>
+				<td valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+				<a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC"))||$course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.WEBINAR")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}&show=$context.viewType" #else "javascript:selfEnroll('$!{course.courseId}')"#end>$course.name</a><br/><div style="margin-top:5px;"><span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")"></span><a class="view-details-ul-none" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType">$brander.getBrandElement("lms.mycourses.viewDetails")</a>&nbsp;</div></td>
+				<td align="center" valign="middle" width="20%;" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end> 
+				<div style="float:center;margin-left:100px;">&nbsp;</div>
+				</td></tr>
+        #end 
+   #if($courseCounter == 0)
+      <tr class="borderRow-alt"><td colspan="3" align="left" valign="top">You do not have any available courses under this Course Group</td></tr>
+   #end
+  </table><br/>
+  <div class="learner-empty-space"></div>  #end
+  #else
+   <table id="course-list-alt" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid none #CCCCCC;border-bottom:none; margin-top:0px;">
+  <tr class="borderRow">
+  <td width="31" class="header"><img src="$brander.getBrandElement("lms.pixel.iconSearchResult")" class="icon" alt=""></td>
+  <td class="header"><div style="float:left;margin-left:-8px;_margin-left:-4px;">$brander.getBrandElement("lms.mycourses.ShowMyEnrolledCourses.caption.searchResultsfor") $context.search </div></td>
+  <td width="20%" class="header"><div style="float:right;margin-right:20px;"></div></td></tr>
+  
+  #foreach ($courseGroup in ${context.courseGroupList})
+      #set ($courseCounter = 0)
+		#if($velocityCount==1)
+			#set ($evenOdd = 0)
+		#end
+		
+	 #foreach ($course in ${courseGroup.getCourses()})
+		
+  	     
+            #set ($courseCounter = $courseCounter+1)
+	        #if(! $course.completionPercent)
+		       #set($remainingPct=100)
+	        #else
+		       #set($remainingPct=100-$!{course.completionPercent})
+	        #end
+  	
+  	        #if( $evenOdd == 0 )
+  	           #set( $evenOdd = 1 )
+			 #else
+				#set($evenOdd = 0 )	
+			#end
+               <tr>
+			   <td  width="31" valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+				<img class="icon" src="$brander.getBrandElement("$course.get('courseIconToShow')")"></td>
+				<td valign="center" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end>
+				<a class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseTitle-ul")" href=#if($course.type.equals($brander.getBrandElement("lms.instructor.addCourse.courseType.SYNC")))"lrn_enrollSyncCourse.do?courseId=$!{course.courseId}" #else "javascript:selfEnroll('$!{course.courseId}')"#end>$course.name</a><br/><div style="margin-top:5px;"><span id="c12" class="$brander.getBrandElement("lms.mycourses.cssClass.bodycourseDetails")"></span><a class="view-details-ul-none" href="lrn_courseSampleDetails.do?courseId=$!{course.courseId}&show=$context.viewType">$brander.getBrandElement("lms.mycourses.viewDetails")</a>&nbsp;</div></td>
+				<td align="center" valign="middle" width="20%;" class=  #if( $evenOdd == 1 ) "row-gray"  #else "row-white" #end> 
+				<div style="float:center;margin-left:100px;">&nbsp;</div>
+				</td></div></tr>
+        #end 
+	#if($courseCounter == 0)
+      <tr class="borderRow-alt"><td colspan="3" align="left" valign="top">You do not have any available courses under this Course Group</td></tr>
+	 <!-- space -->
+	#end  
+	#end
+	</table><br/>
+	 <!-- space -->
+	<div class="learner-empty-space"></div>
+	
+		#end
+#else
+<table width="98%" cellspacing="0" cellpadding="5" id="courseDetails">
+  <tbody>
+<table id="courseDetails" width="99%" cellpadding="5" cellspacing="0" style="border:1px solid #CCCCCC;border-bottom:none;">
+  <tr class="borderRow"><td colspan="2"><span class="headerRow">Course Catalog - Available Courses</span></td><td>&nbsp;</td></tr>
+  <tr class="borderRow-alt"><td width="80%" colspan="3" align="center" valign="top">You do not have any available courses in the course catalog.  <a href="#springUrl("/lrn_myCourses.do?show=enrolled")" class="mycourses"> Click here to show a list of your enrolled courses</a>.</td></tr>
+  </tbody>
+</table>
+#end

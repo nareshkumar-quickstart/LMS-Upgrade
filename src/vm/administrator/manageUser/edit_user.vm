@@ -1,0 +1,743 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+    <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+    <script type="text/javascript" language="javascript">
+var zipType_1 = "" ;
+var zipCodeLength_1 = "" ;
+var zipType_2 = "" ;
+var zipCodeLength_2 = "" ;
+
+/* change on country drop down will required to submit the form*/
+function stateChangeFormSubmit()
+{
+document.getElementById('action').value='update';
+document.getElementById('validateVariable').value='donotValidate';
+document.editForm.submit();
+}
+ 
+            
+      function checkAnswer(objCheckBox){
+            if(objCheckBox.checked){
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="true";
+            }else {
+                document.getElementById('hdnChoice_'+objCheckBox.id).value="false";
+            }
+        }      
+       
+function FormSubmit(buttonclick) {
+            document.getElementById('action').value=buttonclick;
+            document.editForm.submit();
+        }
+        $(document).ready(function() {
+		 $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+		  $('#sideBar').height($('#right-pannel').height());
+            document.editForm.firstName.focus();
+            $('#content2a').scroll(function() {
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+            });
+            $('#close_message').click(function() {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            });
+$('.alphanumeric').alphanumeric({ichars:'!<>?~`^'});
+            $('.numeric').numeric({allow:"."});
+            $("input:text.ssn").mask("999-99-9999",{placeholder:" "});
+			$(".telephone").mask("(999) 999-9999",{placeholder:" "});
+
+        });
+        
+     </script>
+</head>
+<body>
+    <form name="editForm" method="post" action="">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            <!-- header -->
+			#parse("snippets/adminHeader.vm")             
+            <!-- header-end -->
+		</td></tr>
+		
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- leftt menu starts -->
+                #parse("snippets/adminLearnerLeftMenu.vm")
+                <!-- leftt menu ends -->
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+			#springBind("userForm.*")
+                    #if($!{context.validateFirstName} || $!{context.validateEmailAddress} || $!{context.validateMiddleName} || $!{context.validateLastName} || $!{context.validateOfficePhone} || $!{context.validateMobilePhone} || $!{context.validateOfficePhoneExtn} || $!{context.validateStreetAddress1} || $!{context.validateStreetAddress2} || $!{context.validateStreetAddress2a} || $!{context.validateStreetAddress2b} || $!{context.validateCity} || $!{context.validateCity2} || $!{context.validateZipcode} || $!{context.validateZipcode2} || $!{context.validateUsername} || $!{context.validatePassword} || $!{context.validateExpirationDate} || $status.error)
+                        #set($errorCodes = [])  
+                        #set($temp = true)
+                        #if($!{context.validateFirstName})
+                         #set($temp = $errorCodes.add(${context.validateFirstName}))
+                        #end
+                        #if($!{context.validateEmailAddress})
+                         #set($temp = $errorCodes.add(${context.validateEmailAddress}))
+                        #end
+                        #if($!{context.validateMiddleName})
+                         #set($temp = $errorCodes.add(${context.validateMiddleName}))
+                        #end
+                        #if($!{context.validateLastName})
+                         #set($temp = $errorCodes.add(${context.validateLastName}))
+                        #end
+                        #if($!{context.validateOfficePhone})
+                         #set($temp = $errorCodes.add(${context.validateOfficePhone}))
+                        #end
+                        #if($!{context.validateMobilePhone})
+                         #set($temp = $errorCodes.add(${context.validateMobilePhone}))
+                        #end
+                        #if($!{context.validateOfficePhoneExtn})
+                         #set($temp = $errorCodes.add(${context.validateOfficePhoneExtn}))
+                        #end
+                        #if($!{context.validateStreetAddress1})
+                         #set($temp = $errorCodes.add(${context.validateStreetAddress1}))
+                        #end
+                        #if($!{context.validateStreetAddress2})
+                         #set($temp = $errorCodes.add(${context.validateStreetAddress2}))
+                        #end
+                        #if($!{context.validateStreetAddress2a})
+                         #set($temp = $errorCodes.add(${context.validateStreetAddress2a}))
+                        #end
+                        #if($!{context.validateStreetAddress2b})
+                         #set($temp = $errorCodes.add(${context.validateStreetAddress2b}))
+                        #end
+                        #if($!{context.validateCity})
+                         #set($temp = $errorCodes.add(${context.validateCity}))
+                        #end
+                        #if($!{context.validateCity2})
+                         #set($temp = $errorCodes.add(${context.validateCity2}))
+                        #end
+                        #if($!{context.validateZipcode})
+                         #set($temp = $errorCodes.add(${context.validateZipcode}))
+                        #end
+                        #if($!{context.validateZipcode2})
+                         #set($temp = $errorCodes.add(${context.validateZipcode2}))
+                        #end
+                        #if($!{context.validateUsername})
+                         #set($temp = $errorCodes.add(${context.validateUsername}))
+                        #end
+                         #if($!{context.validatePassword})
+                         #set($temp = $errorCodes.add(${context.validatePassword}))
+                        #end
+                         #if($!{context.validateExpirationDate})
+                         #set($temp = $errorCodes.add(${context.validateExpirationDate}))
+                        #end
+				
+
+                        <!-- error-box -->
+                        <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+
+                        #foreach($errorCode in $errorCodes)
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+					  #foreach($myError in $context.errors)
+                                <div class="message_box_align">HAHAHA $myError</div>						
+  					#end
+                            </div>
+                        #end
+
+				
+
+
+
+
+                        #foreach($errorCode in $status.errorCodes)
+                            #if($errorCode != 'custom.field.required')
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$!error</div>
+                            </div>
+                            #end
+                        #end
+                        #foreach($errorMessage in $status.errorMessages)
+                            #if(!$!errorMessage.equals(""))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$!errorMessage</div>
+                            </div>
+                            #end
+                        #end
+                        </div>
+                        <!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoUser">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.editLearner.caption.editUser")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.editLearner.caption.editUserDesc")</div>
+			</td>
+		    </tr>
+		</table>
+                    <!-- Logo+Manage-User-end -->
+
+                    <!-- User-profile starts-->
+                    <div class="content-Block">
+                        <div id="userprofileheader" class="Block-Contain-header">
+                            <a class="button" onclick="window.location.href='switchuser.do?username=$!{context.vu360User.username}&switchBackUrl='+window.location.href;"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.btnLoginAsUser")</span></a>
+                            <a class="button" onclick="window.location.href='adm_editlearner_changegroup.do?learnerId=$!{context.vu360User.learner.id}'"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.btnChangeGroup")</span></a>
+                            <a class="button" onclick="window.location.href='adm_learnerPreferences.do?learnerId=$!{context.vu360User.id}'"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.btnChangePreferences")</span></a>
+                        </div>
+                        <div id="userprofilebody" class="Search-inputfield-box" ><!-- user profile body starts-->
+
+                            <!-- 1 -->
+                            <div id="up1" class="search-content-row">
+                                <div #if($!{context.validateFirstName}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.firstName}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validateFirstName}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="255" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="firstName" tabindex="8" value="$!{context.vu360User.firstName}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+
+                                <div #if($!{context.validateEmailAddress}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.eMailAddress")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.emailAddress}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validateEmailAddress}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onkeypress="if(event.keyCode==13){FormSubmit('update');}" name="emailAddress" tabindex="11" value="$!{context.vu360User.emailAddress}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 2 -->
+                            <div id="up2" class="search-content-row">
+                                <div #if($!{context.validateMiddleName}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.middleName")</div>
+                                <div class="com-star-r-t">#if($!{context.validateMiddleName}) <img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"  />#end </div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onkeypress="if(event.keyCode==13){FormSubmit('update');}" name="middleName" tabindex="9" value="$!{context.vu360User.middleName}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 3 -->
+                            <div id="up3" class="search-content-row">
+                                <div #if($!{context.validateLastName}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.lastName}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validateLastName}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="255" onkeypress="if(event.keyCode==13){FormSubmit('update');}" name="lastName" tabindex="10" value="$!{context.vu360User.lastName}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 4 -->
+                            <div id="up4" class="search-content-row">
+                                <div #if($!{context.validateOfficePhone}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.officePhone")</div>
+                                <div class="com-star-r-t">#if($!{context.validateOfficePhone})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="officePhone" tabindex="12" value="$!{context.vu360User.learner.learnerProfile.officePhone}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+
+                                <div #if($!{context.validateMobilePhone}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.mobilePhone")</div>
+                                <div class="com-star-r-t">#if($!{context.validateMobilePhone})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="mobilePhone" tabindex="14" value="$!{context.vu360User.learner.learnerProfile.mobilePhone}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 5 -->
+                            <div id="up5" class="search-content-row">
+                                <div #if($!{context.validateOfficePhoneExtn}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.officePhoneExt")</div>
+                                <div class="com-star-r-t">#if($!{context.validateOfficePhoneExtn})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="officePhoneExtn" tabindex="13" value="$!{context.vu360User.learner.learnerProfile.officePhoneExtn}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 6 -->
+                            <div id="up6" class="search-content-row">
+                                <div #if($!{context.validateStreetAddress1} || $!{context.validateStreetAddress2}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.editLearner.caption.address1")</div>
+                                <div class="com-star-r-t">#if($!{context.validateStreetAddress1})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"  />#end </div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="streetAddress1" tabindex="15"     value="$!{context.vu360User.learner.learnerProfile.learnerAddress.streetAddress}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+
+                                <div #if($!{context.validateStreetAddress2a} || $!{context.validateStreetAddress2b}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.editLearner.caption.address2")</div>
+                                <div class="com-star-r-t">#if($!{context.validateStreetAddress2a})<img # src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /> #end </div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50"  onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="streetAddress2a" tabindex="21" value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.streetAddress}" class="input_field"/></div>
+                            </div>
+
+                            <!-- 7 -->
+                            <div id="up7" class="search-content-row">
+                                <div class="block_text_in-r-f"></div>
+                                <div class="com-star-r-t">#if($!{context.validateStreetAddress2})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="streetAddress2" tabindex="16" value="$!{context.vu360User.learner.learnerProfile.learnerAddress.streetAddress2}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+
+                                <div class="block_text_in-r-f"></div>
+                                <div class="com-star-r-t">#if($!{context.validateStreetAddress2b})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50"  onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="streetAddress2b" tabindex="22" value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.streetAddress2}" class="input_field"/></div>
+                            </div>
+					#* ============================================================ *#
+					#* -----------adding country \state code for ADDRESS 1 -------- *#
+					#* ============================================================ *#
+					
+					#set( $State = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+					#set( $StateLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+					#set( $ZipLabel_1 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+					
+					 
+					#set($Country1 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+					 
+					#foreach ($objCountry1 in $Country1)
+					 
+					#if("$!{context.vu360User.learner.learnerProfile.learnerAddress.country}" == $objCountry1.value)
+					
+					#set( $State_var1 = "lms.manageUser.AddLearner.")
+					#set( $State_var2 = ".State")
+					#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+					#set( $CurrentCountry1 = "$objCountry1.value")
+					#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+					#set( $State_label_var2 = ".label")
+					#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+					
+					#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+					#set( $State_zip_var2 = ".label")
+					#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+					
+					#set( $State = $brander.getBrandMapElements($State_var) )
+					#set( $StateLabel_1 = $brander.getBrandElement($State_label_var) )
+					#set( $ZipLabel_1 = $brander.getBrandElement($State_zip_var) )
+					
+					
+					#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+					
+					<script type="text/javascript" language="javascript" > 
+					#set( $ZipType2 = ".type" )
+					#set( $ZipLength = ".length" )
+					#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+					#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+					
+					zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+					zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+					</script> 
+					
+					#end
+					#end
+
+                    <!-- 11 COUNTRY -->
+                            <div id="up11" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.country")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                
+                                <select onChange="stateChangeFormSubmit()" class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="cmbCountry" tabindex="20" >
+                                #foreach ($objCountry in $Country1)
+                                    #if($objCountry.value == "$!{context.vu360User.learner.learnerProfile.learnerAddress.country}") 
+                                        <option value="$objCountry.value" selected>$objCountry.label</option>
+                                    #else 
+                                        <option value="$objCountry.value" >$objCountry.label</option>
+                                    #end
+                                #end
+                                </select>
+                                </div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+			<input type="hidden" value="validate" id = "validateVariable" name="validate" />
+						#* ============================================================ *#
+						#* ============================================================ *#
+						#* adding country \state code for ADDRESS 2  *#
+						
+						#set( $State2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.State") )
+						#set( $StateLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.state.US.label") )
+						#set( $ZipLabel_2 = $brander.getBrandElement("lms.manageUser.AddLearner.zip.US.label") )
+						
+						#set($Country2 = $brander.getBrandMapElements("lms.manageUser.AddLearner.Country"))
+						 
+						#foreach ($objCountry1 in $Country2)
+						 
+						#if("$!{context.vu360User.learner.learnerProfile.learnerAddress2.country}" == $objCountry1.value)
+						
+						#set( $State_var1 = "lms.manageUser.AddLearner.")
+						#set( $State_var2 = ".State")
+						#set( $State_var = "$State_var1$objCountry1.value$State_var2")
+						#set( $CurrentCountry2 = "$objCountry1.value")
+						#set( $State_label_var1 = "lms.manageUser.AddLearner.state.")
+						#set( $State_label_var2 = ".label")
+						#set( $State_label_var = "$State_label_var1$objCountry1.value$State_label_var2")
+						
+						#set( $State_zip_var1 = "lms.manageUser.AddLearner.zip.")
+						#set( $State_zip_var2 = ".label")
+						#set( $State_zip_var = "$State_zip_var1$objCountry1.value$State_zip_var2")
+						
+						#set( $State2 = $brander.getBrandMapElements($State_var) )
+						#set( $StateLabel_2 = $brander.getBrandElement($State_label_var) )
+						#set( $ZipLabel_2 = $brander.getBrandElement($State_zip_var) )
+						
+						
+						#set( $ZipType = "lms.manageUser.AddLearner.zip." )
+						
+						<script type="text/javascript" language="javascript" > 
+						#set( $ZipType2 = ".type" )
+						#set( $ZipLength = ".length" )
+						#set( $ZipType3 = "$ZipType$objCountry1.value$ZipType3" )
+						#set( $ZipLength2 = "$ZipType$objCountry1.value$ZipLength" )
+						
+						zipType_2 = '$brander.getBrandElement("$ZipType3")' ;
+						zipCodeLength_1 = '$brander.getBrandElement("ZipLength2")' ;
+						</script> 
+						
+						#end
+						#end 
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.country")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                             
+                                <select onChange="stateChangeFormSubmit()" class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="cmbCountry2" tabindex="26" >
+                                #foreach ($objCountry in $Country2)
+                                    #if($objCountry.value == $!{context.vu360User.learner.learnerProfile.learnerAddress2.country})
+                                        <option value="$objCountry.value" selected>$objCountry.label</option>
+                                    #else     
+                                        <option value="$objCountry.value" >$objCountry.label</option>
+                                    #end
+                                #end
+                                </select>
+                                </div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 9 -STATE - -->
+                            <div id="up9" class="search-content-row">
+                            #if($CurrentCountry1 == "US" || $CurrentCountry1 == "United States" || $CurrentCountry1 == "AU" || $CurrentCountry1 == "Australia" || $CurrentCountry1 == "AE" || $CurrentCountry1 == "United Arab Emirates" || $CurrentCountry1 == "CA" || $CurrentCountry1 == "Canada" || $CurrentCountry1 == "GB" || $CurrentCountry1 == "United Kingdom")
+                                <div class="block_text_in-r-f">$StateLabel_1</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                    
+                                    <select class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="cmbState" tabindex="18" >
+                                    #foreach ($objState in $State)
+                                        #if($objState.value.toUpperCase() == "$!{context.vu360User.learner.learnerProfile.learnerAddress.state.toUpperCase()}") 
+                                                <option value="$objState.value" selected>$objState.label</option>
+                                           
+                                            #else      
+                                                <option value="$objState.value" >$objState.label</option>
+                                            
+                                            #end
+                                    #end
+                                    </select>
+                                </div>
+                            #else
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" name="cmbState" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" tabindex="18" value="$!{context.vu360User.learner.learnerProfile.learnerAddress.state}" class="input_field"/>                                
+                                </div>
+                            #end
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+							
+							#if($CurrentCountry2 == "US" || $CurrentCountry2 == "United States" || $CurrentCountry2 == "AU" || $CurrentCountry2 == "Australia" || $CurrentCountry2 == "AE" || $CurrentCountry2 == "United Arab Emirates" || $CurrentCountry2 == "CA" || $CurrentCountry2 == "Canada" || $CurrentCountry2 == "GB" || $CurrentCountry2 == "United Kingdom")
+                                <div class="block_text_in-r-f">$StateLabel_2</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                     
+                                    <select class="$brander.getBrandElement("lms.administrator.editDistributorProfile.cssClass.input_field1c")" name="cmbState2" tabindex="24" >
+                                    #foreach ($objState in $State2)
+                                        #if($objState.value.toUpperCase() == "$!{context.vu360User.learner.learnerProfile.learnerAddress2.state.toUpperCase()}") 
+                                            <option value="$objState.value" selected>$objState.label</option>
+                                         #else
+                                            <option value="$objState.value" >$objState.label</option>
+                                         #end
+                                    #end
+                                    </select>
+                                </div>
+                            #else
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.editLearner.caption.State")</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" name="cmbState2" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" tabindex="24" value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.state}" class="input_field"/>                                
+                                </div>
+                            #end
+                            </div>
+
+
+                            <!-- 8 -->
+                            <div id="up8" class="search-content-row">
+                                <div #if($!{context.validateCity}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.city")</div>
+                                <div class="com-star-r-t">#if($!{context.validateCity})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" /> #end </div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" name="city" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" tabindex="17" value="$!{context.vu360User.learner.learnerProfile.learnerAddress.city}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+
+                                <div #if($!{context.validateCity2}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.city")</div>
+                                <div class="com-star-r-t">#if($!{context.validateCity2})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"  />#end</div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" name="city2" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" tabindex="23" value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.city}" class="input_field"/></div>
+                            </div>
+
+
+                            <!-- 10 -->
+#if($ZipLabel_1 != "_" || $ZipLabel_2 != "_")
+                            <div id="up10" class="search-content-row">
+#if($ZipLabel_1 != "_")
+                                <div #if($!{context.validateZipcode}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$ZipLabel_1</div>
+                                <div class="com-star-r-t">#if($!{context.validateZipcode})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f"><input type="text" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="zipcode" tabindex="19" value="$!{context.vu360User.learner.learnerProfile.learnerAddress.zipcode}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+#else
+                                <div class="block_text_in-r-f-red" >&nbsp;</div>
+                                <div class="com-star-r-t">&nbsp;</div>
+                                <div class="input_field_area-user-f"><input type="hidden"  name="zipcode"  value="$!{context.vu360User.learner.learnerProfile.learnerAddress.zipcode}" class="input_field"/>&nbsp;</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+#end
+
+#if($ZipLabel_2 != "_")
+                                <div #if($!{context.validateZipcode2}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$ZipLabel_2</div>
+                                <div class="com-star-r-t">#if($!{context.validateZipcode2})<img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")"   />#end</div>
+                                <div class="input_field_area-user-f">
+                                <input type="text" maxlength="50" name="zipcode2" tabindex="25" value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.zipcode}" class="input_field"/></div>
+#else
+                                <div class="block_text_in-r-f-red" >&nbsp;</div>
+                                <div class="com-star-r-t">&nbsp;</div>
+                                <div class="input_field_area-user-f"><input type="hidden"  name="zipcode"  value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.zipcode}" class="input_field"/>&nbsp;</div>
+                                <div class="com-star-r-t"></div>
+                                <div class="com-star-r-t"></div>
+#end
+
+</div>
+#else
+
+    <input type="hidden"  name="zipcode2"  value="$!{context.vu360User.learner.learnerProfile.learnerAddress2.zipcode}"  />
+    <input type="hidden"  name="zipcode" value="$!{context.vu360User.learner.learnerProfile.learnerAddress.zipcode}"  />
+#end
+
+
+                            <!-- 12 -->
+                            <div id="up12" class="search-content-row">
+                                <div class="block_text_in-r-f"></div>
+                                <div class="input_field_area-user-f"></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                        </div><!-- user profile body ends-->
+                    </div>
+                    <!-- User-profile ends-->
+
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+
+                    <!-- Login-Information starts-->
+                    <div class="content-Block">
+                        <div id="logininformationheader" class="Block-Contain-header">
+                            <div id="logininformationheaderContent" class="Search-Containerheaderleft">$brander.getBrandElement("lms.manageUser.addNewLearner.loginPassword.text")</div>
+                        </div>
+                        <!-- login information body starts -->
+                        <div id="logininformationbody" class="Search-inputfield-box" >
+                            <!-- 1 -->
+                            <div id="li1" class="search-content-row">
+                                <div #if($!{context.validateUsername}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.learnerProfile.caption.username")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.Username}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validateUsername}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input  type="text" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="userName" value="$!{context.vu360User.Username}" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 2 -->
+                            <div id="li2" class="search-content-row">
+                                <div #if($!{context.validatePassword}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.learnerProfile.caption.password")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.password}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validatePassword}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input type="password" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="password"  tabindex="27" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                                <div class="block_text_in-r2">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.pwStrength")</div>
+                            </div>
+
+                            <!-- 3 -->
+                            <div id="li3" class="search-content-row">
+                                <div #if($!{context.validatePassword}) class="block_text_in-r-f-red" #else class="block_text_in-r-f" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.confirmPassword")</div>
+                                <div class="com-star-r-t"><img #if($!{context.vu360User.password}) src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" #elseif($!{context.validatePassword}) src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" #else src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_03.gif")" #end /></div>
+                                <div class="input_field_area-user-f"><input type="password" maxlength="50" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" name="confirmpassword" tabindex="28" class="input_field"/></div>
+                                <div class="com-star-r-t"></div>
+                            </div>
+
+                            <!-- 4 -->
+                            <div id="li4" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.searchLearner.caption.AccountLocked")</div>
+                                <div class="input_field_area-user-f">
+                                    #if($!{context.vu360User.accountNonLocked})
+                                    <div class="btn_radio3"><input type="radio" tabindex="29" name="accountNonLocked" value="false" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" tabindex="30" name="accountNonLocked" value="true" checked /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                    #else
+                                    <div class="btn_radio3"><input type="radio" tabindex="29" name="accountNonLocked" value="false" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" tabindex="30" name="accountNonLocked" value="true"  /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                    #end 
+                                </div>
+                            </div>
+
+                            <!-- 5 -->
+                            <div id="li5" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.accountExpired")</div>
+                                <div class="input_field_area-user-f">
+                                    #if($!{context.vu360User.accountNonExpired})   
+                                    <div class="btn_radio3"><input type="radio" name="accountNonExpired" tabindex="31" value="false" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="accountNonExpired" tabindex="32" value="true" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                    #else
+                                    <div class="btn_radio3"><input type="radio" name="accountNonExpired" tabindex="31" value="false" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="accountNonExpired" tabindex="32" value="true" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                    #end
+                                </div>
+                                <div class="com-star-r-t"></div>
+                                <div #if($!{context.validateExpirationDate}) class="block_text_in2-red" #else class="block_text_in2" #end>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.expirationDate")</div>
+                                #if($!{context.validateExpirationDate})
+                                <div class="com-star-r-t">
+                                <img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" />
+                                </div>
+                                #end
+                                <div class="input_field_area-user-f">
+                                    #if ($!{context.vu360User.expirationDate})
+                                        <input type="text" style="width:150px" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")" name="expirationDate" tabindex="39" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" value="$date.format('MM/dd/yyyy',$!{context.vu360User.expirationDate})" class="input_field"/>
+                                    #else
+                                        <input type="text" style="width:150px" id="expirationDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.manager.enrollSelectDates.calender.tooltipEndDate")"name="expirationDate" tabindex="39" onKeyPress="if(event.keyCode==13){FormSubmit('update');}" value="$!{context.vu360User.expirationDate}" class="input_field"/>
+                                    #end
+                                    <script type="text/javascript">
+                                        $("#expirationDate").datepicker({ 
+                                        showOn: "both", 
+                                        buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+                                        buttonImageOnly: true
+                                    });
+                                    </script>
+                                </div>
+                            </div>
+
+                            <!-- 6 -->
+                            <div id="li6" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.accountDisabled")</div>
+                                <div class="input_field_area-user-f">
+                                #if($!{context.vu360User.enabled})
+                                    <div class="btn_radio3"><input type="radio" name="enabled" tabindex="33" value="false" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="enabled" tabindex="34" value="true" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                #else
+                                    <div class="btn_radio3"><input type="radio" name="enabled" tabindex="33" value="false" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="enabled" tabindex="34" value="true" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                #end
+                                </div>
+                            </div>
+
+                            <!-- 7 -->
+                            <div id="li7" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.visiableReports")</div>
+                                <div class="input_field_area-user-f">
+                                #if($!{context.vu360User.vissibleOnReport})
+                                    <div class="btn_radio3"><input type="radio" name="vissibleOnReport" tabindex="35" value="true" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="vissibleOnReport" tabindex="36" value="false" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                                #else
+                                    <div class="btn_radio3"><input type="radio" name="vissibleOnReport" tabindex="35" value="true" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="vissibleOnReport" tabindex="36" value="false" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                                #end
+                                </div>
+                            </div>
+
+                            <!-- 8 -->
+                            <div id="li8" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.changePass")</div>
+                                <div class="input_field_area-user-f">
+                                #if($!{context.vu360User.changePasswordOnLogin})
+                                    <div class="btn_radio3"><input type="radio" name="exsisting" tabindex="37" value="true" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="exsisting" tabindex="38" value="false" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                                #else
+                                    <div class="btn_radio3"><input type="radio" name="exsisting" tabindex="37" value="true" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="btn_radio3"><input type="radio" name="exsisting" tabindex="38" value="false" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo") </div>
+                                #end
+                                </div>
+                            </div>
+
+                            <!-- 9 -->
+                            <div id="li9" class="search-content-row">
+                                <div class="input_field_area-user"></div>
+                            </div>
+
+                        </div><!-- login information body ends -->
+                    </div>
+                    <!-- Login-Information ends-->
+
+				#foreach($myError in $context.errors)
+						HAHAHA $myError
+				#end
+
+
+<!-- space -->
+                 <div class="content-Block">
+                    <div id="e7a" class="Block-Contain-header">
+                        <div id="e8" class="b-courseheaderDivleft">$brander.getBrandElement("lms.accreditation.editCredential.caption.Custom-Fields")</div>
+                    </div>
+                    <div class="Search-inputfield-box">
+                        #springBind("userForm.creditReportingFields")
+                        #if($status.value.size()>0)
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3" height="100%">
+                            #set($count=0)
+                            #foreach($customField in $status.value)
+
+                                #set($id = "customField$count")
+                                #set($name = "creditReportingFields[$count].creditReportingFieldValueRef")
+                                #set($customFieldValueIdentifire = "creditReportingFields[$count].creditReportingFieldValueRef.id")
+                                #set($customFieldIdentifire = "creditReportingFields[$count]")
+                                $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+
+                                #set($count=$count+1)
+                            #end
+
+
+                        </table>
+                        #end
+ 						#springBind("userForm.customFields")	
+                        #if($status.value.size()>0)
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3" height="100%">
+                            #set($count=0)
+                            #foreach($customField in $status.value)
+
+                                #set($id = "customField$count")
+                                #set($name = "customFields[$count].customFieldValueRef")
+                                #set($customFieldValueIdentifire = "customFields[$count].customFieldValueRef.id")
+                                #set($customFieldIdentifire = "customFields[$count]")
+                                $customField.renderCustomField($id,$name,$customFieldValueIdentifire,$customFieldIdentifire,$brander)
+
+                                #set($count=$count+1)
+                            #end
+                        </table>
+                        #end
+
+                    </div>
+                </div>
+                    <!-- button-div -->
+                    <div id="e13" class="buttonContainer">
+                        <div class="right">
+                             <a class="button" onclick="FormSubmit('update');"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.Update")</span></a>
+                        </div>
+                        <div class="left">
+                             <a class="button" onclick="FormSubmit('cancel');"><span class="button">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</span></a>
+                        </div>
+                        <input type="hidden" id="action" name="action" />
+                    </div>
+                    <!-- button-div -->
+
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div> 
+                    <!-- space -->
+
+                </div><!-- right-pannel ends -->
+
+            </td></tr><!-- content2a ends -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/adminFooter.vm")
+            <!-- footer-end -->
+	</td></tr>
+        </table><!-- main-container ends-->
+    </form>
+</body>
+<script type="text/javascript" language="javascript">
+	new MaskFieldsAsPassword($(".ssnEncrypt"), $("input:password.ssn"), true, 1000);
+</script>
+</html>

@@ -1,0 +1,567 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<style type="text/css">
+#table-layout #row-tabs {
+    background-color: #F4F4F4;
+    height: 25px;
+    
+    border-bottom-color: #DDDDDD;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+#table-layout #blank-tab {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    width: 184px;
+    border-bottom-width: 0px;
+}
+#table-layout #hidden-blank-tab {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+    display: none;
+    width: 184px;
+}
+#table-layout #tabs {
+}
+#table-tabs a, #table-tabs a:visited, #table-tabs a:link {
+    color: #666666;
+    text-decoration: none;
+}
+#table-tabs td, #table-tabs td:hover, #table-tabs #last, #table-tabs .selected {
+    border-left-color-ltr-source: physical;
+    border-left-color-rtl-source: physical;
+    border-left-color-value: #DDDDDD;
+    border-left-style-ltr-source: physical;
+    border-left-style-rtl-source: physical;
+    border-left-style-value: solid;
+    border-left-width-ltr-source: physical;
+    border-left-width-rtl-source: physical;
+    border-left-width-value: 1px;
+    color: #666666;
+    cursor: pointer;
+    font-size: 10px;
+    height: 25px;
+    min-width: 120px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 120px;
+}
+#table-tabs td:hover, #table-tabs #last:hover {
+    background-color: #FEFEFE;
+    color: #000000;
+}
+#table-tabs #last {
+    border-right-color-ltr-source: physical;
+    border-right-color-rtl-source: physical;
+    border-right-color-value: #DDDDDD;
+    border-right-style-ltr-source: physical;
+    border-right-style-rtl-source: physical;
+    border-right-style-value: solid;
+    border-right-width-ltr-source: physical;
+    border-right-width-rtl-source: physical;
+    border-right-width-value: 1px;
+}
+#table-tabs .selected {
+    background-color: #E5E5E5;
+    border-top-color: #FCFCFC;
+    border-top-style: solid;
+    border-top-width: 1px;
+    font-weight: bold;
+}
+.grid-header {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-family: Tahoma;
+	font-size: 12px;
+	border-color: #DFDFDF !important;
+	border-style: none solid solid none;
+	border-width: 0px 1px 1px 0px;
+	cursor: pointer;
+	height: 30px;
+	padding-left: 5px;
+	text-decoration: none;
+}
+</style>
+
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<!--        <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+<script type="text/javascript">
+function FormSubmit(buttonclick) {
+document.getElementById('action').value=buttonclick;
+document.manageform.submit();
+}
+
+
+$(document).ready(function(){
+$('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='brand']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='brand']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+            
+    //Hack to get the checkboxes aligned.
+    if(jQuery.browser.msie){
+        $('input[name=\'brand\']').css('margin-left','-5px');
+    }else{
+        $('input[name=\'brand\']').css('margin-left','-1px');
+    }
+});
+function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer',
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+ function toggleFieldDisplay(fieldNameCell,command){
+
+ 	if(document.getElementById(fieldNameCell+"-edit").style.display == ""){
+	 	document.getElementById(fieldNameCell+"-edit").style.display = "none";
+		document.getElementById(fieldNameCell).style.display = "";
+		if(command!="cancel"){				
+		 var fieldName= fieldNameCell.substring(0,fieldNameCell.toUpperCase().lastIndexOf("TD"));		
+		 updateFieldNameDivHTML(fieldName);
+		}		
+ 	}else{ 	
+		document.getElementById(fieldNameCell+"-edit").style.display = "";
+		document.getElementById(fieldNameCell).style.display = "none";		
+	}	
+ } 
+
+ function addNewKey(){
+      document.getElementById('actionmethod').value='addNewKey';	 
+	  document.brandingForm.submit();
+ }
+
+ function saveFieldName(fieldName,item,keyFieldName){
+   var fieldNameCell=fieldName+"TD";    
+	if(document.getElementById(fieldName).value.length==0){
+	   alert("Please enter a value for Field Name");
+	} 
+	
+	var methodString= "item="+item+"&key="+document.getElementById(keyFieldName+"Div").innerHTML+"&value="+document.getElementById(""+fieldName).value;	
+	jQuery.ajax({
+	   type: "POST",
+	   url: "branding.do?method=saveAdvancedProperty",
+	   data: methodString   
+	 });
+	 updateFieldNameDivHTML(fieldName);
+	 toggleFieldDisplay(fieldNameCell);
+}
+ 
+ function updateFieldNameDivHTML(fieldName){    
+        var previousInnerHTML = new String();                             
+        previousInnerHTML = previousInnerHTML.concat(document.getElementById(fieldName).value);                      
+        document.getElementById(fieldName+"Div").innerHTML = previousInnerHTML;
+ }
+ 
+ function changeRowColor(checkbox, cssClass) {
+    var tr=checkbox.parentNode.parentNode;
+    var tdarr=$(tr).find("td");
+          if (checkbox.checked) {
+              for(i=0;i<tdarr.size();i++){
+                tdarr[i].style.background="#E9F9FE";
+                tdarr[i].style.color="#006699";
+              }
+          } else {
+              for(i=0;i<tdarr.size();i++){
+				if(cssClass == 'row_1')
+					tdarr[i].style.background="#FFFFFF";
+				else
+					tdarr[i].style.background="#F4F4F4";
+                tdarr[i].style.color="#000000";
+              }
+          }
+ }
+ 
+ function deleteKey(){
+        if ($("INPUT[type='checkbox'][name='brand']:checked").length>0) {
+            confirm("$brander.getBrandElement("lms.branding.deleteAdvanced.key.message")", function () {
+                document.getElementById('actionmethod').value='deleteAdvancedProperty';
+                document.brandingForm.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+ } 
+
+ function doSearch() {
+        document.getElementById('actionmethod').value="searchProperty";
+        document.brandingForm.submit();
+ }
+ 
+ function sortBranding(sortColumnIndex, sortDirection,showAll){
+        document.getElementById('actionmethod').value='advancedBranding';
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.brandingForm.submit();
+}    
+function onAllPage(){
+        document.getElementById('actionmethod').value='advancedBranding';
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('showAll').value="true";
+        document.brandingForm.submit();
+        return true;
+}
+
+function onNextPage(nextIndex){
+        document.getElementById('actionmethod').value='advancedBranding';
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        document.brandingForm.submit();
+        return true;
+}
+
+function onPreviousPage(previousIndex){
+        document.getElementById('actionmethod').value='advancedBranding';
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items) ;
+        document.brandingForm.submit();
+        return true;
+}
+</script>
+<head>
+     <body>
+    <form name="brandingForm" method="post" action="branding.do" enctype="multipart/form-data">
+    <input type="hidden" id="actionmethod" name="method" value=""/>     	
+    #springBind("brandingForm.brandName")
+    <input type="hidden" id="brandName" name="brandName" value="$!{status.value}"/>
+     
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+            <td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+                  #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/managerHeader.vm")
+			#end
+            <!-- header-end -->
+            </td>
+			</tr>
+        <!-- Tabs Start -->
+            <td  id="row-tabs"  colspan="2">
+                <table id="table-tabs" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td id="blank-tab"></td>
+                        <td id="blank-tab" style="width :275px"></td>
+                        <td><a href="branding.do?method=basicBranding" ><span style="font-size: 10px;">$brander.getBrandElement("lms.admin.branding.basic")</span></a></td>
+                        <td class="selected"><a href="#"><span style="font-size: 10px;">$brander.getBrandElement("lms.admin.branding.advanced")</span></a> </td>
+                    </tr>
+                </table>
+            </td>
+            
+            <!-- Tabs End -->
+         <tr id="main">
+           <!-- <LEFT NAGIVATION> -->
+           <td id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <!-- left-pannel-content -->
+					 #parse("snippets/compliance/complianceLeftMenu.vm")
+                <!-- left-menu-content-end -->
+				</table>
+			</td>
+         <!-- </LEFT NAGIVATION> -->
+                <!-- </LEFT NAGIVATION> -->
+                <td id="content">
+                    <div id="scrollable">
+                        <!-- <PAGE DESCRIPTION> -->
+                        <table id="table-description" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <table id="table-page-description" border="0" cellpadding="0" cellspacing="0">
+									    <tr>
+										  <td id="page-icon" class="icon_surveys">
+											&nbsp;
+										  </td>
+										  <td id="page-description">
+            								<div id="page-heading">$brander.getBrandElement("lms.admin.branding.title")</div>
+											<div id="page-help">$brander.getBrandElement("lms.admin.branding.advanced.subtitle")</div>
+        								  </td>
+    									</tr>
+									</table>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- </PAGE DESCRIPTION> -->
+                        <!-- <TOP CONTROLS> -->
+                        
+                       <!-- Search Result Start -->
+            <div id="resultBox" class="search_box_result" style="margin-left: 1px">
+            <!-- Result Header Start -->
+                <div id="resultHeader" class="box_header" style="width:100%; display:inline-block;">
+
+					<table width="100%" cellpadding="0" cellspacing="0">
+						<tr>
+							<td width="33%">
+
+							<!-- Result Heading -->
+						<div style="margin-top:6px;">
+						  <a onClick="addNewKey();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.branding.advanced.addKey")</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="margin-top:6px;">
+						  <a onClick="javascript:deleteKey();" style="text-decoration:none;">
+												  <div class="btn_start"></div>
+												  <div class="btn_normal">$brander.getBrandElement("lms.branding.advanced.deleteKey")</div>
+												  <div class="btn_end"></div>
+						  </a>
+						</div>
+
+						</td>
+						
+						<td width="34%" align="center">
+		   
+						  <table width="100px;" align="center" cellpadding="0" cellspacing="0" style="margin-top:6px;"><tr><td>
+							<a onClick="showSearchBox(this);" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.administrator.commonHeader.caption.Search")</div>
+							  <div class="btn_end"></div>
+							</a>
+						  </td></tr></table>
+
+						</td>
+						
+						<td width="33%" align="right">
+				
+						<div style="margin-bottom:25px;">
+							$pager.setItems($!{context.systemBrandList})
+								#set($totalCount = $pager.total)
+								#if($pager.hasItems())
+										#set($pageFirstIndex = $pager.firstIndex)
+										#set($pageLastIndex = $pager.lastIndex)
+										#set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+										#set($currentPageCount = $pageLastIndex + 1)
+										#set($pageCurrIndex = $pager.index)
+								#else
+										#set($pageFirstIndex = 0)
+										#set($pageLastIndex = 0)
+										#set($currentPageSize = 0)
+										#set($currentPageCount = 0)
+										#set($pageCurrIndex = 0)
+								#end
+								<!-- Commented as per instruction in LMS:7126 -->    <!-- All Icon -->
+									<!-- All Icon -->
+									 #if($totalCount > 10)
+											<div id="showEach" class="icon-all" onClick="javascript:window.location='branding.do?method=advancedBranding&showAll=true&searchSurveyName=$!{context.searchSurveyName}&status=$!{context.surveyStatus}&retire=$!{context.isRetire}&editable=$!{context.isEditable}';" value="Search" name="_target0" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+										
+									#end
+									<!-- Next Icon -->
+									#if($pager.nextIndex)
+											<div id="goNext" class="icon-caret-right" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='branding.do?method=advancedBranding&pageIndex=$pager.nextIndex&paging=paging&searchSurveyName=$!{context.searchSurveyName}&pageCurrIndex=onNextPage($pager.nextIndex);';" ></div>
+									#end
+									<!-- Back Icon -->
+									#if ($pager.prevIndex)
+											<div id="goBack" class="icon-caret-left" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" value="Search" name="_target0" onclick="javascript:window.location='branding.do?method=advancedBranding&pageIndex=$pager.prevIndex&paging=paging&searchSurveyName=$!{context.searchSurveyName}&pageCurrIndex=onPreviousPage($pager.prevIndex);';" ></div>
+									#end
+									<!-- Showing Results -->
+									<div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+							<!-- Showing Results -->
+						</div>
+					
+					</td>
+				</tr>
+			</table>
+	</div>
+		       <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                            <input type="hidden" id="showAll" name="showAll" value="false" />
+                            <input type="hidden" id="paging" name="paging" value="" />
+                            <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                          
+                    </div>
+                    <div id="searchBox"  style="width:360px;height:130px;margin-top:-32px;left:45%;padding-left: 0px;padding-top: 0px" class="visible">
+                        <div style="padding: 5px"><b>Search Keys</b></div>
+                        <div style="padding: 5px;height:15px"></div>                                                                        
+                        <div style="padding: 5px; margin-bottom: 15px">
+                         <div style="width:75px; font-size: 11px;float:left">$brander.getBrandElement("lms.branding.advanced.keyName")</div> 
+                          <div style="float:right">
+                           <input type="text" id="name" onKeyPress="if(event.keyCode==13){doSearch();}" name="name" value="$!{context.name}" class="input-spl" />
+                          </div>
+                          <br style="clear:both" />
+                         </div>                                                                         
+                        <div style="float:right;padding: 6px;margin-left:40px;">
+                                <a class="button" style="width:80px;" onClick="showSearchBox(this);">$brander.getBrandElement("lms.addSecurityRole.Cancel")</a>
+                                <a class="button" style="width:80px;" onClick="return doSearch();">$brander.getBrandElement("lms.manageUser.searchLearner.caption.search")</a>
+                        </div>
+                   </div>
+                <!-- Result Header End -->
+
+                
+
+                <!-- Result Subheader Start -->
+                <div id="searchResult_1">
+                     #if($currentPageSize > 0)
+                                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:0px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" width="2%" style="border-width:0px 1px 1px 1px; border-style:none solid solid solid;">
+                                            <input type="checkbox" id="chkAll" name="selectedLearnerGroup" />
+                                        </td>                                        
+                                        <td class="grid-header" width="48%">
+                                            <div onClick=#if($context.sortColumnIndex == 0 && $context.sortDirection == 0) "sortBranding('0','1','$!context.showAll');" #else "sortBranding('0','0','$!context.showAll');" #end>
+												#if($context.sortColumnIndex == 0)
+                                                 <div id="nameSort" #if($context.sortDirection == 1 ) class="icon_up" #else class="icon_down" #end ></div>
+												#end
+                                                $brander.getBrandElement("lms.branding.advanced.keyName")
+                                            </div>
+                                        </td>
+                                        <td class="grid-header" width="47%">
+											<div onClick=#if($context.sortColumnIndex == 1 && $context.sortDirection == 0) "sortBranding('1','1','$!context.showAll');" #else "sortBranding('1','0','$!context.showAll');" #end>
+												#if($context.sortColumnIndex == 1)
+                                                 <div id="valueSort" #if($context.sortDirection == 1 ) class="icon_up" #else class="icon_down" #end ></div>
+												#end
+												$brander.getBrandElement("lms.branding.advanced.keyValue")
+											</div>
+										</td>                                        										
+                                    </tr>
+                                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+									##foreach($brand in $!{context.systemBrandList})
+                                        #set($brand = $context.systemBrandList.get($loopIndex))
+                                            #if($loopIndex%2 == 0)
+                                                #set($alternate="row_1")
+                                            #else
+                                                #set($alternate="row_2")
+                                            #end
+                                        <tr>
+                                            <td class="$alternate" width="17px" style="border-width:0px 1px 1px 1px; border-style:none solid solid solid;">
+                                                <input type="checkbox" id="chk${brand.uniqueKeyId}" 
+                                                   name="brand" value="${brand.key}" onclick="changeRowColor(this, '$alternate');" 
+                                                   style="margin-left: -1px"/>
+                                            </td>
+                                            <td id="${brand.uniqueKeyId}TD" class="$alternate">
+                                                <div id="${brand.uniqueKeyId}Div" onclick="toggleFieldDisplay('${brand.uniqueKeyId}TD');" style="text-decoration: underline;">$!{brand.key}</div>
+                                             </td>
+                                             <td width="48%" id="${brand.uniqueKeyId}TD-edit" class="unsaved-column" style="display:none;">
+                                                 <div style="margin-left: 3px; float: left">
+                                                     <input type="text" id="${brand.uniqueKeyId}" name="${brand.uniqueKeyId}" value="$!{brand.key}" maxlength="50" size="50"/>
+                                                 </div>
+                                                 <div>
+                                                    <div onclick="toggleFieldDisplay('${brand.uniqueKeyId}TD','cancel');" class="icon-cancel"></div>
+                                                    <div onclick="saveFieldName('${brand.uniqueKeyId}','key','${brand.uniqueKeyId}');" class="icon-save"></div>
+                                                 </div>
+                                             </td>
+                                            <td id="${brand.uniqueValueId}TD" class="$alternate">
+                                                    <div  id="${brand.uniqueValueId}Div" onclick="toggleFieldDisplay('${brand.uniqueValueId}TD');" style="text-decoration: underline;">$!{brand.value}</div>
+                                             </td>
+                                             <td width="48%" id="${brand.uniqueValueId}TD-edit" class="unsaved-column" style="display:none;">
+                                                 <div style="margin-left: 3px; float: left">
+                                                     <input type="text" id="${brand.uniqueValueId}" name="${brand.uniqueValueId}" value="$!{brand.value}" maxlength="50" size="50"/>
+                                                 </div>
+                                                 <div>
+                                                    <div onclick="toggleFieldDisplay('${brand.uniqueValueId}TD','cancel');" class="icon-cancel"></div>
+                                                    <div onclick="saveFieldName('${brand.uniqueValueId}','value','${brand.uniqueKeyId}');" class="icon-save"></div>
+                                                 </div>
+                                             </td>                                           
+                                        </tr>
+                                    #end
+                                </table>
+                            #else
+                                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                                    <tr bgcolor="#efefef">
+                                        <td class="check_box_top" width="3%"></td>
+                                        <td class="grid-header" width="48%">$brander.getBrandElement("lms.branding.advanced.keyName")</td>
+                                        <td class="grid-header" width="48%">$brander.getBrandElement("lms.branding.advanced.keyValue")</td>                                        
+									</tr>
+                                    <tr>
+                                        <td colspan="7" style="border-bottom:none; border-color:#dfdfdf !Important;">
+                                            <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.administrator.searchMember.caption.searchbutton") #end</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            #end
+			    <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                            <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+
+            </div>
+            <!-- Search Result End -->
+        </div>
+	
+    </div>
+                      
+
+                        <!-- <BOTTOM CONTROLS> -->
+                           
+                        <!-- </BOTTOM CONTROLS> -->
+                    </div>
+                </td>
+            </tr>
+			   <tr> <!-- Footer BLOCK -->
+         <td id="footer" colspan="2">
+         <!-- footer -->
+         #parse("snippets/managerFooter.vm")
+         <!-- footer-end -->
+         </td>
+         </tr>
+        </table>
+        <!-- Alert Message Box starts -->
+    <div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.branding.messageBox.pleaseConfirm")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+        <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                    <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+    </div>
+<!-- Alert Message Box Ends -->
+ </form>    
+</body>
+</html>

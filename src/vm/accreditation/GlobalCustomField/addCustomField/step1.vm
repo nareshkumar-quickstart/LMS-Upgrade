@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function(){
+                document.title="$brander.getBrandElement("lms.accraditation.PageTitle.caption.AddCustomField")";
+			
+                $("#toggleIconSelectEntity").click(function() {
+                    toggleView('toggleIconSelectEntity', 'collapsibleSelectEntity');
+                });
+			
+            });
+        
+        </script>
+    </head>
+    <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <tr> <!-- First Block -->
+                <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                    <!-- Header starts -->
+                    #parse("snippets/managerWizardHeader.vm")
+                    <!-- Header ends -->
+                </td></tr>
+
+            <!-- Body Start -->
+            <tr id="main"> <!-- SECOND BLOCK -->
+                <td id="left-sidebar" valign="top">
+                    <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                        <!-- Left Menu Start -->
+                        <div>
+                            <div id="l-menu-back">
+                                <div class="l-menu-back-text-h">Add Custom Field Wizard<br>showing 1 of 4</div>
+                                <div class="l-menu-back-text-act">1. Select Entity</div>
+                                <div class="l-menu-back-text">2. Select Custom Field</div>
+                                <div class="l-menu-back-text">3. Summary</div>
+                                <div class="l-menu-back-text">4. Confirmation</div>
+                            </div>
+                        </div>
+                        <!-- Left Menu End -->
+
+                    </table></td>
+
+                <TD id="content" >
+                    <div id="scrollable">
+
+                        <!-- Page Description -->
+
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.accraditation.editApproval.caption.AddCustomField")</div>
+                                    <div id="page-help">Inline help text goes here.</div>
+                                </td>
+                            </tr>
+                        </table>				
+
+                        <BR>
+                            <!-- Page Description -->
+
+                            <form name="addCustomField" method="post" action="acc_addGlobalCustomField.do" >
+                                <input type="hidden" id="currentpage" name="_page" value="0"/>
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                                <div class="search_box_result"><!-- search_box_result -->
+                                    <div id="toggleIconSelectEntity" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                    <div class="box_header"><span class="box_heading">Select Entity</span></div>
+                                    <div id="collapsibleSelectEntity">
+                                        <table border="0" width="98%" cellpadding="0" cellspacing="3">
+                                            #springBind("customFieldForm.entity")                    
+                                            #foreach($customFieldEntity in $customFieldEntities)
+                                            <tr>
+                                                <td valign="top" width="20"><div class="row_text"></div></td>
+                                                <td width="10">
+                                                    <input type="radio" name="${status.expression}" value="$customFieldEntity" class="input_radio" #if($!{status.value} == "$customFieldEntity") checked #end />
+                                            </td>
+                                            <td>$customFieldEntity</td>
+                                        </tr>
+                                        #end                   
+                                    </table>
+                                </div>
+
+                            </div><!-- search_box_result -->
+
+                            <!-- ************************************************* -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_target1');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                    <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_cancel');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->
+                        </form>
+
+                </div><!-- scrollable -->
+            </td></tr>
+        <!-- Body End -->
+        <tr> <!-- Footer BLOCK -->
+            <td id="footer" colspan="2">
+                <!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+                <!-- Footer End -->
+            </td></tr>
+    </table>
+</body>
+</html>

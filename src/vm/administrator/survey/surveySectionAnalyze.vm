@@ -1,0 +1,283 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    #parse("snippets/learnerNewHead.vm")
+   <!--     <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" /> -->
+    <script type="text/javascript">
+        document.title="LMS-Add Survey";
+        function FormSubmit(buttonclick) {
+            //alert(buttonclick);
+            document.getElementById('action').value=buttonclick;
+            document.enrollmentForm.submit();
+        }
+    </script>
+	
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script type="text/javascript">
+var launchWindow;
+        function launchDocument(surveyId) {
+			
+            var url = "#springUrl("/mgr_viewWrittenTrainingPlan.do")";
+            var params = "?surveyId="+surveyId;
+			
+            if ( launchWindow != null ) {
+                launchWindow.close();
+            }
+			launchWindow = window.open(url+params,'NeedTrainingAnalysis','address=no,resizable=yes,toolbar=no,location=no,scrollbars=yes,menubar=yes,status=yes,width=1024,height=768,left=0,top=0');
+            launchWindow.focus();
+            launchWindow.opener=this.window;
+			
+        }
+
+ function backForm(){
+        document.getElementById("actionmethod").value='backDisplaySurvey';
+        document.surveyAnalyzeForm.submit();
+    }
+
+ function closeSurveyAnalyzeAction(){
+        document.getElementById('surveyAnalyzeAction').value = 'closeSurveyAnalyzeAndDisplaySurveys';
+        document.surveyAnalyzeForm.submit();
+        return true;
+    }
+    $(document).ready(function(){
+        document.title="$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.title")";
+    });
+
+$(document).ready(function()
+{
+  
+   /* if(document.getElementById('sign').checked == true) {
+        $("#electronic-signature-required").show();
+        $("#spaceDiv").hide();
+    }
+    if(document.getElementById('link').checked == true) {
+        $("#links-required").show();
+        $("#spaceDiv2").hide();
+    }*/
+});
+
+</script>
+
+ <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+
+
+<body>
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+         	<!-- header -->
+             #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                 #parse("snippets/adminHeader.vm")
+             #else
+                 #parse("snippets/managerHeader.vm")
+             #end
+             <!-- header-end -->
+			 </td>
+		</tr>
+		
+	<!-- Tabs Start -->
+        <td id="tabBar" class="tab_bar" colspan="2">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td width="194"><div class="tab_blank"></div></td>
+                    <td>&nbsp;</td>
+                    <td width="223">
+                        #springBind("manageSurveyForm.sid")
+                        <a href="adm_manageSyrvey.do?method=showResponseSummaryView&sid=$!{status.value}"><div class="tab_selected">$brander.getBrandElement("lms.assignEnrollmentSummary.caption.header")</div></a>
+                        <a href="adm_manageSyrvey.do?method=showSurveyAnalizeForIndividuals&sid=$!{status.value}"><div class="tab" style="border-right-style:solid;">$brander.getBrandElement("lms.administrator.searchMember.caption.individuals")</div></a>
+                    </td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+
+   <tr id="main"> <!-- SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+	<td id="left-navigation" valign="top">
+		 <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        <!-- left-menu-content -->
+        #parse("snippets/compliance/complianceLeftMenu.vm")
+        <!-- left-menu-content-end -->
+		</table>
+		</td>
+		
+         <TD id="content" >
+					<div id="scrollable">
+            <form name="surveyAnalyzeForm" action="adm_manageSyrvey.do" method="POST">
+            <input type="hidden" id="surveyAnalyzeAction" name="method" value=""/> 
+			<input type="hidden" id="actionmethod" name="method" value=""/>
+
+           <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description" style="margin-bottom:10px;">
+		
+		<div style="float:left;width:70%;border:0px solid red; height:60%;">			
+			<div id="pageIcon" class="courseLogo"><img src="$brander.getBrandElement("lms.manager.surveys.responseSummary.pixel.icon_survey_summary.gif")" /></div>
+			<div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.title")</div>
+			<div id="detailsHolder" style="border:0px solid red;padding-left:80px;" >$brander.getBrandElement("lms.manager.surveys.analyzeSurvey.caption.description")</div>
+		</div>
+
+		 <div id="rightboxcontent" style="float:right; width:210px; margin-top:20px; padding:10px; height:45px; margin-left:60px" class="survey-count-box"> 
+			<div class="r-menu-text-L">$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.TotalStartedSurvey")</div><div class="r-menu-text-R">$!{context.surveyResponseAnalysis.startedSurveyCount}</div>
+			<div class="r-menu-text-L">&nbsp;</div>
+			<div class="r-menu-text-L">$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.TotalCompletedSurvey")</div><div class="r-menu-text-R">$!{context.surveyResponseAnalysis.completedSurveyCount}</div>
+		</div>
+		
+			<!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+            </div>
+		<div style="margin-bottom:10px;overflow:hidden;clear:both;">	
+			<div style="float:right; margin-top:3px;">
+			  <a onclick="window.print();return false;" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Print</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:right; margin-top:3px;margin-right:5px;">
+			  <a onClick="backForm('back');" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">Back</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+
+		</div>
+	    
+            <!-- Logo+Manage-User-end -->
+            
+			#springBind("manageSurveyForm.surveyName")
+				#if($status.value=="Needs Analysis Survey")
+				<div >
+				  <a href="#" onClick="launchDocument('$manageSurveyForm.sid');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">Download Written Training Plan</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div> 		
+				<!--<a href="javascript:launchDocument($manageSurveyForm.sid)">Click here to view Training Need Analysis</a>-->
+				
+				#end
+                
+            <!--Group-Name-div -->
+			<div id="resultBox" class="search_box_result">
+            <h2 class="box_header">
+                #springBind("manageSurveyForm.surveyName")
+                $!{status.value} <!-- Customer Satisfaction Survey -->
+            </h2>
+            <!-- Group-Name-div -->
+			
+
+			#macro(displaySectionAnalysis $section $sectionIdx)
+        		<div id="wrapper_section_${section.id}">
+					<br/>
+            		<div id="section_${section.id}" class="survey-section plus">
+						<strong>${section.name}</strong>
+						<hr/>
+                		<div id="section_detail_${section.id}" class="survey-section-detail" style="overflow:hidden;">
+        					#set($questionIdx = 1)
+                			#foreach($framework in ${section.surveyQuestionBanks})
+                                #foreach($question in ${framework.surveyQuestions})
+        							<div class="content-Block" style="margin-bottom: 10px;">
+										
+										<strong>${questionIdx}. ${question.surveyQuestionRef.text}</strong>
+										
+        								<table id="tblQuestion{$question.id}Answers" width="100%" cellpadding="0" cellspacing="0" >
+											#set($textQuestion = ${question.surveyQuestionRef.getClass().getName().equalsIgnoreCase("com.softech.vu360.lms.model.TextBoxSurveyQuestion")})
+        									<thead>
+        										<tr class="head" align="center" style="background: #F4F4F4;">
+        											<td width="58%" align="left"></td>
+        											<td>#if(!${textQuestion})$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.ResponsePercent")#end</td>
+        											<td>$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.ResponseCount")</td>
+        										</tr>
+        									</thead>
+        									<tbody>
+												#if(!${textQuestion})
+            										#foreach($answer in ${question.answerItems})
+            											<tr>
+            												<td> &nbsp;&nbsp;&nbsp; $answer.surveyAnswerItemRef.label</td>
+            												<td align="center">$answer.responsePercent %</td>
+            												<td align="center">$answer.responseCount</td>
+            											</tr>
+    												#end
+												#end
+        										<tr>
+        											<td>&nbsp;</td>
+        											<td align="center">$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.Answeredquestion")</td>
+        											<td align="center"><strong>${question.totalCompletedQuestion}</strong></td>
+        										</tr>
+        										<tr style="background: #F4F4F4;">
+        											<td>&nbsp;</td>
+        											<td align="center">$brander.getBrandElement("lms.manager.surveys.responseSummary.caption.Skippedquestion")</td>
+        											<td align="center"><strong>${question.skippedQuestion}</strong></td>
+        										</tr>
+        									</tbody>
+        								</table>
+        							</div>
+                					#set ($questionIdx = (1 + $questionIdx))
+                				#end
+                			#end
+                		</div>
+                    </div>
+        			#if(${section} && ${section.children} && ${section.getChildren().size()}>0)
+        				#foreach($childSection in ${section.children})
+        					#set($sectionIdx = (${sectionIdx} + 1))
+        					#displaySectionAnalysis($childSection $sectionIdx)
+        				#end
+        			#end
+        		</div>
+        	#end
+
+            <!-- SECTIONS -->
+            #if ($context.surveyResponseAnalysis.sectionVOs && $context.surveyResponseAnalysis.sectionVOs.size()>0)
+				#set($pageSectionIdx = 1)
+                #foreach($section in $context.surveyResponseAnalysis.sectionVOs)
+					#displaySectionAnalysis($section $pageSectionIdx)
+					#set($pageSectionIdx = (1 + $pageSectionIdx))
+				#end
+			#end
+			<!-- /SECTIONS -->
+			
+            <!-- button -->
+            <div class="managerBtn">
+				 <div style="float:right; margin-top:3px;">
+				  <a onClick="backForm('back');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.close")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>                    
+            </div>
+            <!-- button -->
+            </div>
+            <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+
+            </form>
+
+        </div><!-- right-pannel -->
+
+    </td></tr><!-- content-area -->
+
+    <tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+      	<!-- footer -->
+          #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+              #parse("snippets/adminFooter.vm")
+          #else
+             #parse("snippets/managerFooter.vm")
+          #end
+          <!-- footer-end -->
+		  </td>
+	</tr>
+</table><!-- main-container -->
+</body>
+</html>

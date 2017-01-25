@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+	function setCourseSelection(checkbox, id){
+        document.getElementById(id).value = checkbox.checked;
+        $("#"+$("#"+checkbox.id).attr("enrollTextboxid")).attr("disabled", !$("#"+checkbox.id).is(':checked')).val("").focus();
+    }
+	
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.manageform.submit();
+    }
+
+    $(document).ready(function() {
+
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+
+</script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js" ></script>
+#macro( treeviewEntitlement $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])
+    #set($index = 0)
+    #set($count = 0)
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+            <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else 
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="$node.value.organisationalGroupId}"></div>
+            #end
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroupSelect${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].selected" #if(${node.value.selected}) checked #end #if(!${node.enabled}) disabled #end onclick="setCourseSelection(this,this.id);" enrollTextboxid="_maxenroll${node.value.organisationalGroupId}"/>
+            <input type="hidden" id="_orgGroup${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].organisationalGroupId" value="${node.value.organisationalGroupId}" />
+            <input type="hidden" id="_orgGroupName$count" name="organisationalGroupEntitlementItems[$index].organisationalGroupName" value="${node.value.organisationalGroupName}" /></div>
+            #set ($padLimit=60-$node.depth*5)
+            <div class="row_title">#dotPaddingWithOutTitle(${node.value.organisationalGroupName},$padLimit)</div>
+            <div class="head_1b-e-1-admin-tree" style="padding-right:25px;"  ><input type="text" id="_maxenroll${node.value.organisationalGroupId}" value="$!{node.value.maxEnrollments}" name="organisationalGroupEntitlementItems[$index].maxEnrollments" class="search_field" #if(!${node.value.selected}) disabled #end  /></div>
+        </div>
+        #set($index = $index + 1)
+        #set($count = $count + 1)
+    #end
+#end
+</head>
+
+<body>
+<form name="customerEntitlementForm" method="post" action="adm_customerEntitlements.do" >
+<div id="main-container">
+
+    <!-- header -->
+         #parse("snippets/adminWizardHeader.vm")
+    <!-- header-end -->
+
+    <div id="content2a">
+    <!-- content-area -->
+        <!-- left-pannel-content -->
+        <div id="sideBar" class="side_bar">
+            <div id="l-menu-back">
+                <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.AddCustomerEntitlements")<br />$brander.getBrandElement("lms.administrator.addNewDistributorProfile.caption.step-2-4")</div>
+                <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.administrator.custEntitlement.caption.EntitlementDetails")</div>
+                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.OrginationalGroup")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.administrator.custEntitlement.caption.OrginationalGroupAssignment")</div>
+                <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.SelectCourses")</div>
+                <div class="$brander.getBrandElement("lms.listServeyQuestions.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.administrator.custEntitlement.caption.Summary")</div>
+            </div>
+        </div>
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+        <div id="right-pannel">
+            #springBind("addCustomerEntitlementsForm.*")
+            #if($status.error)  
+                #set($errorCodes = [])  
+                #set($temp = true)
+                #springBind("addCustomerEntitlementsForm.organisationalGroupEntitlementItems")
+                #if($status.error)
+                    #foreach($errorCode in $status.errorCodes)
+                        #set($temp = $errorCodes.add($errorCode))
+                    #end
+                #end
+                #if($errorCodes.size() > 0)
+                    <!-- error-box -->
+                     <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $errorCodes)         
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+                            <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$!error</div>
+                            </div>
+                        #end
+                    </div>
+                    <!-- error-box -->
+                #end
+            #end
+
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoCustomer">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.custEntitlement.caption.AddCustomerEntitlements")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.custEntitlement.caption.page2.subTitle")</div>
+			</td>
+		    </tr>
+		</table>            
+            <!-- Logo+Manage-User-end -->
+
+            <!-- tree -->
+            <div class="content-Block-new">
+                <div class="Block-Contain-header">
+                    <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.col.header")</div>
+                    <div class="head_1a-a1"></div>
+                    <div class="head_1b-e-tree-adim">Max Enrollments</div>
+                </div>
+                #treeviewEntitlement($!{orgGroupTreeAsList})
+            </div>
+            <!-- tree-end -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- button-div -->
+            <div class="$brander.getBrandElement("lms.administrator.addNewDistributorPreferences.cssClass.managerBtn")">
+                <!-- <div class="btn-left2"><input type="image" src="brands/default/en/images/btn-cancel_n.gif" width="71" height="19" id="cancel" name="_cancel" title="Cancel" align="top" /></div>
+                <div class="btn-right1"><input type="image" src="brands/default/en/images/btn-previous_n.gif" width="71" height="19" id="previous" name="_target0" title="Previous" align="top"/>&nbsp;<input type="image" src="brands/default/en/images/btn-next_n.gif" width="71" height="19" id="next" name="_target2" title="Next" align="top"/></div> -->
+                <input type="hidden" id="currentpage" name="_page" value="1"/>
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                <div class="btn-left2">
+                    <a class="button" onClick="submitButtonForm(document.customerEntitlementForm,'wizardSubmitter','_cancel');"><span class="button">Cancel</span></a>                            
+                </div>
+                <div class="btn-right1">
+                     <a class="button" onClick="submitButtonForm(document.customerEntitlementForm,'wizardSubmitter','_target2');"><span class="button">Next</span></a>                             
+                </div>
+                <div class="btn-right1">
+                     <a class="button" onClick="submitButtonForm(document.customerEntitlementForm,'wizardSubmitter','_target0');"><span class="button">Previous</span></a>
+                </div>
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.add-New-Survey-Question_Container.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+            </div>
+            <!-- scrollable-div -->
+
+            <!-- right-pannel-content-end -->
+        </div>
+        <!-- content-area-end -->
+    </div>
+    <!-- footer -->
+    #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+</div>
+</form>
+</body>
+</html>

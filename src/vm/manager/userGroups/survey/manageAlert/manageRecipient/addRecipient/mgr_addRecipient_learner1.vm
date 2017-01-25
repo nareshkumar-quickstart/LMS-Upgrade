@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+#parse("snippets/compliance/complianceHead.vm")
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script language="javascript" type="text/javascript">
+	document.title="$brander.getBrandElement("lms.manager.addDFCourses.caption.pageTitle")";
+</script>
+
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+
+ $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+    if ($('#right-pannel').height()<$('#frame_body').height()) {
+        $('#right-pannel').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel').height());
+	
+	$('#frame_body').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+});
+
+function submitFormWithDescriptionData(textAreaId)
+{	
+	updateTextArea("description1");
+	submitButtonForm(document.addCustomCourses,'wizardSubmitter','_finish');
+	}
+</script>
+    </head>
+    <body>
+    <form name="addRecipientForm" method="post" action="mgr_addRecipient.do?alertId=$addRecipientForm.alertId">
+        <input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+           #parse("snippets/managerWizardHeader.vm")
+		 </td></tr>
+		 
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                <div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.showingWizard")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.summary")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.selectRecipientType")</div>
+						#springBind("addRecipientForm.recipientType")
+						#if($!{status.value}=="learners")
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.selectLearners")</div>
+						#elseif(($!{status.value}=="learnergroups"))
+						 <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearnerGroup.learnerGroup")
+						 </div>
+						#elseif(($!{status.value}=="organizationgroups"))
+						<div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addOrgGroup.selectOrgGroup")
+						</div>
+						#else
+						<div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.selectEmail")</div>
+						#end
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.confirmation")</div>
+                    </div>
+                </div>
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+					<div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.addRecipientGroup")</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.confirmation")</div>
+                    </div>
+
+                    <div id="resultBox" class="search_box_result">
+                        <div id="resultHeader" class="box_header">
+                            <div class="box_heading">$brander.getBrandElement("lms.manageAlert.editAlert.caption.summary")</div>
+                        </div>
+                       <table border="0" width="97%" cellpadding="0" cellspacing="3">
+                            <tr>
+                                <td width="200" height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupName")</span></td>
+
+                                <td>#springBind("addRecipientForm.recipientGroupName")<span class="row_text">$!{status.value}</span></td>
+                            </tr>
+                            <tr>
+                                <td width="200" height="20"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.recipientsGroupType")</span></td>
+                                <td>#springBind("addRecipientForm.recipientType")<span class="row_text">
+								
+								 #if($!{status.value}=="learners")
+								 $brander.getBrandElement("lms.manageOrganizationGroup.caption.Learners")	
+								 
+								 #elseif($!{status.value}=="learnergroups")
+								 $brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.learnerGroups")
+								
+								 #elseif($!{status.value}=="organizationgroups")
+								 $brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.organizationalGroups")
+								 
+								 #elseif($!{status.value}=="emailaddress")
+								 $brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.emailAddress")
+								 #end
+								
+								</span></td>
+                            </tr>
+                            <tr>
+
+                                #if($!{status.value}=="learnergroups")
+									<tr><td width="200" height="20" valign="top"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.learnerGroups")</span></td><td>
+									
+									#springBind("addRecipientForm.selectedLearnerGroupList")
+									#foreach($learnerGroup in $!{status.value})
+										<span class="row_text">$!{learnerGroup.name}</span>
+									#end
+									</td></tr>
+									#springBind("addRecipientForm.recipientType")
+								#elseif($!{status.value}=="organizationgroups")
+									<tr><td width="200" height="20" valign="top"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.organizationalGroups")</span></td><td>
+									#springBind("addRecipientForm.selectedOrgGroupList")
+									#foreach($orgGroup in $!{status.value})
+										<span class="row_text">$!{orgGroup.name}</span>							
+									#end
+									</td></tr>
+								#springBind("addRecipientForm.recipientType")
+								#elseif($!{status.value}=="emailaddress")
+									<tr><td width="200" height="20" valign="top"><span class="row_text" style="font-weight:bold;">$brander.getBrandElement("lms.manageAlert.editRecipient.confirmation.emailAddress")</span></td><td>
+									#springBind("addRecipientForm.emailAddress")
+									#foreach($emailaddress in $!{status.value})
+										<span class="row_text">$emailaddress</span>							
+									#end
+								  </td></tr>
+								#end
+									
+								
+                            </tr>
+                            
+
+                        </table>
+                    
+                    </div>
+                     <input type="hidden" id="currentpage" name="_page" value="7" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+						<div style="float:right; margin-top:15px;">
+							<div class="btn_start"></div>
+							<div class="btn_normal" onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_finish');">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</div>
+							<div class="btn_end"></div>
+						</div>
+                    #springBind("addRecipientForm.pageIndex")
+                <div style="float:right; margin-top:15px;margin-right:5px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target$!{status.value}');">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+                            <div class="btn_end"></div>
+                    </div>
+					
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+                            <div class="btn_start"></div>
+                            <div class="btn_normal" onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_cancel');">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+                            <div class="btn_end"></div>
+
+                    </div>
+                </div>
+		#if($request.getParameter("showAll") == "true" )
+			<input type="hidden" id="showAll" name="showAll" value="true"/>	
+		#end
+
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            #parse("snippets/managerFooter.vm")
+	</td></tr>
+        </table>
+        </form>
+    </body>
+
+</html>

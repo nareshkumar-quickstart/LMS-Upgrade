@@ -1,0 +1,375 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+#set($distributorFeatureGroup = $ssn.getAttribute("distributorFeatureGroup"))
+#set($externalServices = $brander.getBrandElement("lms.manager.externalservices"))
+
+        <div id="header" class="page_header">
+            <div style="width:200px; float:left;"><!-- logo -->
+              <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+            </div><!-- logo-end -->
+             <div style="float: right;"><!-- top-nav-right-menu -->
+            #if(! $distributorFeatureGroup)
+				#if($userPermissionChecker.hasAccessToFeatureGroup("Profile", $userData, $ssn) && ($userPermissionChecker.hasAccessToFeature("LMS-MGR-0023", $userData, $ssn) || $userPermissionChecker.hasAccessToFeature("LMS-MGR-0024", $userData, $ssn)))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0023", $userData, $ssn))
+					<a onclick="submitForm('Profile','LMS-MGR-0023','mgr_editCustomer.do?method=editCustomerProfile')" tabindex="1">
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0024", $userData, $ssn))
+					<a onclick="submitForm('Profile','LMS-MGR-0024','mgr_editCustomer.do?method=editCustomerPreferences')" tabindex="1">
+					#end
+					   <img id="manager-profile" alt="" src="brands/default/en/images/icon-profile-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-profile-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-profile-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Profile") class="selected" #end>
+					$brander.getBrandElement("lms.mycourses.header.Profile")					
+					</td></tr>
+				</table>
+				#end
+				#if($externalServices && $externalServices == "on")  
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('ExternalServices','ExternalServices','view.do?vm=manager/externalServices/listExternalLinks')" tabindex="2">
+					   <img id="manager-external-services" alt="" src="$brander.getBrandElement("lms.manager.externalservices.clientlogo.normal")"
+				                    onmouseover="this.src='$brander.getBrandElement("lms.manager.externalservices.clientlogo.hover")'"
+				                    onmouseout="this.src='$brander.getBrandElement("lms.manager.externalservices.clientlogo.normal")'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "ExternalServices") class="selected" #end>
+					$brander.getBrandElement("lms.mycourses.header.ExternalServices")			
+					</td></tr>
+				</table>
+				#end  
+				#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+				
+					#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0017", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Tools','LMS-MGR-0017','mgr_alertCourse.do')" tabindex="3">
+					<img id="manager-tools" alt="" src="brands/default/en/images/icon-tools-normal.png" onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'" onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Tools") class="selected" #end>TOOLS</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0018", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Tools','LMS-MGR-0018','mgr_sendMailToLearners.do')" tabindex="3"><img id="manager-tools" alt="" src="brands/default/en/images/icon-tools-normal.png" onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'" onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Tools") class="selected" #end>TOOLS</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0019", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Tools','LMS-MGR-0019','mgr_viewAssignSurveyMain.do')" tabindex="3"><img id="manager-tools" alt="" src="brands/default/en/images/icon-tools-normal.png" onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'" onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Tools") class="selected" #end>TOOLS</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0020", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" tabindex="3"><img id="manager-tools" alt="" src="brands/default/en/images/icon-tools-normal.png" onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'" onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Tools") class="selected" #end>TOOLS</td></tr></table>
+					#end
+					   
+					
+				#end
+				#if($userPermissionChecker.hasAccessToFeatureGroup("Reports", $userData, $ssn) )
+				
+				#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0012", $userData, $ssn))
+				<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+				<tr><td>
+				<a onclick="submitForm('Reports','LMS-MGR-0012','mgr_ManageReports.do')" tabindex="4"><img id="manager-reports" alt="" src="brands/default/en/images/icon-reports-normal.png" onmouseover="this.src='brands/default/en/images/icon-reports-hover.png'" onmouseout="this.src='brands/default/en/images/icon-reports-normal.png'"/>	
+				</a>
+				</td></tr>
+				<tr><td #if($menu == "Reports") class="selected" #end>$brander.getBrandElement("lms.mycourses.header.Reports")
+				</td></tr>
+				</table>
+				#end
+				#end
+				#if($userPermissionChecker.hasAccessToFeatureGroup("Plan & Enroll", $userData, $ssn) )
+			    
+			    #if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0008", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_viewPlanAndEnroll.do')" tabindex="3">
+					<img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png" onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Plan & Enroll") class="selected" #end>Plan & Enroll</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0009", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0009','mgr_searchTrainingPlans.do')" tabindex="3">
+					<img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png" onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Plan & Enroll") class="selected" #end>Plan & Enroll</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0010", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0010','mgr_manageCustomCourses.do')" tabindex="3">
+					<img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png" onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Plan & Enroll") class="selected" #end>Plan & Enroll</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0011", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')" tabindex="3">
+					<img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png" onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Plan & Enroll") class="selected" #end>Plan & Enroll</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0025", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0025','mgr_viewAllEntitlements.do')" tabindex="3">
+					<img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png" onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Plan & Enroll") class="selected" #end>Plan & Enroll</td></tr></table>
+					
+					
+					
+				#end
+				#end
+				#if($userPermissionChecker.hasAccessToFeatureGroup("Users & Groups", $userData, $ssn))
+				#if($userPermissionChecker.hasAccessToFeature("LMS-MGR-0001", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0001','mgr_manageLearners.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0002", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0002','mgr_batchImportLearners.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0003", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0003','mgr_regInvitation-1.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0004", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0004','mgr_manageOrganizationGroup.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+				#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0005", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0005','mgr_manageLearnerGroups.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0006", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0006','mgr_manageSecurityRoles.do?method=showSecurityRoles')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+					
+					#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0007", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0007','mgr_viewAssignSecurityRoleMain.do')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+				#elseif($userPermissionChecker.hasAccessToFeature("LMS-MGR-0029", $userData, $ssn))
+					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','LMS-MGR-0029','mgr_learnerEnrollments.do?method=showSearchLearnerPage')" tabindex="3">
+					<img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png" onmouseover="this.src='brands/default/en/images/icon-users-hover.png'" onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/></a>
+					</td></tr><tr><td #if($menu == "Users & Groups") class="selected" #end>Users & Groups</td></tr></table>
+				#end
+				#end
+				#set($ssn=$request.getSession(true))
+        		#set($isCASAuthenticated=$ssn.getAttribute("isCASAuthenticated"))
+        		#if($isCASAuthenticated) 
+    					<table id="table-icons" border="0" cellpadding="0" cellspacing="0"><tr><td>
+    					<a onclick="javascript:goToLS360Dashboard()" tabindex="3">
+    					<img id="manager-ls360-dashboard" alt="" src="brands/default/en/images/headericons/dashboard.png" onmouseover="this.src='brands/default/en/images/headericons/dashboard.png'" onmouseout="brands/default/en/images/headericons/dashboard.png'"/></a>
+    					</td></tr><tr><td #if($menu == "SF Dashboard") class="selected" #end>$brander.getBrandElement("lms.header.caption.ls360dashboard")</td></tr></table>
+				#end
+				
+				<!-- LMS-15500 -->
+				#if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') 
+		            #if($userPermissionChecker.hasAccessToFeatureGroup("Admin Predict Account", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end
+				#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')	
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end
+				#elseif($!adminCurrentMode == 'ROLE_LEARNER')	
+					#if($userPermissionChecker.hasAccessToFeatureGroup("My Predict", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end	
+				#end
+			#else
+				#if($distributorFeatureGroup.contains("Profile"))
+				<table id="ProfileTable" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Profile','LMS-MGR-0023','mgr_editCustomer.do?method=editCustomerProfile')" tabindex="1">
+					   <img id="manager-profile" alt="" src="brands/default/en/images/icon-profile-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-profile-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-profile-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Profile") class="selected" #end>
+					PROFILE
+					</td></tr>
+				</table>				
+				#end
+				#if($externalServices && $externalServices == "on")  
+				<table id="announcementTable" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('ExternalServices','ExternalServices','view.do?vm=manager/externalServices/listExternalLinks')" tabindex="2">
+					   <img id="manager-tools" alt="" src="brands/default/en/images/hover/external_services.png"
+				                    onmouseover="this.src='brands/default/en/images/hover/external_services.png'"
+				                    onmouseout="this.src='brands/default/en/images/headericons/external_services.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "") class="selected" #end>
+					External Services
+					</td></tr>
+				</table>				
+				#end  
+				#if($distributorFeatureGroup.contains("Announcements") )
+				<table id="announcementTable" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Announcements','Announcements','mgr_sendMailToLearners.do')" tabindex="2">
+					   <img id="manager-tools" alt="" src="brands/default/en/images/hover/announcements.png"
+				                    onmouseover="this.src='brands/default/en/images/hover/announcements.png'"
+				                    onmouseout="this.src='brands/default/en/images/headericons/announcements.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Announcements") class="selected" #end>
+					ANNOUNCEMENTS
+					</td></tr>
+				</table>				
+				#end
+				#if($distributorFeatureGroup.contains("Tools"))
+				<table id="manager-tools" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Tools','LMS-MGR-0020','mgr_alertCourse.do')" tabindex="3">
+					   <img id="manager-tools" alt="" src="brands/default/en/images/icon-tools-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-tools-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-tools-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Tools") class="selected" #end>
+					TOOLS
+					</td></tr>
+				</table>				
+				#end
+				#if($distributorFeatureGroup.contains("Reports") )
+				<table id="manager-reports" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Reports','LMS-MGR-0012','mgr_ManageReports.do')" tabindex="4">
+					   <img id="manager-reports" alt="" src="brands/default/en/images/icon-reports-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-reports-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-reports-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "LMS-MGR-0012") class="selected" #end>
+					REPORTS
+					</td></tr>
+				</table>				
+				#end
+				#if($distributorFeatureGroup.contains("Plan & Enroll") )
+				<table id="manager-plan-enroll" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onClick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0008','mgr_viewPlanAndEnroll.do')" tabindex="5">
+					   <img id="manager-plan-enroll" alt="" src="brands/default/en/images/icon-gantt-chart-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-gantt-chart-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-gantt-chart-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Plan & Enroll") class="selected" #end>
+					PLAN & ENROLL
+					</td></tr>
+				</table>				
+				#end
+				#if($distributorFeatureGroup.contains("Users & Groups"))
+				<table id="manager-users-groups" border="0" cellpadding="0" cellspacing="0"><tr><td>
+					<a onclick="submitForm('Users%20%26%20Groups','ManageLearner','mgr_manageLearners.do')" tabindex="6">
+					   <img id="manager-users-groups" alt="" src="brands/default/en/images/icon-users-normal.png"
+				                    onmouseover="this.src='brands/default/en/images/icon-users-hover.png'"
+				                    onmouseout="this.src='brands/default/en/images/icon-users-normal.png'"/>	
+					</a>
+					</td></tr>
+					<tr><td #if($menu == "Users & Groups") class="selected" #end>
+					USERS & GROUPS
+					</td></tr>
+				</table>				
+				#end
+				
+				<!-- LMS-15500 -->
+				#if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') 
+		            #if($userPermissionChecker.hasAccessToFeatureGroup("Admin Predict Account", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end
+				#elseif($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR')	
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end
+				#elseif($!adminCurrentMode == 'ROLE_LEARNER')	
+					#if($userPermissionChecker.hasAccessToFeatureGroup("My Predict", $userData, $ssn))
+						<table id="table-icons" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+								<td>
+									<a onclick="" href="#springUrl('/predict.do')">
+										<img id="manager-predict" alt="" src="brands/default/en/images/icon-predict-normal.png" onmouseover="this.src='brands/default/en/images/icon-predict-hover.png'" onmouseout="this.src='brands/default/en/images/icon-predict-normal.png'" />
+									</a>
+								</td>
+							</tr>
+							<tr>
+								<td #if($menu == "Predict") class="selected" #end>
+										$brander.getBrandElement("lms.header.caption.Predict")
+								</td>
+							</tr>
+						</table>
+					#end	
+				#end
+			#end
+        </div><!-- top-nav-right-menu-end -->
+    </div>

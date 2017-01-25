@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+    ##parse("snippets/instructorHead.vm")
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+           $('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+			if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+			}
+			$('#sideBar').height($('#right-pannel').height());
+        });
+    </script>
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script language="javascript" type="text/javascript">
+
+    </script>
+</head>
+
+<body>
+<form name="addResourceForm" method="post" action="ins_addResource.do">
+
+    <div id="main-container">
+
+    <!--Header Start -->
+    #parse("snippets/instructor/instructorWizardHeader.vm")
+    ##parse("snippets/instructorHeader.vm")
+    <!-- Header End -->
+
+    <!-- Body Start -->
+    <div id="frame_body">
+        <div id="sideBar" class="side_bar">
+            <div id="l-menu-back">
+                <div class="l-menu-back-text-h">$brander.getBrandElement("lms.Instructor.caption.LeftpanelSteps.AddResources2")</div>
+                <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.Instructor.caption.LeftpanelStep1.AddResources")</div>
+                <div class="l-menu-back-text-act">$brander.getBrandElement("lms.Instructor.caption.LeftpanelStep2.AddResources")</div>
+            </div>
+        </div>
+
+        <div id="right-pannel" class="scrollable">
+
+
+
+            <!-- Page Description -->
+        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+            <tr>
+                <td id="page-icon" class="page-icon-tools">
+                    &nbsp;
+                </td>
+                <td id="page-description">
+                    <div id="page-heading">$brander.getBrandElement("lms.Instructor.caption.AddResource.ManageResources")</div>
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.Instructor.caption.PageInlineText.AddResources1")</div>
+                </td>
+            </tr>
+        </table> 
+
+            <div class="search_box_result">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.Summary.EditResources")</span></div>
+
+                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                        <tr>
+                            #springBind("addResourceForm.name")
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.ResourceName.ManageResources")</b></div></td>
+                            <td ><div class="row_text">$!{status.value}</div></td>
+                        </tr>
+                        <tr>
+			   #springBind("addResourceForm.resourceTypes")
+                           #set($resouceTypes = $status.value)
+                            #springBind("addResourceForm.resourceTypeId")
+                            #set($selectedResouceType = "$!{status.value}")
+			                            #set($selectedResouceTypeName = "")
+			                            #foreach ($resouceType in $resouceTypes)
+                                #if($resouceType.id == "$!{selectedResouceType}")
+                                    
+				                                  #set($selectedResouceTypeName =$resouceType.name)
+                                
+                                #end
+                            #end
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.ResourceType.ManageResources")</b></div></td>
+                            <td ><div class="row_text">$selectedResouceTypeName</div></td>
+                        </tr>
+                        <tr>
+                            #springBind("addResourceForm.assetTagNumber")
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.AssetTagnumber.ManageResources")</b></div></td>
+                            <td ><div class="row_text">$!{status.value}</div></td>
+                        </tr>
+                        <tr>
+                            #springBind("addResourceForm.description")
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.Description.EditResources")</b></div></td>
+                            <td ><div class="row_text">$!{status.value}</div></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <input type="hidden" id="currentpage" name="_page" value="1" />
+                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+				
+				<div style="float:right; margin-top:15px;">
+				<a onClick="submitButtonForm(document.addResourceForm,'wizardSubmitter','_finish');" >
+                    <div class="btn_start"></div>
+                    <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.Finish")</div>
+                    <div class="btn_end"></div>
+				</a>	
+                </div>
+
+                <div style="float:right; margin-top:15px; margin-right:5px;">
+				<a onClick="submitButtonForm(document.addResourceForm,'wizardSubmitter','_target0');">
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" >$brander.getBrandElement("lms.Instructor.button.Previous")</div>
+                    <div class="btn_end"></div>
+				</a>	
+                </div>
+				
+				 <div style="float:left; margin-top:15px; margin-left:10px;">
+				<a onClick="submitButtonForm(document.addResourceForm,'wizardSubmitter','_cancel');"> 
+                    <div class="btn_start"></div>
+                    <div class="btn_normal" >$brander.getBrandElement("lms.Instructor.button.Cancel")</div>
+                    <div class="btn_end"></div>
+				</a>
+                </div>
+
+            </div>
+        </div>
+    <!-- Body End -->
+
+     <!-- Footer starts -->
+	#parse("snippets/instructor/instructorFooter.vm")
+	<!-- Footer ends -->
+
+
+
+    </div>
+</form>
+</body>
+</html>

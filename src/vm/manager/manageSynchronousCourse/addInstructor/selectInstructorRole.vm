@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+    
+    	<!-- Parsed Page Head -->
+		#parse("snippets/learnerNewHead.vm")
+    
+		 <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+		 
+		<!-- Page Javascript -->
+       
+
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        
+        <script type="text/javascript" language="javascript">
+        		
+        	$(document).ready(function(){
+        	 	
+        	});
+        
+        </script>
+		<!-- END: Page Javascript -->
+    
+    </head>
+
+    <body>
+		<form name="searchManageForm" id="searchManageForm" method="post" action="mgr_addCourseInstructor.do?id=$!{courseInstructorForm.courseId}">
+    		<!-- Page Table -->
+            <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+                
+        		<!-- Header Row -->
+        		<tr>
+                    <td id="header" colspan="2">
+    					
+    					#parse("snippets/instructor/instructorWizardHeader.vm")
+    					
+        			</td>
+        		</tr>
+    			<!-- END: Header Row -->
+        		
+        		
+        		
+        		<!-- Page -->
+                <tr id="main">
+        			
+        			<!-- Page Sidebar -->
+        			<td id="left-navigation" valign="top">
+                        <div id="sidebar-scroller" style="overflow:hidden">
+    						
+    			            <div id="l-menu-back">
+                                <div class="$brander.getBrandElement("lms.sendEmail.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.step2.title")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-acted")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step1")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step2")</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.instructor.addCourseInstructor.leftPanel.caption.step3")</div>
+                            </div>
+    						
+                        </div>
+        			</td>
+    				<!-- END: Page Sidebar -->
+        			
+        			<!-- Page Content -->
+        			<td id="content">
+        				
+        				<!-- Page Scrollable Area -->
+        				<div id="scrollable">
+    							
+    						
+                			<!-- Logo+Manage-User -->
+                	        <div class="page_description" id="pageDescription">
+                				<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                        		    <tr>
+                        			<td id="page-icon" class="page-icon-plan">
+                        			    &nbsp;
+                        			</td>
+                        			<td id="page-description">
+                        			    <div id="page-heading">$brander.getBrandElement("lms.instructor.addCourseInstructor.caption.title")</div>
+                        			    <div id="page-help">$brander.getBrandElement("lms.instructor.addCourseInstructor.caption.subtitle")</div>
+                        			</td>
+                        		    </tr>
+                        		</table>	                			
+							</div>
+                			<!-- Logo+Manage-User-end -->
+                			
+                			<!-- Result Box -->
+                			<div class="search_box_result">
+                				<div class="box_header">
+                					#springBind("courseInstructorForm.assignmentType")
+                					<input name="assignmentType" value="all" type="radio" #if( ${courseInstructorForm.assignmentType} == "all" ) checked #end style="float:left; margin-top:5px;"/>
+                					<span class="box_heading">$brander.getBrandElement("lms.instructor.addCourseInstructor.table.title.typeForAll")</span>
+                				</div>
+                				<table border="0" width="100%" cellpadding="0" cellspacing="3">
+                					<tr>
+                						<td width="25%" height="25"><span class="row_text">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructorType")</span></td>
+                						<td>
+                							#springBind("courseInstructorForm.instructorType")
+                							<select name="${status.expression}" id="${status.expression}" style="width:182px; font-size:11px;">
+                								<option #if (${status.value} == "Lead") selected #end  >Lead</option>
+                								<option #if (${status.value} == "Moderator") selected #end  >Moderator</option>
+                								<option #if (${status.value} == "Teaching Assistant") selected #end  >Teaching Assistant</option>
+                							</select>
+                						</td>
+                					</tr>
+                					<tr><td border-bottom:1px solid;></td></tr>
+                				</table>
+                			</div>
+                			
+                			<div class="search_box_result" style="margin-top:20px;">
+                				<div class="box_header">
+                					#springBind("courseInstructorForm.assignmentType")
+                					<input name="assignmentType" value="ind" type="radio" #if( ${courseInstructorForm.assignmentType} == "ind" ) checked #end style="float:left; margin-top:5px;"/>
+                					<span class="box_heading">$brander.getBrandElement("lms.instructor.addCourseInstructor.table.title.typeForIndividual")</span>
+                				</div>
+                				<table border="0" width="100%" cellpadding="0" cellspacing="3">
+                				#set($index=-1)
+                				#foreach($curInstructor in ${courseInstructorForm.selectedInstructors})
+                					#set($index=$index+1)
+                					<tr>
+                						<td width="25%" height="25"><span class="row_text">${curInstructor.getInstructor().getUser().getFirstName()}&nbsp;${curInstructor.getInstructor().getUser().getLastName()}</span></td>
+                						<td>
+                							#springBind("courseInstructorForm.selectedInstructors[$index].instructorType")
+                							<select name="${status.expression}" id="${status.expression}" style="width:182px; font-size:11px;">
+                								<option #if (${status.value} == "Lead") selected #end  >Lead</option>
+                								<option #if (${status.value} == "Moderator") selected #end  >Moderator</option>
+                								<option #if (${status.value} == "Teaching Assistant") selected #end  >Teaching Assistant</option>
+                							</select>
+                						</td>
+                					</tr>
+                				#end
+                				</table>
+                			</div>			
+                			<!-- Result Box - end-->
+                			
+                			<!-- Wizard Footer button-div -->
+                            <div class="managerBtn">
+                				<input type="hidden" id="currentpage" name="_page" value="1" />
+                                <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+                				
+                				<div style="float: left; margin-top:25px; margin-left:25px;">
+                					<div>
+                						<a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_cancel');">
+                							<div class="btn_start"></div>
+                							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnCancel")</div>
+                							<div class="btn_end"></div>
+                						</a>
+                					</div>
+                				</div>
+                				<div style="float: right; margin-top:25px; margin-right:15px;">
+                					<div>
+                						<a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_target2');">
+                							<div class="btn_start"></div>
+                							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnNext")</div>
+                							<div class="btn_end"></div>
+                						</a>
+                					</div>
+                				</div>      
+                				<div style="float: right; margin-top:25px; margin-right:15px;">
+                					<div>
+                						<a onClick="submitButtonForm(document.searchManageForm,'wizardSubmitter','_target0');">
+                							<div class="btn_start"></div>
+                							<div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnPrevious")</div>
+                							<div class="btn_end"></div>
+                						</a>
+                					</div>
+                				</div>      
+                            </div>
+                			<!-- Wizard Footer button-div - end -->
+                	    	
+                	    	<!-- space -->
+                            <div class="manager-bottom-space"></div>
+                            <!-- space -->		           
+                			
+                			<!-- hidden elements for form binding -->
+                			#springBind("courseInstructorForm.courseId")
+                			<input id="id" type="hidden" name="id" value="${status.value}" />
+                		</div>	
+                    	<!-- END: Page Scrollable Area -->	
+    					
+                    </td>
+    				<!-- END: Page Content -->
+    				
+                </tr>
+    			<!-- END: Page-->
+    			
+    			<!-- Page Footer-->
+    			<tr>				
+            		<td id="footer" colspan="2">
+    					<!-- Footer -->
+    						
+    						#parse("snippets/managerFooter.vm")
+    						
+    					<!-- END: Footer-->
+    				</td>
+    			</tr>
+    			<!-- END: Page Footer -->
+    			
+    		</table>
+    		<!-- END: Page Table -->
+		</form>	
+	</body>
+	
+</html>

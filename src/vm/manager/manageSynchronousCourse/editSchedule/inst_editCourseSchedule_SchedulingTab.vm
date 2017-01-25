@@ -1,0 +1,416 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/instructorHead46.vm")
+
+<head>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/lms_rtf_styles.css"/>
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+<script type="text/javascript">
+function cancelInformation(){
+        document.getElementById('actionmethod').value='cancelSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+
+function saveInformation(){
+        document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+function finishAction(){
+       // document.getElementById('actionmethod').value='saveSurveyInfoAndDisplaySurveys';
+        document.editSurveyInfoForm.submit();
+}
+$(document).ready(function()
+{
+    $('#frame_body').height($(window).height() - ($('#header').height()+$('#frame_footer').height()));
+    if ($('#right-pannel-new').height()<$('#frame_body').height()) {
+        $('#right-pannel-new').height($('#frame_body').height());
+    }
+    $('#sideBar').height($('#right-pannel-new').height());
+
+        $('#frame_body').scroll(function()
+        {
+                $('#message_box').animate({top:$('#frame_body').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		$("#startDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+		$("#endDate").datepicker({ 
+            showOn: "both", 
+            buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+            buttonImageOnly: true 
+        });
+});
+
+</script>
+<script type="text/javascript" language="javascript">
+function electronicSignature(para){
+    if($(para).attr("checked") == true){
+        $("#electronic-signature-required").css("visibility", "visible")
+    }else{
+         $("#electronic-signature-required").css("visibility", "hidden")
+    }
+}
+
+</script>
+</head>
+
+<body>
+
+<form name="editSurveyInfoForm" method="POST" action="mgr_add-New-Survey-Information.do">
+<input type="hidden" id="actionmethod" name="method" value=""/> 
+<div id="main-container">
+
+<!-- header -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminHeader.vm")
+#else
+   #parse("snippets/instructorHeader.vm")
+#end
+<!-- header-end -->
+
+   
+	<div class="tab_bar">
+
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tbody><tr>
+                            <td width="192"><div class="tab_blank"></div></td>
+                            <td>&nbsp;</td>
+                            <td width="405">
+                                <a href="ins_editCourseSchedule.do?method=viewScheduleSummary"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.summary")</div></a></div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleScheduling"><div class="tab_selected">$brander.getBrandElement("lms.instructor.schedule.tabBar.scheduling")</div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleResources"><div class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.resources")</div></a>
+                               <a href="ins_editCourseSchedule.do?method=viewScheduleInstructor"><div style="border-right-style: solid;" class="tab">$brander.getBrandElement("lms.instructor.schedule.tabBar.instructors")</div></a>
+                            </td>
+                            <td>&nbsp;</td>
+                        </tr>
+                    </tbody></table>
+
+                </div>
+
+        <div id="frame_body">
+        <!-- content-area -->
+			<!-- left-pannel-content -->
+			         
+			   #parse("snippets/instructorCourseLeftMenu.vm")
+			
+                <!-- left-pannel-content-end -->
+
+                <!-- right-pannel-new-content -->
+                <div class="scrollable" style="height: 462px;">
+
+                    <div style="display: none;" id="error_messages">
+                        <div class="error_box">
+                            <div style="width: 98%; float: left;" id="errors">
+
+                            </div>
+                            <div onclick="hideErrors();" class="close_icon"></div>
+                        </div>
+                    </div>
+
+                    
+                  <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.subTitle")</div>
+			</td>
+		    </tr>
+		</table>				 
+                <!-- Logo+Manage-User-end -->
+                    
+
+                    <div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recurrencePattern")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td>
+                                    <input type="radio" onclick="recurrencePatter('once');" style="float: left;" checked="" name="pattern">
+                                    <div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.manual")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" onclick="recurrencePatter('daily');" style="float: left;" name="pattern">
+                                    <div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.daily")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" onclick="recurrencePatter('weekly');" style="float: left;" name="pattern">
+                                    <div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.weekly")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" onclick="recurrencePatter('monthly');" style="float: left;" name="pattern">
+                                    <div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.monthly")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" onclick="recurrencePatter('yearly');" style="float: left;" name="pattern">
+                                    <div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.yearly")</div>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                    <div style="height: 25px;"></div>
+
+                    <!-- Search Result Start -->
+                    <div class="search_box_result" id="once" style="display: none;">
+                        <!-- Result Header Start -->
+                        <div class="box_header" id="resultHeader">
+                            <!-- Result Heading -->
+                            <div style="float: left; height: 23px;">
+                                <div style="float: left; margin-top: 2px;">
+                                    <a href="add_once_recurrence.jsp">
+                                        <div class="btn_start"></div>
+                                        <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnAddRecurrence")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+                                <div style="float: left; margin-top: 2px;">
+                                    <div class="btn_start"></div>
+                                    <div onmouseout="this.className='btn_normal'" onmouseup="this.className='btn_normal'" onmousedown="this.className='btn_down'" onmouseover="this.className='btn_over'" class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnDeleteRecurrence")</div>
+                                    <div class="btn_end"></div>
+                                </div>
+                            </div>
+
+                            <div class="result_left_side">
+                                <!-- All Icon -->
+                                <div onmousedown="showResult();" onmouseout="hideTooltip();" onmouseover="showTooltip('Show All', event);" class="icon_all" id="showAll"></div>
+                                <!-- Next Icon -->
+                                <div onmouseout="hideTooltip();" onmouseover="showTooltip('Next', event);" class="icon_next" id="goNext"></div>
+                                <!-- Back Icon -->
+                                <div onmouseout="hideTooltip();" onmouseover="showTooltip('Back', event);" class="icon_back" id="goBack"></div>
+                                <!-- Showing Results -->
+                                <div class="box_description" id="resultDescription">Showing 1 - 3 of 3</div>
+                            </div>
+                        </div>
+
+                        <form style="margin-bottom: 0pt; margin-top: -1px; margin-left: 0pt;" name="myform">
+                            <div id="searchResult">
+                                <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 2px; border-top: 1px none;">
+                                    <tbody><tr bgcolor="#efefef">
+                                        <td width="17px" class="check_box_top"><input type="checkbox" style="margin-left: 3px;" onclick="checkAll(document.myform.row, this)" name="selectAll" id="check_box"></td>
+                                        <td class="box_subheader"><div class="icon_up"></div>$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.startDate")</td>
+                                        <td class="box_subheader"><div style="margin-left: 15px;">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.startTime")</div></td>
+                                        <td class="box_subheader"><div style="margin-left: 15px;">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endTime")</div></td>
+                                        <td style="border-right: medium none;" class="box_subheader"><div style="margin-left: 15px;">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endTime")</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_1"><a href="edit_once_recurrence.jsp">8/15/09</a></td>
+                                        <td class="row_1"><a href="edit_once_recurrence.jsp">9:30 AM</a></td>
+                                        <td class="row_1"><a href="edit_once_recurrence.jsp">8/15/09</a></td>
+                                        <td style="border-right: medium none;" class="row_1"><a href="edit_once_schedule.jsp">10:30 AM</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" class="row_2"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td class="row_2">8/16/09</td>
+                                        <td class="row_2">9:30 AM</td>
+                                        <td class="row_2">8/16/09</td>
+                                        <td style="border-right: medium none;" class="row_2">10:30 AM</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="17px" style="border-bottom: medium none;" class="row_1"><input type="checkbox" style="margin-left: -2px;" name="row"></td>
+                                        <td style="border-bottom: medium none;" class="row_1">8/17/09</td>
+                                        <td style="border-bottom: medium none;" class="row_1">9:30 AM</td>
+                                        <td style="border-bottom: medium none;" class="row_1">8/17/09</td>
+                                        <td style="border-right: medium none; border-bottom: medium none;" class="row_1">10:30 AM</td>
+                                    </tr>
+                                </tbody></table>
+                            </div>
+                        </form>
+                        <!-- Search Result End -->
+                    </div>
+                    <!-- Search Result End -->
+
+                    <div style="margin-bottom: 25px; display: block;" class="search_box_result" id="daily">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recurrence")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td>
+                                    <input type="radio" style="float: left;" name="rec" checked="">
+                                    <div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.Every")</div>
+                                    <input type="text" value="1" style="width: 15px;" class="input_text_field" id="field_after">
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.day")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="25%"><input type="radio" style="float: left;" name="rec"><div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.everyWeekday")</div></td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                    <div style="margin-bottom: 25px; display: none;" class="search_box_result" id="weekly">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recurrence")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td><div style="float: left; margin-top: 2px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recureEvery")</div><input type="text" value="1" style="width: 15px;" class="input_text_field" id="field_after"><div style="float: left; margin-left: -5px; margin-top: 2px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.weekOn")</div></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" style="float: left; margin-left: 10px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Sunday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Monday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Tuesday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Wednesday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Thursday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Friday</div>
+                                    <input type="checkbox" style="float: left; margin-left: 15px;"><div style="float: left; margin-top: 4px; margin-left: -11px;" class="row_text">Saturday</div>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                    <div style="margin-bottom: 25px; display: none;" class="search_box_result" id="monthly">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recurrence")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td>
+                                    <input type="radio" style="float: left;" name="rec" checked="">
+                                    <div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.day")</div>
+                                    <input type="text" value="18" style="width: 15px;" class="input_text_field" id="field_after">
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.ofEvery")</div>
+                                    <input type="text" value="18" style="width: 15px;" class="input_text_field" id="field_after">
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.month")</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" style="float: left;" name="rec" checked="">
+                                    <div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.The")</div>
+                                    <select style="float: left; width: 80px; font-size: 11px;" id="field_after" type="text"><option>first</option><option>second</option><option>third</option><option>fourth</option><option>last</option></select>
+                                    <select style="float: left; margin-left: 8px; width: 80px; font-size: 11px;" id="field_after" type="text"><option>day</option><option>weekday</option><option>weekend</option><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.ofEvery")</div>
+                                    <input type="text" value="18" style="width: 15px;" class="input_text_field" id="field_after">
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.month")</div>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                    <div style="margin-bottom: 25px; display: none;" class="search_box_result" id="yearly">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.recurrence")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td>
+                                    <input type="radio" style="float: left;" name="rec" checked="">
+                                    <div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.Every")</div>
+                                    <select style="float: left; width: 80px; font-size: 11px;" id="field_after" type="text"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>Novemeber</option><option>December</option></select>
+                                    <input type="text" value="18" style="width: 15px; margin-left: 8px;" class="input_text_field" id="field_after">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="radio" style="float: left;" name="rec" checked="">
+                                    <div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.The")</div>
+                                    <select style="float: left; width: 80px; font-size: 11px; margin-left: 10px;" id="field_after" type="text"><option>first</option><option>second</option><option>third</option><option>fourth</option><option>last</option></select>
+                                    <select style="float: left; margin-left: 8px; width: 80px; font-size: 11px;" id="field_after" type="text"><option>day</option><option>weekday</option><option>weekend</option><option>Sunday</option><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select>
+                                    <div style="float: left; margin-left: -5px; margin-top: 2px; margin-right: 10px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.of")</div>
+                                    <select style="float: left; width: 80px; font-size: 11px;" id="field_after" type="text"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>Novemeber</option><option>December</option></select>
+                                </td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                    <div style="margin-bottom: 25px; display: block;" class="search_box_result" id="range">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.rangeOfRecurrence")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td width="20%"><span class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.startDate")</span></td>
+                                <td width="30%"><input type="text" value="8/17/09" style="width: 152px; margin-left: 14px;" class="input_text_field" id="startDate"></td>
+                                <td width="59%"><input type="radio" style="float: left;" name="range"><div style="margin-top: 3px; margin-left: 8px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.noEndDate")</div></td>
+                                <td width="1%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td><input type="radio" style="float: left;" name="range"><div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 23px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endAfter")</div><input type="text" value="10" style="width: 15px;" class="input_text_field" id="field_after"><div style="float: left; margin-left: -5px; margin-top: 2px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.occurences")</div></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                                <td><input type="radio" style="float: left;" checked="" name="range"><div style="float: left; margin-top: 3px; margin-left: -12px; margin-right: 25px;" class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endDate")</div><input type="text" value="9/17/09" style="width: 152px;" class="input_text_field" id="endDate"></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.startTime")</span></td>
+                                <td><input type="text" value="8:30 AM" style="margin-left: 14px;" class="input_text_field" id="field_start_time"></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.endTime")</span></td>
+                                <td><input type="text" value="9:30 AM" style="margin-left: 14px;" class="input_text_field" id="field_end_time"></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.scheduleTab.schedulingTab.caption.Duration")</span></td>
+                                <td><select style="margin-left: 14px; width: 183px; font-size: 11px;" id="field_duration"><option>15 minutes</option><option>30 minutes</option><option>1 hour</option><option>2 hours</option><option>3 hours</option><option>4 hours</option></select></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+
+                      <!-- button-div -->
+						<div style="float: right; margin-top: 15px; margin-right: 15px;">
+						  <a onClick="saveInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnSave")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					   </div>
+					  <div style="float: right; margin-top: 15px; margin-right: 10px;">
+						<div>
+						  <a onClick="cancelInformation();">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.instructor.courseOverview.btnCancel")</div>
+							  <div class="btn_end"></div>
+						  </a>
+					  </div>
+				   </div>
+					<!-- button-div --> 
+                </div>
+                        <!-- scrollable-div -->
+
+                        <!-- space -->
+                        <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+                        <!-- space -->
+
+                <!-- right-pannel-new-content-end -->
+                </div>
+        <!-- content-area-end -->
+        </div>
+<!-- footer -->
+#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+   #parse("snippets/instructorFooter46.vm")
+#end   
+<!-- footer-end -->
+
+</div>
+</form>
+</body>
+</html>

@@ -1,0 +1,769 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/compliance/complianceHead.vm")
+    <head>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+
+ <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+    <script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+	<script type="text/javascript" src="javascript/ui.datepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+<script type='text/javascript'>
+	function show () {
+	
+     if(document.getElementById('chk').checked==true){
+	 document.getElementById('recurring').disabled = false; 
+	  document.getElementById('check_date').style.display="block"; 
+	  document.getElementById('check_event').style.display="none"; 
+	 }
+	 }
+
+  function hide () { 
+  
+  if(document.getElementById('event').checked==true){
+	 document.getElementById('recurring').disabled= true; 
+	 document.getElementById('recurring').checked=false;
+	document.getElementById('check_event').style.display="block"; 
+	document.getElementById('check_date').style.display="none";
+	document.getElementById('recurrence-schedule').style.display="none";
+	 document.getElementById('daily').style.display="none";
+	 document.getElementById('range').style.display="none"; 
+	 document.getElementById('weekly').style.display="none";
+	 document.getElementById('monthly').style.display="none";
+	 document.getElementById('yearly').style.display="none";
+	 
+} 
+}
+  function showall(){
+
+	
+  if(document.getElementById('recurring').checked==true){
+     document.getElementById('recurrence-schedule').style.display="block";
+	// document.getElementById('daily').style.display="block";
+	#springBind("triggerForm.recurrrenceSchedule")
+   #if(${status.value}=="weekly" ) 
+									
+										document.getElementById('weekly').style.display="block";
+									
+									#end
+  #springBind("triggerForm.recurrrenceSchedule")
+   #if(${status.value}=="daily" ) 
+									
+										document.getElementById('daily').style.display="block";
+									
+									#end
+#springBind("triggerForm.recurrrenceSchedule")
+   #if(${status.value}=="monthly" ) 
+									
+										document.getElementById('monthly').style.display="block";
+									
+									#end
+#springBind("triggerForm.recurrrenceSchedule")
+   #if(${status.value}=="yearly" ) 
+									
+										document.getElementById('yearly').style.display="block";
+									#end
+	#springBind("triggerForm.recurrrenceSchedule")
+    #if(${status.value}=="" ) 
+								document.getElementById('daily').style.display="block";
+	#end
+	 document.getElementById('range').style.display="block"; 
+	 }
+	 else{
+     document.getElementById('recurrence-schedule').style.display="none";
+	 document.getElementById('daily').style.display="none";
+	 document.getElementById('range').style.display="none"; 
+	 document.getElementById('weekly').style.display="none";
+	 document.getElementById('monthly').style.display="none";
+	 document.getElementById('yearly').style.display="none";
+
+	 }
+	 }
+	  function showdaily(){
+	
+	  if(document.getElementById('recurring').checked==true && document.getElementById('pattern1').checked==true){
+	  	  document.getElementById('daily').style.display="block";
+		  document.getElementById('weekly').style.display="none"
+		 document.getElementById('monthly').style.display="none";  
+		 document.getElementById('yearly').style.display="none"; 
+		 }
+		 }
+	 function showweekly(){
+
+
+	  if(document.getElementById('recurring').checked==true && document.getElementById('pattern2').checked==true){
+	  	  document.getElementById('weekly').style.display="block"; 
+		  document.getElementById('daily').style.display="none";
+		  document.getElementById('monthly').style.display="none";  
+		 document.getElementById('yearly').style.display="none"; 
+	 }
+	 }
+	 function showmonthly(){
+
+
+	  if(document.getElementById('recurring').checked==true && document.getElementById('pattern3').checked==true){
+	  	  document.getElementById('weekly').style.display="none"; 
+		  document.getElementById('daily').style.display="none";
+		  document.getElementById('monthly').style.display="block";  
+		 document.getElementById('yearly').style.display="none"; 
+	 }
+	 }
+	 function showyearly(){
+
+	  if(document.getElementById('recurring').checked==true && document.getElementById('pattern4').checked==true){
+	  	  document.getElementById('weekly').style.display="none"; 
+		  document.getElementById('daily').style.display="none";
+		  document.getElementById('monthly').style.display="none";  
+		 document.getElementById('yearly').style.display="block"; 
+	 }
+	 }
+
+	$(document).ready(function()
+	{
+
+       	$("INPUT[type='checkbox'][name='chkbox']").bind('click',
+               function(){
+                  $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
+               }
+        );
+
+        $('#scrollable').scroll(function()
+        {
+                $('#message_box').animate({top:$('#scrollable').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function()
+        {
+                $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+		$('#sideBar').height($('.scrollable').height());
+
+
+		 $('#pattern2').click
+});
+
+function updateTrigger(){
+
+	document.getElementById('action').value='updateTriggerDetails';
+	document.editTriggerForm.submit();
+	}
+
+function hideStarEvent(){
+
+document.getElementById('check_date').style.display="none";
+document.getElementById('check_event').style.display="block"; 
+//////document.getElementById('event').checked=true;
+document.getElementById('recurring').checked=false;
+document.getElementById('recurring').disabled= false; 
+
+}
+function hideStarDate(){
+  document.getElementById('check_event').style.display="none"; 
+  document.getElementById('check_date').style.display="block";
+ ////// document.getElementById('event').checked=false;
+ ////// document.getElementById('chk').checked=true;
+  document.getElementById('recurring').disabled=false;
+  showall();
+  
+}
+
+/*
+Show/hide div of CE Due Reminder Session.
+*/
+ $(document).ready(function(){
+	var event_ce_Reminder_Event_text = 'CE Due Reminder' 
+	 $("#ce_due_reminder").hide();
+	 handleNewSelection = function () {
+
+		 $("#selectedEventsText").val($("#selectedEventsId option:selected").text());	 
+		 if($("#selectedEventsId option:selected").text()==event_ce_Reminder_Event_text){
+		 	$("#ce_due_reminder").show();
+		 }else{
+		    $("#ce_due_reminder").hide();
+		    //do emtpy all related fields.
+		    $('#licenseExpireDate').val('');
+		 }
+	 };
+	$("#selectedEventsId").change(handleNewSelection);
+	$('#selectedEventsId').trigger('change');
+});
+</script>
+    </head>
+    <body>
+    <form name="editTriggerForm" method="post" action="mgr_manageTrigger.do">
+<input type="hidden" id="action" name="method" value=""/>
+<input type="hidden" id="selectedEventsText" name="selectedEventsText" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+		 #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+			  #parse("snippets/adminHeader.vm")
+			#else
+			#parse("snippets/compliance/complianceHeader.vm")
+			#end
+        </td></tr>
+		
+	        <td  id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td width="194"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="305">
+
+                             <a href='mgr_manageTrigger.do?method=showEditTriggerPage&triggerId=$request.getParameter("triggerId")'><div class="tab_selected">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.summary")</div></a>
+                            <a href="mgr_manageFilter.do?method=displayAlertTriggerFilter&triggerId=$request.getParameter('triggerId')"><div class="tab" style="border-right-style:solid;">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.filters")</div></a>
+                         </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+			
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/compliance/complianceLeftMenu.vm")
+		</table></td>
+		
+        <TD id="content" >
+	<div id="scrollable">
+            <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_surveys">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.editTrigger")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.myAlert.addAlert.subheading")</div>
+			</td>
+		    </tr>
+		</table>
+					 <!-- Search Result Start -->
+                 #springBind("triggerForm.*")
+                    #if($status.error)
+                        <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                        </div><!-- error-box -->
+                    #end
+                    <div id="resultBox" class="search_box_result">
+                        <div id="resultHeader" class="box_header">
+                            <div class="box_heading">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.summary")</div>
+
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+                            #springBind("triggerForm.trigger.triggerName")
+                                <td width="20%" height="30"><span class="row_text">$brander.getBrandElement("lms.manager.manageAlert.manageTrigger.caption.triggerName")</span></td>
+                                <td>
+                                    <div id="survey-name-required" >
+                                        <div  class="required_field" >*</div>
+                                    </div>
+									
+                                   <input type="text" class="input_text_field" id="field_name"  name="$!{status.expression}" value="$!{status.value}" ></input>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="resultBox" class="search_box_result" style="margin-top:20px;">
+                        <div id="resultHeader" class="box_header">
+							#springBind("triggerForm.event_date")
+								<input type="radio" id="event" class="input-trigger-radio"  #if($!{status.value}=="event") checked #end name="event_date"  value="event" style="float:left;" onclick="hide(this);"/>
+                            <div class="box_heading">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.event")</div>
+
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr valign="top" >
+                                <td width="20%" style="padding-top:8px;">
+                                    <span class="row_text">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.event")</span>
+                                </td>
+                                <td style="padding-top:8px;">
+                                    <div class="required_field" style="width:14px">
+										<div id="check_event">*</div>
+									</div>
+
+                                   <!--  <select class="input_multi_select" name="selectedEventsId" multiple>
+					#springBind("triggerForm.availableAlertEvents")
+					#set($availableAlertEvents = $!{status.value} )
+					#foreach($availableAlertEventObj in $availableAlertEvents)  
+						<option value='$availableAlertEventObj.id' >$availableAlertEventObj.dbDisplayName</option>						
+					#end 
+
+                                    </select> -->
+									<select class="input_multi_select" name="selectedEventsId" id="selectedEventsId" style="width:178px;">
+									   #set($selected = "false" )
+										#springBind("triggerForm.availableAlertEvents")
+										#set($availableAlertEvents = $!{status.value} )
+										#foreach($availableAlertEventObj in $availableAlertEvents)  
+											#springBind("triggerForm.selectedAvailableAlertEvents")
+											#set($selectedEvents = $!{status.value} )
+											#foreach($selectedEventsObj in $selectedEvents)											
+												#if($selectedEventsObj.id == $availableAlertEventObj.id)
+													#set($selected = "true" )													
+												#end
+											#end
+											<option #if($selected == "true") selected #end value='$availableAlertEventObj.id' >$availableAlertEventObj.dbDisplayName</option>	
+											#set($selected = "false" )
+										#end                                    
+									</select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td height="30">
+                                    <span class="row_text">&nbsp;</span>
+                                </td>
+
+                                <td>
+                                    #springBind("triggerForm.days")
+                                    <input type="text" class="input_text_field" style="margin-left:20px; width:30px; margin-right:10px; margin-top:3px;" name="${status.expression}" value="$!{status.value}" />$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.days")
+                                    #springBind("triggerForm.before")
+                                    <input type="checkbox" style="margin-left:10px;" value="true" name="${status.expression}"  #if($!{status.value}=="true") checked="yes" #end />$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.beforeEvent")
+                                     #springBind("triggerForm.after")
+                                    <input type="checkbox" style="margin-left:10px;" value="true" name="${status.expression}" #if($!{status.value}=="true") checked #end />$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.afterEvent")
+                                </td>
+                            </tr>
+                        </table>
+                         <!-- CE Reminder Alert Start   --> 
+                        <div id="ce_due_reminder">
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr valign="top" >
+                                <td width="20%" style="padding-top:8px;">
+                                    <span class="row_text">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.licenseType")</span>
+                                </td>
+                                
+								 <td style="padding-top:8px; " align>
+									<div class="required_field" style="width:8px;" >
+										<div id="check_event">*</div>
+									</div>
+									
+									#springBind("triggerForm.credentials")
+                                 #set ($list = $!{status.value})	
+                                    <select class="input_multi_select" id="selectedCredentialId" name="selectedCredentialId"  style="width:178px;">
+										#if(!$list.isEmpty )
+	                                    #foreach($ls in $list)
+	                                   		#springBind("triggerForm.selectedCredentialId") 
+	                                   		#if($ls.id == "$!{status.value}")      
+			                                <option selected=ture value="$ls.id" >$ls.officialLicenseName</option>
+			                                #else
+			                                <option value="$ls.id" >$ls.officialLicenseName</option>
+			                                #end
+										#end
+									#end
+									
+                                    
+                                </td>
+                            </tr>
+							</table>
+							<table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr valign="top" >
+                                <td width="20%" style="padding-top:8px;">
+                                    <span class="row_text">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.licenseExpirationDate")</span>
+                                </td>
+                                #springBind("triggerForm.licenseExpireDate")
+								 <td style="padding-top:8px; " align>
+									<div class="required_field" style="width:8px;" >
+										<div id="check_event">*</div>
+									</div>
+									 <input type="text" readonly="readonly" name="$!{status.expression}" value="$!{status.value}" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="licenseExpireDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="licenseExpireDate" value="" class="input_text_field" />
+									<script type="text/javascript">
+										jQuery.noConflict();
+										jQuery("#licenseExpireDate").datepicker({ 
+										showOn: "both", 
+										buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+										buttonImageOnly: true 
+									});
+									</script>
+                                </td>
+                            </tr>
+							</table>
+                       </div>
+                       <!-- CE Reminder Alert end   --> 
+                    </div>
+                    <div id="resultBox" class="search_box_result" style="margin-top:20px;">
+                        <div id="resultHeader" class="box_header">
+								#springBind("triggerForm.event_date")
+		                            <input type="radio" id="chk" class="input-trigger-radio" name="event_date" value="date"  #if($!{status.value}=="date") checked  #end style="float:left;" onclick="show(this);"/>
+                            <div class="box_heading">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.date")</div>
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr id="date-row">
+                                
+                                <td width="20%" height="30">
+                                    <span class="row_text">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.caption.date")</span>
+                                </td>
+
+                                <td>
+                                     #springBind("triggerForm.date")
+									<div class="required_field" style="width:14px">
+                                    <div id="check_date">*</div>
+									</div>
+                                    <input type="text" readonly="readonly" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="date" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="$!{status.expression}" value="$!{status.value}" class="input_text_field" /><div class="icon_calen">
+								<script type="text/javascript">
+									jQuery.noConflict();
+									jQuery("#date").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+								});
+								</script>
+								</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    &nbsp;
+
+                                </td>
+                                <td>
+                                     #springBind("triggerForm.recurring") 
+                                    <input id="$!{status.expression}" type="checkbox" id="$!{status.expression}" style="float:left; margin-left: 15px;" disabled="false" onclick="showall(this);" name="chkbox" #if($!{status.value}) checked #end />
+                                    <input type="hidden" name="$!{status.expression}" value="$!{status.value}"/>
+                                    <div style="float:left; margin-top:3px; margin-left: 5px;">$brander.getBrandElement("lms.manager.manageAlert.editTrigger.triggerRecurring")</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div id="recurrence-schedule" class="search_box_result" style="margin-top:20px; margin-bottom:25px; display: none;">
+                        <div id="resultHeader" class="box_header">
+                            <div class="box_heading">Recurrence Schedule</div>
+                        </div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+                                <td>
+								 #springBind("triggerForm.recurrrenceSchedule")
+									#if(${status.value}=="daily" ) 
+
+									<script type='text/javascript'>
+										 $(document).ready(function() {
+											showdaily();
+										    });										
+									</script>
+									#end
+                                    <input type="radio"  id="pattern1"  #if(${status.value}=="daily" ) checked #end  value="daily" style="float:left;" name="$!{status.expression}" onclick="showdaily(this);"></input>
+
+                                    <div class="row_text" style="margin-top:3px; margin-left:8px;">Daily</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>	
+								   #if(${status.value}=="weekly" ) 
+									<script type='text/javascript'>
+										$(document).ready(function() {
+											showweekly();
+										    });										
+									</script>
+									#end
+                                    <input type="radio" id="pattern2"  #if(${status.value}=="weekly" ) checked #end  value="weekly" style="float:left;" name="$!{status.expression}" onclick="showweekly(this);"></input>
+                                    <div class="row_text" style="margin-top:3px; margin-left:8px;">Weekly</div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+								#if(${status.value}=="monthly" ) 
+									<script type='text/javascript'>
+										$(document).ready(function() {
+											showmonthly();
+										    });										
+									</script>
+									#end
+                                    <input type="radio"  value="monthly" id="pattern3" #if(${status.value}=="monthly" ) checked #end style="float:left;" name="$!{status.expression}" onclick="showmonthly(this);"></input>
+                                    <div class="row_text" style="margin-top:3px; margin-left:8px;">Monthly</div>
+                                </td>
+                            </tr>
+                            <tr>
+
+                                <td>
+								#if(${status.value}=="yearly" ) 
+									<script type='text/javascript'>
+										$(document).ready(function() {
+											showyearly();
+										    });											
+									</script>
+									#end
+                                    <input type="radio"  id="pattern4"   #if(${status.value}=="yearly" ) checked #end value="yearly" style="float:left;"  name="$!{status.expression}" onclick="showyearly(this);"></input>
+                                    <div class="row_text" style="margin-top:3px; margin-left:8px;">Yearly</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                   <div id="daily" class="search_box_result" style="margin-bottom:25px; display:none;">
+
+                        <div class="box_header"><span class="box_heading">Recurrence</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+                                <td>
+								 #springBind("triggerForm.dailyRecurrrenceEveryWeekDay")
+                                    <input type="radio"   name="$!{status.expression}" value="everyDay" #if(${status.value}=="everyDay" ) checked #end style="float:left;"></input>
+                                    <div class="row_text" style="float:left; margin-top:1px; padding-left: 0; margin-right:10px;">Every</div>
+                                   #springBind("triggerForm.dailyRecurrrenceEveryDay")
+                                    <input type="text" id="field_after" class="input_text_field" style="width:15px;"  name="$!{status.expression}" value="$!{status.value}"></input>
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">day(s)</div>
+
+                                </td>
+                            </tr>
+                            <tr>#springBind("triggerForm.dailyRecurrrenceEveryWeekDay")
+                                <td width="25%"><input type="radio" value="everyWeekDay" #if(${status.value}=="everyWeekDay" ) checked #end name="$!{status.expression}" style="float:left;"/>
+                                    <div style="float:left; margin-top:1px; padding-left: 0; margin-right:10px;">Every Weekday</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="weekly" class="search_box_result" style="margin-bottom:25px; display:none;">
+
+                        <div class="box_header"><span class="box_heading">Recurrence</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+							#springBind("triggerForm.weeklyRecureEveryWeek")
+                                <td><div class="row_text" style="float:left; margin-top:2px;  margin-left:-9px; margin-right:10px;">Recure Every</div><input type="text" id="field_after" class="input_text_field" style="width:15px;" name="$!{status.expression}" value="$!{status.value}"></input><div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">week(s) on:</div></td>
+                            </tr>
+                            <tr>
+                                <td>
+									#springBind("triggerForm.weeklyRecureEveryWeekOn")
+									#set($weekOnList =${status.value})
+									 #foreach($weekOnObj in $weekOnList)
+											 #if($weekOnObj=="sunday")
+													#set($sunday="true")
+											
+											#end
+											#if($weekOnObj=="monday")
+													#set($monday="true")
+											
+											#end
+											#if($weekOnObj=="tuesday")
+													#set($tuesday="true")
+											
+											#end
+											#if($weekOnObj=="wednesday")
+													#set($wednesday="true")
+											
+											#end
+											#if($weekOnObj=="thursday")
+													#set($thursday="true")
+											
+											#end
+											#if($weekOnObj=="friday")
+													#set($friday="true")
+											
+											#end
+											#if($weekOnObj=="saturday")
+													#set($saturday="true")
+											
+											#end
+									 #end
+								
+                                    <input type="checkbox" style="float:left; margin-left:5px;" value="sunday" name="$!{status.expression}" #if($sunday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Sunday</div>
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="monday" name="$!{status.expression}"  #if($monday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Monday</div>
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="tuesday" name="$!{status.expression}"  #if($tuesday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Tuesday</div>
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="wednesday" name="$!{status.expression}"  #if($wednesday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Wednesday</div>
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="thursday" name="$!{status.expression}"  #if($thursday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Thursday</div>
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="friday" name="$!{status.expression}"  #if($friday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Friday</div>
+
+                                    <input type="checkbox" style="float:left; margin-left:15px;"  value="saturday" name="$!{status.expression}"  #if($saturday=="true") checked #end/><div class="row_text" style="float: left; margin-top:1px; padding-left:0;">Saturday</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="monthly" class="search_box_result" style="margin-bottom:25px; display:none;">
+                        <div class="box_header"><span class="box_heading">Recurrence</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+
+                            <tr>
+                                <td>
+								#springBind("triggerForm.monthlyRecurrenceTheEvery")
+                                    <input type="radio"  value="day" style="float:left;" name="$!{status.expression}"#if(${status.value}=="day") checked #end></input>
+                                    <div class="row_text" style="float:left; margin-top:3px; padding-left: 0; margin-right:10px;">Day</div>
+								#springBind("triggerForm.monthlyRecurrenceType")
+                                    <input type="text" id="field_after" class="input_text_field" style="width:15px;" name="$!{status.expression}" value="$!{status.value}"></input>
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of every</div>
+									#springBind("triggerForm.monthlyRecurrence")
+                                    <input type="text" id="field_after" class="input_text_field" style="width:15px;"  value="$!{status.value}" name="monthlyRecurrence"></input>
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">month(s)</div>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+								#springBind("triggerForm.monthlyRecurrenceTheEvery")
+                                    <input type="radio" value="the"  style="float:left;" name="$!{status.expression}" #if(${status.value}=="the") checked #end ></input>
+                                    <div class="row_text" style="float:left; margin-top:3px;  padding-left: 0; margin-right:10px;">The</div>
+									#springBind("triggerForm.theColMonthly")
+                                    <select id="field_after" name="$!{status.expression}"  style="float:left; width:80px; font-size:11px;"><option #if (${status.value} == "1") selected #end value="1">first</option><option    #if (${status.value} == "2") selected #end value="2">second</option><option  #if (${status.value} == "3") selected #end value="3">third</option><option #if (${status.value} == "4") selected #end value="4">fourth</option><option  #if (${status.value} == "5") selected #end value="5">last</option></select>
+									#springBind("triggerForm.monthlyRecurrenceTypeDescriptor")
+                                    <select id="field_after" name="$!{status.expression}" style="float:left; margin-left:8px; width:80px; font-size:11px;"><option #if (${status.value} == "7") selected #end value="7">day</option><option #if (${status.value} == "8") selected #end value="8">weekday</option><option  #if (${status.value} == "9") selected #end value="9">weekend</option><option #if (${status.value} == "0") selected #end value="0">Sunday</option><option #if (${status.value} == "1") selected #end  value="1">Monday</option><option #if (${status.value} == "2") selected #end value="2">Tuesday</option><option  #if (${status.value} == "3") selected #end value="3">Wednesday</option><option #if (${status.value} == "4") selected #end value="4">Thursday</option><option  #if (${status.value} == "5") selected #end value="5">Friday</option><option  #if (${status.value} == "6") selected #end value="6">Saturday</option></select>
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of every</div>
+									#springBind("triggerForm.monthlyRecurrenceMonth")
+                                    <input type="text" id="field_after" class="input_text_field" style="width:15px;" name="$!{status.expression}" value="$!{status.value}"></input>
+
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">month(s)</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="yearly" class="search_box_result" style="margin-bottom:25px; display:none;">
+                        <div class="box_header"><span class="box_heading">Recurrence</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3"
+                               <tr>
+
+                                <td>
+										#springBind("triggerForm.yearlyRecurrenceTheEvery")
+                                    <input type="radio" value="every"#if(${status.value}=="every") checked #end  name="$!{status.expression}"  style="float:left;"></input>
+                                    <div class="row_text" style="float:left; margin-top:3px;  padding-left: 0; margin-right:10px;">Every</div>
+									
+									#springBind("triggerForm.yearlyEveryMonthName")
+                                    <select id="field_after"  style="float:left; width:80px; font-size:11px;" name="$!{status.expression}"  value="$!{status.value}"><option #if (${status.value} == "January") selected #end value="January">January</option><option #if (${status.value} == "February") selected #end value="February">February</option><option #if (${status.value} == "March") selected #end value="March">March</option><option #if (${status.value} == "April") selected #end value="April">April</option><option #if (${status.value} == "May") selected #end value="May">May</option><option #if (${status.value} == "June") selected #end value="June">June</option><option #if (${status.value} == "July") selected #end value="July">July</option><option #if (${status.value} == "August") selected #end value="August">August</option><option #if (${status.value} == "September") selected #end value="September">September</option><option #if (${status.value} == "October") selected #end value="October">October</option><option #if (${status.value} == "Novemeber") selected #end value="Novemeber">Novemeber</option><option #if (${status.value} == "December") selected #end value="December">December</option></select>
+									#springBind("triggerForm.yearlyEveryMonthDay")
+                                    <input type="text" id="field_after" name="yearlyEveryMonthDay" class="input_text_field" style="width:15px; margin-left:8px;" value="$!{status.value}"></input>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+								#springBind("triggerForm.yearlyRecurrenceTheEvery")
+                                    <input type="radio"  value="the" name="$!{status.expression}" #if (${status.value} == "the") checked #end style="float:left;"></input>
+                                    <div class="row_text" style="float:left; margin-top:3px;  padding-left: 0; margin-right:10px;">The</div>
+									#springBind("triggerForm.yearlyTheDayTerm")
+                                    <select id="field_after"  style="float:left; width:80px; font-size:11px; margin-left:10px;" name="$!{status.expression}"  value="$!{status.value}"><option #if (${status.value} == "1") selected #end value="1">first</option><option #if (${status.value} == "2") selected #end value="2">second</option><option #if (${status.value} == "3") selected #end value="3">third</option><option  #if (${status.value} == "4") selected #end value="4">fourth</option><option #if (${status.value} == "5") selected #end value="5">last</option></select>
+									#springBind("triggerForm.yearlyTheDayDescription")
+                                    <select id="field_after"  style="float:left; margin-left:8px; width:80px; font-size:11px;" name="$!{status.expression}"  value="$!{status.value}"><option #if (${status.value} == "7") selected #end value="7">day</option><option #if (${status.value} == "8") selected #end value="8">weekday</option><option  #if (${status.value} == "9") selected #end value="9">weekend</option><option #if (${status.value} == "0") selected #end value="0">Sunday</option><option #if (${status.value} == "1") selected #end  value="1">Monday</option><option #if (${status.value} == "2") selected #end value="2">Tuesday</option><option  #if (${status.value} == "3") selected #end value="3">Wednesday</option><option #if (${status.value} == "4") selected #end value="4">Thursday</option><option  #if (${status.value} == "5") selected #end value="5">Friday</option><option  #if (${status.value} == "6") selected #end value="6">Saturday</option></select>
+                                    <div class="row_text" style="float:left; margin-left:-5px; margin-top:2px; margin-right:10px;">of</div>
+									#springBind("triggerForm.yearlyTheMonthDescription")
+                                    <select id="field_after"  style="float:left; width:80px;font-size:11px;" name="$!{status.expression}"  value="$!{status.value} "><option #if (${status.value} == "January") selected #end value="January">January</option><option #if (${status.value} == "February") selected #end value="February">February</option><option #if (${status.value} == "March") selected #end value="March">March</option><option #if (${status.value} == "April") selected #end value="April">April</option><option #if (${status.value} == "May") selected #end value="May">May</option><option #if (${status.value} == "June") selected #end value="June">June</option><option #if (${status.value} == "July") selected #end value="July">July</option><option #if (${status.value} == "August") selected #end value="August">August</option><option #if (${status.value} == "September") selected #end value="September">September</option><option #if (${status.value} == "October") selected #end value="October">October</option><option #if (${status.value} == "Novemeber") selected #end value="Novemeber">Novemeber</option><option #if (${status.value} == "December") selected #end value="December">December</option></select>
+
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                   <div id="range" class="search_box_result" style="margin-bottom:25px; display:none;">
+                        <div class="box_header"><span class="box_heading">Range of Recurrence</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>
+								#springBind("triggerForm.rangeOfRecurrrenceStartDay")
+                                <td width="20%"><span class="row_text">Start Date</span></td>
+                                <td width="30%"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="startDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="$!{status.expression}" value="$!{status.value}" class="input_text_field" /><div class="icon_calen">
+								<script type="text/javascript">
+									jQuery.noConflict();
+									jQuery("#startDate").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+								});
+								</script></div></td>
+								#springBind("triggerForm.rangeRadio")
+                                <td width="59%"><input type="radio" name="$!{status.expression}" value="0" #if(${status.value}=="0" ) checked #end style="float:left;"/><div class="row_text" style="float:left; margin-top:3px;  padding-left:4px; margin-right:24px;">No End Date</div></td>
+                                <td width="1%">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+								 #springBind("triggerForm.rangeRadio")
+                                <td><input type="radio"  name="$!{status.expression}"   value="1" #if(${status.value}=="1" ) checked #end style="float:left;"/><div class="row_text" style="float:left; margin-top:3px;  padding-left:4px; margin-right:22px;">End After</div>
+								  #springBind("triggerForm.rangeOfRecurrrenceEndAfter")<input type="text" id="field_after" class="input_text_field" style="width:15px;"  name="$!{status.expression}" value="$!{status.value}"></input><div class="row_text" style="float:left; margin-left:-5px; margin-top:2px;">occurences</div></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+								#springBind("triggerForm.rangeRadio")
+                                <td><input type="radio"  name="$!{status.expression}" value="2" #if(${status.value}=="2" ) checked #end  style="float:left;"/><div class="row_text" style="float:left; margin-top:3px;  padding-left:4px; margin-right:24px;">End Date</div>
+								#springBind("triggerForm.rangeOfRecurrrenceEndDay")
+								<input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  id="endDate" date:closeAtTop="false" date:buttonText="$brander.getBrandElement("lms.administrator.updateEntitlements.calender.tooltipStartDate")" name="$!{status.expression}" value="$!{status.value}" class="input_text_field" /><div class="icon_calen">
+								<script type="text/javascript">
+									jQuery.noConflict();
+									jQuery("#endDate").datepicker({ 
+									showOn: "both", 
+									buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+									buttonImageOnly: true 
+								});
+								</script></div></td>
+
+                                <td>&nbsp;</td>
+                            </tr>
+<!--
+                            <tr>
+							#springBind("triggerForm.rangeOfRecurrrenceStartTime")
+                                <td><span class="row_text">Start Time</span></td>
+                                <td><input type="text" id="field_start_time" class="input_text_field" style="margin-left:14px;" name="$!{status.expression}"  value="$!{status.value}"></input></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                            <tr>
+							#springBind("triggerForm.rangeOfRecurrrenceEndTime")
+                                <td><span class="row_text">End Time</span></td>
+                                <td><input type="text" id="field_end_time" class="input_text_field" style="margin-left:14px;" name="$!{status.expression}"  value="$!{status.value}"></input></td>
+                                <td>&nbsp;</td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">Duration</span></td>
+									#springBind("triggerForm.rangeOfRecurrrenceDuration")
+                                <td><select id="field_duration" style="margin-left:14px; width:183px; font-size:11px;" name="$!{status.expression}"  value="$!{status.value} "><option #if (${status.value} == "15 minutes") selected #end value="15 minutes">15 minutes</option><option  #if (${status.value} == "30 minutes") selected #end value="30 minutes">30 minutes</option><option #if (${status.value} == "1 hour") selected #end value="1 hour">1 hour</option><option #if (${status.value} == "2 hours") selected #end value="2 hours">2 hours</option><option #if (${status.value} == "3 hours") selected #end value="3 hours">3 hours</option><option #if (${status.value} == "4 hours") selected #end value="4 hours">4 hours</option></select></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+-->
+                        </table>
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="0"/>
+					<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					 <div style="float:right; margin-top:15px;">
+					  <a onClick="updateTrigger();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  #springBind("triggerForm.id")
+					  <a onClick="location.href='mgr_manageTrigger.do?alertId=$!{status.value}';" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>				
+				</div>
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+            #parse("snippets/managerFooter.vm")
+	</td></tr>
+        </table>
+        </form>
+    </body>
+
+</html>
+#springBind("triggerForm.date")
+#if($!{status.value}!="")
+									<script type='text/javascript'>
+										hideStarDate();
+									</script>
+#else
+									<script type='text/javascript'>
+										hideStarEvent();
+									</script>
+#end 
+#springBind("triggerForm.event_date")
+#if($!{status.value}!="date")
+									<script type='text/javascript'>
+										hideStarEvent();
+									</script>
+#end 

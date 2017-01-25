@@ -1,0 +1,71 @@
+#parse("snippets/macroUtils.vm")
+<div id="frame_footer">
+    
+	<!-- Copyright and Links -->	
+	<div class="copyright_text">
+        $brander.getBrandElement("lms.login.footerLinksCopyright") - <a href="$brander.getBrandElement("lms.login.footer.aboutusURL")" target=_newwin> $brander.getBrandElement("lms.login.footer.aboutus.caption")</a>
+        | <a href=$brander.getBrandElement("lms.login.footer.contactusURL") target=_newwin> $brander.getBrandElement("lms.login.footer.contactus.caption")</a>
+        | <a href=#>$brander.getBrandElement("lms.login.footer.termofuse.caption")</a>
+        | <a href=$brander.getBrandElement("lms.login.footer.termofuserURL") target=_newwin>$brander.getBrandElement("lms.login.footer.onlineprivacypractices.caption")</a>
+    </div>
+
+	##LMS-16713
+	<script>
+	function go(thiss, lmsadmin){
+		if(thiss.value=='7'){
+			window.location.href= '$!{authorModeRedirectionURL}' ;
+		}else{
+			setpage(thiss,lmsadmin);
+		}
+	}
+	</script>	
+	<!-- If user type has been switched -->
+    #if($hasSwitchedAuth)
+        <div class="log_out">
+            <a href="switchexituser.do" class="log-out">$brander.getBrandElement("lms.login.switchback")</a>
+			   |&nbsp#LogoutURL($brander $logoutSuccessUrl)
+        </div>
+        #else
+            <div class="log_out">                
+                |&nbsp#LogoutURL($brander $logoutSuccessUrl)
+            </div>
+            #if ( ! $request.getAttribute("switchBackUrl") || $request.getAttribute("switchBackUrl")=="") 
+                #if($!{userData.isLMSAdministrator()} || $!{userData.isTrainingAdministrator()} || $!{userData.isRegulatoryAnalyst()}  || $!{userData.isInstructorMode()})
+                    <div class="user_mode" style="margin-top: 5px;">
+                        <select class="user_switch_input" id="drpMode" onChange="go(this,$!{userData.isLMSAdministrator()});">
+                            #if($!{userData.isInLearnerRole()})
+                                <option value="2" #if($!adminCurrentMode == 'ROLE_LEARNER') selected #end>$brander.getBrandElement("lms.mycourses.learnerMode")</option>
+                            #end
+                            #if($!{userData.isTrainingAdministrator()})
+                                <option value="1" #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') selected #end>$brander.getBrandElement("lms.manager.manangerMode")</option>
+                            #end
+                            #if($!{userData.isRegulatoryAnalyst()})
+                                <option value="4" #if($!adminCurrentMode == 'ROLE_REGULATORYANALYST') selected #end>$brander.getBrandElement("lms.admin.AccreditationMode")</option>
+                            #end
+                            #if($!{userData.isLMSAdministrator()})
+                                <option value="3" #if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') selected #end>$brander.getBrandElement("lms.admin.AdminMode")</option>
+                            #end
+                            #if($!{userData.isInstructorMode()})
+                                <option value="5" #if($!adminCurrentMode == 'ROLE_INSTRUCTOR') selected #end>$brander.getBrandElement("lms.admin.InstructorMode")</option>
+                            #end
+                            ##LMS-16713
+			               #if($!{authorMode})
+			                    <option value="7" #if($!adminCurrentMode == 'ROLE_AUTHOR') selected #end>$brander.getBrandElement("lms.admin.AuthorMode")</option>
+			               #end
+                            
+                            
+                        </select>
+                    </div>
+                    #else
+                        $brander.getBrandElement("lms.mycourses.learnerMode")
+                #end
+                #else
+                    #set ($var=$!{request.getAttribute("switchBackUrl")})
+                    #if($!var.lastIndexOf('?')>0)
+                        #set($switchBackUrl="$var&switchBackReuest=true")
+                        #else 
+                            #set($switchBackUrl="$var?switchBackReuest=true")
+                    #end                    
+            #end                
+    #end
+</div>

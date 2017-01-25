@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+        <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+        <script language="javascript" type="text/javascript">
+		
+            $(document).ready(function(){
+                $("#toggleIconForEntity").click(function() {
+                    toggleView('toggleIconForEntity', 'collapsibleEntity');
+                });
+                $("#toggleIconForCustomField").click(function() {
+                    toggleView('toggleIconForCustomField', 'collapsibleCustomField');
+                });
+                $("#toggleIconForSummary").click(function() {
+                    toggleView('toggleIconForSummary', 'collapsibleSummary');
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+            <tr> <!-- First Block -->
+                <td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+                    <!--Header Start -->
+                    #parse("snippets/managerWizardHeader.vm")
+                    <!-- Header End -->
+                </td></tr>
+
+            <!-- Body Start -->
+            <tr id="main"> <!-- SECOND BLOCK -->
+                <td id="left-sidebar" valign="top">
+                    <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                        <div>
+                            <div id="l-menu-back">
+                                <div class="l-menu-back-text-h">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.lmenuHeader")<br>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.showing-2-of-3")</div>
+                                <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Select-Custom-Field")</div>
+                                <div class="l-menu-back-text-act">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Summary")</div>
+                                <div class="l-menu-back-text">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Confirmation")</div>
+                            </div>
+                        </div>
+                        <!-- Side Bar End -->
+                    </table></td>
+
+                <TD id="content">
+                    <div id="scrollable">
+
+                        <!-- Page Description -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                            <tr><td id="page-icon" class="icon_regulator">&nbsp;</td>
+                                <td id="page-description">
+                                    <div id="page-heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.title")</div>
+                                    <div id="page-help">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.step3.caption.subTitle")</div>
+                                </td>
+                            </tr>
+                        </table>
+                        <form name="addCustomField" method="post" action="acc_addCustomField.do" >
+                            <div style="_height:5px;">&nbsp; </div>
+                            <div class="search_box_result"><!-- search_box_result -->
+                                <div id="toggleIconForEntity" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Entity")</span></div>
+                                <div id="collapsibleEntity">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                        <tr>
+                                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Type")</b></div></td>
+									#springBind("customFieldForm.entity")
+                                            <td><div class="row_text">$!{status.value}</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div><!-- search_box_result -->
+
+                            <div style="height:20px;"></div>
+
+                            <div class="search_box_result"><!-- search_box_result -->
+                                <div id="toggleIconForCustomField" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Custom-Field")</span></div>
+                                <div id="collapsibleCustomField">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                        <tr>
+                                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Type")</b></div></td>
+									#springBind("customFieldForm.fieldType")
+                                            <td><div class="row_text">$!{status.value}</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div><!-- search_box_result -->
+
+                            <div style="height:20px;"></div>
+
+                            <div class="search_box_result">
+                                <div id="toggleIconForSummary" style="float: left; margin-right: 5px;" class="icon-caret-down-large"></div>
+                                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.SummaryHeader")</span></div>
+                                <div id="collapsibleSummary">
+                                    <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                                        <tr>
+                                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Name")</b></div></td>
+								#springBind("customFieldForm.customField.fieldLabel")
+                                            <td><div class="row_text">$!{status.value}</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+								#springBind("customFieldForm.fieldType")
+							#if($!{status.value} == "Radio Button" || $!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+								#set($count = 1)
+								#springBind("customFieldForm.optionList")
+								#foreach($option in $!{status.value})
+                                        <tr>
+									#if($count == 1)
+                                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Options")</b></div></td>
+									#set($count = $count + 1)
+									#else
+                                            <td width="30%"></td>
+									#end
+                                            <td><div class="row_text">$option</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+								#end
+							#end
+								#springBind("customFieldForm.fieldType")
+							#if($!{status.value} == "Radio Button" || $!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+                                        <tr>
+                                            <td><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Alignment")</b></div></td>
+                                            <td>
+										#springBind("customFieldForm.alignment")
+                                                <div class="row_text">
+										#if($!{status.value}) 
+											$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Horizontal") 
+										#else 
+											$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Vertical") 
+										#end
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+							 #end
+								#springBind("customFieldForm.fieldType")
+                                        <tr>
+                                            <td><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Required")</b></div></td>
+								#springBind("customFieldForm.customField.fieldRequired")
+                                            <td><div class="row_text">#if($!{status.value}) $brander.getBrandElement("lms.accreditation.credential.caption.Yes") #else $brander.getBrandElement("lms.accreditation.credential.caption.No") #end</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Encrypted")</b></div></td>
+								#springBind("customFieldForm.customField.fieldEncrypted")
+                                            <td><div class="row_text">#if($!{status.value}) $brander.getBrandElement("lms.accreditation.credential.caption.Yes") #else $brander.getBrandElement("lms.accreditation.credential.caption.No") #end</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Description")</b></div></td>
+								#springBind("customFieldForm.customField.customFieldDescription")
+                                            <td><div class="row_text">$!{status.value}</div></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- *********************************************** -->
+                            <div class="btn-div">
+                                <div style="float:right; margin-top:15px;">
+                                    <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_finish');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Finish")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>	
+
+                                <div style="float:right; margin-top:15px;margin-right:5px;">
+                                    <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_target1');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Previous")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>
+
+                                <div style="float:left; margin-top:15px;margin-left:10px;">
+                                    <a onClick="submitButtonForm(document.addCustomField,'wizardSubmitter','_cancel');">
+                                        <div class="btn_start"></div>
+                                        <div class="btn_normal">$brander.getBrandElement("lms.accraditation.addRegulator.caption.Cancel")</div>
+                                        <div class="btn_end"></div>
+                                    </a>
+                                </div>  
+                            </div>	
+
+                            <!-- bottom-space -->
+                            <div class="manage-bottom-space"></div>
+                            <!-- bottom-space -->
+
+                            <input type="hidden" id="currentpage" name="_page" value="2"/>
+                            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                        </form>
+
+                    </div><!-- scrollable -->
+
+                </td></tr><!-- frame_body -->
+            <!-- Body End -->
+            <tr> <!-- Footer BLOCK -->
+                <td id="footer" colspan="2">
+                    <!-- Footer Start -->
+                    #parse("snippets/managerFooter.vm")
+                    <!-- Footer End -->
+                </td></tr>
+        </table><!-- main-container -->
+    </body>
+</html>

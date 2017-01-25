@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Email #1</title>
+
+</head>
+<body style="font-family:Tahoma;color:#000000;font-size:11px;">
+    <div id="frame" style="float:left;height:auto;width:97%;border-color:#ebe6e6 !Important;border:1px;border-style:solid;overflow:hidden;margin-left:15px;padding:1px;padding-bottom:10px;">
+            <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+			Dear $!{user.firstName} $!{user.lastName}, <br><br>
+			The Bulk Learner Enrollment you requested has been completed.<br/><br/>
+			<div style="height:24px;width:99.2%;background-color:#f4f4f4;font-size:14px;">
+        		<div style="float:left;width:100%;font-size:12px;font-weight:bold;text-transform:uppercase;margin-top:4px;margin-left:4px;">COURSES</div>
+        	</div>
+			</div>
+            <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+            <table border="0">
+                #foreach($course in $!{courses}) 
+                <tr>
+                	<td>$course.courseTitle</td>
+                    <td></td>
+                </tr>
+                #end
+             </table>
+            </div>
+			
+            <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+			<div style="height:24px;background-color:#f4f4f4;font-size:14px;width:99.2%;">
+        		<div style="float:left;width:100%;font-size:12px;font-weight:bold;text-transform:uppercase;margin-top:4px;margin-left:4px;">ASSIGNMENT SUMMARY REPORT</div>
+        	</div>
+			</div>
+            <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+            <table border="0">
+                <tr>
+                	<td>Number of Learners Attempted to Enroll</td>
+                    <td>$!{learnersAttemptedToEnroll}</td>
+                </tr>
+                <tr>
+                	<td width="400px">Number of Learners Enrolled Successfully</td>
+                    <td>$!{learnersEnrolledSucssessfully}</td>
+                </tr>
+                <tr>
+                	<td>Number of Courses Assigned</td>
+                    <td>$!{coursesAssigned}</td>
+                </tr>
+                <tr>
+                	<td>Total Number of Enrollments Created</td>
+                    <td>$!{enrollmentsCreated}</td>
+                </tr>
+                <tr>
+                	<td>Number of Errors Encountered</td>
+                    <td>$learnersNotEnrolled.size()</td>
+                </tr>								
+            </table>
+            </div>				
+			
+			#set($totCount = $learnersNotEnrolled.size()) 
+            #if($totCount > 0)
+                <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+                    <div style="height:24px;background-color:#f4f4f4;font-size:14px;width:99.2%">
+                        <div style="float:left;width:100%;font-size:12px;font-weight:bold;text-transform:uppercase;margin-top:4px;margin-left:4px;">ERRORS</div>
+                    </div>
+                </div>
+                <div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+                <table border="0">
+                #foreach($learner in $!{learnersNotEnrolled}) 
+                        <tr>
+                            <td>First Name</td>
+                            <td>$learner.vu360User.firstName</td>
+                        </tr>
+                        <tr>
+                            <td width="400px">Last Name</td>
+                            <td>$learner.vu360User.lastName</td>
+                        </tr>
+                        <tr>
+                            <td>Error</td>
+                            <td>Not enough seats remaining to enroll the learner</td>
+                        </tr>
+                 #end
+                </table>
+                </div>			
+            #end
+			<div style="float:left;width:100%;font-family:Verdana;font-size:12px;margin-top:15px;margin-left:4px;margin-bottom:5px;">
+			Thank you,<br/>
+			$brander.getBrandElement("lms.brand.signature")
+			</div>
+         </div>           
+    </div>
+</body>
+</html>

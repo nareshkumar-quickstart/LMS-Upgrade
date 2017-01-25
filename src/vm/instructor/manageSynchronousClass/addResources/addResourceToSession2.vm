@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/instructor/instructorHead.vm")
+    <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' >
+	  $(document).ready(function(){
+			$('#frame_body').height($(window).height() - ($('#header').height()+$('#footer').height()));
+			if ($('#right-pannel').height()<$('#frame_body').height()) {
+				$('#right-pannel').height($('#frame_body').height());
+			}
+			$('#sideBar').height($('#right-pannel').height());           
+        });
+        function dontValidate() {
+            document.getElementById('gridAction').value="showing";
+        }
+    </script>
+</head>
+
+<body>
+<form name="schResourceForm" method="post" action="ins_addResourceToSchedule.do">
+
+    <div id="main-container">
+    #parse("snippets/instructor/instructorWizardHeader.vm")
+
+    <div id="frame_body">
+
+        <div id="sideBar" class="side_bar">
+          <div id="l-menu-back">
+            <div class="l-menu-back-text-h">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.wizardHead2")</div>
+            <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.step1")</div>
+            <div class="l-menu-back-text-act">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.step2")</div>
+          </div>
+        </div>
+
+        <div id="right-pannel" class="scrollable">
+
+            #springBind("schResourceForm.action")
+            <input type="hidden" id="gridAction" name="action" value="" />
+
+
+            
+            
+            <!-- Page Description -->
+
+
+            <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+                <tr>
+                    <td id="page-icon" class="courseLogoCourses">
+                        &nbsp;
+                    </td>
+                    <td id="page-description">
+                        <div id="page-heading">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AddResource")</div>
+                        <div id="page-help">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.helpText")</div>
+                    </td>
+                </tr>
+            </table>            
+
+            <div class="search_box_result">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.Summary")</span></div>
+
+                <table border="0" width="100%" cellpadding="0" cellspacing="3" heigth="100%">
+                    #springBind("schResourceForm.resources")
+                    #foreach($reWrapper in ${status.value})
+                        #if( $reWrapper.selected == true )
+                        <tr>
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceName")</b></div></td>
+                            <td ><div class="row_text">$reWrapper.resource.name</div></td>
+                        </tr>
+                        <tr>
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.ResourceType")</b></div></td>
+                            <td ><div class="row_text">$reWrapper.resource.resourceType.name</div></td>
+                        </tr>
+                        <tr>
+                            <td width="30%"><div class="row_text"><b>$brander.getBrandElement("lms.Instructor.caption.addScheduleToResource.AssetTagNum")</b></div></td>
+                            <td ><div class="row_text">$reWrapper.resource.assetTagNumber</div></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                &nbsp;
+                            </td>
+                        </tr>
+                        #end
+                    #end
+                </table>
+            </div>
+
+            <input type="hidden" id="currentpage" name="_page" value="1" />
+            <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+            <div style="float:right; margin-top:15px;">
+                <div class="btn_start"></div>
+                <div class="btn_normal" onClick="submitButtonForm(document.schResourceForm,'wizardSubmitter','_finish');"><span class="button_wizard">$brander.getBrandElement("lms.Instructor.button.Finish")</span></div>
+                <div class="btn_end"></div>
+            </div>
+
+            <div style="float:right; margin-top:15px;margin-right:5px;">
+                <div class="btn_start"></div>
+                <div class="btn_normal" onClick="dontValidate();submitButtonForm(document.schResourceForm,'wizardSubmitter','_target0');"><span class="button_wizard">$brander.getBrandElement("lms.Instructor.button.Previous")</span></div>
+                <div class="btn_end"></div>
+            </div>
+
+            <div style="float:left; margin-top:15px; margin-left:10px;">
+                <div class="btn_start"></div>
+                <div class="btn_normal" onClick="submitButtonForm(document.schResourceForm,'wizardSubmitter','_cancel');"><span class="button_wizard">$brander.getBrandElement("lms.Instructor.button.Cancel")</span></div>
+                <div class="btn_end"></div>
+            </div>
+
+        </div>
+    </div>
+
+    #parse("snippets/instructor/instructorFooter.vm")
+
+   
+    </div>
+</form>
+</body>
+</html>

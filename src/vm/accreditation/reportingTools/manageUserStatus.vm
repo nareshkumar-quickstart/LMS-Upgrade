@@ -1,0 +1,731 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#* Preview Affidavit location *#
+#set($previewAffidavitFormAction = "acc_manageUserStatus.do") 
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/accreditation/accreditationDefaultHead.vm")
+
+    <link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+   
+    <script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+    <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script type='text/javascript' src='javascript/jquery.upload-1.0.2.js' ></script>
+    <script type='text/javascript' src='javascript/jquery.upload-1.0.2.min.js' ></script>
+	<script type='text/javascript' src='javascript/dialogBox.js' ></script>
+	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+	
+    <script language="javascript" type="text/javascript">
+    	
+        $(document).ready(function(){
+            $('#chkAll').click(
+               function(){
+                  $("INPUT[type='checkbox'][name='userstatuses']").attr('checked', $('#chkAll').is(':checked'));
+                  $("INPUT[type='checkbox'][name='userstatuses']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+               }
+            )
+              
+			$('#holdingRegulatorId').change(function() {
+				holdingRegulatorId = $(this).find(":selected").val();
+				
+				if(isNaN(holdingRegulatorId))	{
+					return false;
+				}
+				
+				jQuery.ajax({
+				   type: "POST",
+				   url: "acc_manageUserStatus.do?method=getRegulatorCategoriesByHolder&holdingRegulatorId=" + holdingRegulatorId,
+				   success: function(data)	{
+				   	$("#regulatorCategoryId").empty().append(data);
+				   }   
+				 });
+			});
+			
+			$('input[type=radio][name=searchOption]').change(function() {
+		        if (this.value == '0') {
+            			$("#divSearchByRegulator").show();
+					 	$("#divSearchByRegulatorCategory").hide();
+        		}
+        		else if (this.value == '1') {
+            		 $("#divSearchByRegulator").hide();
+					 $("#divSearchByRegulatorCategory").show();
+        		}
+    		});
+    		
+    		
+            initFileUploads();
+			$('#courseTypeId').change(function() {
+				var courseTypeId = $(this).find(":selected").val();
+				
+				if(isNaN(courseTypeId))	{
+					return false;
+				}
+				
+				updateCourseStatusDropDown(courseTypeId);
+			});
+			
+            $("#startDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+            $("#endDate").datepicker({ 
+               showOn: "both", 
+               buttonImage: "$brander.getBrandElement("lms.pixel.iconCalenderGif")", 
+               buttonImageOnly: true 
+            });
+                $('#close_message').click(function(){
+                    $("#message_box").animate({
+                        opacity: .5
+                    }, "slow", "linear", function(){$("#message_box").hide();} );
+                });
+        });
+        
+        function updateCourseStatusDropDown(courseTypeId)	{
+        	var selectInnerHtml = '';
+			if(courseTypeId == 1)	{
+				selectInnerHtml += '<option value="0">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.unselected")</option>';
+				selectInnerHtml += '<option value="affidavitpending">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitPending")</option>';
+				selectInnerHtml += '<option value="affidavitreceived">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitReceived")</option>';
+				selectInnerHtml += '<option value="affidavitdisputed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitDisputed")</option>';
+				selectInnerHtml += '<option value="userdeclinedaffidavit">$brander.getBrandElement("lms.mycourses.status.userdeclinedaffidavit")</option>';
+				selectInnerHtml += '<option value="completed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.completed")</option>';
+				selectInnerHtml += '<option value="reported">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.reported")</option>';				
+			} 
+			else if(courseTypeId == 2)	{
+				selectInnerHtml += '<option value="0">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.unselected")</option>';
+				selectInnerHtml += '<option value="affidavitpending">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitPending")</option>';
+				selectInnerHtml += '<option value="affidavitreceived">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitReceived")</option>';
+				selectInnerHtml += '<option value="affidavitdisputed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitDisputed")</option>';
+				selectInnerHtml += '<option value="userdeclinedaffidavit">$brander.getBrandElement("lms.mycourses.status.userdeclinedaffidavit")</option>';
+				selectInnerHtml += '<option value="completed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.completed")</option>';
+				
+			}
+			else if(courseTypeId == 3)	{
+				selectInnerHtml += '<option value="0">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.unselected")</option>';
+				selectInnerHtml += '<option value="completed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.completed")</option>';
+				selectInnerHtml += '<option value="reported">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.reported")</option>';
+			} 
+			else	{
+				selectInnerHtml += '<option value="0">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.unselected")</option>';
+				selectInnerHtml += '<option value="affidavitpending">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitPending")</option>';
+				selectInnerHtml += '<option value="affidavitreceived">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitReceived")</option>';
+				selectInnerHtml += '<option value="affidavitdisputed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.affidavitDisputed")</option>';
+				selectInnerHtml += '<option value="userdeclinedaffidavit">$brander.getBrandElement("lms.mycourses.status.userdeclinedaffidavit")</option>';
+				selectInnerHtml += '<option value="completed">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.completed")</option>';
+				selectInnerHtml += '<option value="reported">$brander.getBrandElement("lms.accraditation.manageUserStatus.search.caption.reported")</option>';
+			}
+			$("#courseStatus").empty().append(selectInnerHtml);
+			return;
+        }
+
+        function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+              if (checkbox.checked) {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                  }
+              } else {
+                  for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                    tdarr[i].style.background="";
+                  }
+                  // also remove check from chkAll
+                  $('#chkAll').attr('checked', false);
+              }
+        }
+        
+	function search() {
+       searchUserStatus();
+    }
+    
+    function searchUserStatus() {
+        document.getElementById('actionmethod').value='searchUserStatus';
+        document.getElementById('showAll').value=false;
+        if(isNotEmptySearch(document.manageUserStatusForm))
+        	document.manageUserStatusForm.submit();
+    }
+    function isNotEmptySearch(frm){
+    
+		if(! (  $('#firstName').val() 
+			 || $('#lastName').val()
+			 || $('#emailAddress').val()
+			 || $('#courseId').val() 
+			 || ( parseInt($('#holdingRegulatorId').val()) > 0 )
+			 || ( parseInt($('#regulatorCategoryId2').val()) > 0 )
+			 || ( parseInt( $('#courseTypeId').val()) > 0)
+			 || $('#courseStatus').val() != '0'
+			 || $('#affidavitType').val() != '0'
+			 || $('#startDate').val()
+			 || $('#endDate').val()
+			 ) 
+		   )
+		{
+			$('#emptySearchModel').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			return false;
+		}
+		return true;
+		
+	}
+
+	function confirm(message, callback) {
+		$('#deleteConfirmation').modal({
+			close:false,
+			position: ["40%",],
+			overlayId:'confirmModalOverlay',
+			containerId:'confirmModalContainer', 
+			onShow: function (dialog) {
+				dialog.data.find('.message_box_text').append(message);
+
+				// if the user clicks "yes"
+				dialog.data.find('.yes').click(function () {
+					// call the callback
+					if (jQuery.isFunction(callback)) {
+						callback.apply();
+					}
+					// close the dialog
+					jQuery.modal.close();
+				});
+			}
+		});
+	}
+
+    function confirmStatusChange() {    
+		if ( $("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length > 0) {
+			if ($("INPUT[type='radio'][name='update_courseStatus']").filter(':checked').length > 0) {
+				confirm("Are you sure you want to change the status for selected course(s)?", function () {
+					document.getElementById('actionmethod').value='changeUserStatus';  
+					document.getElementById('showAll').value=false;                       
+					document.manageUserStatusForm.submit();
+				});
+			}	else	{
+				$('#selectUserStatusOption').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			}
+		}else {
+			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+		}
+    }
+
+    function sortUserStatus(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('actionmethod').value='sortUserStatus';
+        document.manageUserStatusForm.submit();
+    }
+    
+    function onAllSearch(sortDirection, sortColumnIndex){
+        document.getElementById('actionmethod').value='sortUserStatus';
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('showAll').value=true;
+        document.manageUserStatusForm.submit();
+    }
+    
+    function printAffidavits()	{
+		if ($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length > 0) {
+			confirm("Only Available Affidavites will be printed.<br/>Are you sure you want to print affidavits for selected course(s)?", function () {
+				document.getElementById('actionmethod').value='printAffidavits';  
+				document.getElementById('showAll').value=false;
+				document.manageUserStatusForm.action="printAffidavits.pdf";
+				document.manageUserStatusForm.submit();
+			});
+		}else {
+			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+		}
+    }
+    
+    function exportAffidavit()	{
+		confirm("Are you sure you want to export all results in Csv?", function () {
+			document.getElementById('actionmethod').value='exportResult';  
+			document.getElementById('showAll').value=false;                       
+			document.manageUserStatusForm.submit();
+		});
+    }
+    
+     function showUploadBox(divId){
+    	var searchBox = document.getElementById('uploadAffidavitDialog');
+        if(searchBox.className == "visible"){
+            searchBox.className = "search_box";
+    		$("#msgebox").html("");
+    		
+    		 //this is limition for file controll, it can not modify 
+    		 //http://forum.jquery.com/topic/how-to-clear-a-file-input-in-ie
+    		 if (jQuery.browser.msie) {
+            	//$('#txtBrowseFile').val('');
+            	$('#impFile').replaceWith($('#impFile').clone());
+            	$("#11").remove();
+            	$("#txtBrowseFile").remove();
+            	$("#22").remove();
+            	$("#33").remove();
+            	initFileUploads();
+		      }
+		      else {
+		        $('#txtBrowseFile').val('');
+		        $('#impFile').val('');
+		      }
+        }else{
+            searchBox.className = "visible";
+        }
+    }
+
+    function uploadAffidavit()	{
+    
+    	/*if not radio buttom selected*/
+       	var len = $("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length;
+    	if(len==0){
+			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			return;
+		}
+
+		document.getElementById('uploadAffidavitDialog').className = "visible";
+		var divId = document.getElementById('uploadAffidavitDialog');
+		showUploadBox(divId);
+    }
+    
+	function showChangeStatusBox(){
+		document.getElementById('searchBox').className = "visible";
+		
+		if(document.getElementById('changeStatusBox').className == "visible"){
+			
+			if($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length < 1)	{
+				$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+			}
+			
+			document.getElementById('changeStatusBox').className = "search_box";
+			$('#changeStatusBox input[type="radio"]:first').focus();
+			////SetOptionsforCourseStatus  ();
+		}else{
+			document.getElementById('changeStatusBox').className = "visible";
+						
+		}
+	    
+	}
+	
+	function hideChangeBoxAndShowSearchBox(divId){
+		$('#courseTypeId').trigger('change');
+		document.getElementById('changeStatusBox').className = "visible";
+		showSearchBox(divId);
+	}
+	
+	
+	function initFileUploads() {
+        //if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile2';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.id="txtBrowseFile";
+        fakeinput.style.cssText="width:600px;*width:300px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton2";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file2';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+    </script>
+    
+</head>
+
+<body>
+<form name="manageUserStatusForm" method="post" action="acc_manageUserStatus.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+  <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+        <!-- Header starts -->
+        #parse("snippets/accreditation/accreditationDefaultHeader.vm")
+        <!-- Header ends -->
+		</td></tr>
+		
+<!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+                #parse("snippets/accreditation/sidebar_reportingtools.vm")
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+            #springBind("manageUserStatusFrom.*")
+             #if($status.error)
+            <!-- error-box -->
+            <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $status.errorCodes)
+                    #set($error = $brander.getBrandElement($errorCode))
+                <div class="width40pct">
+                    <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    <div class="message_box_align">$error</div>
+                </div>
+               #end
+            </div>
+            <!-- error-box -->
+            #end
+        <!-- Page Description -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="icon_reportingtool">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.manageUserStatus")</div>
+		<div id="page-help">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.manageUserStatusDescription")</div>
+		</td>
+	</tr>
+</table>
+
+
+        <!-- Search Result Start -->
+        <div id="resultBox" class="search_box_result">
+        <!-- Result Header Start -->
+            <div id="resultHeader" class="box_header">
+                <!-- "Change Course Status" Div end here -->
+            	#parse("accreditation/reportingTools/manageUserStatusSearchBox.vm")	<!-- Search Box-->
+            	#parse("accreditation/reportingTools/manageUserStatusChangeStatusBox.vm") <!-- Change Status Box-->
+                <div class="result_left_side">
+                    <!-- Result Description -->
+
+                $pager.setItems($!{context.userstatuses})
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                        #set($pageFirstIndex = $pager.firstIndex)
+                        #set($pageLastIndex = $pager.lastIndex)
+                        #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                        #set($currentPageCount = $pageLastIndex + 1)
+                        #set($pageCurrIndex = $pager.index)
+                #else
+                        #set($pageFirstIndex = 0)
+                        #set($pageLastIndex = 0)
+                        #set($currentPageSize = 0)
+                        #set($currentPageCount = 0)
+                         #set($pageCurrIndex = 0)
+                #end
+                <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                <input type="hidden" id="paging" name="paging" value="" />
+                <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+                <input type="hidden" id="showAll" name="showAll" value="" />
+                <input type="hidden" id="pageIndex" name="pageIndex" value="" />
+                  #if($!{context.showAll})
+                    #set($showAll=${context.showAll})
+                  #else
+                   #set($showAll=false)
+                 #end
+
+					<div class="control-button-position">
+						<a onClick="hideChangeBoxAndShowSearchBox(this);">
+							<div class="btn_start"></div>
+							<div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.search")</div>
+							<div class="btn_end"></div>
+						</a>
+                    </div>
+                    
+ 				   #if($!{context.name})
+                    #set($name=${context.name})
+                   #else
+                    #set($name='')
+                  #end
+                   #if($!{context.alias})
+                    #set($alias=${context.alias})
+                   #else
+                    #set($alias='')
+                  #end
+                   #if($!{context.email})
+                    #set($email=${context.email})
+                   #else
+                    #set($email='')
+                  #end
+                    <!-- All Icon -->
+                    <!-- <div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="javascript:window.location='acc_manageUserStatus.do?method=searchUserStatus&showAll=true';" ></div> -->
+					<div id="showAll" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();" onClick="onAllSearch($context.sortDirection, $context.sortColumnIndex);" ></div>                    
+                    
+                    
+                    <!-- Next Icon -->
+                    #if($pager.nextIndex)
+                    <div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageUserStatus.do?method=searchUserStatus&pageIndex=$pager.nextIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goNext" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Back Icon -->
+                    #if ($pager.prevIndex)
+                    <div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();" onclick="javascript:window.location='acc_manageUserStatus.do?method=searchUserStatus&pageIndex=$pager.prevIndex&paging=paging';" ></div>
+                    #else
+                    <div id="goBack" class="icon_disabled">&nbsp;</div>
+                    #end
+                    <!-- Showing Results -->
+                    #if($totalCount>1)
+                        <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $!pager.pageDescription</div>
+                    #else
+                         <div id="resultDescription" class="box_description"> $brander.getBrandElement("lms.accreditation.caption.Showing") $totalCount - $totalCount of $totalCount</div>
+                    #end
+                </div>
+            </div>
+            <!-- Result Header End -->
+            <!-- Result Subheader Start -->
+            #if($currentPageSize == 0)
+            <div id="searchResult_1">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                  <tr bgcolor="#efefef">
+                    <td class="check_box_top" width="17px"><input type="checkbox" name="selectAll" /></td>
+                    <td style="min-width:101px" class="box_subheader"><div #if($context.sortColumnIndex==0)class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.firstName")</td>
+                    <td style="min-width:100px" class="box_subheader"><div #if($context.sortColumnIndex==1) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastName")</td>
+                    <td style="min-width:100px" class="box_subheader"><div #if($context.sortColumnIndex==2) class="icon_up" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.emailAddress")</td>
+                    <td style="min-width:130px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==3) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.phoneNumber")</td>
+                    <td style="min-width:150px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==4) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseName")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseId")</td>
+                    <td style="min-width:50px"  class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==6) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitLink")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==7) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseStatus")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==8) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseType")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==9) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.completeDate")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==21) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.enrollmentDate")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==22) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.firstAccessDate")</td>
+                    <td style="min-width:160px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==10) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.holdingRegulatorName")</td>
+                    <td style="min-width:150px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==11) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.regulatoryCategory")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==12) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitType")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==13) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserStatusChange")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==14) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserStatusChangeDate")</td>
+                    <!--
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==15) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserAffidavitUpload")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==16) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserAffidavitUploadDate")</td>
+                    -->
+                    <td style="min-width:150px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==17) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.address1")</td>
+                    <td style="min-width:50px"  class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==18) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.city")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==19) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.state")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==20) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.zipCode")</td>
+                    
+                  </tr>
+                </table>
+                  <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+            </div>
+            <!-- Result Subheader End -->
+            #else
+            <!-- Search Result Start -->
+            <div id="searchResult_2" style="overflow: auto; width: 100%; height: 100%;">
+                <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px; overflow: scroll; ">
+                    <tr bgcolor="#efefef">
+                        <td class="check_box_top" width="17px"><input id="chkAll" type="checkbox" name="selectAll" style="margin-left:3px"/></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(0,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(0,0,$pageCurrIndex,$showAll);" #end ><div id="firstNameSort" #if($context.sortColumnIndex==0 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==0) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.firstName")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(1,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(1,0,$pageCurrIndex,$showAll);" #end ><div id="lastNameSort" #if($context.sortColumnIndex==1 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==1) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastName")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(2,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(2,0,$pageCurrIndex,$showAll);" #end ><div id="emailAddressSort" #if($context.sortColumnIndex==2 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==2) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.emailAddress")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(3,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(3,0,$pageCurrIndex,$showAll);" #end ><div id="phoneNumberSort" #if($context.sortColumnIndex==3 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==3) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.phoneNumber")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(4,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(4,0,$pageCurrIndex,$showAll);" #end ><div id="courseNameSort" #if($context.sortColumnIndex==4 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==4) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseName")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseId")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(6,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(6,0,$pageCurrIndex,$showAll);" #end ><div id="affidavitSort" #if($context.sortColumnIndex==6 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==6) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitLink")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(7,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(7,0,$pageCurrIndex,$showAll);" #end ><div id="courseStatusSort" #if($context.sortColumnIndex==7 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==7) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseStatus")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(8,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(8,0,$pageCurrIndex,$showAll);" #end ><div id="courseTypeSortSort" #if($context.sortColumnIndex==8 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==8) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseType")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(9,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(9,0,$pageCurrIndex,$showAll);" #end ><div id="completeionDateSort" #if($context.sortColumnIndex==9 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==9) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.completeDate")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(21,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(21,0,$pageCurrIndex,$showAll);" #end ><div id="completeionDateSort" #if($context.sortColumnIndex==21 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==21) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.enrollmentDate")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(22,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(22,0,$pageCurrIndex,$showAll);" #end ><div id="completeionDateSort" #if($context.sortColumnIndex==22 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==22) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.firstAccessDate")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(10,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(10,0,$pageCurrIndex,$showAll);" #end ><div id="holdingRegulatorNameSort" #if($context.sortColumnIndex==10 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==10) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.holdingRegulatorName")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(11,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(11,0,$pageCurrIndex,$showAll);" #end ><div id="regulatoryCategorySort" #if($context.sortColumnIndex==11 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==11) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.regulatoryCategory")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(12,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(12,0,$pageCurrIndex,$showAll);" #end ><div id="affidavitSort" #if($context.sortColumnIndex==12 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==12) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitType")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(13,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(13,0,$pageCurrIndex,$showAll);" #end ><div id="lastUserChangetatusSort" #if($context.sortColumnIndex==13 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==13) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserStatusChange")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(14,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(14,0,$pageCurrIndex,$showAll);" #end ><div id="lastUserStatusDateSort" #if($context.sortColumnIndex==14 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==14) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserStatusChangeDate")</div></td>
+                        <!--
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(15,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(15,0,$pageCurrIndex,$showAll);" #end ><div id="lastUserAffidavitUploadSort" #if($context.sortColumnIndex==15 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==15) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserAffidavitUpload")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(16,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(16,0,$pageCurrIndex,$showAll);" #end ><div id="lastUserAffidavitUploadDateSort" #if($context.sortColumnIndex==16 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==16) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.lastUserAffidavitUploadDate")</div></td>
+                        -->
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(17,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(17,0,$pageCurrIndex,$showAll);" #end ><div id="address1Sort" #if($context.sortColumnIndex==17 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==17) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.address1")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(18,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(18,0,$pageCurrIndex,$showAll);" #end ><div id="citySort" #if($context.sortColumnIndex==18 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==18) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.city")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(19,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(19,0,$pageCurrIndex,$showAll);" #end ><div id="stateSort" #if($context.sortColumnIndex==19 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==19) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.state")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(20,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(20,0,$pageCurrIndex,$showAll);" #end ><div id="zipCodeSort" #if($context.sortColumnIndex==20 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==20) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.zipCode")</div></td>
+                        
+                    </tr>
+                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                    #set($userstatus = $context.userstatuses.get($loopIndex))
+                    #if($loopIndex%2 == 0)
+                        #set($alternate="row_1")
+                    #else
+                        #set($alternate="row_2")
+                    #end
+                    #if($loopIndex == $pageLastIndex)
+                        <tr>
+                            <td class="$alternate" width="17px" style="border-bottom:none;">
+                            	<input type="hidden" name="$!{userstatus.learnerEnrollmentId}_courseSatisticsId" value="$!{userstatus.courseSatisticsId}">
+                            	<input type="hidden" name="$!{userstatus.learnerEnrollmentId}_courseApprovalid" value="$!{userstatus.courseApprovalId}">
+								<input type="checkbox" id="chk$loopIndex" coursestatustag="$!{userstatus.courseStatus}" name="userstatuses" value=$!{userstatus.learnerEnrollmentId} style="margin-left:-2px" onclick="changeRowColor(this);"/>
+							</td>
+                            <td style="min-width:100px" class="$alternate" style="border-bottom:none;">
+                                #if($context.isAdmin)
+                                    <a href="#springUrl("/adm_learnerProfile.do?id=$!{userstatus.learnerId}")">$!{userstatus.firstName}</a>&nbsp;
+                                #else
+                                    $!{userstatus.firstName}
+                                #end
+                            </td>
+                            <td style="min-width:100px" class="$alternate" style="border-bottom:none;">$!{userstatus.lastName}&nbsp;</td>
+                            <td style="min-width:100px" class="$alternate" style="border-bottom:none;">$!{userstatus.emailAddress}&nbsp;</td>
+                            <td style="min-width:130px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.phoneNumber}&nbsp;</td>
+							<td style="min-width:150px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseName}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseId}&nbsp;</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">
+							#if($!{userstatus.courseTypeId} == "1" || $!{userstatus.courseTypeId} == "2")
+								<div style="min-width:50px" class="control-button-position">
+									<a href="$!{previewAffidavitFormAction}?method=viewAffidavit&learnerEnrollmentId=$!{userstatus.learnerEnrollmentId}">
+										<div class="btn_start"></div><div class="btn_normal" style="min-width:30px!important">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.viewAffidavit")</div><div class="btn_end"></div>
+									</a>
+								</div>
+							#else
+								$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.none")&nbsp;
+							#end
+							</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.courseStatus.$!{userstatus.courseStatus}")&nbsp;</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseType}&nbsp;</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.completeDate}&nbsp;</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.enrollmentDate}&nbsp;</td>
+							<td style="min-width:120px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.firstAccessDate}&nbsp;</td>
+							<td style="min-width:160px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.holdingRegulatorName}&nbsp;</td>
+							<td style="min-width:150px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.regulatoryCategory}&nbsp;</td>
+							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.affidavitType}&nbsp;</td>
+							<td style="min-width:175px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.lastUserStatusChange}&nbsp;</td>
+							<td style="min-width:200px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.lastUserStatusChangeDate}&nbsp;</td>
+							<!--
+							<td style="min-width:170px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.lastUserAffidavitUpload}&nbsp;</td>
+							<td style="min-width:150px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.lastUserAffidavitUploadDate}&nbsp;</td>
+							-->
+							<td style="min-width:150px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.address1}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.city}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.state}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.zipCode}&nbsp;</td>
+							
+                        </tr>
+                     #else
+                        <tr>
+                            <td class="$alternate" width="17px">
+                            	<input type="hidden" name="$!{userstatus.learnerEnrollmentId}_courseSatisticsId" value="$!{userstatus.courseSatisticsId}">
+                            	<input type="hidden" name="$!{userstatus.learnerEnrollmentId}_courseApprovalid" value="$!{userstatus.courseApprovalId}">
+								<input type="checkbox" id="chk$loopIndex" coursestatustag="$!{userstatus.courseStatus}" name="userstatuses" value=$!{userstatus.learnerEnrollmentId} style="margin-left:-2px" onclick="changeRowColor(this);"/>
+							</td>
+                            <td style="min-width:101px" class="$alternate">
+                                #if($context.isAdmin)
+                                    <a href="#springUrl("/adm_learnerProfile.do?id=$!{userstatus.learnerId}")">$!{userstatus.firstName}</a>&nbsp;
+                                #else
+                                    $!{userstatus.firstName}
+                                #end
+                            </td>
+                            <td style="min-width:101px" class="$alternate">$!{userstatus.lastName}&nbsp;</td>
+                            <td style="min-width:101px" class="$alternate">$!{userstatus.emailAddress}&nbsp;</td>
+                            <td class="$alternate">$!{userstatus.phoneNumber}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate">$!{userstatus.courseName}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.courseId}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate">
+							#if($!{userstatus.courseTypeId} == "1" || $!{userstatus.courseTypeId} == "2")
+								<div class="control-button-position">
+									<a href="$!{previewAffidavitFormAction}?method=viewAffidavit&learnerEnrollmentId=$!{userstatus.learnerEnrollmentId}">
+										<div class="btn_start"></div><div class="btn_normal" style="min-width:30px!important">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.viewAffidavit")</div><div class="btn_end"></div>
+									</a>
+								</div>
+							#else
+								$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.none")&nbsp;
+							#end
+							</td>
+							<td style="min-width:101px" class="$alternate">$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.courseStatus.$!{userstatus.courseStatus}")&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.courseType}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.completeDate}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.enrollmentDate}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.firstAccessDate}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.holdingRegulatorName}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.regulatoryCategory}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.affidavitType}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.lastUserStatusChange}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.lastUserStatusChangeDate}&nbsp;</td>
+							<!--
+							<td style="min-width:101px" class="$alternate">$!{userstatus.lastUserAffidavitUpload}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.lastUserAffidavitUploadDate}&nbsp;</td>
+							-->
+							<td style="min-width:150px" class="$alternate">$!{userstatus.address1}&nbsp;</td>
+							<td style="min-width:100px" class="$alternate">$!{userstatus.city}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate">$!{userstatus.state}&nbsp;</td>
+							<td style="min-width:50px" class="$alternate">$!{userstatus.zipCode}&nbsp;</td>
+
+                        </tr>
+
+                    #end
+                    #end
+                </table>
+            </div>
+            <!-- Buttons Div start here -->
+			<div class="btn-div">
+				<div style="float:right; margin-top:15px;margin-right:5px;">
+					<a onclick="uploadAffidavit();">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.uploadAffidavit")</div>
+						  <div class="btn_end"></div>
+					</a>
+				</div>  
+				<div style="float:right; margin-top:15px;margin-right:5px;">
+					<a onclick="exportAffidavit();">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.export")</div>
+						  <div class="btn_end"></div>
+					</a>
+				</div>	
+				<div style="float:right; margin-top:15px;">
+				  <a onclick="printAffidavits();">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.printAffidavit")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:right; margin-top:15px;">
+				  <a onclick="showChangeStatusBox();">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.changeStatus")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	
+				<div style="float:right; margin-top:15px;">
+				  <a onClick="window.location.href='acc_manageUserStatus.do?method=initializePage'">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.cancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>	  
+			</div>	
+			<!-- Buttons Div end here -->
+            #end
+            <!-- Search Result End -->
+        </div>
+        <!-- Search Result End -->
+        </div>
+	    </td></tr>
+	<!-- Body End -->
+	<tr> <!-- Footer BLOCK -->
+		<td id="footer" colspan="2">
+		<!-- Footer Start -->
+		    #parse("snippets/managerFooter.vm")
+		<!-- Footer End -->
+		</td></tr>
+	</table>
+	#set($select="UserStatus")
+	#parse("snippets/selectAtleastOnRecord.vm")
+	#parse("snippets/deleteConfirmation.vm")
+	#set($select="UserStatusOption")
+	#parse("snippets/selectAtleastOneOption.vm")
+</form>
+#parse("snippets/uploadAffidavitDialog.vm")
+</body>
+</html>

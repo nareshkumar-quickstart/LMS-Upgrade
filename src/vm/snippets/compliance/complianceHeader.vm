@@ -1,0 +1,126 @@
+#set($ssn=$!{request.getSession(true)})
+#set($menu = $ssn.getAttribute("featureGroup"))
+#set($distributorFeatureGroup = $ssn.getAttribute("distributorFeatureGroup"))
+##set($externalServices = $brander.getBrandElement("lms.manager.externalservices"))
+        
+        <div id="compliance-header" class="page_header">
+            <div style="width:200px; float:left;"><!-- logo -->
+              <img src="$brander.getBrandElement("lms.header.logo.src")" class="logo360" alt="No Image Selected" alt=""/>
+            </div><!-- logo-end -->
+            <div class="headerMenuContainer2" ><!-- top-nav-right-menu -->
+            	<div class="top_nav_spacer" style="width: 5px;     height: 85px;     float: right;"></div> <!-- spacer from right side -->
+				#if(! $distributorFeatureGroup)
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Profile", $userData, $ssn))
+						<div title="Profile" onclick="submitForm('Profile','LMS-MGR-0023','mgr_editCustomer.do?method=editCustomerProfile')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('profile_icon').src='brands/default/en/images/icon-profile-hover.png'" onmouseout="document.getElementById('profile_icon').src='brands/default/en/images/icon-profile-normal.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="1" href="#"  #if($menu == "Profile")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="profile_icon" height="60"
+						#if($menu == "Profile")  src="brands/default/en/images/icon-profile-normal.png"
+						#else src="brands/default/en/images/icon-profile-normal.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Profile")</a></div>
+
+					#end
+					#if($externalServices == "on")  
+						<div title="External Services" class="header_icon" style="width:120px;">
+							<a style="text-decoration:none;width:120px;" onclick="submitForm('ExternalServices','ExternalServices','view.do?vm=manager/externalServices/listExternalLinks')" tabindex="2" href="#" #if($menu == "ExternalServices") class="header_icon_selected" #end>
+								<img id="external_services_icon" onmouseover="document.getElementById('external_services_icon').src='brands/default/en/images/headericons/hover/external_services.gif'" onmouseout="document.getElementById('external_services_icon').src='brands/default/en/images/headericons/external_services.gif'" #if($menu == "ExternalServices") src="brands/default/en/images/headericons/external_services.gif" #else src="brands/default/en/images/headericons/external_services.gif" #end class="icon_style" alt=""><br>$brander.getBrandElement("lms.mycourses.header.ExternalServices")
+							</a>
+						</div>
+					#end 
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Tools", $userData, $ssn))
+						<div title="Tools" onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('surveys_icon').src='brands/default/en/images/icon-tools-hover.png'" onmouseout="document.getElementById('surveys_icon').src='brands/default/en/images/icon-tools-normal.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="3" href="#"  #if($menu == "Tools")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="surveys_icon" height="60"
+						#if($menu == "Tools")  src="brands/default/en/images/icon-tools-normal.png"
+						#else src="brands/default/en/images/icon-tools-normal.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Tools")</a></div>
+					#end
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Reports", $userData, $ssn) )
+						<div title="Reports" onclick="submitForm('Reports','LMS-MGR-0012','mgr_ManageReports.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('reports_icon').src='brands/default/en/images/headericons/hover/reports.png'" onmouseout="document.getElementById('reports_icon').src='brands/default/en/images/headericons/reports.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="4" href="#"  #if($menu == "Reports")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="reports_icon" height="60" 
+						#if($menu == "LMS-MGR-0012") src="brands/default/en/images/headericons/reports.png" 
+						#else src="brands/default/en/images/headericons/reports.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Reports")</a></div>
+					#end
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Plan & Enroll", $userData, $ssn) )
+						<div title="Plan & Enroll" onClick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('trainingplans_icon').src='brands/default/en/images/icon-gantt-chart-hover.png'" onmouseout="document.getElementById('trainingplans_icon').src='brands/default/en/images/icon-gantt-chart-normal.png'"
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="5" href="#"  #if($menu == "Plan & Enroll") style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="trainingplans_icon" height="60" 
+						#if($menu == "Plan & Enroll") src="brands/default/en/images/icon-gantt-chart-normal.png" 
+						#else src="brands/default/en/images/icon-gantt-chart-normal.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.managerHeader.header.Courses")</a></div>
+					#end
+					#if($userPermissionChecker.hasAccessToFeatureGroup("Users & Groups", $userData, $ssn))
+						<div title="Users and Groups" onclick="submitForm('Users%20%26%20Groups','ManageLearner','mgr_manageLearners.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center"
+						onmouseover="document.getElementById('users_icon').src='brands/default/en/images/headericons/hover/users.png'" onmouseout="document.getElementById('users_icon').src='brands/default/en/images/headericons/users.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="6" href="#" #if($menu == "Users & Groups") style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="users_icon" height="60" 
+						#if($menu == "Users & Groups") src="brands/default/en/images/headericons/users.png"
+						#else src="brands/default/en/images/headericons/users.png" #end style="margin-bottom:3px;" /><br />$brander.getBrandElement("lms.mycourses.header.UsersAndGroups")</a></div> 
+					#end
+					
+		            #if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+						<div class="header_icon">
+	        				<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+	        					<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+	        					<br/>$brander.getBrandElement("lms.header.caption.Predict")
+	        				</a>
+	        			</div>
+        			#end
+				#else
+					#if($distributorFeatureGroup.contains("Profile"))
+						<div title="Profile" onclick="submitForm('Profile','LMS-MGR-0023','mgr_editCustomer.do?method=editCustomerProfile')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('profile_icon').src='brands/default/en/images/icon-profile-hover.png'" onmouseout="document.getElementById('profile_icon').src='brands/default/en/images/icon-profile-normal.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="1" href="#" #if($menu == "Profile")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="profile_icon" height="60"
+						#if($menu == "Profile") src="brands/default/en/images/icon-profile-normal.png" style="margin-bottom:3px;font-weight:bold;"
+						#else src="brands/default/en/images/icon-profile-normal.png" style="margin-bottom:3px;" #end /><br />$brander.getBrandElement("lms.mycourses.header.Profile")</a></div>
+					#end
+					#if($externalServices == "on")  
+						<div title="External Services" class="header_icon" style="width:120px;">
+							<a style="text-decoration:none;width:120px;" onclick="submitForm('ExternalServices','ExternalServices','view.do?vm=manager/externalServices/listExternalLinks')" tabindex="2" href="#" #if($menu == "ExternalServices") class="header_icon_selected" #end>
+								<img id="external_services_icon" onmouseover="document.getElementById('external_services_icon').src='brands/default/en/images/headericons/hover/external_services.gif'" onmouseout="document.getElementById('external_services_icon').src='brands/default/en/images/headericons/external_services.gif'" #if($menu == "ExternalServices") src="brands/default/en/images/headericons/external_services.gif" #else src="brands/default/en/images/headericons/external_services.gif" #end class="icon_style" alt=""><br>$brander.getBrandElement("lms.mycourses.header.ExternalServices")
+							</a>
+						</div>
+					#end 
+					#if($distributorFeatureGroup.contains("Announcements") )
+						<div title="Announcements" onclick="submitForm('Announcements','Announcements','mgr_sendMailToLearners.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('announcements_icon').src='brands/default/en/images/headericons/hover/announcements.png'" onmouseout="document.getElementById('announcements_icon').src='brands/default/en/images/headericons/announcements.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="2" href="#"  #if($menu == "Announcements")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="announcements_icon" height="60" 
+						#if($menu == "Announcements") src="brands/default/en/images/headericons/announcements.png"
+						#else src="brands/default/en/images/headericons/announcements.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Announcements")</a></div> 
+					#end
+					#if($distributorFeatureGroup.contains("Tools"))
+						<div title="Tools" onclick="submitForm('Tools','LMS-MGR-0020','mgr_manageSurveys.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('surveys_icon').src='brands/default/en/images/icon-tools-hover.png'" onmouseout="document.getElementById('surveys_icon').src='brands/default/en/images/icon-tools-normal.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="3" href="#"  #if($menu == "Tools")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="surveys_icon" height="60"
+						#if($menu == "Tools")  src="brands/default/en/images/icon-tools-normal.png"
+						#else src="brands/default/en/images/icon-tools-normal.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Tools")</a></div>
+					#end
+					#if($distributorFeatureGroup.contains("Reports") )
+						<div title="Reports" onclick="submitForm('Reports','LMS-MGR-0012','mgr_ManageReports.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('reports_icon').src='brands/default/en/images/headericons/hover/reports.png'" onmouseout="document.getElementById('reports_icon').src='brands/default/en/images/headericons/reports.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="4" href="#"  #if($menu == "Reports")style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="reports_icon" height="60" 
+						#if($menu == "LMS-MGR-0012") src="brands/default/en/images/headericons/reports.png" 
+						#else src="brands/default/en/images/headericons/reports.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.mycourses.header.Reports")</a></div>
+					#end
+					#if($distributorFeatureGroup.contains("Plan & Enroll") )
+						<div title="Plan & Enroll" onClick="submitForm('Plan%20%26%20Enroll','LMS-MGR-0011','mgr_viewAllEntitlements.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center" 
+						onmouseover="document.getElementById('trainingplans_icon').src='brands/default/en/images/headericons/hover/trainingplans.png'" onmouseout="document.getElementById('trainingplans_icon').src='brands/default/en/images/headericons/trainingplans.png'"
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="5" href="#"  #if($menu == "Plan & Enroll") style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="trainingplans_icon" height="60" 
+						#if($menu == "Plan & Enroll") src="brands/default/en/images/headericons/trainingplans.png" 
+						#else src="brands/default/en/images/headericons/trainingplans.png" #end style="margin-bottom:3px;"/><br />$brander.getBrandElement("lms.managerHeader.header.Courses")</a></div>
+					#end
+					#if($distributorFeatureGroup.contains("Users & Groups"))
+						<div title="Users and Groups" onclick="submitForm('Users%20%26%20Groups','ManageLearner','mgr_manageLearners.do')" style="margin-top:0px;    float:right;    width:90px;    height:85px;    font-size:9px;    margin-right:1px;    margin-left:1px;    text-align:center;    padding-top:0;    cursor: pointer;   white-space:nowrap; "  align="center"
+						onmouseover="document.getElementById('users_icon').src='brands/default/en/images/headericons/hover/users.png'" onmouseout="document.getElementById('users_icon').src='brands/default/en/images/headericons/users.png'" 
+						onmousedown="this.className='header_icon_down'" onmouseup="this.className='header_icon_over'"><a tabindex="6" href="#" #if($menu == "Users & Groups") style="font-weight:bold" #end class="$brander.getBrandElement("lms.mycourses.cssClass.top-nav")"><img id="users_icon" height="60"  
+						#if($menu == "Users & Groups") src="brands/default/en/images/headericons/users.png"
+						#else src="brands/default/en/images/headericons/users.png" #end style="margin-bottom:3px;" /><br />$brander.getBrandElement("lms.mycourses.header.UsersAndGroups")</a></div> 
+					#end
+					
+		            #if($userPermissionChecker.hasAccessToFeatureGroup("Manage Predict Account", $userData, $ssn))
+						<div class="header_icon">
+	        				<a onclick="" href="#springUrl('/predict.do')" #if($menu == "Predict") class="header_icon_selected" #end>
+	        					<img id="administrator-predict" onmouseover="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-hover.png'" onmouseout="document.getElementById('administrator-predict').src='brands/default/en/images/icon-predict-normal.png'"  src="brands/default/en/images/icon-predict-normal.png" class="icon_style" />
+	        					<br/>$brander.getBrandElement("lms.header.caption.Predict")
+	        				</a>
+	        			</div>
+	        		#end
+				#end
+            </div><!-- top-nav-right-menu-end -->
+        </div>

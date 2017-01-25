@@ -1,0 +1,437 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+<script type="text/javascript" language="javascript">
+	
+	function doSearch(buttonclick) {
+		if (buttonclick != "") {
+			document.getElementById('action').value = buttonclick;
+		}		
+		document.searchManageForm.submit();
+	} 
+	
+	function sortInstructor(sortColumn){
+		var sortAction = "";
+		
+		document.getElementById('sortColumn').value = sortColumn;
+		if (document.getElementById('sortDirection').value == 0) {
+			document.getElementById('sortDirection').value = 1;
+			sortAction = "sortDesc";
+		}
+		else {
+			document.getElementById('sortDirection').value = 0;
+			sortAction = "sortAsc";
+		}		
+		this.doSearch(sortAction);
+	}	
+	
+	function deleteCourseInstructor(){
+        if ($("INPUT[type='checkbox'][name='selectedInstructors']:checked").length > 0) {
+			confirm(function () {
+                document.getElementById('action').value = "delete";
+                document.searchManageForm.submit();
+            });			
+        }
+		else {
+            $('#messageAlert').modal({close:false,position: ["40%",]});
+        }
+    }
+	
+	function confirm(callback) {	
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {                
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+	
+	$(document).ready(function(){
+	 	$('#frame_body').height($(window).height() - ($('#header').height() + $('#tabBar').height() +  $('#footer').height()));
+		if ($('#right-pannel').height()<$('#frame_body').height()) {
+			$('#right-pannel').height($('#frame_body').height());
+		}
+		if ($('#right-pannel').height()>$('#frame_body').height()) {
+			$('#frame_body').height($('#right-pannel').height());
+		}		
+		$('#sideBar').height($('#right-pannel').height());	
+	 	$('#frame_body').scroll(function(){
+			$('#message_box').animate({top:$('#right-pannel').scrollTop()+"px" },{queue: false, duration: 350});  
+		});
+		
+		$('#close_message').click(function(){
+			$("#message_box").animate({
+			   opacity: .5
+			}, "slow", "linear", function(){$("#message_box").hide();} );
+		});		
+		
+		$("INPUT[type='checkbox'][name='selectedInstructors']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedInstructors']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedInstructors']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+	});
+	
+
+</script>
+
+</head>
+<body>
+<form name="searchManageForm" id="searchManageForm" method="post" action="mgr_searchCourseInstructor.do?id=$!{context.courseId}">
+
+<!-- main-container -->
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	#parse("snippets/managerHeader.vm")
+	<!-- header-end -->
+	</td></tr>
+	
+	<!-- Tabs Start -->		
+      <td  id="row-tabs" class="tab_bar" colspan="2">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+	        <tr>
+	        	<td width="194"><div class="tab_blank"></div></td>
+	            <td>&nbsp;</td>
+	            <td width="697">
+	            	<a href="mgr_viewCourse.do?method=viewCourseSummary&id=${context.courseId}"><div class="tab" >$brander.getBrandElement("lms.manager.tabBar.summary")</div></a>
+	            	<a href="mgr_viewCourse.do?method=viewCourseOverView&id=${context.courseId}"><div class="tab" style="width: 120px;" >$brander.getBrandElement("lms.manager.tabBar.courseOverview")</div></a>
+	            	<a href="mgr_viewCourse.do?method=viewCourseExamOverView&id=${context.courseId}"><div class="tab" style="width: 120px;" >$brander.getBrandElement("lms.manager.tabBar.examOverview")</div></a>
+	            	<a href="mgr_viewCourse.do?method=viewCourseAdditionalDetails&id=${context.courseId}"><div class="tab" style="width: 140px;" >$brander.getBrandElement("lms.manager.tabBar.additionalDetails")</div></a>
+	            	<a href="mgr_searchCourseInstructor.do?id=${context.courseId}"><div class="tab_selected" >$brander.getBrandElement("lms.manager.tabBar.instructor")</div></a>	            	
+					<a href="mgr_manageCourseCourseGroups.do?id=$!{context.courseId}"><div style="border-right-style: solid; " class="tab">$brander.getBrandElement("lms.manager.tabBar.courseGroups")</div></a>
+	            </td>
+	            <td>&nbsp;</td>
+	        </tr>
+		</table>		
+		</td>
+		<!-- Tabs End -->
+	
+	<!-- content-area -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+			<!-- left-menu-content -->
+			#parse("snippets/planEnrollLeftMenu.vm")
+			<!-- left-menu-content-end -->
+		</table></td>	
+		
+		<!-- right-pannel -->
+<TD id="content" >
+	<div id="scrollable">
+			<!-- error-box -->							
+			#if( $request.getAttribute("errors") )
+			<div id="message_box">
+				<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />					
+				#set ($error = $brander.getBrandElement($request.getAttribute("errors")))
+				<div class="width40pct">
+					<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="message_box_align">$error</div>
+				</div>
+			</div>			
+			#end
+			<!-- error-box - end -->        	        
+	        
+	        <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.instructor.courseInstructor.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.instructor.courseInstructor.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>
+			<!-- Logo+Manage-User-end -->
+			
+			<!-- Search Box -->
+			<div id="resultBox" class="search_box_result">
+			
+				<!-- Search input window -->
+				<div id="searchBox" class="visible">                    
+					<div style="padding: 5px">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructors")</div>
+					<div style="padding: 5px">
+						<div style="width:85px; float:left">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchFirstName") </div> 
+						<div style="float:left"><input type="text" name="searchFirstName" value="$!{context.searchFirstName}" style="font-size:9px; width:170px" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}" /></div>
+						<br style="clear:both" />
+					</div>
+					<div style="padding: 5px">
+						<div style="width:85px; float:left">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchLastName") </div>
+						<div style="float:left"><input type="text" name="searchLastName" value="$!{context.searchLastName}"  style="font-size:9px; width:170px" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}" /></div>
+						<br style="clear:both" />
+					</div>
+					<div style="padding: 5px">						
+						<div style="width:85px; float:left">$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructorType") </div>
+						<div style="float:left">
+							<select name="instructorType" id="instructorType" style="font-size:9px; width:172px; height:20px;" class="search_field" onKeyPress="if(event.keyCode==13){doSearch('advanceSearch');}">
+								#foreach($instructorType in ${context.lstIntructorTypes})
+									<option value="$instructorType" #if($instructorType == ${context.instructorType}) selected #end>$instructorType</option>
+								#end
+							</select>
+						</div>
+						<br style="clear:both" />
+					</div>	
+					
+					<div style="padding: 5px;margin-left:10px;margin-right:10px;height:10px">							
+						<div style="float: left; margin-top: 15px; margin-left: 20px;">
+							<div>
+								<a onClick="showSearchBox(this);">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnCancel")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+						<div style="float: left; margin-top: 15px; margin-left: 20px;">
+							<div>
+								<a onClick="doSearch('advanceSearch');">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnSearchInstructor")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+					</div>                    
+                </div>
+                <!-- Search input window - end -->
+				
+				<!-- Alert Message Box -->
+				<div id="messageAlert" style="display:none">
+					<div class="header">&nbsp;&nbsp;$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.instructor.addCourseInstructor.error.selectInstructor")</div>
+					<br style="clear:both" />
+					<div class='buttons'>
+						<div class='no simplemodal-close'>
+							<div style="float: left; margin-top: 2px; margin-right: 0px;">
+								<div>
+									<a  onclick="">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnOK")</div>
+										<div class="btn_end"></div>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Alert Message Box - Ends -->
+				
+				<!-- Delete Message Box -->				
+				<div id='deleteConfirmation' style='display:none'>
+					<div class='header'><span>$brander.getBrandElement("lms.manageCourseInstructor.DeleteConfirmation.title")</span></div>
+					<div class="alert_message_box_icon"></div>
+					<div class="alert_message_box_text">$brander.getBrandElement("lms.manageCourseInstructor.DeleteConfirmation.message")</div>
+					<br style="clear:both" />
+					
+					<div class='buttons'>
+           				<div class='simplemodal-close' style="width:220px">
+				  			<div style="float: center; margin-top: 3px; margin-left: 20px;">
+								<div>
+									<a onClick=""><span class="no button">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnCancel")</div>
+										<div class="btn_end"></div>
+									</span></a>
+								</div>
+							</div>
+							   
+				 			<div style="float: center; margin-top: 0px; margin-left: 20px;">
+								<div>
+									<a class="" onClick=""><span class="yes button">
+										<div class="btn_start"></div>
+										<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnOK")</div>
+										<div class="btn_end"></div>
+									</span>	</a>
+								</div>
+							</div>							   
+	                    </div>
+					</div>
+				</div>
+				<!-- Delete Message Box - end-->	
+			
+				<!-- Result Header Start -->
+				<div id="resultHeader" class="box_header">
+					
+					<!-- Button panel -->
+					<div style="float:left; height:23px;">	
+						<!-- Add Instructor button -->
+						<div style="float: left; margin-top: 2px;">
+							<div>
+								<a href="mgr_addCourseInstructor.do?id=$!{context.courseId}">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnAddInstructor")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>
+						<!-- Delete Instructor button -->
+						<div style="float: left; margin-top: 2px; margin-right: 5px;">
+							<div>
+								<a onClick="deleteCourseInstructor();">
+									<div class="btn_start"></div>
+									<div class="btn_normal">$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnDeleteInstructor")</div>
+									<div class="btn_end"></div>
+								</a>
+							</div>
+						</div>						
+					</div>
+					<!-- Button panel - end -->
+					
+					<!-- Search & Pagination -->											
+					<div class="result_left_side">
+						<!-- Search Instructor button -->       
+						<div style="float:center;">
+					        <div style="float: center; margin-top: 3px; margin-left: 20px;">
+								<div>
+									<a onClick="showSearchBox(this);">
+										<div class="btn_start"></div>
+										<div class="btn_normal" >$brander.getBrandElement("lms.instructor.courseInstructor.caption.btnSearchInstructor")</div>
+										<div class="btn_end"></div>
+									</a>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Search & Pagination -->
+						<!-- Pagination -->						
+						<!-- Show All Icon -->
+						#if (($!{context.totalRecords} > 0) && ( ($!{context.recordShowing} != $!{context.totalRecords}) || ($!{context.pageIndex} > 0)) )
+	                    	<div id="showAll" class="icon_all" onClick="doSearch('showAll');" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+						#end
+	                    <!-- Next/Back Icon -->
+	                    #if($!{context.totalRecords}==-1)
+	                        <div id="goNext" class="icon_disabled">&nbsp;</div>
+	                        <div id="goBack" class="icon_disabled">&nbsp;</div>
+	                    #else
+	                    	<!-- Next Icon -->
+							#if($!{context.recordShowing} == $!{context.totalRecords})
+								<div id="goNext" class="icon_disabled">&nbsp;</div>
+							#else
+								<div id="goNext" onClick="doSearch('showNext');" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
+							#end						
+							<!-- Back Icon -->
+							#if ($!{context.pageIndex} == 0)
+								<div id="goBack" class="icon_disabled">&nbsp;</div>
+							#else
+								<div id="goBack" onClick="doSearch('showPrev');" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+							#end
+						#end	                            
+	                    <!-- Showing Results -->
+	                    #set($lPpageNum = $!{context.pageIndex} * 10 + 1)
+	                    #set($rPpageNum = $!{context.recordShowing})
+	                    <div id="resultDescription" class="box_description">Showing #if($!{context.totalRecords} <= 0) 0 - 0 of 0 #else $lPpageNum - $rPpageNum of $!{context.totalRecords} #end</div>
+	                    <!-- Pagination - end -->
+					</div>
+	                <!-- Search & Pagination - end -->	
+					
+				</div>
+	           	<!-- Result Header End -->	
+           	
+	           	<!-- Search Result Start -->
+	           	<div id="searchResult">
+					<table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+						<tr bgcolor="#efefef">
+							<td class="check_box_top" width="17px"><input type="checkbox" id="chkAll" name="selectedInstructorsAll"/></td> 
+							<td class="box_subheader" onclick="sortInstructor('firstName');" onmouseover="showTooltip('Sort by First Name', event);" onmouseout="hideTooltip();"><div #if(($context.sortDirection == 0 )&&($context.sortColumn == 'firstName')) class="icon_up" #elseif ($context.sortColumn == 'firstName') class="icon_down" #end ></div>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchFirstName")</td>
+							<td class="box_subheader" onclick="sortInstructor('lastName');" onmouseover="showTooltip('Sort by Last Name', event);" onmouseout="hideTooltip();"><div #if(($context.sortDirection == 0 )&&($context.sortColumn == 'lastName' )) class="icon_up" #elseif ($context.sortColumn == 'lastName' ) class="icon_down" #end ></div>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchLastName")</td>
+							<td class="box_subheader" onclick="sortInstructor('instructorType');" style="border-right:none" onmouseover="showTooltip('Sort by Instructor Type', event);" onmouseout="hideTooltip();"><div #if(($context.sortDirection == 0 )&&($context.sortColumn == 'instructorType' )) class="icon_up" #elseif ($context.sortColumn == 'instructorType' ) class="icon_down" #end ></div>$brander.getBrandElement("lms.instructor.courseInstructor.caption.searchInstructorType")</td>
+						</tr>
+					#if ($!{context.totalRecords} > 0)
+						#set($index=-1)
+						#foreach($curInstructor in ${context.instructors})
+							#if($velocityCount%2==0)
+								#set($alternate="row_2")
+							#else
+								#set($alternate="row_1")
+							#end
+							
+							#if($velocityCount == ($rPpageNum - $lPpageNum + 1) )
+								#set($rowStyle="border-bottom:none")
+							#else
+								#set($rowStyle="")
+							#end
+							
+							#set($index=$index+1)
+							#set($checked="")
+							
+							#if(${curInstructor.isSelected}) 
+								#set($checked="checked")								
+								#set($rowStyle="background-color=#E9F9FE;$rowStyle")
+							#end 
+						<tr>						
+							<td class="$alternate" width="17px" style="$rowStyle" >							
+								<input type="checkbox" id="chk$velocityCount" name="selectedInstructors" $checked value="${curInstructor.getId()}" />
+							</td>
+							<td class="$alternate" style="$rowStyle"><a href="mgr_editCourseInstuctorType.do?id=${context.courseId}&associationId=${curInstructor.getId()}">${curInstructor.getInstructor().getUser().getFirstName()}</a></td>
+							<td class="$alternate" style="$rowStyle"><a href="mgr_editCourseInstuctorType.do?id=${context.courseId}&associationId=${curInstructor.getId()}">${curInstructor.getInstructor().getUser().getLastName()}</a></td>
+							<td class="$alternate" style="border-right:none; $rowStyle"><a href="mgr_editCourseInstuctorType.do?id=${context.courseId}&associationId=${curInstructor.getId()}&">${curInstructor.getInstructorType()}</a></td>
+						</tr>
+						#end
+					#else
+						<tr>
+	                        <td colspan="4" style=" !Important;">	                            
+	                            <div class="result_blank">#if( $request.getAttribute("newPage") ) $brander.getBrandElement("lms.instructor.courseInstructor.caption.defaultSearch") #else $brander.getBrandElement("lms.instructor.courseInstructor.caption.noRecordFound") #end</div>
+	                        </td>
+	                    </tr>
+					#end
+					</table>
+				</div>				
+			    <!-- Search Result End -->
+	    	</div>
+	    	<!-- Search Box - end-->
+	    	
+			<!-- hidden elements for form binding -->
+			<input id="id" type="hidden" name="id" value="${context.courseId}" />
+			<input id="action" type="hidden" name="action" value="${context.action}" />
+			<input id="sortColumn" type="hidden" name="sortColumn" value="${context.sortColumn}" />
+			<input id="sortDirection" type="hidden" name="sortDirection" value="${context.sortDirection}" />
+			<input id="pageIndex" type="hidden" name="pageIndex" value="${context.pageIndex}" />
+			
+			<!-- space -->
+			<div class="manager-bottom-space"></div>
+			<!-- space -->
+			       
+		</div>
+		<!-- right-pannel end -->
+    </td></tr>
+    <!-- content-area end -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+<!-- main-container end -->
+<div id="tooltipForList" class="tool_tip"></div>
+</form>	
+</body>
+</html>		

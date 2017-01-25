@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+    
+    	<!-- Parsed Page Head -->
+		
+    	#parse("snippets/learnerNewHead.vm")
+    
+		<!-- Page Javascript -->
+        <script type="text/javascript" language="javascript">
+        
+        function printDiv()
+    {
+           var container = document.getElementById("reportDataContainer");
+           var sOption="toolbar=no,location=no,directories=yes,menubar=no,";
+               sOption+="scrollbars=yes,width=775,height=600,left=10,top=25";
+
+
+			   
+           var sWinHTML = document.getElementById("reportDataContainer").innerHTML;
+
+           var iframe = document.createElement('iframe');
+           var html = '<body></body>';
+           
+           document.body.appendChild(iframe);
+		   iframe.contentWindow.document.open();
+           iframe.contentWindow.document.write(sWinHTML);
+           iframe.contentWindow.document.close();
+		   iframe.contentWindow.focus();// focus on contentWindow is needed on some ie versions
+           iframe.contentWindow.print();
+			
+/*
+           var winprint=window.open("","",sOption);
+               winprint.document.open();
+               winprint.document.write('<html>');
+               winprint.document.write('<body style="overflow:auto;width:auto;height:auto;"><div id=reportDataContainer>');
+               winprint.document.write(sWinHTML);
+               winprint.document.write('               ');
+               winprint.document.write('<input id=noprint type="button" value="Print Page" onclick="window.focus();window.print();return false;" />');
+               winprint.document.write('</div></body></html>')
+               winprint.document.close();
+               winprint.focus();
+			   winprint.print();
+*/
+
+  
+
+    }
+        	//  JS Document Ready
+            $(document).ready(function() {
+			
+            });
+        </script>
+		<!-- END: Page Javascript -->
+		#set($currentReport=$reportForm.getCurrentReport())
+    </head>
+
+    <body>
+		
+		<!-- Page Table -->
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            
+    		<!-- Header Row -->
+    		<tr>
+                <td id="header" colspan="2">
+					
+					#parse("snippets/learnerNewHeader.vm")
+					
+    			</td>
+    		</tr>
+			<!-- END: Header Row -->
+    		
+    		
+    		
+    		<!-- Page -->
+            <tr id="main">
+    			
+    			<!-- Page Sidebar -->
+    			<td id="left-navigation" valign="top">
+                    <div id="sidebar-scroller" style="overflow:hidden">
+						
+						#parse("snippets/reportLearnerLeftMenu.vm")
+						
+                    </div>
+    			</td>
+				<!-- END: Page Sidebar -->
+    			
+    			<!-- Page Content -->
+    			<td id="content">
+    				
+    				<!-- Page Scrollable Area -->
+    				<div id="scrollable">
+							
+						  #set($totCount=$context.members.size())
+                        <!-- Logo+Manage-User -->
+                        <div class="logoContainer">
+                            <div id="e3" class="courseLogoReports">&nbsp;</div>
+                            <div id="e4" class="courseTitleWithButtonContainer">
+                                <div id="titleHolder" class="courseTitle1" >#dotPadding($!{currentReport.title},100)</div>
+                                <div id="detailsHolder" class="courseDetails">$!{currentReport.description}</div>
+                            </div>
+                            <div style="float:right; margin-top:5px;">
+            				  <a onclick="javascript:printDiv();" style="text-decoration:none;">
+            					  <div class="btn_start"></div>
+            					  <div class="btn_normal">Print</div>
+            					  <div class="btn_end"></div>
+            				  </a>
+            				</div>
+            				<div style="float:right; margin-top:5px;">
+            				  <a onclick="document.location.href='#springUrl('/lrn_ViewReports.do?method=browseReport')';" style="text-decoration:none;">
+            					  <div class="btn_start"></div>
+            					  <div class="btn_normal">Back</div>
+            					  <div class="btn_end"></div>
+            				  </a>
+            				</div>
+            			</div>
+                        <!-- Logo+Manage-User-end -->
+            
+                        <div id="reportDataContainer" >
+            				
+                            $htmlData
+                        </div>
+
+						
+                    </div>
+                	<!-- END: Page Scrollable Area -->	
+					
+                </td>
+				<!-- END: Page Content -->
+				
+            </tr>
+			<!-- END: Page-->
+			
+			<!-- Page Footer-->
+			<tr>				
+        		<td id="footer" colspan="2">
+					<!-- Footer -->
+						
+						#parse("snippets/learnerNewFooter.vm")
+						
+					<!-- END: Footer-->
+				</td>
+			</tr>
+			<!-- END: Page Footer -->
+			
+		</table>
+		<!-- END: Page Table -->
+		
+	</body>
+	
+</html>
+

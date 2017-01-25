@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Chameleon Namespace Design:
+		This design approach says to give the "main" schema a targetNamespace, and the "supporting" schemas have no targetNamespace.
+		There are two things to note about this design approach:
+
+		First, a schema is able to access components in schemas that have no targetNamespace, using <include>. The User schema uses
+		the components in Address.xsd (and have no targetNamespace).
+
+		Second, note the chameleon-like characteristics of schemas with no targetNamespace:
+
+    	The components in the schemas with no targetNamespace get namespace-coerced. That is, the components "take-on" the 
+    	targetNamespace of the schema that is doing the <include>
+        For example, Address in Address.xsd gets implicitly coerced into the User targetNamespace. This is the reason that the 
+        Address element was able to reference Adress defined in Address.xsd in the default namespace using type="Address".
+
+		"Chameleon effect" ... This is a term coined by Henry Thompson to describe the ability of components in a schema with no 
+		targetNamespace to take-on the namespace of other schemas. This is powerful!
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://enrollment.serviceoperations.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns="http://enrollment.serviceoperations.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns:enrolmnt="http://enrollment.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	xmlns:tr="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<!--
+		<xsd:import namespace="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="../types/TransactionResultType.xsd"/>
+		<xsd:import namespace="http://enrollment.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="../types/Enrollment.xsd"/>
+	-->
+
+    <xsd:import namespace="http://transactionresult.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="TransactionResultType.xsd"/>
+	<xsd:import namespace="http://enrollment.types.lmsapi.message.webservice.lms.vu360.softech.com" schemaLocation="Enrollment.xsd"/>
+	
+	<xsd:element name="LearnerCoursesEnrollRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="LearnerCourses" type="enrolmnt:LearnerCourses" minOccurs="1" maxOccurs="unbounded" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string" use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+			<xsd:attribute name="notifyLearnersByEmail" type="xsd:boolean" default="false" />
+			<xsd:attribute name="duplicatesEnrollment" type="enrolmnt:DuplicatesEnrollment" default="Update" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="LearnerCoursesEnrollResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="LearnerEnrolledCourses"
+					type="enrolmnt:LearnerEnrolledCourses" minOccurs="0"
+					maxOccurs="unbounded" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="BulkEnrollmentRequest">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Learners" type="enrolmnt:Learners"
+					minOccurs="1" maxOccurs="1" nillable="false" />
+				<xsd:element name="Courses"
+					type="enrolmnt:LearnerEnrollCourses" minOccurs="1" maxOccurs="1"
+					nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="customerCode" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="key" type="xsd:string" use="required" />
+			<xsd:attribute name="notifyLearnersByEmail"
+				type="xsd:boolean" default="false" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="BulkEnrollmentResponse">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="FailedCourses"
+					type="enrolmnt:FailedCourses" minOccurs="0" maxOccurs="1"
+					nillable="false" />
+				<xsd:element name="LearnerEnrolledCourses"
+					type="enrolmnt:LearnerEnrolledCourses" minOccurs="0"
+					maxOccurs="unbounded" nillable="false" />
+			</xsd:sequence>
+			<xsd:attribute name="transactionResult"
+				type="tr:TransactionResultType" use="required" />
+			<xsd:attribute name="transactionResultMessage"
+				type="xsd:string" />
+		</xsd:complexType>
+	</xsd:element>
+
+
+</xsd:schema>

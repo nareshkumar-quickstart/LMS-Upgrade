@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+
+	<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+	<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+	<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script language="javascript" type="text/javascript">
+    //document.title="$brander.getBrandElement("lms.surveyPreview.caption.title")";
+    function saveSuggestedTraining() {
+        document.getElementById('actionmethod').value='saveSuggestedTraining';
+        document.suggestedTrainingForm.submit();
+    }
+
+    function checkAnswer(checkbox, id){
+        if( document.getElementById(id).value == "false"  ){ 
+            document.getElementById(id).value = true;}
+        else			
+            document.getElementById(id).value = false;
+    }
+
+	$(document).ready(function() {
+		
+		
+		
+    });
+</script>
+</head>
+
+<body>
+<form name="suggestedTrainingForm" method="post" action="mgr_suggTraining.do">
+<input type="hidden" id="actionmethod" name="method" value=""/>
+
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!--Header Start -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+       #parse("snippets/adminHeader.vm")
+    #else
+	#parse("snippets/managerHeader.vm")
+    #end
+    <!-- Header End -->
+	</td>
+	</tr>
+	
+    <!-- Tabs Start -->
+     <td id="row-tabs" class="tab_bar" colspan="2">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td width="194"><div class="tab_blank"></div></td>
+                <td>&nbsp;</td>
+                #springBind("suggTrainingForm.sid")
+                <td width="600">
+                    <a href="mgr_add-New-Survey-Information.do?method=showSurveyInfoView&sid=$!{status.value}"><div class="tab">Summary</div></a>
+                     <a href="mgr_manageSurveys.do?method=showQuestionView&sid=$!{status.value}"><div class="tab">Questions</div></a>
+                     <a href="mgr_manageSurveys.do?method=showCoursesView&sid=$!{status.value}"><div class="tab">Courses</div></a>
+                     <a href="mgr_manageSurveys.do?method=showManageFlags&sid=$!{status.value}"><div class="tab">Flags</div></a>
+                     <a href="mgr_suggTraining.do?sid=$!{status.value}"><div class="tab_selected" style="border-right-style:solid; width:140px;">Suggested Training</div></a>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </td>
+    <!-- Tabs End -->
+
+    <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    #parse("snippets/compliance/complianceLeftMenu.vm")
+		</table>
+	</td>
+	
+    <TD id="content" >
+	<div id="scrollable">
+      <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">Edit Suggested Training</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.manageSurvey.editSuggestedTraining.textDescription")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+
+
+             <div id="table-frame" class="table-frame" style="margin-bottom:20px; margin-top:20px;">
+                <div id="table-header" class="table-header">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <tr>
+                            <td>
+                                <div class="table-heading">SUMMARY</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <table border="0" cellpadding="0" cellspacing="0">
+                    #set($index = 0)
+                    #springBind("suggTrainingForm.suggTraining.courses")
+                    #if ($!{status.value.size()} > 0)
+                        #foreach($course in $!{status.value})
+                            #if ($index == 0)
+                                <tr>
+                                    <td height="30" width="150">
+                                        <div class="table-text">Course Name</div>
+                                    </td>
+                                    <td>
+                                        <div class="table-text">$!{course.courseTitle}</div>
+                                    </td>
+                                </tr>
+                            #else
+                                <tr>
+                                    <td height="30" width="150">
+                                        <div class="table-text"></div>
+                                    </td>
+                                    <td>
+                                        <div class="table-text">$!{course.courseTitle}</div>
+                                    </td>
+                                </tr>
+                            #end
+                            #set($index = $index + 1)
+                        #end
+                    #end
+                    <tr>
+                        <td height="10" colspan="2">&nbsp;</td>
+                    </tr>
+                </table>
+                </div>
+
+                <div id="table-frame" class="table-frame">
+
+                    <div id="table-header" class="table-header">
+                        <div class="table-heading">Questions and Responses</div>
+                    </div>
+
+					<table border="0" cellpadding="0" cellspacing="0" width="100%">
+                   #set($questionCount = ${suggTrainingForm.surveyView.questionList.size()})
+                    #set($questionNumber = 0)
+                    #if($questionCount > 0)
+                        #set($maxQuestionIndex = $questionCount - 1)
+                        #foreach($index in [0..$maxQuestionIndex])
+                            #set($surveyQuestion = ${suggTrainingForm.surveyView.questionList.get($index)})
+                            #set($prefix = "surveyView.questionList[$index]")
+                            #set($questionNumber = $questionNumber + 1)
+							<tr height="24" bgcolor="#FFFFFF">
+								<td width="1%" align="center">
+									<img id="queOne" countVal="$velocityCount" class="icon-expand" src="brands/default/en/images/icon_collapse.gif"/>
+								</td>
+								<td width="1%" align="center">
+									<input type="checkbox" onClick="checkAns($velocityCount,this)" />
+								</td>
+								<td width="98%">
+									 #if(${surveyQuestion.surveyQuestionRef.required} == true) <div class="required_field">*</div> #end $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table id="choices_$velocityCount">
+												$surveyQuestion.renderQuestion($prefix)
+									</table>
+								</td>
+							</tr>
+                        #end
+                    #end
+					</table>
+
+                </div>
+				
+				<div style="float:right; margin-top:15px;">
+				  <a onClick="saveSuggestedTraining();" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				<div style="float:right; margin-top:15px;margin-right:5px;">
+				 #springBind("suggTrainingForm.sid")
+				  <a href='mgr_suggTraining.do?sid=$!{status.value}' style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>							
+                
+                <div style="height:30px;"></div>
+
+            </div>
+        </td></tr>
+        <!-- Body End -->
+
+		<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+       #parse("snippets/managerFooter.vm")
+	   </td></tr>
+    </tr>
+</form>
+</body>
+</html>

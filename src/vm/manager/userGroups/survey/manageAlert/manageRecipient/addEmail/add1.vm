@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    #parse("snippets/compliance/complianceHead.vm")
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+		<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+		<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+		<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+		<script type='text/javascript' src='javascript/js_survey.js' ></script>
+		<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+		
+		<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+		<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+
+		<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+		
+		<script type='text/javascript'>
+				
+			$(document).ready(function() {
+				$('#sideBar').height($('.scrollable').height());
+			});
+		</script>
+		<script language="javascript" type="text/javascript">
+			function addEmail() {
+				//document.getElementById('action').value="add";
+				//document.addEmailForm.submit();
+				var rowCount= $('#email-table tr').length;
+				var rowHtml;
+				//////////////alert(i);
+				for(i=rowCount; i<=rowCount; i++){
+					rowHtml = '<tr id="row'+i+'">'+
+									'<td width="25" height="25" >'+
+									'   <div class="icon_minus" >'+
+									'	<img id="img'+i+'" src="brands/default/en/images/minus-c.gif" onClick="deleteEmail('+i+');" /></div>'+
+									'</td>'+
+									'<td width="90">'+
+									'    <div>Email Address</div>'+
+									'</td>'+
+									'<td>'+
+									'	<input type="text" class="input_text_field_small" value="" name="emailAddresses['+i+']" id="emailAddresses'+i+'" >'+
+									'</td>'+
+								'</tr>';
+				}
+				$('#email-table').append(rowHtml);
+
+			}
+			function deleteEmail(i) {
+				$('#row'+i).remove();
+				var rowCount = $('#email-table tr').length;
+				var acnt;//count to be alloted
+				var func="";
+				//code to rename
+				while($('#row'+ ++i).length){
+				acnt=i-1;
+				//alert('i='+i);
+				//alert('acnt='+acnt);
+				//alert('element='+$('#row'+ i).length);
+				
+				func='deleteEmail('+acnt+');';
+				
+					$('#img'+i).attr('onClick',func);
+					$('#img'+i).attr('id','img'+acnt);
+					$('#emailAddresses'+i).attr('name','emailAddresses['+acnt+']');
+					$('#emailAddresses'+i).attr('id','emailAddresses'+acnt);
+					$('#row'+i).attr('id', 'row'+ acnt);
+				}
+			}
+		</script>
+    </head>
+    <body>
+		<form name="addEmailForm" method="post" action="mgr_addRecipientEmail.do?recipientId=$request.getParameter('recipientId')">
+			#springBind("recipientEmailForm.action")
+			<input type="hidden" id="action" name="action" value="" >
+        <div id="main-container">
+            #parse("snippets/managerWizardHeader.vm")
+            <div id="frame_body">
+                <div id="sideBar" class="side_bar">
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageAlert.addRecipient.addEmailAddress.showingWizard")</div>
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageAlert.addRecipient.addEmailAddress.selectEmail")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.manageAlert.addRecipient.addEmailAddress.confirmation")</div>
+
+                    </div>
+                </div>
+                <div class="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" style="margin-top: 19px;font-size: 24px; letter-spacing: -1px;word-spacing: -2px;">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.addEmail")</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manageAlert.addRecipient.Email.caption.description")</div>
+                    </div>
+
+                    <div id="table-frame" class="table-frame">
+                        <div id="table-header" class="table-header">
+
+                            <div style="float:left; height:23px;">
+							<div id="add-email-address" style="float:left; margin-top:3px;">
+							  <a onClick="addEmail();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.addEmail")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							</div>
+                        </div>
+
+                        <table id="email-table" border="0" cellpadding="0" cellspacing="0" width="100%">
+							<tr id="row0">
+								<td width="25" height="25" >
+                                    &nbsp;
+                                </td>
+                                <td width="90">
+                                    <div>$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.emailAddress")</div>
+                                </td>
+                                <td>
+									<input type="text" class="input_text_field_small" value="" name="emailAddresses[0]">
+                                </td>
+							</tr>
+
+
+                          <!--  <tr>
+                                <td width="25" height="25" >
+                                    &nbsp;
+                                </td>
+                                <td width="90">
+                                    <div>Email Address</div>
+                                </td>
+                                <td>
+									#springBind("recipientEmailForm.emailAddresses[0]")
+                                    <input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+                                </td>
+                            </tr>
+							#springBind("recipientEmailForm.numberOfEmails")
+							#set($emailNum = ${status.value} - 1)
+							#if($emailNum > 0)
+								#foreach($index in [1..$emailNum])
+									<tr class="learner">
+										<td width="15">
+											<div class="icon_minus" ><img src="brands/default/en/images/minus-c.gif" onClick="deleteEmail();" /></div>
+										</td>
+										<td>
+											<div >Email Address</div>
+										</td>
+										<td>
+											#springBind("recipientEmailForm.emailAddresses[$index]")
+											<input type="text" name="${status.expression}" value="$!{status.value}" class="input_text_field_small"/>
+										</td>
+									</tr>
+								#end
+							#end -->
+                        </table>
+
+
+                    </div>
+					<input type="hidden" id="currentpage" name="_page" value="0" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+
+                    <div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addEmailForm,'wizardSubmitter','_target1');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addEmailForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>			
+					
+				</div>
+            </div>
+           #parse("snippets/managerFooter.vm")
+        </div>
+		</form>
+    </body>
+
+</html>

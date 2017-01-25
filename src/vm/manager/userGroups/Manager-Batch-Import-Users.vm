@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+ 
+<style type="text/css">
+
+input.file2 {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    -moz-opacity:0 ;
+    filter:alpha(opacity: 0);
+    opacity: 0;
+    width:100%;
+    height:100%;
+    cursor:pointer
+}
+
+a.browsbutton2 {
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: bold;
+    background: transparent url(../images/button_right.gif) no-repeat center right;
+    white-space: nowrap;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-family: Arial, Helvetica, Geneva, sans-serif;
+    font-size: 10px !important;
+    font-size: 10px;
+    padding: 5px 6px 8px 0 !important;
+    line-height: 8px !important;
+    letter-spacing: 1px;
+    font-weight: normal;
+    float:left;
+    margin-left:10px;
+    width:70px;
+    *width:75px;
+}
+
+
+div.fakefile2 {
+    float:left;
+    position: relative;
+    top: -22px;
+    left: 0px;
+    z-index: 1;
+}
+</style>
+
+
+#parse("snippets/learnerNewHead.vm")
+
+ 
+<script language="javascript" type="text/javascript">
+
+
+
+
+    document.title="$brander.getBrandElement("lms.batchImportUsers.title")";
+
+    function validateUploadedFile(id){
+        var objFile=document.getElementById(id);
+        if (objFile.value =="" ){
+            var message_box=document.getElementById("message_box");
+            message_box.style.display="block";
+            return false;
+        }
+        document.getElementById("imghide").style.display = "";
+        document.fileSubmit.submit();
+        return true;
+    }
+
+    function myCall(ob) {
+        var del = ob.value;
+        var myLink = document.getElementById("alink");
+        myLink.href = "$brander.getBrandElement('lms.batchImportUsers.samplefile')";
+    }
+
+    var W3CDOM = (document.createElement && document.getElementsByTagName);
+
+    function initFileUploads() {
+        if (!W3CDOM) return;
+        var fakeFileUpload = document.createElement('div');
+        fakeFileUpload.className = 'fakefile2';
+        var fakeinput = document.createElement('input');
+        fakeinput.className="search_field";
+        fakeinput.style.cssText="width:345px;*width:345px;float:left";
+        fakeFileUpload.appendChild(fakeinput);
+        var image = document.createElement('a');
+        image.className="browsbutton";
+        var span=document.createElement('span');
+        span.className="browsbutton2";
+        span.innerHTML="Browse";
+        span.style.cssText="cursor:pointer;";
+        image.style.cssText="cursor:pointer;";
+        image.appendChild(span);
+        
+        //image.src='brands/default/en/images/btn-Browse_n.gif';
+        fakeFileUpload.appendChild(image);
+        var x = document.getElementsByTagName('input');
+        for (var i=0;i<x.length;i++) {
+            if (x[i].type != 'file') continue;
+            if (x[i].parentNode.className != 'fileinputs') continue;
+            x[i].className = 'file2';
+            var clone = fakeFileUpload.cloneNode(true);
+            x[i].parentNode.appendChild(clone);
+            x[i].relatedElement = clone.getElementsByTagName('input')[0];
+            x[i].onchange = x[i].onmouseout = function () {
+                this.relatedElement.value = this.value;
+            }
+        }
+    }
+
+    $(document).ready(function(){
+       
+        initFileUploads();
+        	
+    });
+    
+  
+</script>
+</head>
+
+<body>
+    <!-- <div id="main-container"> -->
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		  <tr> 
+		   <td id="header" colspan="2">
+           	   <!-- header -->
+        	   #parse("snippets/managerHeader.vm")
+        	   <!-- header-end -->
+      		 </td>
+		  </tr>
+			
+	<!--    <div id="content2a"> --><!-- content-area -->
+			<tr id="main" > <! SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+				<td  id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+           		 <!-- left-pannel-content -->
+         		    #parse("snippets/managerLeftMenu.vm")
+         			   <!-- left-menu-content-end -->
+				</table> <!-- END OF TABLE 3 -->
+				<!-- <PAGE DESCRIPTION> -->
+				</td>
+            
+			<!-- <div id="right-pannel"> --> <!-- right-pannel-content -->
+			<TD id="content" >
+				<div id="scrollable" style="position: relative;">
+                <form method="post" action="" name="fileSubmit" enctype="multipart/form-data">
+
+                    <div id="message_box" style="display:none;"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" onClick="document.getElementById('message_box').style.display='none';" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        <div class="width40pct">
+                            <div class="message_box_align"><img  src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">Please select a file</div>
+                        </div>
+                    </div><!-- error-box -->
+
+                    #springBind("bean.*")
+                    #if($status.error)
+                    <!-- error-box -->
+                     <div id="message_box2" class="message_box" >
+                        <img id="close_message" style="float:right;cursor:pointer" onClick="document.getElementById('message_box2').style.display='none';" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        ##set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$errorCode</div>
+                        </div>
+                        #end
+                    </div>
+                    <!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-users">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.batchImportUsers.caption.title")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.batchImportUsers.caption.subtitle")</div>
+						        </td>
+						    </tr>
+						</table>
+                    <!-- Logo+Manage-User-end -->
+
+                    <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")"><!-- Import-Settings-Information -->
+                        <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                            <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.batchImportUsers.importSettings")</div>
+                        </div>
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                            <!-- 1 -->
+                            <!-- importFile -->
+                            <div id="e12" class="search-content-row" style="padding-top:10px">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.importFile")</div>
+                                <div class="com-star-r-t"><img src="$brander.getBrandElement("lms.errorMessage.pixel.Learner_06.gif")" /></div>
+                                <div class="input_field_browse">
+                                    <div class="fileinputs"><input type="file" name="file" value="" id="impFile" class="file2"/></div>
+                                </div>
+                                <!-- <div class="com-star-r-t"></div> -->
+                            </div>
+                            <!-- importFile -->
+                            <div id="e13" class="search-content-row">
+                                <div class="block_text_in-r-f">Note</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="input_field_area-user-f" style="color:#999999">$brander.getBrandElement("lms.batchUpload.fileSizeNotice")</div>
+                            </div>							
+                            <!-- 3 -->
+                            <div id="e13" class="search-content-row">
+                                <div class="block_text_in-r-f">File Delimiter</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="input_field_area-user-f">
+                                    <select name="delimiter" class="input_field1" onchange="myCall(this);">
+                                        <option value=",">comma(,)</option>
+                                        <option value=";">semi colon(;)</option>
+                                        <option value="|">pipe(|)</option>
+                                        <option value="\t">tab</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- 4 -->
+                            #if($request.getSession().getAttribute("fieldheader")=='0')
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.row")</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="header" type="radio" value="yes" id="" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="header" type="radio" value="no" id="" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                </div>
+                            </div>
+                            #end
+							#if($request.getSession().getAttribute("fieldheader")=='1')
+								<input type="hidden" name="header" value="yes"/>
+							#end
+                            <!-- 5 -->
+                            <div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1")"><!-- using for space --></div>
+                            <!-- 6 -->
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.accountLocked")</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="accLocked" type="radio" value="yes" id="" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="accLocked" type="radio" value="no" id="" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                </div>
+                            </div>
+                            <!-- 7 -->
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.accountsVisible")</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="accVisible" type="radio" value="yes" id="" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="accVisible" type="radio" value="no" id="" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                </div>
+                            </div>
+                            <!-- 9 -->
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.duplicateRecords")</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="dupRecords" type="radio" value="ignore" id="" /> $brander.getBrandElement("lms.batchImportUsers.Ignore") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="dupRecords" type="radio" value="update" id="" checked/> $brander.getBrandElement("lms.manageUser.editLearner.caption.Update")  </div>
+                                </div>
+                            </div>
+                            <!-- 10 -->
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.sendEmail")</div>
+                                <div class="com-star-r-t">&nbsp;</div>
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="registration" type="radio" value="yes" id="" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="registration" type="radio" value="no" id="" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                </div>
+                            </div>
+                            <!-- [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login -->                            
+							<div id="e12" class="search-content-row-changePassword">
+                                <div class="block_text_in-r-f-changePassword">$brander.getBrandElement("lms.batchImportUsers.changePasswordOnLogin")</div>
+                                <div class="com-star-r-t">&nbsp;</div>                       
+                                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="changePasswordOnLogin" type="radio" value="yes" id="" /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioYes") </div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input name="changePasswordOnLogin" type="radio" value="no" id="" checked/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioNo")  </div>
+                                </div>
+                            </div>
+							<!-- 8 -->
+                            <div id="e12" class="$brander.getBrandElement("lms.batchImportUsers.search-content-row1")"><!-- using for space --></div>
+                            <!-- 12 -->
+                            <div id="e10a" class="search-content-row">
+                                <div class="block_text_in-r-f">$brander.getBrandElement("lms.batchImportUsers.sampleFile")</div>
+                                <div class="com-star-r-t">&nbsp;</div>
+                                <div class="input_field_area-user-f2a">
+                                    <a id="alink" class="sampleFileImport" href="$brander.getBrandElement("lms.batchImportUsers.samplefile")">
+                                    $brander.getBrandElement("lms.batchImportUsers.Click")
+                                    </a>
+                                </div>
+                                <div id="imghide" style="width:13%;float:right;display:none">
+                                    <div class="input_field_area-user-fn"><img src="$brander.getBrandElement("lms.pixel.progressGif")" width="24" height="24" alt="" /></div>
+                                    <div class="input_field_area-user-fn">
+                                        <div class="bodycourseDetails-2">$brander.getBrandElement("lms.batchImportUsers.Processing")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 13 -->
+                            <div id="e12" class="search-content-row">
+                                <div class="block_text_in-r-f"><!-- using for space --></div>
+                                <div class="input_field_area-user"></div>
+                            </div>
+                        </div>
+                        <!-- End-User-left-right-list -->
+                    </div><!-- End-Import-Settings-Information -->
+
+                    <div class="buttonContainer"><!-- button-div -->
+                       <div style="float:right; margin-top:5px;">
+						  <a onclick="validateUploadedFile('impFile');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Import</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						
+                        #* <div class="left">
+                            <a class="button" onclick="window.location.href='mgr_manageLearners.do';"><span class="button">Cancel</a>
+                        </div>*#
+                    </div><!-- button-div -->
+                    <!-- space -->
+                   <!-- <div class="manager-bottom-space"></div> -->
+                    <!-- space -->
+                </form>
+          <!--  </div> --> <!-- right-pannel-content-end -->
+		  		</div>
+		  </TD>
+       <!-- </div> --><!-- content-area-end -->
+	   </TR>
+	   
+	   
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+     		   <!-- footer -->
+    		       #parse("snippets/managerFooter.vm")
+        <!-- footer-end -->
+			 </td>
+		</tr>
+   <!--  </div> -->
+   </TABLE> <!-- TABLE 1 END -->
+</body>
+</html>

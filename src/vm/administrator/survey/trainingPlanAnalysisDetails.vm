@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+
+</script>
+</head>
+
+<body>
+<form name="tpAnalysisDetails" method="post" action="adm_manageSyrvey.do">
+
+    <div id="main-container"><!-- main-container -->
+
+        <!-- header -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+           #parse("snippets/adminHeader.vm")
+        #else
+           #parse("snippets/managerHeader.vm")
+        #end
+        <!-- header-end -->
+
+        <div id="content2a"><!-- content-area -->
+
+			<!-- left-menu-content -->
+            #parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-menu-content-end -->
+
+            <div id="right-pannel">
+
+            <!-- Error -->
+            <div id="error-message-box" style="display:none;">
+               <div class="error_box">
+                   <div id="errors"></div>
+                   <div id="close-errors" class="close_icon"></div>
+               </div>
+            </div>
+
+            <table border="0" width="100%" cellpadding="0" cellspacing="3" width="100%">
+                <tr>
+                     <td style="padding-right:10px;">
+                         <!-- Logo+Manage-User -->
+            <div id="pageDescription" class="page_description">
+
+                  <div id="pageIcon" class="icon_surveys">&nbsp;</div>
+
+                  <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.administrator.searchMember.caption.trainingplananalysis")</div>
+
+                  <div id="detailsHolder">$brander.getBrandElement("lms.accraditation.instructor.caption.description")</div>
+
+            </div>
+            <!-- Logo+Manage-User-end -->
+                      </td>
+                </tr>
+                <tr>
+                    <td>
+						<div style="float:right; margin-top:3px;*margin-right:15px;">
+								<a onClick="window.print();" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.print")</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+							
+							<div style="float:right; margin-top:3px;">
+								<a href="adm_manageSyrvey.do?method=createTrainingNeedsAnalysis" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</div>
+								  <div class="btn_end"></div>
+								</a>
+							</div>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="search_box_result" style="margin-top:20px;">
+                <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.addSecurityRole.Details")</span></div>
+                    #foreach($value in $!{context.values})
+                        <table border="0" width="100%" cellpadding="0" cellspacing="0" heigth="100%">
+                            <tr class="row_1">
+                                <td height="20"><div class="survey-list">$value.surveyName</div></td>
+                            </tr>
+                            <tr class="row_2">
+                                <td height="20" ><div class="survey-respondent">$value.ownerName</div></td>
+                            </tr>
+                            #foreach($course in $value.courses)
+                                <tr class="row_1">
+                                    <td height="20"><div class="respondent-course">$course.courseTitle</div></td>
+                                </tr>
+                            #end
+                        </table>
+                    #end
+                </div>
+                <div style="height:30px;"></div>
+            </div>
+        </div>
+
+        <!-- Body End -->
+
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            #parse("snippets/adminFooter.vm")
+        #else
+            #parse("snippets/managerFooter.vm")
+        #end
+        <!-- footer-end -->
+	</div>
+    </form>
+</body>
+</html>

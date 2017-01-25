@@ -1,0 +1,27 @@
+        <div id="footer">
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.link")">$brander.getBrandElement("lms.login.footerLinksCopyright") <a target=_newwin href=$brander.getBrandElement("lms.login.footer.aboutusURL") class="log-out"  > $brander.getBrandElement("lms.login.footer.aboutus.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.contactusURL") class="log-out" target=_newwin> $brander.getBrandElement("lms.login.footer.contactus.caption")</a> | <a href=$brander.getBrandElement("lms.login.footer.termofuserURL") target=_newwin class="log-out" > Online Privacy Practices</a></div>
+
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.log")">
+            #if($hasSwitchedAuth)
+               |<a href="switchexituser.do" class="$brander.getBrandElement("lms.mycourses.cssClass.log-out")">$brander.getBrandElement("lms.login.switchback")</a>
+            #else
+               <select class="input_field2" id="drpMode" onChange="setpage(this,$!{userData.isLMSAdministrator()});">
+                  #if($!{userData.isTrainingAdministrator()})
+	              <option value="1" #if($!adminCurrentMode == 'ROLE_TRAININGADMINISTRATOR') selected #end>$brander.getBrandElement("lms.manager.manangerMode")</option>
+                  #end
+                  #if($!{userData.isTrainingAdministrator()} || $!{userData.isLMSAdministrator()} || $!{userData.isRegulatoryAnalyst()})
+                  <option value="2" #if($!adminCurrentMode == 'ROLE_LEARNER') selected #end>$brander.getBrandElement("lms.mycourses.learnerMode")</option>
+                  #else 
+                  Learner Mode
+                  #end
+                  #if($!{userData.isLMSAdministrator()})
+	              <option value="3" #if($!adminCurrentMode == 'ROLE_LMSADMINISTRATOR') selected #end>$brander.getBrandElement("lms.admin.AdminMode")</option>
+                  #end
+	              #if($!{userData.isRegulatoryAnalyst()})
+                  <option value="4" #if($!adminCurrentMode == 'ROLE_REGULATORYANALYST') selected #end>$brander.getBrandElement("lms.admin.AccreditationMode")</option>
+                  #end
+               </select>
+               <a href="logout" class="$brander.getBrandElement("lms.mycourses.cssClass.log-out")">$brander.getBrandElement("lms.login.logout")</a>
+         #end
+               </div>
+        </div>

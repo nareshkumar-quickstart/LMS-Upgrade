@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    #parse("snippets/compliance/complianceHead.vm")
+
+
+        <script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+        <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+        <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+        <script type='text/javascript' src='javascript/js_survey.js' ></script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+
+<script type='text/javascript'>
+var i=1;
+    $(document).ready(function() {
+        $('#sideBar').height($('.scrollable').height());
+    
+		$('#add_combo').click(function() {
+			var count=$('#email_table').children().length;
+			  i++;
+				var div='<tr id="row'+i+'" ><td width="19px" style="padding-left:18px;" ><img src="brands/default/en/images/minus-c.gif"   onclick="removeRow('+i+')"></td><td width="90"> <div> Email Address</div></td><td><input type="text"  class="input_text_field_small" name="emailAddress"/></td></tr>';
+				$('#email_table').append(div);
+			});
+
+			//$('#sideBar').height($('#right-pannel').height());
+			$('#scrollable').scroll(function(){
+				$('#message_box').animate({top:$('#scrollable').scrollTop()+"px" },{queue: false, duration: 350});  
+			});
+			$('#close_message').click(function(){
+				$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+			});
+
+		});
+
+		function removeRow(row) {
+			var temp='row'+row;
+			var row_obj= document.getElementById(temp);
+				$(row_obj).remove();
+				//alert(row_obj);
+		}
+
+	
+
+     function sortApproval(sortColumnIndex,sortDirection,pageIndex,showAll){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('showAll').value=showAll;
+        document.getElementById('pageIndex').value=pageIndex;
+        document.getElementById('actionmethod').value='searchApprovals';
+        document.surveyAppForm.submit();
+    }
+</script>
+    </head>
+    <body>
+        <form name="addRecipientForm" method="post" action="mgr_addRecipient.do?alertId=$addRecipientForm.alertId">
+        <input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+            #parse("snippets/managerWizardHeader.vm")
+		</td>
+	</tr>
+	
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+            <div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.showingWizard")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.summary")</div>
+                        <div class="l-menu-back-text-acted">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.selectRecipientType")</div>
+
+                        <div class="l-menu-back-text-act">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.selectEmail")</div>
+                        <div class="l-menu-back-text">$brander.getBrandElement("lms.manageAlert.editRecipient.addLearner.confirmation")</div>
+                    </div>
+                </div>
+			</table>
+	</td>
+	
+    <TD id="content" >
+	<div id="scrollable">
+				#springBind("addRecipientForm.*")
+					#if($status.error)
+					   <div id="message_box">
+							<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+							#foreach($errorMessage in $status.errorMessages)  
+								#if(!$!errorMessage.equals(""))
+								<div class="width40pct">
+									<div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+									<div class="message_box_align">$!errorMessage</div>
+								</div>
+								#end
+							#end
+						</div>
+					#end
+                    <div id="pageDescription" class="page_description">
+                        <div id="pageIcon" class="icon_surveys"></div>
+                        <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.manageAlert.editAlert.manageRecipient.addRecipientGroup")</div>
+                        <div id="pageDescriptionText">$brander.getBrandElement("lms.manager.manageAlert.addTrigger.caption.selectRecipientsEmail")</div>
+                    </div>
+
+                    <div id="table-frame" class="table-frame">
+                        <div  class="table-header">
+                            <div style="float:left; height:23px;">
+							<div id="add-email-address" style="float:left; margin-top:3px;">
+							  <a id="add_combo" href="javascript:void(0)" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.manageAlert.editRecipient.addEmail.addEmail")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+                               
+                            </div>
+                        </div>
+
+                        <table id="email_table" border="0" cellpadding="2" cellspacing="2" width="100%">
+                            
+								<!-- <td width="90">
+                                    <div>Email Address</div>
+                                </td>
+                                <td>
+                                    <input type="text" name="email_address" class="input_text_field_small"/>
+                                </td>
+                            </tr>
+
+                            <tr class="learner">
+                                <td width="25" height="25" align="center">
+                                    <div class="icon_minus"></div>
+                                </td>
+                                <td>
+ -->								
+							<tr>
+								
+								#set($prelimStage = "true")
+								#springBind("addRecipientForm.emailAddress")							
+								#set($i=0)
+								#foreach($email in $!{status.value})
+									#set($prelimStage = "false")
+									<tr id="row$i">
+										<td width="19px" style="padding-left: 18px;"><img onclick="removeRow($i)" src="brands/default/en/images/minus-c.gif"></td>
+										<td width="90"><div>Email Address</div></td>
+										<td><input type="text"  class="input_text_field_small" value=$email name="emailAddress"/></td>
+									</tr>
+									#set($i=$i+1)
+								#end
+
+								#if($prelimStage == "true")
+								<tr id="rowt">
+									<td width="30"></td> 
+									<td width="90"><div>Email Address</div></td>
+									<td><input type="text"  class="input_text_field_small" name="emailAddress"/></td>
+								</tr>
+								#end
+								
+                        </table>
+
+
+                    </div>
+                    <input type="hidden" id="currentpage" name="_page" value="5" />
+			        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+					
+					<div style="float:right; margin-top:15px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target6');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnNext")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  <a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_target1');" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.viewNewLearner.caption.Previous")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:left; margin-top:15px;margin-left:10px;">
+						<a onClick="submitButtonForm(document.addRecipientForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+							  <div class="btn_end"></div>
+						</a>
+					</div>	
+                </div>
+            </td></tr>
+	<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+           #parse("snippets/managerFooter.vm")
+	</td>
+	</tr>
+        </table>
+    </body>
+
+</html>

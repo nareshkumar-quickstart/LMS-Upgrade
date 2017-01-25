@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Course Approval</title>
+#parse("snippets/footerLinksHeader.vm")
+<link rel="stylesheet" type="text/css" href="brands/default/en/css/datepicker.css"/>
+<script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<script type="text/javascript" src="javascript/jquery.maskedinput-1.2.2.min.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles-icons.css" />
+<script language=javascript>
+	
+	function FormSubmit(buttonclick) {
+	        document.getElementById('action').value=buttonclick;
+		  document.getElementById('method').value=buttonclick;
+		  
+		var apvid = document.getElementById('approvalId').value;
+		if(apvid == "-1" && $('[name="name"]').length>0)
+		{
+			showError('message_box1');
+		}
+		else
+		{	
+	        document.creditReportingForm.submit();
+	    }
+	}
+	
+</script>
+</head>
+<body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <!-- Header Row -->
+            <tr>
+                <td id="header" colspan="2">
+                            <!-- header -->
+					            <div id="header">
+					                <!-- logo -->
+					                <div class="$brander.getBrandElement("lms.mycourses.cssClass.wel-logo")">
+					                    <div id="a1" class="$brander.getBrandElement("lms.mycourses.cssClass.welcomeMessage")"></div>
+					                    <div id="a2" class="$brander.getBrandElement("lms.mycourses.cssClass.logo")"><img src="$brander.getBrandElement("lms.header.logo.src")"></div>
+					                </div>
+					                <!-- logo-end -->
+					            </div>
+					            <div class="box_header">
+					            	#springBind("creditReportingForm.courseName")
+				    			    #if($status.value) 
+				    			    	<span class="box_heading" style="text-align:center; width:100%">${status.value}</span>
+				    			    #end
+					            </div>
+					        <!-- header -->
+                </td>
+            </tr>
+            <!-- Page -->
+            <tr id="main">
+                <!-- Page Content -->
+                <td id="content">
+                    <!-- Page Scrollable Area -->
+                    <div id="content2a"  style="overflow-y:auto;height:85%;position:relative;min-width:10px;padding:0;"><!-- content-area -->
+                        <!-- Logo+Manage-User -->
+                        <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-left:15px;margin-bottom:15px">
+						    <tr>
+						    	#springBind("creditReportingForm.courseApproval")
+			                	#if($status.value.size()>0) 
+				    			<td id="logoHolder" class="courseLogoCoursesApproval">&nbsp;</td>
+				    			<td id="page-description">
+				    				
+				    				
+				    			   #springBind("creditReportingForm.showAllRegulators")
+			                	   #if($status.value == "true") 
+				    			    	<div id="page-heading">$brander.getBrandElement("lms.launchCourse.courseAapproval")</div>
+				    			    	#springBind("creditReportingForm.findMoreInfoLink")
+				    			    	<div id="page-help">$brander.getBrandElement("lms.launchCourse.courseAapproval.ForAll.helpText") $escapeTool.unescapeHtml($status.value)  </div>
+				    				#else
+				    			    	<div id="page-heading">$brander.getBrandElement("lms.launchCourse.courseAapproval")</div>
+				    			    	#springBind("creditReportingForm.findMoreInfoLink")
+				    			    	<div id="page-help">$brander.getBrandElement("lms.launchCourse.courseAapproval.helpText") $escapeTool.unescapeHtml($status.value)  </div>
+				    				#end
+				    			</td>
+				    			#end
+						    </tr>
+						</table>
+                        <!-- Logo+Manage-User-end -->
+                        <div id="error_box" style="display: none;">
+                        <div id="message_box1">
+			                    <img id="close_message1" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+			                        <div class="width40pct">
+			                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+			                            <div class="message_box_align">Please select jurisdiction.</div>
+			                        </div>
+			                </div>
+			            </div>
+ 						<form id="creditReportingForm" name="creditReportingForm" method=post  action="#springUrl("/lrn_launchCourse.do")" onsubmit="FormSubmit('saveMissingCustomFieldsAndCreditReportingFields')">
+								
+			
+						 #springBind("creditReportingForm.learnerEnrollmentId")
+						<input type=hidden name="${status.expression}" id="learnerEnrollmentId" value="$status.value">
+						 #springBind("creditReportingForm.courseId")
+						<input type=hidden name="${status.expression}" id="courseId" value="$status.value">
+			
+						 #springBind("creditReportingForm.source")
+						 #if($status.value)
+						 <input type=hidden name="${status.expression}" id="source" value="$status.value">
+						 #else
+						 <input type=hidden name="${status.expression}" id="source" value="">
+						 #end
+			
+						 #springBind("creditReportingForm.externallmssessionid")
+						 #if($status.value)
+							<input type=hidden name="${status.expression}" id="externallmssessionid" value="$status.value">
+						 #else
+						 	<input type=hidden name="${status.expression}" id="externallmssessionid" value="">
+						 #end
+						
+						#springBind("creditReportingForm.externallmsurl")
+						#if($status.value)
+						<input type=hidden name="${status.expression}" id="externallmsurl" value="$status.value">
+						#else
+						<input type=hidden name="${status.expression}" id="externallmsurl" value="">
+						#end
+			
+						<input type=hidden name="action" id="action" value="'saveMissingCustomFieldsAndCreditReportingFields'">
+						<input type=hidden name="method" id="method" value="'saveMissingCustomFieldsAndCreditReportingFields'">
+						
+						
+						 #springBind("creditReportingForm.courseApprovalId")
+						 <input type=hidden name="courseApprovalId" id="courseApprovalId" value="$status.value">
+						 
+						 #set($errorExists=false)
+						 	
+						 #set($prevCourseApprovalId=$status.value)
+						 ##springBind("creditReportingForm.courseApproval")
+			             ##if($status.value.size()>0)
+			              <table width="97%" cellspacing="0" cellpadding="0" style="margin-top:2px;margin-left:15px;" class="table-border">
+								<tr bgcolor="#efefef">
+								 	<td class="box_subheader_noLink" height="24px">&nbsp;</td>
+								 	<td class="box_subheader_noLink">&nbsp; $brander.getBrandElement("lms.LaunchCourse.SelectCourseApproval.HoldingRegulator")</td>
+								  	<td class="box_subheader_noLink">&nbsp; $brander.getBrandElement("lms.LaunchCourse.SelectCourseApproval.CreditType") </td>
+									<td class="box_subheader_noLink">&nbsp; $brander.getBrandElement("lms.accraditation.addApproval.caption.AppCreditHr")</td>				                            
+		                         </tr>   
+								 <tr>
+								 	<td class="row_1" colspan="4">&nbsp;&nbsp;&nbsp;&nbsp; $brander.getBrandElement("error.learner.learnerConnect.NoMoreCourseFound.empty")</td>
+		                         </tr>
+		                            
+		                    </table>
+			               ##end
+							
+			            <!-- button-div -->
+			            <div id="b13" style="display:">
+			        	<div id="e13" class="buttonContainer">
+				                <div class="left" style="height: 100px;float:left;margin-left:15px;">
+				                    <a class="button" onClick="FormSubmit('displayLearnerProfile');" tabindex="30">
+				            	    <span class="button">$brander.getBrandElement("lms.manageUser.learnerProfile.caption.btnBack")</span>
+			      	                </a>
+									<input type=hidden name="approvalId" id="approvalId">	    
+			      	                
+				            	</div>
+				            	## continue button to procced
+				            ##end
+			            </div>
+			            </div>
+					</form>
+						
+                    </div>    
+                    <!-- END: Page Scrollable Area -->
+					</td>
+                </tr>
+                <!-- END: Page-->
+                
+            </table>
+	</form>
+	<!-- daiglog Box find out more -->
+	#parse("/learner/findoutMore.vm")
+</body>
+</html>

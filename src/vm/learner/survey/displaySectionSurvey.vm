@@ -1,0 +1,317 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+	<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+    <script language="javascript" type="text/javascript">
+        document.title="Display Survey";
+		
+		function cloneSection(surveyId, surveySectiondId) {
+			reindexFiles();
+			var frmAction = document.getElementById('actionmethod').form.action;
+			frmAction += "?surveyId=" + surveyId + "&surveySectiondId=" + surveySectiondId;
+			document.getElementById('actionmethod').form.action = frmAction;
+			document.getElementById('actionmethod').value='cloneSection';
+            document.displaySurveyForm.submit();
+		}
+		
+		function validate() {
+			var validated = true;
+            $("input[name='fileRequired']").each(function(idx, elm){
+                var obj = $(elm);
+                if(obj.val().indexOf('true')>=0) {
+                    var ids = obj.val().split('-');
+					ids.shift();
+					var divKey = ids.join('-');
+					var divId = "#" + divKey + ".fileUploadDivList";
+					var objDiv = $(divId);
+					var files = objDiv.children(".fileUploadItem , .fileUploadedItem");
+					if(files.size()==0) {
+						if(validated) {
+							$('#fileRequired').modal({close:false,position: ["40%",]});
+							validated = false;
+						}
+						return validated;
+					}
+					
+					$(files).each(function(fileIdx, fileElm) {
+						objFileElm = $(fileElm);
+						if(objFileElm.hasClass('fileUploadedItem')) {
+							// do nothing for the uploaded items
+						} else if( objFileElm.hasClass('fileUploadItem') && ((!($(objFileElm.children().get(0)).val())) || $(objFileElm.children().get(0)).val()=='')) {
+							if(validated) {
+								$('#selectFile').modal({close:false,position: ["40%",]});
+    							validated = false;
+							}
+							return validated;
+						}
+					});
+                }
+            });
+			
+			return validated;
+		}
+		
+        function finishSurvey(){
+			if(validate()) {
+				reindexFiles();
+                document.getElementById('actionmethod').value='finishSurvey';
+                document.displaySurveyForm.submit();
+			}
+        }
+
+        function cancelform(){
+            document.getElementById("actionmethod").value='cancelDisplaySurvey';
+            document.displaySurveyForm.submit();
+        }
+
+        function nextForm(){
+            document.getElementById("actionmethod").value='showSurveyView';
+            document.displaySurveyForm.submit();
+        }
+
+        function checkAnswer(checkbox, id){
+        //alert(document.getElementById(id).value + "----" + document.getElementById(id).checked+"=="+checkbox.checked);
+            if( document.getElementById(id).value == "false"  ){
+             
+                document.getElementById(id).value = true;}
+            else           
+                document.getElementById(id).value = false;
+        }
+		
+		function addFile(divKey) {
+    		var divId = "#"+divKey+".fileUploadDivList";
+    		var objDiv = $(divId);
+    		var fileElementHTML = " <input type='file' name='file-" + divKey + "'> ";
+    		var delButtonHTML = " <a href='#' onclick='javascript:delFile(this);'><img src='brands/default/en/images/12-em-cross.png' /></a> ";
+    		var inputHTML = "<div class='fileUploadItem'>" + fileElementHTML + delButtonHTML + "</div>";
+    		objDiv.append(inputHTML);
+    	}
+    	
+    	function delFile(delElm) {
+    		var delObj = $(delElm);
+    		var fileContainer = delObj.parent().parent();
+    		delObj.parent().remove();
+    	}
+		
+		function delUploadedFile(obj, fileId) {
+			var progressImage = 'brands/default/en/images/progress.gif';
+			var oldImage = $($(obj).children().get(0)).attr('src');
+			$($(obj).children().get(0)).attr('src', progressImage);
+			$.get(
+				'/lms/lrn_takeSurvey.do?method=removeUploadedFile',
+				{'fileId':fileId},
+				function(responseData) {
+					var deleted = responseData.result;
+					if(deleted) {
+						$(obj).parent().remove();
+					} else {
+						$($(obj).children().get(0)).attr('src', oldImage);
+					}
+				},
+				'json'
+			);
+		}
+    	
+    	function reindexFiles() {
+    		$('.fileUploadDivList').each(function(idx, elm){
+                $(elm).find('.fileUploadItem').each(function(idx2, elm2){
+                    fileElm = $(elm2).children().get(0);
+                    var name = $(fileElm).attr('name');
+                    name = name + "[" + idx2 + "]";
+                    $(fileElm).attr('name', name);
+                });
+            });
+    	}
+       
+        $(document).ready(function() {
+ 
+        $('#close_message').click(function() {
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+            $('#message_box_saved').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+ 
+});
+    </script>
+</head>
+#macro(lrnPreviewSections $sections $isChild)
+	#foreach($surveySection in $sections)
+		<!-- 1 -->
+        #if($isChild)
+        	#set($className="fwk_name")
+        #else
+        	#set($className="group-name")
+        #end
+        
+		#if(${context.survey.survey.inspection})
+			<div class="${className}"><a href="#" onclick="javascript:cloneSection(${context.survey.survey.id}, ${surveySection.id});" class="btn_normal floatRight">$brander.getBrandElement("lms.survey.preview.clone")</a> <span class="floatLeft sectionLabel">${surveySection.name}</span></div>
+		#else
+			## no cloning for normal survey
+		#end
+            
+            #set($questionNumber = 1)
+            #foreach($surveyQuestionBank in ${surveySection.surveyQuestionBanks})
+                #foreach($surveyQuestion in $surveyQuestionBank.surveyQuestions)
+                    <div class="preview_responses">
+                         <p>
+                            $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                         </p>
+                         #if($!{surveyQuestion.surveyQuestionRef.notes})
+                             <p>
+                                $!{surveyQuestion.surveyQuestionRef.notes}
+                             </p>
+                         #end
+                         
+                        <div style="border:0px solid green;float:left;width:100%; padding-bottom:15px; ">
+                            <input type="hidden" name="sectionsArray" value="$!{surveySection.id}" />
+                            <input type="hidden" name="questionBanksArray" value="$!{surveyQuestionBank.id}" />
+                            <input type="hidden" name="questionsArray" value="$!{surveyQuestion.surveyQuestionRef.id}" />
+							#set($fileDivKey = "${surveySection.id}-${surveyQuestionBank.id}-${surveyQuestion.surveyQuestionRef.id}")
+							<input type="hidden" name="fileRequired" value="$!{surveyQuestion.fileRequired}-${fileDivKey}" />
+                            #set($prefix = "survey.questionList[$idx]")
+                            $surveyQuestion.renderQuestion($prefix)
+							#if(${surveyQuestion.canHaveFile})
+    							<div class="fileUploadDiv" id="div-${fileDivKey}" >
+									<fieldset>
+										<legend>
+											$brander.getBrandElement("lms.survey.preview.uploadFiles") #if(${surveyQuestion.fileRequired})<span class="required-field">*</span>#end
+										</legend>
+        								<div class="fileUploadDivList" id="${fileDivKey}">
+                                            <div class="clearfix"></div>
+                                            <a href="#" onclick="javascript:addFile('${fileDivKey}');" class="btn_normal">$brander.getBrandElement("lms.survey.preview.addMoreFiles")</a><div class="clearfix"></div>
+											#set($noFiles = true)
+											#springBind("takeSurveyForm.answerFilesMap")
+											#set($map = $!{status.value})
+											#set($uploadedFileList = $map.get($fileDivKey))
+											#set($fileIdx = 0)
+											#foreach($uploadedFile as $uploadedFileList)
+                                                <div class="fileUploadedItem">${uploadedFile.fileName} <a href='#' onclick="javascript:delUploadedFile(this, '${fileDivKey}~${fileIdx}');"><img src='brands/default/en/images/12-em-cross.png' /></a></div>
+												#set($noFiles = false)
+												#set($fileIdx = $fileIdx + 1)
+											#end
+											#set($uploadedFileList = [])
+                                        </div>
+										#if(${surveyQuestion.fileRequired} && ${noFiles})
+											<script type="text/javascript">addFile("${fileDivKey}");</script>
+										#end
+                                        <div class="clearfix"></div><br />
+                                        $brander.getBrandElement("lms.survey.preview.uploadFileSize")
+                                    </fieldset>
+    							</div>
+							#end
+                        </div>
+                    </div>
+                    #set($questionNumber = $questionNumber + 1)
+                    #set($idx=($idx+1))
+                #end
+            #end
+        <!-- End-User-left-right-list -->
+        <!-- 1-end -->
+        <!-- space -->
+        <div class="manager-bottom-space"></div>
+        <!-- space -->
+		#if(${surveySection.children} && ${surveySection.children.size()}>0)
+			#lrnPreviewSections(${surveySection.children} true)
+		#end
+		
+	#end
+#end
+<body>
+		<form name="displaySurveyForm" method="POST" action="lrn_takeSurvey.do" enctype="multipart/form-data">
+        <input type="hidden" id="actionmethod" name="method" value=""/>
+
+		<table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+        
+		<!-- Header Row -->
+		<tr id="singleColumn-header">
+            <td id="header" colspan="2">
+				#parse("snippets/learnerNewHeader.vm")
+			</td>
+		</tr>
+		
+		<tr id="singleColumn-searchbar">
+		<!-- search Bar -->
+            <td  id="row-tabs" class="tab_bar" colspan="2">&nbsp;
+                
+            </td>
+			<!-- search Bar end -->
+		</tr>
+		<!-- Page -->
+        <tr id="main">
+			
+			<!-- Page Content -->
+			<td id="content">
+				
+				<!-- Page Scrollable Area -->
+				<div id="scrollable" class="predictLMS">	
+               
+                <div id="right-pannel">
+                <br />
+                <div id="resultBox" class="search_box_result">
+                    <h2 class="box_header">$!{context.survey.survey.name}</h2>
+					#set($idx=0)
+					#lrnPreviewSections(${context.survey.surveySectionVO} false)
+
+                    <!-- button-div -->
+                    <div class="managerBtn">
+                        <div class="btn-left2">
+                            <!--<input type="button" value="Cancel" class="btn-submit_n71" title="Cancel" name="imagesubmit1" align="top" onClick="cancelform();" />-->
+                            <a class="button" onClick="cancelform();"><span class="button">Cancel</span></a>
+                        </div>
+                       
+                        <div class="btn-right1">
+                           
+                                <!--<input type="button" value="Finish" class="btn-submit_n71" title="Finish" name="imagesubmit1" align="top" onClick="finishSurvey();"/> -->
+                                <a class="button" onClick="finishSurvey();"><span class="button">Finish</span></a> 
+                           
+                        </div>
+                       
+                        <div class="btn-right1">
+                            <!--<input type="button" value="Clear All" class="btn-submit_n71" title="Clear All" name="imagesubmit1" align="top"/>-->
+                            <a class="button" onClick="document.displaySurveyForm.reset();"><span class="button">Clear All</span></a>
+                        </div>
+                       
+                    </div>
+                    <!-- scrollable-div -->
+        		</div>
+
+        <div class="manager-bottom-space"></div>
+                </div>
+
+                </div>
+            	<!-- END: Page Scrollable Area -->				
+            </td>
+        </tr>
+		<!-- END: Page-->
+		<tr> <!-- Footer BLOCK -->
+        	<td id="footer" colspan="2">
+                #parse("snippets/learnerNewFooter.vm")
+        	</td>
+		</tr>
+	</table>
+		
+    </form>
+	<div id="fileRequired" style="display:none">
+		<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+		<div class="alert_message_box_icon"></div>
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.survey.preview.alert.required.file")</div>
+		<br style="clear:both" />
+		<div class='buttons'>
+			<div class='no simplemodal-close'>
+				<a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+			</div>
+		</div>
+    </div>
+	<div id="selectFile" style="display:none">
+		<div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+		<div class="alert_message_box_icon"></div>
+		<div class="alert_message_box_text">$brander.getBrandElement("lms.survey.preview.alert.select.file")</div>
+		<br style="clear:both" />
+		<div class='buttons'>
+			<div class='no simplemodal-close'>
+				<a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+			</div>
+		</div>
+    </div>
+</body>
+</html>

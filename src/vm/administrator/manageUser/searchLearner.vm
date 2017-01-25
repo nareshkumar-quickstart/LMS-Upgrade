@@ -1,0 +1,386 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script language="javascript" type="text/javascript">
+
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function confirmB2C(message, callback) {
+        $('#b2bConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+        function trim(stringToTrim) {
+                return stringToTrim.replace(/^\s+|\s+$/g,"");
+        }
+
+        function ltrim(stringToTrim) {  // trim functionality
+                return stringToTrim.replace(/^\s+/,"");
+        }
+
+        function rtrim(stringToTrim) {  // trim functionality
+                return stringToTrim.replace(/\s+$/,"");
+        }
+
+        function FormSubmitNew(buttonclick) {
+                var firstName= trim( ltrim( rtrim( document.searchManageForm.firstname.value ) ) );
+                var lastName= trim( ltrim( rtrim( document.searchManageForm.lastname.value ) ) );
+                var email= trim( ltrim( rtrim( document.searchManageForm.emailaddress.value ) ) );
+                // test for empty string
+                if( firstName.length == 0 &&  lastName.length == 0  &&  email.length == 0 )
+                {
+                        $('#blankSearch').modal({close:false,position: ["40%",]});
+                        return false;
+                }
+                // test for Customer selected yet or not 
+                else if ( #if($adminSelectedEntityType != 'CUSTOMER') true #else false #end )
+                {
+                        $('#customerSelect').modal({close:false,position: ["40%",]});
+                        return false;
+                }
+                document.getElementById('action').value=buttonclick;
+                document.searchManageForm.submit();
+                return true;
+        }
+
+    function FormSubmit(buttonclick) {
+        document.getElementById('action').value=buttonclick;
+        document.searchManageForm.submit();
+    }
+
+    function deleteLearners(){
+        if ($("INPUT[type='checkbox'][name='selectedLearners']:checked").length>0) {
+            confirm("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")", function () {
+                document.deleteManageForm.action.value='delete';
+                document.deleteManageForm.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+
+    function checkCustomerType(){
+         #if (($!{context.b2cRecord}>=1) && (${adminSelectedCustomer.customerType} == 'b2c'))
+            confirmB2C("", function () {
+                window.location.href="adm_addLearner.do";
+                return true;
+            });
+         #else
+             window.location.href="adm_addLearner.do";
+             return true;
+         #end
+    }
+
+    $(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+        $("INPUT[type='checkbox'][name='selectedLearners']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='selectedLearners']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='selectedLearners']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+#set($ssn=$!{request.getSession(true)})
+#set($pa = $ssn.getAttribute("prevAction"))
+</script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+
+    #parse("snippets/adminHeader.vm")
+	</td></tr>
+	
+    <!-- header-end -->
+    <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- left-pannel-content -->
+
+        #parse("snippets/adminLearnerLeftMenu.vm")
+		</table></td>
+		
+        <!-- left-pannel-content-end -->
+        <TD id="content" >
+	<div id="scrollable">
+        #set($totCount=$context.members.size())
+        #if($context.customerSelection == "NOT SET")
+                <!-- error-box -->
+                <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.customerSelect")</div>
+                        </div>
+                </div>
+                <!-- error-box -->
+        #end
+
+            <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-users">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.manageUser.searchLearner.ManageEnrollments")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.manageUser.searchLearner.caption.subtitle")</div>
+			</td>
+		    </tr>
+		</table>            
+            <!-- Logo+Manage-User-end -->
+
+            <div id="resultBox" class="content-Block-new"><!-- Search resultBox -->
+                <div id="searchBox" class="visible"><!-- Search input window -->
+                    <form name="searchManageForm" id="searchManageForm" method="post" action="adm_manageLearners.do">
+                        <div style="padding: 5px">$brander.getBrandElement("lms.manageUser.searchLearner.caption.searchUsers")</div>
+                        <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.manageUser.searchLearner.caption.firstName") </div> <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}" name="firstname" value="$!{context.firstName}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                        <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.manageUser.searchLearner.caption.lastName") </div><div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}"  name="lastname"value="$!{context.lastName}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                        <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.manageUser.searchLearner.caption.emailAddress") </div><div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('advanceSearch');}" name="emailaddress" value="$!{context.emailAddress}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                        <div style="padding: 5px;margin-left:40px;margin-right:40px;height:20px">
+                        <a class="button" onClick="showSearchBox(this);"><span class="button">Cancel</span></a>
+                        <a class="button" onClick="return FormSubmitNew('advanceSearch');"><span class="button">Search</span></a>
+                        </div>
+                        <input id="action" type="hidden" name="action" value="advanceSearch" />
+                        <input id="direction" type="hidden" name="direction" value="prev" />
+                        <input id="pageIndex" type="hidden" name="pageIndex" value="0" />
+                    </form>
+                </div><!-- Search input window -->
+
+                <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                    <div style="float:left; height:23px;">
+                        <div style="float:left; margin-top:2px;">
+						  <a onClick="return checkCustomerType();" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Add User</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:2px;">
+						  <a onClick="deleteLearners($totCount);" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Delete User</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                    </div>
+
+                    <form name="nextPrevManageForm" method="post" action="adm_manageLearners.do">
+                        <div class="result_left_side">
+						<div style="float:left; margin-top:2px;">
+						  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Search</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+                        #if ($!{context.totalRecord} > 0)
+                            <div id="showAll" class="icon_all" onClick="location.href='?action=allSearch&direction=prev&pageIndex=0&sortBy=$context.sortBy&sortDirection=$context.sortDirection';" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                        #end
+                            <!-- Next Icon -->
+                            #if($!{context.totalRecord}==-1)
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                            #else
+                                #if($!{context.recordShowing} == $!{context.totalRecord})
+                                <div id="goNext" class="icon_disabled">&nbsp;</div>
+                                #else
+                                <div id="goNext" onClick="location.href='?action=$!{context.searchType}&direction=next&pageIndex=$!{context.pageNo}&sortBy=${context.sortBy}&sortDirection=${context.sortDirection}';"class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
+                                #end
+                                <!-- Back Icon -->
+                                #if ($!{context.pageNo} == 0)
+                                <div id="goBack" class="icon_disabled">&nbsp;</div>
+                                #else
+                                <div id="goBack" onClick="location.href='?action=$!{context.searchType}&direction=prev&pageIndex=$!{context.pageNo}&sortBy=${context.sortBy}&sortDirection=${context.sortDirection}';" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div>
+                                #end
+                            #end
+                            <!-- Showing Results -->
+                            #set($lPpageNum =$!{context.pageNo} *10 + 1)
+                            #set($rPpageNum =$!{context.recordShowing})
+                            <div id="resultDescription" class="box_description">Showing #if($!{context.totalRecord}<=0) 0 - 0 of 0 #else $lPpageNum - $rPpageNum of $!{context.totalRecord} #end</div>
+                        </div>
+                    </form>
+                </div><!-- Result Header End -->
+
+                #if( (${context.sortDirection}=="0" && $pa=="nextPrev") || (${context.sortDirection}=="1" && $pa=="sort") )
+                        #set($dirSign = "up")
+                #elseif( (${context.sortDirection}=="0" && $pa=="sort") || (${context.sortDirection}=="1" && $pa=="nextPrev") )
+                        #set($dirSign = "down")
+                #end
+                <form name="deleteManageForm" id="deleteManageForm" method="post" action="adm_manageLearners.do" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+                    <!-- Result Subheader End -->
+                    <!-- Search Result Start -->
+                    <div id="searchResult">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
+                            <tr bgcolor="#efefef">
+                                <td class="check_box_top" width="17"><input type="checkbox" id="chkAll" name="selectedLearner" /></td>
+                                <td class="box_subheader"><div onClick="location.href='?action=sort&direction=${context.direction}&pageIndex=$!{context.pageNo}&sortBy=firstName&sortDirection=${context.sortDirection}';" ><div id="firstNameSort" #if($request.getParameter("sortBy")=="firstName" && $dirSign=="up") class="icon_up" #elseif($request.getParameter("sortBy")=="firstName" && $dirSign=="down") class="icon_down" #end ></div>First Name</div></td>
+                                <td class="box_subheader"><div onClick="location.href='?action=sort&direction=${context.direction}&pageIndex=$!{context.pageNo}&sortBy=lastName&sortDirection=${context.sortDirection}';"><div id="lastNameSort"#if($request.getParameter("sortBy")=="lastName" && $dirSign=="up") class="icon_up" #elseif($request.getParameter("sortBy")=="lastName" && $dirSign=="down") class="icon_down" #end ></div>Last Name</a></td>
+                                <td class="box_subheader"><div onClick="location.href='?action=sort&direction=${context.direction}&pageIndex=$!{context.pageNo}&sortBy=username&sortDirection=${context.sortDirection}';"><div id="userNameSort"#if($request.getParameter("sortBy")=="username" && $dirSign=="up") class="icon_up" #elseif($request.getParameter("sortBy")=="username" && $dirSign=="down") class="icon_down" #end ></div>UserName</a></td>
+                                <td class="box_subheader"><div onClick="location.href='?action=sort&direction=${context.direction}&pageIndex=$!{context.pageNo}&sortBy=accountNonLocked&sortDirection=${context.sortDirection}';"><div id="accountNonLockedSort"#if($request.getParameter("sortBy")=="accountNonLocked" && $dirSign=="up") class="icon_up" #elseif($request.getParameter("sortBy")=="accountNonLocked" && $dirSign=="down") class="icon_down" #end ></div>Account Locked</td>
+                                <td class="check_box_top" width="18" style="border-right:none;">&nbsp;</td>
+                            </tr>
+                            #if ($!{context.totalRecord} > 0)
+                            #foreach($learner in ${context.members})
+                            #if($velocityCount%2==0)
+                            #set($alternate="row_2")
+                            #else
+                            #set($alternate="row_1")
+                            #end
+                            <tr>
+                                <td class="$alternate" width="17"><input type="checkbox" name="selectedLearners" value="${learner.id}" id="chk$velocityCount" /></td>
+                                <td class="$alternate"><a href="adm_editlearner.do?Id=${learner.id}" >#dotPaddingWithOutTitle($!{learner.firstName}, 25)</a></td>
+                                <td class="$alternate"><a href="adm_editlearner.do?Id=${learner.id}" >#dotPaddingWithOutTitle($!{learner.lastName}, 25)</a></td>
+                                <td class="$alternate">#dotPaddingWithOutTitle($!{learner.username} 35)</td>
+                                <td class="$alternate">#if(${learner.accountNonLocked})No #else Yes #end</td>
+                                <td class="$alternate" width="18" style="border-right:none;" nowrap=true>
+                                        <a href="adm_editlearner_changegroup.do?learnerId=${learner.learner.id}&backToSearch=true'" >
+                                        $brander.getBrandElement("lms.manageUser.searchLearner.caption.changeGroup")
+                                        </a>
+                                </td>
+                            </tr>
+                            #end
+                            #else
+                            <tr>
+                                <td colspan="6" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                    <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                </td>
+                            </tr>
+                            #end
+                        </table>
+                        <input id="action" type="hidden" name="action" value="delete" />
+                    </div>
+                </form>
+
+            </div><!-- Search resultBox -->
+
+            <!-- space -->
+            <div class="manager-bottom-space"></div>
+            <!-- space -->
+
+        </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+
+    <!-- tooltip -->
+    
+    <!-- tooltip -->
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+</div>
+
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+<div id="blankSearch" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.blankSearch")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+<div id="customerSelect" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.customerSelect")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+</div><!-- Alert Message Box Ends -->
+
+<div id='b2bConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">Current customer is B2C type having one learner. It will be changed to B2B type after this action. Do you want to continue?</div>
+    <br style="clear:both" />
+     <div class='buttons'>
+            <div class='simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+</div>
+
+</body>
+</html>

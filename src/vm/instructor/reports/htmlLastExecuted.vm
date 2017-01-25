@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/reportAccreditationHead.vm")
+<link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/css_search_net.css" />
+<script language="javascript">
+/*
+to resize the screen
+*/
+function reportResize()
+{
+var container = document.getElementById("reportTableContainer");
+
+ var myWidth = 0, myHeight = 0;
+ if( typeof( window.innerWidth ) == 'number' ) {
+   //Non-IE
+   myWidth = window.innerWidth;
+   myHeight = window.innerHeight;
+ } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+   //IE 6+ in 'standards compliant mode'
+   myWidth = document.documentElement.clientWidth;
+   myHeight = document.documentElement.clientHeight;
+ } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+   //IE 4 compatible
+   myWidth = document.body.clientWidth;
+   myHeight = document.body.clientHeight;
+ }
+//alert( 'Width = ' + myWidth );alert( 'Height = ' + myHeight );
+
+var crop = (165 + 87 )/myHeight ; // 165+87 for geader and top header size and other spaces 
+//alert( 'Height = ' + myHeight );alert( 'Crop = ' + crop );
+var reqPercent = 1-crop;
+var newHeight = reqPercent * myHeight;
+//alert( 'newHeight = ' + newHeight );
+
+var container = document.getElementById("reportTableContainer");
+container.style.height = newHeight+'px';
+}
+ 
+</script>
+</head>
+<body onLoad="reportResize()">
+<div id="main-container">
+    #set($currentReport=$reportForm.getCurrentReport())
+    <!-- header -->
+    #parse("snippets/instructorReportHeader.vm")
+    <!-- header-end -->
+
+    <!-- TopBar Start -->
+    <div id="topBar" class="Block-Contain-header-report">
+        <div id="reportlistheading" class="master-div">
+            <div name="eTopMenu" class="menu-text">REPORT LIST</div>
+        </div>
+        <div class="master-div2">
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3-position")"></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=browseReports')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")"><b>$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</b></a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=reportFieldMenu')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=displayReportFilters')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a></div></div>
+            <div class=""></div>
+        </div>
+    </div>
+    <!-- TopBar End -->
+
+    <div id="content2r">
+    <!-- content-area -->
+
+        <!-- left-pannel-content -->
+        #parse("snippets/instructorReportLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+
+        <!-- right-pannel-content -->
+        <!-- <div id="right-pannel"> -->
+
+        <div id="right-pannel-for-report" class="right-pannel-report-last-executed">
+            <!-- for center-align-div -->
+            <div class="right-pannel-report">
+                <!-- Logo+Manage-User -->
+                <div class="logoContainer">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+                    <div id="e4" class="reportTitleWithButtonContainer">
+                        <div id="titleHolder" class="courseTitle1" >#dotPadding($!{currentReport.title},26)</div>
+                        <div class="courseDetails">$!{currentReport.description}</div>
+                    </div>
+                    <div class="btn-right3-new"><a class="button" onclick="return window.print();"><span class="button">Print</span></a></div>
+                    <div class="btn-right3-new"><a class="button" onclick="document.location.href='#springUrl('/ins_ManageReports.do?method=browseReports')';"><span class="button">Back</span></a></div>
+                </div>
+                <!-- Logo+Manage-User-end -->
+
+                <!-- User-list -->
+                <div id="reportTableContainer" style="overflow:auto;width:105%;height:368px;">
+                $htmlData
+                </div>
+            </div>
+            <!-- for center-align-div -->
+        </div>
+
+    <!-- content-area-end -->
+    </div>
+
+    <!-- footer -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminFooter.vm")
+    #else
+        #parse("snippets/instructor/instructorFooter.vm")
+    #end  
+    <!-- footer-end -->
+</div>
+</body>
+</html>

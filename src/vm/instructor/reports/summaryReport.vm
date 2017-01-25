@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructor/instructorHead.vm")
+<script type="text/javascript">
+ function submitLogoContainer(value){
+        document.frmLogoContainer.method.value=value;
+        document.frmLogoContainer.submit();
+    }
+	$(document).ready(function(){
+        $('#frame_body').height($(window).height() - ($('#header').height()+$('#tabBar').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#frame_body').height()) {
+            $('#right-pannel').height($('#frame_body').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+        });
+</script>
+</head>
+<body>
+#set($currentReport=$reportForm.getCurrentReport())
+<div id="main-container">
+
+        #parse("snippets/instructorHeader.vm")
+
+    <!-- TopBar Start -->
+    <div id="tabBar" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header-report")">
+        <div id="reportlistheading" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div")">
+            <div name="eTopMenu" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")">$brander.getBrandElement("lms.reports.summaryReport.caption.reportList")</div>
+        </div>
+        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div2")">
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3-position")"></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=browseReports')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")"><b>$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</b></a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=reportFieldMenu')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a></div></div>
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.master-div3")"><div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.menu-text")"><a href="#springUrl('/ins_ManageReports.do?method=displayReportFilters')" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.sub-top-nav")">$brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a></div></div>
+            <div class=""></div>
+        </div>
+    </div>
+    <!-- TopBar End -->
+
+    <div id="frame_body"><!-- content-area -->
+        <!-- left-pannel-content -->
+        #parse("snippets/instructorReportLeftMenu.vm")
+        <!-- left-pannel-content-end -->
+
+        <div id="right-pannel" class="scrollable"><!-- right-pannel-content -->
+            <!-- for center-align-div -->
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.right-pannel-report")">
+
+            <!-- form for logo container -->
+            <form name="frmLogoContainer" action="ins_ManageReports.do" method="POST">
+                <input type="hidden" name="method" value="" >
+                <!-- Logo+Manage-User -->
+                  <div class="logoContainer" id="logomainContainer">
+                    <div id="e3" class="reportLogo">&nbsp;</div>
+					<div id="titleHolder" class="courseTitle1" > $brander.getBrandElement("lms.reports.summaryReport.topHeading")</div>
+                    <div id="detailsHolder">  $brander.getBrandElement("lms.reports.summaryReport.description")</div>
+                    #if($null.isNotNull($currentReport)) <div class="btn-right3" onClick="submitLogoContainer('setFavouriteReport');">#if($currentReport.favorite)<img src="brands/default/en/images/star-acti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteRemove")" />#else<img src="brands/default/en/images/star-inacti.gif" title="$brander.getBrandElement("lms.reports.summaryReport.title.favouriteAdd")"/>#end</div>#end
+                     #if($null.isNotNull($currentReport)) <div class="btn-right3"><a class="button" onclick="submitLogoContainer('selectReportForEdit');"><span class="button">&nbsp;&nbsp; $brander.getBrandElement("lms.reports.summaryReport.save.copy.and.edit") &nbsp;&nbsp;</span></a></div> #end
+                </div>
+                <!-- Logo+Manage-User-end -->
+            </form>
+
+            <!-- User-profile -->
+#if($null.isNotNull($currentReport)) 
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                    <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$currentReport.title</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                    <!-- s -->
+                    <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                    <!-- 1 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                        <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table1Description")</div>
+                    </div>
+                    <!-- 2 -->
+                    <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                    <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-btn-row")">
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><a class="button" onclick="submitLogoContainer('executeReport');"><span class="button">Execute Report</span></a></div>
+                    </div>
+                    <!-- 0 -->
+                    <!-- space -->
+                    
+                    <!-- space -->
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+#else
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                No Reports Found
+            </div>
+            <!-- User-profile-end -->
+#end
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+            
+#set($lastExecutionSummary=$reportForm.getCurrentReportLastExecutionSummary())
+
+#if($null.isNull($lastExecutionSummary))
+                        <!-- No Execution Summary -->
+#else
+            <!-- User-profile -->
+            <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.content-Block")">
+                <div id="e7a" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Block-Contain-header")">
+                    <div id="e8" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2ViewResults") |<span class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-Containerheaderleft3")"> $brander.getBrandElement("lms.reports.summaryReport.caption.table2LastRunOn") $lastExecutionSummary.executionDate</span></div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.Search-inputfield-box4")">
+                    <!-- s -->
+                    <div id="e12" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row1a")"><!-- using for space --></div>
+                    <!-- 1 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-content-row")">
+                        <div class="">$brander.getBrandElement("lms.reports.summaryReport.caption.table2Description")</div>
+                    </div>
+                    <!-- 2 -->
+                    <div id="e13" class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.search-btn-row")">
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsHTML');" src="brands/default/en/images/ico-html.gif" width="35" height="41" alt="" /></div>
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2HTML")</div>
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2")"><img onClick="submitLogoContainer('displayReportResultsCSV');" src="brands/default/en/images/ico-excel.gif" width="35" height="41" alt="" /></div>
+                        <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.btn-left2a")">$brander.getBrandElement("lms.reports.summaryReport.caption.table2EXCEL")</div>
+                    </div>
+                    <!-- 0 -->
+                    <!-- space -->
+                    <div class="$brander.getBrandElement("lms.reports.summaryReport.cssClass.manager-bottom-space")"></div>
+                    <!-- space -->
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- User-profile-end -->
+            <!-- space -->
+            <div class="manager-bottom-space"> </div>
+            <!-- space -->
+#end
+            </div><!-- for center-align-div -->
+
+        </div><!-- right-pannel-content-end -->
+
+    </div><!-- content-area-end -->
+
+    <!-- footer -->
+    #parse("snippets/instructor/instructorFooter.vm")
+    <!-- footer-end -->
+</div>
+
+</body>
+</html>

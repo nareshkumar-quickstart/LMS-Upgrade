@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/learnerNewHead.vm")
+<head>
+
+<script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+<script language="javascript" type="text/javascript" src="javascript/360js.js"></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type='text/javascript' src='javascript/js_survey.js' ></script>
+<script language="javascript" type="text/javascript"></script>
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+
+
+        
+<script type='text/javascript'>
+
+	$(document).ready(function() {
+        $('#sideBar').height($('.scrollable').height());
+		
+    });
+
+  function confirm(message, callback) {
+                $('#deleteConfirmation').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message').append(message);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+        }
+
+        function search() {
+        document.getElementById('searchType').value="advancedSearch";
+        document.courseSearchForm.submit();
+        return true;
+    }
+
+    function onAllPage(view) {
+        document.getElementById('pageIndex').value=0;
+        document.getElementById('gridAction').value="search";
+        document.getElementById('showAll').value="true";
+        if(view == '0') {
+                document.getElementById('gridAction').value="searchCourses";
+        } else {
+                document.getElementById('gridAction').value="showCoursesView";
+        }
+        document.nextPrevManageForm.submit();
+        return true;
+    }
+
+    function onNextPage(nextIndex, view){
+        document.getElementById('pageIndex').value=nextIndex;
+        document.getElementById('gridAction').value="showCoursesView";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value;
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value=parseInt(items) +  parseInt(itemNo);
+        if(view == '0') {
+                document.getElementById('gridAction').value="searchCourses";
+        } else {
+                document.getElementById('gridAction').value="showCoursesView";
+        }
+        document.nextPrevManageForm.submit();
+        return true;
+    }
+
+    function onPreviousPage(previousIndex, view){
+        document.getElementById('pageIndex').value=previousIndex;
+        document.getElementById('gridAction').value="showCoursesView";
+        document.getElementById('showAll').value="false";
+        var itemNo= document.getElementById('pageCurrIndex').value;
+        var items=$pager.itemsPerPage;
+        document.getElementById('pageCurrIndex').value= parseInt(itemNo) - parseInt(items);
+        if(view == '0') {
+                document.getElementById('gridAction').value="searchCourses";
+        } else {
+                document.getElementById('gridAction').value="showCoursesView";
+        }
+        document.nextPrevManageForm.submit();
+        return true;
+    }
+
+    function sortLearner(sortColumnIndex, sortDirection, showAll, published, currentIndex){
+        document.getElementById('sortColumnIndex').value=sortColumnIndex;
+        document.getElementById('sortDirection').value=sortDirection;
+        document.getElementById('gridShowAll').value=showAll;
+        document.getElementById('gridPageIndex').value=currentIndex;
+        if(published == '0') {
+                document.getElementById('lastAction').value="searchCourses";
+        } else {
+                document.getElementById('lastAction').value="showCoursesView";
+        }
+        document.surveyCoursesForm.submit();
+    }
+
+   
+	 function setCourseSelection(checkbox,id) {
+            var tr=checkbox.parentNode.parentNode;
+            var tdarr=$(tr).find("td");
+            if (checkbox.checked) {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].style.background="#E9F9FE";
+                }
+            } else {
+                for(i=0;i<tdarr.size();i++){
+                    tdarr[i].removeAttribute("style");
+                }
+            }
+                document.getElementById(id).value = checkbox.checked;
+                
+               
+        }
+
+    function saveSurveyCoursesAction(){
+        document.getElementById('lastAction').value = 'updateSurveyCoursesAndDisplaySurveys';
+        document.surveyCoursesForm.submit();
+        return true;
+    }
+
+    function cancelSurveyCoursesAction(){
+        document.getElementById('lastAction').value = 'cancelSurveyCoursesAndDisplaySurveys';
+        document.surveyCoursesForm.submit();
+        return true;
+    }
+
+    function reset() {
+        var searchType = document.getElementById('searchType').value;
+        if(searchType == 'simpleSearch'){
+            document.getElementById('simpleSearchCriteria').value = '';
+        }else{
+            document.getElementById('searchCourseName').value = '';
+            document.getElementById('searchCourseId').value = '';
+            document.getElementById('searchKeyword').value = '';
+        }
+    }
+	
+
+    function selectAllCheckBoxes(initial,countCheckBoxes) {
+        var objCheckAll=document.getElementById("chkAll");
+        if (objCheckAll.checked) {
+                for(var i = initial; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=true;
+                        var hiddenid = "deleteableCourses[" + i + "]";
+                        var objHiddenCheckBox=document.getElementById(hiddenid);
+                        objHiddenCheckBox.value = true ; 
+                        changeRowColor(objCheckBox,hiddenid);
+                }
+        }else{
+                for(var i = initial; i < countCheckBoxes; i++){
+                        var objCheckBox=document.getElementById("chk"+i);
+                        objCheckBox.checked=false;
+                        var hiddenid = "deleteableCourses[" + i + "]";
+                        var objHiddenCheckBox=document.getElementById(hiddenid);
+                        objHiddenCheckBox.value = false ; 
+                        changeRowColor(objCheckBox,hiddenid);
+                }
+        }
+    }
+
+    function changeRowColor(checkbox) {
+        var tr=checkbox.parentNode.parentNode;
+        var tdarr=$(tr).find("td");
+        if (checkbox.checked) {
+                for(i=0;i<tdarr.size();i++){
+                        tdarr[i].style.background="#E9F9FE";
+                }
+        } else {
+                for(i=0;i<tdarr.size();i++){
+                        tdarr[i].removeAttribute("style");
+                }
+        }
+    }
+	
+	function deleteCourses(buttonclick,countCheckBoxes,first,end) {
+	
+                if ($("INPUT[type='checkbox'][name='deleteableCourses']:checked").length>0) {
+                       confirm("$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.sure")", function () {
+                                
+								document.getElementById('lastAction').value=buttonclick;
+								document.getElementById('pageEndIndex').value=end;
+								document.getElementById('pageFirstIndex').value=first;
+								
+                                document.surveyCoursesForm.submit();
+                        });
+                } else {
+                        $('#selectLearner').modal({close:false,position: ["40%",]});
+                }
+        }
+</script>
+</head>
+
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+    <!-- header -->
+    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+        #parse("snippets/adminHeader.vm")
+    #else
+        #parse("snippets/managerHeader.vm")
+    #end
+    <!-- header-end -->
+	</td></tr>
+	
+    <td  id="row-tabs" class="tab_bar" colspan="2">
+     <table width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody><tr>
+                <td width="194"><div class="tab_blank"></div></td>
+                <td>&nbsp;</td>
+                <td width="656">
+				#springBind("manageSurveyForm.sid")
+                      <a href="adm_manageSyrvey.do?method=showSurveyInfoView&sid=$status.value"><div class="tab">$brander.getBrandElement("lms.assignEnrollmentSummary.caption.header")</div></a>
+                     <a href="adm_manageSyrvey.do?method=questionView&sid=$status.value"><div class="tab">$brander.getBrandElement("lms.administrator.searchMember.caption.questions")</div></a>
+                     <a href="adm_manageSyrvey.do?method=showCoursesView&sid=$status.value"><div class="tab_selected" style="width:100px;border-right:1px solid #DADADA">$brander.getBrandElement("lms.manageUser.searchLearner.caption.Courses")</div></a>
+                     <!-- commented as per discussion with faisal <a href="adm_manageSyrvey.do?method=showManageFlags&sid=$status.value"><div class="tab">$brander.getBrandElement("lms.administrator.searchMember.caption.flags")</div></a>-->
+                     <!--<a href="adm_suggestedTraining.do?sid=$status.value"><div class="tab" style="width:150px;border-right:1px solid #DADADA">$brander.getBrandElement("lms.administrator.searchMember.caption.suggestedtraining")</div></a>-->
+                           </td>
+                <td>&nbsp;</td>
+            </tr>
+    </tbody></table>
+</td>
+    <!-- Body Start -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+        #parse("snippets/compliance/complianceLeftMenu.vm")
+		</table>
+	</td>
+	
+<TD id="content" >
+	<div id="scrollable">
+	#springBind("manageSurveyForm.*")
+            #if($status.error)
+                <!-- error-box -->
+                <div id="message_box">
+                    <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                    #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                        </div>
+                    #end
+                </div>
+                <!-- error-box -->
+            #end
+
+                        <!-- <div id="delete_message_box" style="display:none;">
+                            <img id="close_message" onClick="document.getElementById('delete_message_box').style.display='none';" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$brander.getBrandElement("lms.survey.addQuestion.caption.deleteQuestionErrorText")</div>
+                            </div>
+                        </div> -->
+
+              <!-- Logo+Manage-User -->
+	<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="icon_surveys">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.surveys.editsurveycourses.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.surveys.editsurveycourses.caption.description")</div>
+			</td>
+		    </tr>
+		</table>
+            <!-- Logo+Manage-User-end -->
+		#springBind("manageSurveyForm.locked")
+                #set($surveyLocked = $!{status.value})
+                #springBind("manageSurveyForm.published")
+                #set($surveyPublished = $!{status.value})
+
+            <!-- Search Result Start -->
+            <div id="resultBox" class="search_box_result">
+            <!-- Result Header Start -->
+                        <form  name="courseSearchForm" action="adm_manageSyrvey.do" method="POST" >
+                        <input type="hidden" name="method" value="searchCourses"/>
+                        <div id="searchBox" class="visible">
+                            $brander.getBrandElement("lms.manageUser.searchLearner.caption.SearchCourseAndGroup")<br/><br/>
+                            #springBind("manageSurveyForm.searchCourseName")
+                            <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.mycourses.courseName")</div> <div style="float:left"><input type="text" id="searchCourseName" onKeyPress="doEnter(event);" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px;" class="search_field" /></div><br style="clear:both" /></div>
+                            #springBind("manageSurveyForm.searchCourseID")
+                            <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.manageUser.searchLearner.caption.courseId")</div> <div style="float:left"><input type="text" onKeyPress="doEnter(event);" id="searchCourseId" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                            #springBind("manageSurveyForm.searchKeyword")
+                            <div style="padding: 5px"><div style="width:75px; float:left">$brander.getBrandElement("lms.survey.caption.Keywords")</div> <div style="float:left"><input type="text" onKeyPress="doEnter(event);"  id="searchKeyword" name="${status.expression}" value="$!{status.value}" style="font-size:9px; width:170px" class="search_field" /></div><br style="clear:both" /></div>
+                            <div onClick="search()" style="float:right; margin-top:2px; margin-right:15px;">
+                                <a class="button"><span class="button">Search</span></a>
+                                    <input id="action" type="hidden" name="action" value="search" />
+                                    <input id="searchType" type="hidden" name="searchType" value="${searchType}" />
+                                    <input type="hidden" id="searchpage" name="_page" value="4" />
+                            </div>
+                            <div style="float:right; margin-top:2px; ">
+                                <a class="button" onClick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.manageUser.viewOrganizationGroup.caption.Cancel")</span></a>
+                            </div>
+                        </div>
+                    </form>
+
+                        <!-- User-list -->
+              <div id="searchResult">
+                            <form name="nextPrevManageForm" method="post" action="adm_manageSyrvey.do">
+                    <input type="hidden" name="method" id="gridAction"/>
+                    
+                        #springBind("manageSurveyForm.surveyCourses")
+						#if ($!{status.value})
+                                #set($totCount=$!{status.value.size()})
+                        #else
+                                #set($totCount=0)
+                        #end
+                        $pager.setItems($!{status.value})
+                        #set($totalCount = $pager.total)
+                        #if($pager.hasItems())
+                            #set($pageFirstIndex = $pager.firstIndex)
+                            #set($pageLastIndex = $pager.lastIndex)
+                            #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                            #set($currentPageCount = $pageLastIndex + 1)
+                            #set($pageCurrIndex = $pager.index)
+                        #else
+                            #set($pageFirstIndex = 0)
+                            #set($pageLastIndex = 0)
+                            #set($currentPageSize = 0)
+                            #set($currentPageCount = 0)
+                            #set($pageCurrIndex = 0)
+                        #end
+
+                        <input type="hidden" id="pageIndex" name="pageIndex" value="0" />
+                        <input type="hidden" id="showAll" name="showAll" value="false" />
+                        <input type="hidden" id="paging" name="paging" value="" />
+                        <input id="gridAction" type="hidden" name="action" value="search" />
+                        <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
+                        <div id="resultHeader" class="box_header">
+                               <div style="float:left; height:23px;">
+
+                    <!-- Result Heading -->
+							<div style="float:left; margin-top:3px;">
+							  <a onClick="javascript:window.location='adm_manageSyrvey.do?method=addCourseView';" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.addNewSurvey.caption.addCourse")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							<div style="float:left; margin-top:3px;">
+							  <a onClick="return deleteCourses('deleteCourses',$totCount,$pageFirstIndex,$pageLastIndex)" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.addNewSurvey.caption.deleteCourse")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+                        </div>
+                                <!-- All Icon -->
+                               #if($totalCount > 10)
+								<div id="showEach" class="icon_all" onClick=#if($!{context.methodName} == 'searchCourses') "return onAllPage('0');" #else "return onAllPage('1');" #end value="Search" name="_target4" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+						#end
+						<!-- Next Icon -->
+						#if($pager.nextIndex)
+								<div id="goNext" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();" value="Search" name="_target4" onclick=#if($!{context.methodName} == 'searchCourses') "return onNextPage($pager.nextIndex,'0');" #else "return onNextPage($pager.nextIndex,'1');" #end ><img src="$brander.getBrandElement("lms.pixel.arrow-forwardGif")" width="6" height="10"  title="Next Page" /></div>
+						#else
+								<div id="goNext" class="icon_disabled">&nbsp;</div>
+						#end
+						<!-- Back Icon -->
+						#if ($pager.prevIndex)
+								<div id="goBack" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip(); "value="Search" name="_target4" onclick=#if($!{context.methodName} == 'searchCourses') "return onPreviousPage($pager.prevIndex,'0');" #else "return onPreviousPage($pager.prevIndex,'1');" #end ><img src="$brander.getBrandElement("lms.pixel.arrow-reviewGif")" width="6" height="10"  title="Previous Page"/></div>
+						#else
+								<div id="goBack" class="icon_disabled">&nbsp;</div>
+						#end
+									
+                                <div id="resultDescription" class="box_description">$brander.getBrandElement("lms.manager.manageTrainingPlans.caption.Showing") $!pager.pageDescription </div>
+                            </div>
+			    </form>
+			    <form name="surveyCoursesForm" action="adm_manageSyrvey.do" method="POST" style="margin-bottom:0; margin-top:-1px; margin-left:0;">
+
+                             <input type="hidden" id="gridPageIndex" name="pageCurrIndex" value="" />
+                             <input type="hidden" name="method" id="lastAction" value=""/>
+                             <input type="hidden" name="pageEndIndex" id="pageEndIndex" value=""/>
+                             <input type="hidden" name="pageFirstIndex" id="pageFirstIndex" value=""/>
+                             <input type="hidden" id="gridShowAll" name="showAll" value="" />
+                              <input type="hidden" id="sortDirection" name="sortDirection" value="" />
+                              <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="" />
+
+                     #if($currentPageSize > 0)
+                                 #set ($quoteStr = '"')
+                                 #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field"))
+                                 #set ($inputTextCSS = "class=$quoteStr$cssClass$quoteStr")
+				 #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field1"))
+				 #set ($inputSelectCSS = "class=$quoteStr$cssClass$quoteStr")
+				 #set ($cssClass = $brander.getBrandElement("lms.manageUser.addNewLearner.mandatoryMark.text"))
+				 #set ($errorCSS = "class=$quoteStr$cssClass$quoteStr")
+                           
+                            
+                                <div id="searchResult"><!-- searchResult -->
+                                <table width="100%"  cellpadding="0" cellspacing="0" style="border-top:1px;">
+                                    <tr bgcolor="#efefef">
+				    #if($surveyPublished == "false" && $surveyLocked == "false")
+                                <td class="check_box_top" width="17px"><input type="checkbox" id="chkAll" onClick="selectAllCheckBoxes($pageFirstIndex,$pageLastIndex+1);" name="selectAll"/></td>
+                                #end
+                                #if($!{context.methodName} == 'searchCourses')
+                                <td class="box_subheader"><div onClick=#if(${context.sortDirection} == 0) "sortLearner('0','1','${context.showAll}','0',$pageCurrIndex);" #else "sortLearner('0','0','${context.showAll}','0',$pageCurrIndex);" #end ><div id="nameSort" #if((${context.sortDirection} == 1 )&&(${context.sortColumnIndex} == 0)) class="icon_up" #elseif(${context.sortColumnIndex} == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.mycourses.courseName")</div></td>
+                                #else
+                                <td class="box_subheader"><div onClick=#if(${context.sortDirection} == 0) "sortLearner('0','1','${context.showAll}','1',$pageCurrIndex);" #else "sortLearner('0','0','${context.showAll}','1',$pageCurrIndex);" #end ><div id="nameSort" #if((${context.sortDirection} == 1 )&&(${context.sortColumnIndex} == 0)) class="icon_up" #elseif(${context.sortColumnIndex} == 0) class="icon_down" #end ></div>$brander.getBrandElement("lms.mycourses.courseName")</div></td>
+                                #end
+                            </tr>
+                                    
+                                    
+							#springBind("manageSurveyForm.surveyCourses")
+							#set($surveyCourses = $status.value)
+                            #foreach($index in [$pageFirstIndex..$pageLastIndex])
+                            <!--#springBind("manageSurveyForm.surveyCourses[$index].selected")-->
+							#set($aSurveyCourse = $!{surveyCourses.get($index)})
+							#springBind("manageSurveyForm.deleteableCourses[$index]")
+                            #if($index%2 == 0)
+                                #set($alternate="row_1")
+                            #else
+                                #set($alternate="row_2")
+                            #end
+                            <tr>
+                                #if($surveyPublished == "false" && $surveyLocked == "false")
+                                <td class="$alternate" #if($velocityCount==$pageLastIndex+1) style="border-bottom:none;" #end width="17px">
+                                    <input type="checkbox" id="chk$index" name="deleteableCourses"  #if(${status.value}) checked #end onclick="setCourseSelection(this,'${status.expression}'); changeRowColor(this);"/>
+                                    <input type="hidden" id="${status.expression}" name="${status.expression}" value="${status.value}"/>
+                                </td>
+                                #end
+                                <td class="$alternate" #if($velocityCount==$pageLastIndex+1) style="border-bottom:none;border-right:none;" #else style="border-right:none;" #end>
+                                    #springBind("manageSurveyForm.surveyCourses[$index].course.courseTitle")
+                                    $!{status.value}</div>
+                                </td>
+                            </tr>
+                            #end
+                        </table>
+                            </div>
+		#else
+                <!-- Result Subheader Start -->
+                <div id="searchResult_1">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:1px;">
+                        <tr bgcolor="#efefef">
+                            <td class="check_box_top" width="17px"><input type="checkbox" id="chkAll" name="selectAll"/></td>
+                            <td class="box_subheader">$brander.getBrandElement("lms.mycourses.courseName")</td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" style="border-bottom:0px solid;border-color:#dfdfdf !Important;">
+                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else $brander.getBrandElement("lms.administrator.searchMember.caption.searchbutton") #end</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <!-- Result Subheader End -->
+                #end
+            </div>
+            </div>
+	        #if($surveyPublished == "false" && $surveyLocked == "false")
+			 <div style="float:right; margin-top:15px;">
+			  <a onClick="return saveSurveyCoursesAction();" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			<div style="float:right; margin-top:15px;margin-right:5px;">
+			  <a onClick="javascript:window.location='adm_manageSyrvey.do';" style="text-decoration:none;">
+				  <div class="btn_start"></div>
+				  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+				  <div class="btn_end"></div>
+			  </a>
+			</div>
+			
+		     #else
+			 <div style="float:left; margin-top:15px;margin-left:10px;">
+				<a onClick="javascript:window.location='adm_manageSyrvey.do';" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.manager.survey.showCourses.caption.backButton")</div>
+					  <div class="btn_end"></div>
+				</a>
+			</div>				   
+		     #end
+		    
+	    <!-- space -->
+            <div class="$brander.getBrandElement("lms.editSurveyCources.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+                <!-- Result Subheader End -->
+                </form>
+            
+	     
+
+                <!-- right-pannel-new-content-end -->
+                
+		</div>
+        <!-- content-area-end -->
+        <!-- tooltip -->
+        
+        <!-- tooltip -->
+        </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+   #parse("snippets/adminFooter.vm")
+#else
+    #parse("snippets/managerFooter.vm")
+#end
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+<div id='deleteConfirmation' style='display:none'>
+    <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">Are you sure you want to delete the selected course(s)?</div>
+    <br style="clear:both" />
+
+
+<div class='buttons'>
+            <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+</div>
+ </div>
+<div id="selectLearner" style="display:none">
+    <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='no simplemodal-close'>
+          <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+    </div>
+     </div>
+</body>
+</html>

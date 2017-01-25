@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("snippets/learnerNewHead.vm")
+    <script type="text/javascript" src="javascript/jquery-1.2.6.min.js"></script>
+
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+                  
+        
+        )};
+        /*
+        to resize the screen
+        */
+        function batchImportErrorResize(){
+            var container = document.getElementById("batchImportError");
+            
+             var myWidth = 0, myHeight = 0;
+             if( typeof( window.innerWidth ) == 'number' ) {
+                   //Non-IE
+                   myWidth = window.innerWidth;
+                   myHeight = window.innerHeight;
+             } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+                   //IE 6+ in 'standards compliant mode'
+                   myWidth = document.documentElement.clientWidth;
+                   myHeight = document.documentElement.clientHeight;
+             } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+                   //IE 4 compatible
+                   myWidth = document.body.clientWidth;
+                   myHeight = document.body.clientHeight;
+             }
+            
+			//alert( 'Width = ' + myWidth );alert( 'Height = ' + myHeight );
+            
+            var crop = (165 + 300 )/myHeight ; // 165+87 for geader and top header size and other spaces
+            //alert( 'Height = ' + myHeight );alert( 'Crop = ' + crop );
+            var reqPercent = 1-crop;
+            var newHeight = reqPercent * myHeight;
+            //alert( 'newHeight = ' + newHeight );
+            
+            var container = document.getElementById("batchImportError");
+            container.style.height = newHeight+'px';
+        }
+    </script>
+
+
+</head>
+
+<body onLoad="batchImportErrorResize();" >
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		  <tr> 
+		   <td id="header" colspan="2">
+    <!-- header -->
+    #parse("snippets/managerHeader.vm")
+    <!-- header-end -->
+	</td></tr>
+	
+			<tr id="main" > <! SECOND BLOCK -->
+				<td  id="left-navigation" valign="top">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+           <!-- left-pannel-content -->
+            #parse("snippets/managerLeftMenu.vm")
+            <!-- left-menu-content-end -->
+			</table></td>
+			
+            <!-- right-pannel-content -->
+			<TD id="content" >
+				<div id="scrollable">
+                <!-- Logo+Manage-User -->
+						<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="page-icon-users">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						            <div id="page-heading">$brander.getBrandElement("lms.batchImportUsers.caption.title")</div>
+						            <div id="page-help">$brander.getBrandElement("lms.batchImportUsersResult.caption.subtitle")</div>
+						        </td>
+						    </tr>
+						</table>
+                <!-- Logo+Manage-User-end -->
+
+                <!-- button-div -->
+                <div class="buttonContainereditmessage">
+                    <div class="left">
+                        <a class="button" onClick="window.print();"><span class="button">Print this page</span></a>
+                    </div>
+                </div>
+                <!-- scrollable-div -->
+                #if(${context.errorMsg.nullFile} == "true")
+                <script>
+                document.location="mgr_batchImportLearners.do";
+                </script>
+                #end
+                <!-- Summary-Information -->
+                <div class="$brander.getBrandElement("lms.manageOrganizationGroup.cssClass.content-Block")">
+                    <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-Containerheaderleft")">$brander.getBrandElement("lms.batchImportUsersResult.summaryInformation")</div>
+                    </div>
+                    <!-- User-left-right-list -->
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+                    #set($listSize = ${context.errorMsg.size()})
+                        <!-- 1 -->
+                        #set($recNumber = $listSize - 3)
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">$brander.getBrandElement("lms.batchImportUsersResult.numOfUsers")</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">$!{context.errorMsg.recordNumber}</div>
+                        </div>
+                        <!-- 2 -->
+                        #set($importedNumber = $listSize - 2)
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">$brander.getBrandElement("lms.batchImportUsersResult.numOfUsersImported")</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">$!{context.errorMsg.totalImportedUsers}</div>
+                        </div>
+                        <!-- 3 -->
+                        #set($updatedNumber = $listSize - 1)
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-f2a")">$brander.getBrandElement("lms.batchImportUsersResult.existingLearners")</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsers.input_field_area-user-fn")">$!{context.errorMsg.totalUpdatedUsers}</div>
+                        </div>
+                        <!-- 4 -->
+                        #set($errors = 0)
+                        #foreach($learner in ${context.errorMsg.errorMessages})
+                            #set($errors = $errors + 1)
+                        #end
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsersResult.input_field_area-user-f2-rb")">$brander.getBrandElement("lms.batchImportUsersResult.numOfErrors")</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsersResult.input_field_area-user-fn-rb")">$errors</div>
+                        </div>
+                        <!-- 0 -->
+                    </div>
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- End-Summary-Information -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- Errors -->
+                <div class="$brander.getBrandElement("lms.batchImportUsersResult.content-Block2")">
+                    <!-- User-left-right-list -->
+                    <!-- <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")"> -->
+                        <!-- 1 -->
+                        <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.batchImportUsersResult.input_field_area-user-fn-l")">$brander.getBrandElement("lms.batchImportUsersResult.recordsWithErrors")</div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsersResult.input_field_area-user-fn-l")"><img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="16" height="17" alt="" /></div>
+                            <div class="$brander.getBrandElement("lms.batchImportUsersResult.input_field_area-user-fn-l")">$brander.getBrandElement("lms.batchImportUsersResult.nextError")</div>
+                        </div>
+                        <!-- 1 -->
+                    <!-- </div> -->
+                    <!-- End-User-left-right-list -->
+                </div>
+                <!-- End-Errors -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- others-Information -->
+                <div id="batchImportError" class="content-Block-new" style="height:150px;width:100%;overflow:auto;border-bottom: 1px solid;">
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:0px; border-top:0px;">
+                            <tr bgcolor="#efefef">
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.batchImportUsersResult.Line")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.firstName")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.lastName")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.batchImportUsersResult.emailAddress")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.batchImportUsersResult.Username")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.manageUser.addNewLearner.caption.Password")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.Manager-Batch-ImportUsers-Result.caption.Group")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.Manager-Batch-ImportUsers-Result.caption.LearnerGroup")</td>
+                                <td class="box_subheader" NOWRAP>$brander.getBrandElement("lms.Manager-Batch-ImportUsers-Result.caption.zip")</td>
+                                #* ******************Custom field errors ************************** *#
+                                #if( $context.customFieldHeaders )
+                                #foreach( $header in $context.customFieldHeaders)
+                                <td NOWRAP class="box_subheader">$header.fieldLabel</td>
+                                #end
+                                #end
+                                #* ******************Custom field errors ************************** *#
+                            </tr>
+                            #foreach($record in ${context.errorMsg.errorMessages})
+                                #if($velocityCount%2==0)
+                                        #set($alternate="row_2")
+                                #else
+                                        #set($alternate="row_1")
+                                #end
+                                <tr>
+
+                                    <td class="$alternate" NOWRAP >$record.recordNumber</td>
+                                    #if($record.invalidFormat == "false" && ($record.notCurrentCustomer==false || !$record.notCurrentCustomer))
+                                        #if($record.firstName == "blank")
+                                            <td class="$alternate" NOWRAP >
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                No Value
+                                            </td>
+                                        #else
+                                            <td class="$alternate" NOWRAP >$!{record.firstName} </td>
+                                        #end
+
+                                        #if($record.lastName == "blank")
+                                            <td class="$alternate" NOWRAP >
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />No Value
+                                            </td>
+                                        #else
+                                            <td NOWRAP  class="$alternate">$!{record.lastName} </td>
+                                        #end
+
+                                        #if($record.emailAddress == "blank")
+                                            <td  NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />No Value
+                                            </td>
+                                        #else
+                                            <td NOWRAP  class="$alternate">$!{record.emailAddress} </td>
+                                        #end
+
+
+                                        #if($record.learnerAlreadyExists == "true")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                $!{brander.getBrandElement("lms.batchImportUsersResult.UserNameAlreadyExists")}
+                                            </td>
+                                        #elseif($record.userNameMissing == "true" )
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                              $!{brander.getBrandElement("lms.batchImportUsersResult.invalidUsername")}
+                                            </td>
+                                        #elseif($record.userName == "blank")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />No Value
+                                            </td>
+                                        #else
+                                            <td NOWRAP class="$alternate">$!{record.userName} </td>
+                                        #end
+
+                                        #if($record.password == "blank")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />No Value</td>
+                                        #else
+                                            #if($record.password == "shortPassword")
+                                                <td NOWRAP class="$alternate">
+                                                    <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />$brander.getBrandElement("lms.manageUser.addNewLearner.caption.pwStrength")
+                                                </td>
+                                            #else
+                                                <td NOWRAP class="$alternate">$!{record.password} </td>
+                                            #end
+                                        #end
+
+                                        #if($record.orgGroupMissing == "true")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                $!{brander.getBrandElement("lms.batchImportUsersResult.invalidOrgGroup")}
+                                            </td>
+                                        #elseif($record.learnerGroupMissing == "true")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                $!{brander.getBrandElement("lms.batchImportUsersResult.invalidLearnerGroup")}
+                                            </td>
+
+                                        #else
+                                            <td NOWRAP class="$alternate">$!{record.orgGroups} </td>
+                                        #end
+
+                                        #if($record.learnerGroupMissing == "true")
+                                            <td NOWRAP class="$alternate">
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                $!{brander.getBrandElement("lms.batchImportUsersResult.invalidLearnerGroup")}
+                                            </td>
+                                        #else
+                                            <td NOWRAP class="$alternate">$!{record.learnerGroups} &nbsp;</td>
+                                        #end
+
+                                        #if($record.invalidZip == "false")
+                                            <td NOWRAP class="$alternate">$!{record.zipcode}</td>
+                                        #else
+                                            #if($record.invalidZip == "invalidCountry")
+                                                #set($reason = $brander.getBrandElement("lms.batchImportUsersResult.invalidCountry"))
+                                            #elseif($record.invalidZip == "invalidState")
+                                                #set($reason = $brander.getBrandElement("lms.batchImportUsersResult.invalidState"))
+                                            #else
+                                                #set($reason = $brander.getBrandElement("lms.batchImportUsersResult.invalidZip"))
+                                            #end
+                                            <td NOWRAP class="$alternate" >
+                                                <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                                $reason
+                                            </td>
+                                        #end
+
+                                    #elseif($record.notCurrentCustomer==true)
+                                         <td NOWRAP class="$alternate" colspan="8">
+                                            <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                            User does not belong to current customer
+                                        </td>
+                                    #else
+                                        <td NOWRAP class="$alternate" colspan="8">
+                                            <img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+                                            $!{brander.getBrandElement("lms.batchImportUsersResult.Invalidformat")}
+                                        </td>
+                                    #end
+
+#* ******************Custom field errors ************************** *#
+ #if( $context.customFieldHeaders )
+
+#foreach( $header in $context.customFieldHeaders)
+#if( $context.customFieldHash )
+#set( $customFieldsSize = $context.customFieldHeaders.size()+16 )
+
+
+#set( $found = 0 )
+#foreach($indexx in [16..$customFieldsSize])
+#if( $context.customFieldHash.get($indexx) )
+#set( $cf=$context.customFieldHash.get($indexx) )
+#if( $cf.id == $header.id)
+#set( $found = 1 )
+#set( $fieldLabel1 = $header.fieldLabel)
+#set( $fieldLabel2 = "-error" )
+#set( $fieldLabel3 = "$fieldLabel1$fieldLabel2" )
+
+#if($record.get($fieldLabel3))
+<td class="$alternate" NOWRAP >
+<img src="$brander.getBrandElement("lms.pixel.iconErrorpng")" width="12" height="13" alt="" />
+$record.get($fieldLabel3)
+</td>
+#elseif( $record.get($fieldLabel1) )
+<td class="$alternate" NOWRAP >  $record.get($fieldLabel1)</td>
+#end
+#end
+#end
+#end
+ #if( $found == 0 ) <td NOWRAP class="$alternate"> </td>
+ #end
+#end
+#end
+#end
+#* ******************Custom field errors ************************** *#
+
+                                </tr>
+                            #end
+                        </table>
+                </div>
+                <!-- End-others-Information -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+                <!-- button-div -->
+                <div class="button">
+                    <div class="btn-right1">
+                        <!--<input type="image" src="brands/default/en/images/btn-finish_n.gif" onclick="window.location.href='mgr_batchImportLearners.do'" width="71" height="19" alt=""  align="top"/>-->
+                        <a class="button" onClick="window.location.href='mgr_batchImportLearners.do'"><span class="button">$brander.getBrandElement("lms.manageUser.editLearner.caption.Finish")</span></a>
+                    </div>
+                </div>
+                <!-- scrollable-div -->
+
+                <!-- space -->
+                <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+                <!-- space -->
+
+            </div><!-- right-pannel-content-end -->
+    </td></tr><!-- content-area-end -->
+
+		<tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+    <!-- footer -->
+    #parse("snippets/managerFooter.vm")
+    <!-- footer-end -->
+	</td></tr>
+</table>
+
+</body>
+</html>

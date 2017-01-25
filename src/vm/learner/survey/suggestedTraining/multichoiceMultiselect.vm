@@ -1,0 +1,20 @@
+
+#set($choiceCount = ${question.answerItems.size()})
+#if($choiceCount > 0)
+	#set($maxChoiceIndex = $choiceCount - 1)
+	#foreach($index in [0..$maxChoiceIndex])
+		#set($answerItem = ${question.answerItems.get($index)})
+
+						<tr height="24" bgcolor="#F4F4F4" class="schedule-1">
+								<td width="20">&nbsp;</td>
+								<td width="20">&nbsp;</td>
+								<td width="20">
+									<input type="checkbox" width="20" #if($answerItem.selected) checked #end onclick="checkAnswer(this,'${prefix}answerItem[$index]');"/>
+									<input type="hidden" id="${prefix}answerItem[$index]"   name="${prefix}.answerItems[$index].selected"  #if($answerItem.selected) value="true" #else value="false" #end  />
+								</td>
+								<td width="900">
+									$answerItem.surveyAnswerItemRef.label
+								</td>
+							</tr>
+	#end
+#end

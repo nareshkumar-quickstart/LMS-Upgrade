@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type="text/javascript" language="javascript">
+
+
+    var defaultRole = false;
+
+    function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer',
+            onShow: function (dialog) {
+                dialog.data.find('.message').append(message);
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+
+    function FormSubmit(buttonclick) {
+		document.getElementById('action').value=buttonclick;
+            document.RoleForm.submit();
+    }
+    
+
+   
+
+    $(document).ready(function(){
+        $('#content2a').scroll(function(){
+            $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+        });
+        $('#close_message').click(function(){
+            $('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+        });
+    });
+</script>
+</head>
+
+<body>
+<form name="RoleForm" method="post" action="adm_manageResellerPermissions.do">
+<input type="hidden" id="roleType" name="roleType" value="$context.roleType">
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+         #parse("snippets/adminHeader.vm")
+		 </td></tr>
+
+		 <td id="row-tabs" class="tab_bar" colspan="2">
+                <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                    <tbody><tr>
+                        <td width="270"><div class="tab_blank"></div></td>
+                        <td>&nbsp;</td>
+                        <td width="700">
+					
+
+                            <a href="adm_manageResellerPermissions.do?roleType=0"><div class=#if($context.roleType.equals("0"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Learner")</div></a>
+                            <a href="adm_manageResellerPermissions.do?roleType=1"><div class=#if($context.roleType.equals("1"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Manager")</div></a>
+                            <a href="adm_manageResellerPermissions.do?roleType=2"><div class=#if($context.roleType.equals("2"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Instructor")</div></a>
+                            <a href="adm_manageResellerPermissions.do?roleType=3"><div class=#if($context.roleType.equals("3"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Accreditation")</div></a>
+                            <a href="adm_manageResellerPermissions.do?roleType=4"><div class=#if($context.roleType.equals("4"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Administrator")</div></a>
+							<a href="adm_manageResellerPermissions.do?roleType=5"><div style="border-right:1px solid #DADADA;" class=#if($context.roleType.equals("5"))"tab_selected" #else "tab" #end>$brander.getBrandElement("lms.proctor.alias")</div></a></div></a>
+
+
+                        </td>
+                        <td>&nbsp;</td>
+                    </tr>
+                </tbody></table>
+            </td>
+    
+    <!-- header-end -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- content-area -->
+        <!-- left-pannel-content -->
+		#parse("snippets/adminDistributorLeftMenu.vm")
+        <!-- left-menu-content-end -->
+		</table>
+		</td>
+		<TD id="content" >
+	<div id="scrollable">
+
+        <!-- right-pannel-content -->
+        <div id="right-pannel">
+            #if($!{context.validateRoleName} || $!{context.validateDefaultForRegistration} || !$nullTool.isNull($!{context.validateTermsofServices}))
+                #set($errorCodes = [])
+                #set($temp = true)
+                #if($!{context.validateRoleName})
+                 #set($temp = $errorCodes.add(${context.validateRoleName}))
+                #end
+                #if($!{context.validateDefaultForRegistration})
+                 #set($temp = $errorCodes.add(${context.validateDefaultForRegistration}))
+                #end
+                 #if($!{context.validateTermsofServices})
+                 #set($temp = $errorCodes.add(${context.validateTermsofServices}))
+                #end
+                <!-- error-box -->
+                <div id="message_box">
+                <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                #foreach($errorCode in $errorCodes)
+                    #set ($error = $brander.getBrandElement($errorCode))
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                        <div class="message_box_align">$error</div>
+                    </div>
+                #end
+                </div>
+                <!-- error-box -->
+            #end
+
+            <!-- Logo+Manage-User -->
+            <div id="logomainContainer" style="border: 1px solid rgb(255, 255, 255);" class="page_description" >
+                <div id="logoHolder" class="icon_distributor">&nbsp;</div>
+                <div id="titleHolder" class="courseTitle1">$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Title")</div>
+                <div id="detailsHolder" class="courseDetails">$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Description")</div>
+            </div>
+            <!-- Logo+Manage-User-end -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <!-- Permissions -->
+            <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")">
+                <div id="e12" class="$brander.getBrandElement("lms.mycourses.cssClass.Block-Contain-header")">
+                    <div id="e13" class="Search-Containerheaderleft")">
+
+				 	#if($context.roleType.equals("0"))$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Learner") #end
+					#if($context.roleType.equals("1"))$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Manager") #end
+					#if($context.roleType.equals("2"))$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Instructor")#end
+					#if($context.roleType.equals("3"))$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Accreditation")#end
+					#if($context.roleType.equals("4"))$brander.getBrandElement("lms.administrator.adminCustomerLeftMenu.ResellerPermissions.Administrator")#end
+					#if($context.roleType.equals("5"))$brander.getBrandElement("lms.proctor.alias")#end
+
+
+
+
+</div>
+                </div>
+                <!-- User-left-right-list -->
+                <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.Search-inputfield-box")">
+
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        #if($context.roleType.equals("0"))
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsLearnerPermission")</div>
+                        #elseif($context.roleType.equals("1"))
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsManagerPermission")</div>
+						#elseif($context.roleType.equals("2"))
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsInstructorPermission")</div>
+						#elseif($context.roleType.equals("3"))
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsAccreditationPermission")</div>
+                        #elseif($context.roleType.equals("4"))
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.lmsAdminPermission")</div>
+                        #elseif($context.roleType.equals("5"))
+                        	<div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4b")">$brander.getBrandElement("lms.addSecurityRole.proctorAdminPermission")</div>
+                        #end
+                    </div>
+
+                    #set($Permissions=${context.finalPermissions})
+                    #set($permissionGroups=$context.permisionForm.getFeatureGroups())
+                    #foreach($permissionGroup in $permissionGroups)
+
+                        <!-- 2 -->
+                        <div id="e13" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")" style="font-weight:bold;">$permissionGroup</div>
+                            <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                            </div>
+                        </div>
+                        #set($permissions=$context.permisionForm.getFeatures($permissionGroup))
+                        #foreach($Permission in $permissions)
+                            ##if($Permission.getLmsFeature().getFeatureGroup().equals($permissionGroup.getLmsFeature().getFeatureName()) && !$Permission.getLmsFeature().getFeatureGroup().equals($Permission.getLmsFeature().getFeatureName()))
+                                <!-- 3a -->
+                                <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                                    <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                                    <div class="$brander.getBrandElement("lms.addSecurityRole.head_1a-b")"></div>
+                                    <div class="$brander.getBrandElement("lms.addSecurityRole.Org-grp_4c")">$Permission.getLmsFeature().getFeatureName()</div>
+                                    <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.input_field_area-user-f")">
+                                       
+                                        #if($Permission.isLocked()) 
+                                        	<input id="enabled_$Permission.getLmsFeature().getFeatureCode()"  name="prd$Permission.getLmsFeature().getFeatureCode()" value="$!{Permission.getEnabled()}" type="hidden" /> 
+                                        #end 
+                                        
+                                        #if($Permission.getEnabled())
+                                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" id="enabled_$Permission.getLmsFeature().getFeatureCode()"  value="true" name="prd$Permission.getLmsFeature().getFeatureCode()" checked #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioEnabled") </div>
+                                            <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" id="disabled_$Permission.getLmsFeature().getFeatureCode()" value="false" name="prd$Permission.getLmsFeature().getFeatureCode()" #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioDisabled") </div>
+                                        #else
+                                            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.btn_radio3")"><input type="radio" id="enabled_$Permission.getLmsFeature().getFeatureCode()"  value="true" name="prd$Permission.getLmsFeature().getFeatureCode()" #if($Permission.isLocked()) disabled #end /> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioEnabled") </div>
+                                            <div class="$brander.getBrandElement("lms.manageUser.regInvitation.cssClass.btn_radio4")"><input type="radio" id="disabled_$Permission.getLmsFeature().getFeatureCode()" value="false" name="prd$Permission.getLmsFeature().getFeatureCode()" checked #if($Permission.isLocked()) disabled #end/> $brander.getBrandElement("lms.manageUser.addNewLearner.caption.radioDisabled") </div>
+                                        #end
+                                    </div>
+                                </div>
+                            ##end
+                        #end
+                    #end
+                    <!-- Foreach for Permissions Ends-->
+
+                    <!-- 10 -->
+                    <div id="e12" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.search-content-row")">
+                        <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.block_text_in-r-f")"><!-- using for space --></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.input_field_area-user")"></div>
+                    </div>
+                    <!--  -->
+                </div>
+                <!-- End-User-left-right-list -->
+            </div>
+            <!-- End-Permissions -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+            <div class="managerBtn">
+            	
+            	<div style="float:left; margin-top:3px;margin-right:5px;">
+				  <a onClick="FormSubmit('Cancel');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.addSecurityRole.Cancel")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+            	
+                 <div style="float:right; margin-top:3px;">
+				  <a onClick="FormSubmit('Save');" style="text-decoration:none;">
+					  <div class="btn_start"></div>
+					  <div class="btn_normal">$brander.getBrandElement("lms.addSecurityRole.Save")</div>
+					  <div class="btn_end"></div>
+				  </a>
+				</div>
+				
+                <input type="hidden" id="action" name="action" />
+            </div>
+            <!-- scrollable-div -->
+
+            <!-- space -->
+            <div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+            <!-- space -->
+
+        <!-- right-pannel-content-end -->
+        </div>
+    <!-- content-area-end -->
+    </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+    <!-- footer -->
+       #parse("snippets/adminFooter.vm")
+	   </td></tr>
+	   
+</form>
+
+<div id='deleteConfirmation' style='display:none'><!-- Alert Message Box starts -->
+    <div class='header'><span>$brander.getBrandElement("lms.addSecurityRole.messageBox.caption")</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="alert_message_box_text">$brander.getBrandElement("lms.addSecurityRole.defaultRegConfirm")</div>
+    <br style="clear:both" />
+    <div class='buttons'>
+        <div class='simplemodal-close'>
+            <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+            <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+        </div>
+</table>
+
+</body>
+</html>

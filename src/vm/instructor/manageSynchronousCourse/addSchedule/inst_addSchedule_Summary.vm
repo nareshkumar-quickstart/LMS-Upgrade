@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/instructorHead46.vm")
+
+
+<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type="text/javascript" language="javascript" src="javascript/richtexteditor/richtext.js"></script>
+<script type="text/javascript" language="javascript">
+$(document).ready(function()
+{
+
+ $('#content2a').height($(window).height() - ($('#header').height()+$('footer').height()));
+    if ($('#right-pannel').height()<$('#content2a').height()) {
+        $('#right-pannel').height($('#content2a').height());
+    }
+    $('#sideBar').height($('#right-pannel').height());
+	
+	$('#content2a').scroll(function()
+	{
+  		$('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
+	});
+	$('#close_message').click(function()
+	{
+		$('#message_box').animate({ top:"+=15px",opacity:0 }, "slow");
+	});
+});
+
+function submitFormWithDescriptionData(textAreaId)
+{	
+	updateTextArea("description1");
+	submitButtonForm(document.addSchedule,'wizardSubmitter','_finish');
+	}
+</script> 
+</head>
+<body >
+<form name="addSchedule" method="post" action="ins_addCourseSchedule.do" >   
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+	<!-- header -->
+	 #parse("snippets/instructorHeader.vm")
+	 </td></tr>
+	 	
+	<!-- header-end -->
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top" style="width:195px;">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+		<!-- left-pannel-content -->
+		<div>
+                    <div id="l-menu-back">
+                        <div class="l-menu-back-text-h">Add Schedule Wizard<br>showing 1 of 3</div>
+                        <div class="l-menu-back-text-act">1.Summary</div>
+                        <div class="l-menu-back-text">2.Set Recurrence</div>
+                        <div class="l-menu-back-text">3. Set Location</div>
+                    </div>
+                </div>
+		<!-- left-pannel-content-end -->
+		</table></tr>
+		
+		<!-- right-pannel-content -->
+<TD id="content" >
+	<div id="scrollable">
+				#springBind("scheduleForm.*")
+				#if($status.error)
+				<!-- error-box -->
+				 <div id="message_box">
+					<img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					#foreach($errorCode in $status.errorCodes)
+				#set ($error = $brander.getBrandElement($errorCode))
+				<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.width40pct")">
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+					<div class="$brander.getBrandElement("lms.administrator.adddistributorentitlement.cssClass.message_box_align")">$error</div>
+					</div>
+					#end
+				</div>
+				<!-- error-box -->
+				#end
+
+            <!-- Logo+Manage-User -->
+<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+	<tr><td id="page-icon" class="courseLogoCourses">&nbsp;</td>
+		<td id="page-description">
+		<div id="page-heading">$brander.getBrandElement("lms.instructor.addDFCourses.caption.pageHead")</div>
+		<div id="page-help">$brander.getBrandElement("lms.instructor.addDFCourses.caption.pageDesc")</div>
+		</td>
+	</tr>
+</table>
+            <!-- Logo+Manage-User-end -->
+			
+			<!-- Review-&-Confirm -->
+			
+			
+			
+			
+			<div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.instructor.editSchedule.caption.summary")</span></div>
+                        <table width="100%" cellspacing="3" cellpadding="0" border="0" heigth="100%">
+                            <tbody><tr>
+                                <td width="20%"><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.className")</span></td>
+                                <td width="30%"><div class="required_field">*</div><input type="text" value="InCopy CS3 Essential Training" class="input_text_field" id="field_class_name"></td>
+                                <td width="20%"></td>
+                                <td width="30%"></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.courseName")</span></td>
+                                <td><div class="required_field">*</div><input type="text" value="Adobe InCopy" class="input_text_field" id="field_course_name"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.maximumClassSize")</span></td>
+                                <td><input type="text" style="margin-left: 14px;" value="15" class="input_text_field" id="field_size"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.minimumClassSize")</span></td>
+                                <td><input type="text" style="margin-left: 14px;" value="15" class="input_text_field" id="field_size"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.enrollmentCloseDate")</span></td>
+                                <td>
+								<input type="text" value="8/17/09" style="width: 152px; margin-left: 14px;" class="input_text_field" id="enrolEndDate"><div class="icon_calen"></div></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.status")</span></td>
+                                <td><select style="margin-left: 14px; width: 183px; font-size: 11px;" id="field_status"><option>Active</option><option>Inactive</option></select></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" style="float: left; margin-left: 10px; margin-right: 3px;" onclick="onlineMeeting();" checked="" id="onlineMeeting">
+								<div style="margin-top: 3px;" class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.onlineMeeting")</div></td>
+                                <td>
+                                	<select style="margin-left: 14px; width: 183px; font-size: 11px;" id="field_meeting_type">
+										<option value="dimdim" selected>$brander.getBrandElement("lms.instructor.caption.dimdim.defaulttext")</option>
+										<option value="WebEx" >$brander.getBrandElement("lms.instructor.caption.WebEx.defaulttext")</option>
+                                	</select>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.meetingID")</span></td>
+                                <td><input type="text" style="margin-left: 14px;" value="801215" class="input_text_field" id="field_meeting_id"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><span class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.meetingPasscode")</span></td>
+                                <td><input type="text" style="margin-left: 14px;" value="2774" class="input_text_field" id="field_meeting_passcode"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><div class="row_text">$brander.getBrandElement("lms.instructor.editSchedule.caption.location")</div></td>
+                                <td><div class="required_field">*</div><input type="text" value="6th Street" class="input_text_field" id="field_location"></td>
+                                <td>
+                                    <a class="button" >
+                                        <span class="button">Change</span>
+                                     </a>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody></table>
+                    </div>
+			<!-- Review-&-Confirm-end -->
+
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+			<!-- button-div -->
+			
+			<input type="hidden" id="currentpage" name="_page" value="1" />
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />	
+			            <!-- button-div -->
+						<div style="float: right; margin-top: 15px; margin-right: 15px;">
+              <a onClick="submitFormWithDescriptionData('description1');">
+                  <div class="btn_start"></div>
+                  <div class="btn_normal">Finish</div>
+                  <div class="btn_end"></div>
+              </a>
+           </div>
+		   
+		   <div style="float: right; margin-top: 15px; margin-right: 10px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addSchedule,'wizardSubmitter','_target0');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">Previous</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+		   <div style="float: left; margin-top: 15px; margin-left: 20px;">
+              <div>
+                  <a onClick="submitButtonForm(document.addSchedule,'wizardSubmitter','_cancel');">
+                      <div class="btn_start"></div>
+                      <div class="btn_normal">Cancel</div>
+                      <div class="btn_end"></div>
+                  </a>
+              </div>
+           </div>
+
+			
+			<!-- scrollable-div -->
+			<input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />			
+			<!-- space -->
+			<div class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.manager-bottom-space")"></div>
+			<!-- space -->
+
+		<!-- right-pannel-content-end -->
+		</div>
+	<!-- content-area-end -->
+	</td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+	<!-- footer -->
+	#parse("snippets/managerFooter.vm")
+	<!-- footer-end -->
+	</td></tr>
+</table>
+</form>
+</body>
+</html>

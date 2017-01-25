@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+#parse("snippets/learnerNewHead.vm")
+    <head>
+
+<script type="text/javascript" language="javascript" src="javascript/wisiwig/richtext.js" ></script>
+<script type="text/javascript" language="javascript" src="javascript/wisiwig/config.js" ></script>
+<script type="text/javascript" language="javascript" ></script>
+
+<script type='text/javascript'>
+    $(document).ready(function() {
+	
+    });
+
+</script>
+<script type="text/javascript" language="javascript" >
+        function updateParty() {
+       
+            document.getElementById('action').value='updateCommissionablePartyDetails';
+            document.manageEntity.submit();
+        }
+         
+    </script>
+
+    </head>
+    <body>
+	<form name="manageEntity" method="post" action="adm_commissionableParty.do">
+	<input type="hidden" id="action" name="method" value=""/>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+         #parse("snippets/adminHeader.vm")
+		</td></tr>
+	        
+			
+<tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+#parse("snippets/adminDistributorLeftMenu.vm") 
+		</table></td>
+		
+<TD id="content" >
+	<div id="scrollable">
+                    <div id="error-message-box" style="display:none;">
+                        <div class="error_box">
+                            <div id="errors"></div>
+                            <div id="close-errors" class="close_icon"></div>
+                        </div>
+                    </div>
+
+					<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+						    <tr>
+						        <td id="page-icon" class="courseLogoDistributor">
+						            &nbsp;
+						        </td>
+						        <td id="page-description">
+						             <div id="page-heading">$brander.getBrandElement("lms.administrator.resellerCommission.editCommissionableParty.heading")</div>
+			    					 <div id="page-help">$brander.getBrandElement("lms.administrator.resellerCommission.editCommissionableParty.title")</div>
+						        </td>
+						    </tr>
+						</table>
+					#springBind("commissionablePartyForm.*")	
+                    #if($status.error)
+                        <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement('lms.errorMessage.pixel.12-em-cross.png')" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement('lms.errorMessage.pixel.addLearner_06.gif')" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                        </div><!-- error-box -->
+                    #end
+                    <div class="search_box_result">
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.manageAlert.editAlert.caption.summary")</span></div>
+                        <table border="0" width="100%" cellpadding="0" cellspacing="3">
+                            <tr>								
+                                <td width="200" height="30"><span class="row_text" >$brander.getBrandElement("lms.administrator.resellerCommission.editCommissionableParty.name")</span></td>
+                                <td>
+                                    <div id="survey-name-required">
+                                        <div class="required_field">*</div>
+                                    </div>                                    
+                                    #springBind("commissionablePartyForm.name")									
+                                    <input type="text" class="input_text_field" id="field_name" onKeyPress="if(event.keyCode==13){updateParty();}" name="$!{status.expression}" value="$!{status.value}"></input>
+                                </td>
+                            </tr>                           
+                        </table>
+                    </div>
+					
+					 <div style="float:right; margin-top:15px;">
+					  <a onClick="updateParty();" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.editLearner.caption.Save")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>
+					<div style="float:right; margin-top:15px;margin-right:5px;">
+					  
+					  <input type="hidden" name="alertId" value="$!{status.value}">
+					  <a onClick="location.href='adm_commissionableParty.do?method=showCommissionableParties&entity=reseller';" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.btnCancel")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>				
+
+                </div>
+            </td></tr>
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+          #parse("snippets/adminFooter.vm")
+	</td></tr>
+        </table>
+		</form>
+    </body>
+
+</html>

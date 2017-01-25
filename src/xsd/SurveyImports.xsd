@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.360training.com/vu360/schemas/lms/surveyimport"
+	xmlns:vu360-lms-import="http://www.360training.com/vu360/schemas/lms/surveyimport"
+	elementFormDefault="qualified">
+
+	<element name="SurveyImportPredictRequest">
+		<complexType>
+			<sequence>
+				<element maxOccurs="unbounded" minOccurs="1" name="sections"
+					type="vu360-lms-import:SurveySectionSoapVO" nillable="false" />
+			</sequence>
+			<attribute name="id" type="long" />
+			<attribute name="name" type="string" />
+			<attribute name="username" type="string" />
+			<attribute name="isInspection" type="boolean" />
+		</complexType>
+	</element>
+
+	<complexType name="SurveySectionSoapVO">
+		<sequence>
+			<element maxOccurs="unbounded" minOccurs="0" name="frameworks"
+				type="vu360-lms-import:SurveyFrameworkSoapVO" nillable="true" />
+			<element maxOccurs="unbounded" minOccurs="0" name="children"
+				type="vu360-lms-import:SurveySectionSoapVO"  nillable="true" />
+		</sequence>
+		<attribute name="id" type="long" />
+		<attribute name="name" type="string" />
+		<attribute name="description" type="string" />
+	</complexType>
+
+	<complexType name="SurveyFrameworkSoapVO">
+		<sequence>
+			<element maxOccurs="unbounded" minOccurs="0" name="questions"
+				type="vu360-lms-import:SurveyQuestionSoapVO" nillable="false" />
+		</sequence>
+		<attribute name="id" type="long" />
+		<attribute name="name" type="string" />
+		<attribute name="description" type="string" />
+	</complexType>
+
+	<complexType name="SurveyQuestionSoapVO">
+		<sequence>
+			<element maxOccurs="unbounded" minOccurs="0" name="answers"
+				type="vu360-lms-import:SurveyQuestionAnswerSoapVO"
+				nillable="false" />
+		</sequence>
+		<attribute name="id" type="long" />
+		<attribute name="text" type="string" />
+		<attribute name="type" type="string" />
+		<attribute name="notes" type="string" />
+		<attribute name="canHaveFile" type="boolean" />
+		<attribute name="fileRequired" type="boolean" />
+	</complexType>
+
+	<complexType name="SurveyQuestionAnswerSoapVO">
+		<attribute name="id" type="long" />
+		<attribute name="label" type="string" />
+	</complexType>
+
+	<element name="SurveyImportPredictResponse">
+		<complexType>
+			<attribute name="eventDate" type="dateTime" use="required" />
+			<attribute name="resultMessage" type="string" />
+		</complexType>
+	</element>
+
+
+</schema>

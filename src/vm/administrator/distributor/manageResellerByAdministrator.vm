@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/learnerNewHead.vm")
+
+#set($objSess=$!{request.getSession(true)})
+
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+
+<script language="javascript" type="text/javascript">
+   
+       function confirm(message, callback) {
+        $('#deleteConfirmation').modal({
+            close:false,
+            position: ["40%",],
+            overlayId:'confirmModalOverlay',
+            containerId:'confirmModalContainer', 
+            onShow: function (dialog) {
+                dialog.data.find('.alert_message_box_text').append(message);
+
+                // if the user clicks "yes"
+                dialog.data.find('.yes').click(function () {
+                    // call the callback
+                    if (jQuery.isFunction(callback)) {
+                        callback.apply();
+                    }
+                    // close the dialog
+                    jQuery.modal.close();
+                });
+            }
+        });
+    }
+   
+    function FormSubmit(buttonclick) {
+        document.getElementById('actionField').value=buttonclick;
+        document.manageDistributorGroupForm.submit();
+    }
+    
+
+  	$(document).ready(function(){
+        $('#content2a').height($(window).height() - ($('#header').height()+$('#footer').height()));
+        if ($('#right-pannel').height()<$('#content2a').height()) {
+            $('#right-pannel').height($('#content2a').height());
+        }
+        $('#sideBar').height($('#right-pannel').height());
+
+        $("INPUT[type='checkbox'][name='distributorIds']").click(function(){
+            $("#"+this.id).parent().parent().find("td").css("background-color", $("#"+this.id).is(':checked')?"#E9F9FE":"");
+        });
+
+        $('#chkAll').click(
+           function(){
+              $("INPUT[type='checkbox'][name='distributorIds']").attr('checked', $('#chkAll').is(':checked'));
+              $("INPUT[type='checkbox'][name='distributorIds']").parent().parent().find("td").css("background-color", $('#chkAll').is(':checked')?"#E9F9FE":"");
+           }
+        )
+    });
+    
+     function deleteAdmin() {
+        if ($("INPUT[type='checkbox'][name='distributorIds']:checked").length>0) {
+            confirm("Are you sure you want to delete the selected Reseller(s)?", function () {
+                document.getElementById('actionField').value = "deleteDistributor";
+                document.manageDistributorGroupForm.submit();
+            });
+        }else {
+            $('#selectLearner').modal({close:false,position: ["40%",]});
+        }
+    }
+</script>
+</head>
+<body>
+<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	<tr> <!-- First Block -->
+		<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+
+        <!-- header -->
+        #parse("snippets/adminHeader.vm")
+        <!-- header-end -->
+		</td></tr>
+		
+        <tr id="main"> <!-- SECOND BLOCK -->
+	<td id="left-navigation" valign="top">
+		<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+    <!-- left-pannel-content -->
+            #parse("snippets/adminDistributorLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table></td>
+			
+            <TD id="content" >
+	<div id="scrollable">
+                <!-- Logo+Manage-User -->
+		<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="courseLogoDistributor">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.administrator.caption.ResellerGroupManageReseller.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.administrator.caption.ResellerGroupAddReseller.desc")</div>
+			</td>
+		    </tr>
+		</table>            
+        
+        <div class="group-name">
+                    <div>Administrator Name: $objSess.getAttribute("administratorName")</div>
+        </div>    
+        <div class="managerBtn1" style="margin-bottom: 4px">
+                        <a onclick="javascript:window.location='adm_editDistributorViewAdministrator.do?Id=$objSess.getAttribute("groupId")'" class="button" style="float: left; margin-top: 3px"><span class="button">Back to Administrator(s) List</span></a>
+        </div>
+                                         
+                <!-- Logo+Manage-User-end -->
+
+                $pager.setItems($context.distributorGroups)
+                #set($totalCount = $pager.total)
+                #if($pager.hasItems())
+                    #set($pageFirstIndex = $pager.firstIndex)
+                    #set($pageLastIndex = $pager.lastIndex)
+                    #set($currentPageSize = $pageLastIndex - $pageFirstIndex + 1)
+                    #set($currentPageCount = $pageLastIndex + 1)
+                #else
+                    #set($pageFirstIndex = 0)
+                    #set($pageLastIndex = 0)
+                    #set($currentPageSize = 0)
+                    #set($currentPageCount = 0)
+                #end
+                <form name="manageDistributorGroupForm" method="post" action="adm_ManagerResellerByDistributorGroup.do">
+                    <input type="hidden" id="actionField" name="actionField" value=""/>
+                    <div class="content-Block-new" style="margin-bottom:25px"><!-- content-Block -->
+                        <div id="searchBox" class="visible"><!-- Search input window -->
+                            <div style="padding: 5px"><b>$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.searchDistributorGroup")</b></div>
+                            <br />
+                            <div style="padding: 5px">
+                                <div style=" float:left">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.distributor-Group-Name") &nbsp;&nbsp;</div> 
+                                <div style="float:left"><input type="text" onKeyPress="if(event.keyCode==13){FormSubmit('Search');}" name="distributorGroupName" size="28" class="search_field"/></div>
+                                <br style="clear:both" />
+                            </div>
+                            
+                            <br /><br />
+                            
+                            <div style="padding: 5px;margin-left:50px; height:20px">
+                                <a style="float: left; margin-left: 10px;" class="button" onclick="showSearchBox(this);"><span class="button">$brander.getBrandElement("lms.addSecurityRole.Cancel")</span></a> 
+                               
+                            </div>
+                        </div><!-- Search input window -->
+                        <div id="resultHeader" class="box_header"><!-- Result Header Start -->
+                            <div style="float:left; height:23px;">
+                                
+                               <div style="float:left; margin-top:6px;">
+								  <a onclick="javascript:window.location='adm_ManagerResellerByDistributorGroup.do?Id=$objSess.getAttribute("distributorGroupId")&method=addAdministratorInResellerGroup';" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.admin.distributor.caption.addReseller")</div>
+									  <div class="btn_end"></div>
+								  </a>
+								</div>
+								
+								 <div style="float:left; margin-top:6px;">
+                                 <a onclick="deleteAdmin()" style="text-decoration:none;">
+									  <div class="btn_start"></div>
+									  <div class="btn_normal">$brander.getBrandElement("lms.admin.distributor.caption.deleteReseller")</div>
+									  <div class="btn_end"></div>
+								 </a>
+								</div>
+                            
+                            </div>
+                            <div class="result_left_side"><!-- result_left_side -->
+                                <!-- Search Button -->
+                                
+                                <!-- Search Button -->
+                                <!-- Show all -->
+                                <a href="adm_ManagerResellerByDistributorGroup.do?action=ShowAll&showAll=true"><div id="e14d" class="icon_all" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div></a>
+                                <!-- Show all -->
+                                #if( $pager.nextIndex )
+                                    <a href="adm_ManagerResellerByDistributorGroup.do?action=ShowAll&pageIndex=$pager.nextIndex"><div id="e14c" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div></a> 
+                                #else 
+                                    <div class="icon_disabled">&nbsp;</div> 
+                                #end
+                                 #if( $pager.prevIndex )
+                                <a href="adm_ManagerResellerByDistributorGroup.do?action=ShowAll&pageIndex=$pager.prevIndex"><div id="e14b" class="icon_back" onmouseover="showTooltip('Back', event);" onmouseout="hideTooltip();"></div></a>#else <div class="icon_disabled">&nbsp;</div> #end
+                                #if($pageFirstIndex == 0 && $pageLastIndex == 9)
+                                    #set($x = $pageFirstIndex+1)
+                                #elseif($pageFirstIndex > 0)
+                                    #set($x = $pageFirstIndex+1)
+                                #else
+                                    #if($currentPageSize > 0)
+                                        #set($x = 1)
+                                    #else
+                                        #set($x = 0)
+                                    #end
+                                #end
+                                #if($pageLastIndex != 0)
+                                    #set($y = $pageLastIndex+1)
+                                #else
+                                    #if($currentPageSize > 0)
+                                        #set($y = 1)
+                                    #else
+                                        #set($y = 0)
+                                    #end
+                                #end
+                                <div id="e14a" class="$brander.getBrandElement("lms.administrator.searchMember.cssClass.Search-ContainerheaderRight")">Showing $x - $y of $totalCount </div>
+                            </div><!-- result_left_side -->
+                        </div><!-- Result Header End -->
+                        <div id="searchResult"><!-- searchResult -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;border-bottom:111px;">
+                                <tr bgcolor="#efefef">
+                                    <td class="check_box_top" width="17"><input type="checkbox" id="chkAll" name="alladmin" style="margin-left:3px"/></td>
+                                    <td class="box_subheader">$brander.getBrandElement("lms.administrator.manageDistributorGroup.caption.name")</td>
+                                </tr>
+                                #if($currentPageSize > 0)
+                                    #set($count = 0)
+                                    #foreach($loopIndex in [$pageFirstIndex..$pageLastIndex])
+                                        #if($count%2 == 0)
+                                            #set($alternate="row_1")
+                                        #else
+                                            #set($alternate="row_2")
+                                        #end
+                                        #set($distributorGroup = $context.distributorGroups.get($loopIndex))
+                                        <tr>
+                                        	<td width="25px" class="$alternate"><input type="checkbox" name="distributorIds" value="${distributorGroup.id}" id="chk$count" /></td>
+                                            <td class="$alternate">$!{distributorGroup.name}</td>
+                                        </tr>
+                                        #set($count = $count+1)
+                                    #end
+                                #else
+                                        <tr>
+                                            <td colspan="2" style="border-bottom:1px solid;border-color:#dfdfdf !Important;">
+                                                <div class="result_blank">#if(! $request.getAttribute("newPage")) $brander.getBrandElement("lms.searchLearner.caption.noRecordFound") #else To search click on the Search button above #end</div>
+                                            </td>
+                                        </tr>
+                                #end
+                            </table>
+                        </div><!-- searchResult -->
+                    </div><!-- content-Block -->
+                </form>
+            </div><!-- right-pannel-content-end -->
+
+        </td>
+</tr><!-- content-area-end -->
+        
+
+
+<tr> <!-- Footer BLOCK -->
+	<td id="footer" colspan="2">
+
+        <!-- footer -->
+        #parse("snippets/adminFooter.vm")
+        <!-- footer-end -->
+	</td>
+</tr>
+		
+		
+		
+		
+	
+		
+    </table><!-- main-container -->
+    
+    
+    
+    
+    <div id='deleteConfirmation' style='display:none'>
+        <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text"></div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="no button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.cancel")</span></a>
+                <a class="button" onClick=""><span class="yes button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+    </div>    
+     <div id="selectLearner" style="display:none">
+        <div class="header">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.warning")</div>
+        <div class="alert_message_box_icon"></div>
+        <div class="alert_message_box_text">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.select")</div>
+        <br style="clear:both" />
+        <div class='buttons'>
+            <div class='no simplemodal-close'>
+                <a class="button" onClick=""><span class="button">$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.OK")</span></a>
+            </div>
+        </div>
+    </div><!-- Alert Message Box Ends -->
+    
+ 
+</body>
+</html>

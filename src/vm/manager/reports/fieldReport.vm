@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        #parse("snippets/reportManagerHead.vm")
+            <link rel="stylesheet" type="text/css" media="all" href="brands/default/en/css/styles.css" />
+        
+        #set($currentReport=$reportForm.getCurrentReport())
+        <script type="text/javascript">
+             $(function(){
+               
+        
+             });
+        </script>
+    </head>
+    <body>
+        <table id="table-layout" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td id="header" colspan="2">
+                    <!-- header -->
+                    #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                       #parse("snippets/adminHeader.vm")
+                    #else
+                       #parse("snippets/managerHeader.vm")
+                    #end  
+                    <!-- header-end -->
+                </td>
+    		</tr>
+    	
+    		<!-- TopBar Start -->
+    		<tr id="row-tabs">
+    			<td id="blank-tab">
+    				&nbsp;
+    			</td>
+    			<td id="tabs" align="center">
+    
+    				<table id="table-tabs" border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<td><a href="#springUrl('/mgr_ManageReports.do?method=browseReports')">$brander.getBrandElement("lms.reports.summaryReport.caption.summary")</a></td>
+    						<td class='selected'><a href="#springUrl('/mgr_ManageReports.do?method=reportFieldMenu')"> $brander.getBrandElement("lms.reports.summaryReport.caption.fields")</a></td>
+    						<td id='last'><a href="#springUrl('/mgr_ManageReports.do?method=displayReportFilters')"> $brander.getBrandElement("lms.reports.summaryReport.caption.filters")</a></td>
+    					</tr>
+    				</table>
+    
+    			</td>
+    		</tr>
+    		<!-- TopBar End -->
+        
+    		<tr id="main" style="background:none;">
+    			<td valign="top" id="left-navigation">
+    
+    				<style type="text/css">
+    					#sidebar-scroller{
+    					width:195px;
+    					overflow-y:auto;
+    					overflow-x:hidden;
+    					}
+    				</style>
+            		<div id="sidebar-scroller" style="overflow-x: hidden;">
+                        #parse("snippets/reportLeftMenu.vm")
+                    </div>
+    			</td>
+    			<td id="content" >
+    				<div id="scrollable">
+    					
+                        <!-- Logo+Manage-User -->
+        				<table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+    					    <tr>
+    					        <td id="page-icon" class="reportLogo">
+    					            &nbsp;
+    					        </td>
+    					        <td id="page-description">
+    					            <div id="page-heading">$brander.getBrandElement("lms.reports.summaryReport.reportFields")</div>
+    					            <div id="page-help">$brander.getBrandElement("lms.reports.summaryReport.reportFields.mainPageDescription")</div>
+    					        </td>
+    					    </tr>
+    					</table>
+    					<!-- Logo+Manage-User-end -->
+    
+    					
+    
+                        <div class="content-Block">
+                            <div id="e7a" class="Block-Contain-header">
+                                <div id="e8" class="Search-Containerheaderleft">Report Fields</div>
+                            </div>
+                            <!-- User-left-right-list -->
+                            <form name="selectFieldsForm" action="#springUrl('/mgr_ManageReports.do?method=displayReportFields')" method="POST">
+                                <input type="hidden" name="method" value="displayReportFields"/>
+                                <div id="e7b" class="Search-inputfield-box4">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 1 -->
+                                    <div id="e13" class="search-content-row">
+                                        <div class="">This option allows you to select your preferred fields from a predefined list for this report.</div>
+                                    </div>
+                                    <!-- 2 -->
+                                    <div class="manager-bottom-space"></div>
+                                    <div style="float:left; margin-top:3px;">
+            						  <a onclick="document.location.href='mgr_ManageReports.do?method=displayReportFields'" style="text-decoration:none;">
+            							  <div class="btn_start"></div>
+            							  <div class="btn_normal">Select Fields</div>
+            							  <div class="btn_end"></div>
+            						  </a>
+            						</div>	
+                                    <!-- 0 -->
+                                    <!-- space -->
+                                    
+                                    <!-- space -->
+                                </div>
+                            </form>
+                            <!-- End-User-left-right-list -->
+                        </div>
+            
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+            
+                        <div class="content-Block">
+                            <div id="e7a" class="Block-Contain-header">
+                                <div id="e8" class="Search-Containerheaderleft">Report Field Ordering</div>
+                            </div>
+                            <!-- User-left-right-list -->
+                            <form name="orderFieldsForm" action="#springUrl('/mgr_ManageReports.do?method=displayReportFieldsOrder')" method="POST">
+                                <input type="hidden" name="method" value="displayReportFieldsOrder"/>
+                                <div id="e7b" class="Search-inputfield-box4">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 1 -->
+                                    <div id="e13" class="search-content-row">
+                                        <div class="">Ordering involves choosing the progression of the report field columns from left to right. Once saved, your preference applies every time this report is run.</div>
+                                    </div>
+                                    <!-- 2 -->
+                                    <div class="manager-bottom-space"></div>
+                                   <div style="float:left; margin-top:3px;">
+            						  <a onclick="document.location.href='mgr_ManageReports.do?method=displayReportFieldsOrder'" style="text-decoration:none;">
+            							  <div class="btn_start"></div>
+            							  <div class="btn_normal">Order Fields</div>
+            							  <div class="btn_end"></div>
+            						  </a>
+            						</div>	
+                                    <!-- 0 -->
+                                    <!-- space -->
+                                    
+                                    <!-- space -->
+                                </div>
+                            </form>
+                            <!-- End-User-left-right-list -->
+                        </div>
+            
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+            
+                        <div class="content-Block">
+                            <div id="e7a" class="Block-Contain-header">
+                                <div id="e8" class="Search-Containerheaderleft">Report Field Sorting</div>
+                            </div>
+                            <!-- User-left-right-list -->
+                            <form name="sortFieldsForm" action="#springUrl('/mgr_ManageReports.do?method=displayReportFieldsSortOrder')" method="POST">
+                                <input type="hidden" name="method" value="displayReportFieldsSortOrder"/>
+                                <div id="e7b" class="Search-inputfield-box4">
+                                    <!-- s -->
+                                    <div id="e12" class="search-content-row1a"><!-- using for space --></div>
+                                    <!-- 1 -->
+                                    <div id="e13" class="search-content-row">
+                                        <div class="">This option allows you to have the report data listed and sorted by a preferred field. For instance, if you wanted everyone with the last name "Jones" to appear at the top of the list, you would sort by last name first.</div>
+                                    </div>
+                                    <!-- 2 -->
+                                    <div class="manager-bottom-space"></div>
+                                    <div style="float:left; margin-top:3px;">
+            						  <a onclick="document.location.href='mgr_ManageReports.do?method=displayReportFieldsSortOrder'" style="text-decoration:none;">
+            							  <div class="btn_start"></div>
+            							  <div class="btn_normal">Sort Fields</div>
+            							  <div class="btn_end"></div>
+            						  </a>
+            						</div>	
+                                    <!-- 0 -->
+                                    <!-- space -->
+                                    
+                                    <!-- space -->
+                                </div>
+                            </form>
+                            <!-- End-User-left-right-list -->
+                        </div>
+            
+                        <!-- space -->
+                        <div class="manager-bottom-space"></div>
+                        <!-- space -->
+            
+    				</div>
+    				<!-- content-area-end -->
+    			</td>
+    		</tr>
+    
+    		<tr> <!-- Footer BLOCK -->
+    			<td id="footer" colspan="2">
+    				<!-- footer -->
+    				#if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+    					#parse("snippets/adminFooter.vm")
+    				#else
+    					#parse("snippets/managerFooter.vm")
+    				#end  
+    				<!-- footer-end -->
+    			</td>
+    		</tr>
+    	</table>
+    
+    </body>
+</html>

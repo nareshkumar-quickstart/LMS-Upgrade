@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+#parse("snippets/compliance/complianceHead.vm")
+
+
+
+<script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
+<script language="javascript" type="text/javascript">
+
+    document.title="$brander.getBrandElement("lms.surveyPreview.caption.title")";
+
+    function backForm(){
+        document.getElementById("actionmethod").value='backDisplaySurvey';
+        document.previewSurveyForm.submit();
+    }
+
+    function nextForm(){
+        document.getElementById("actionmethod").value='showSurveyView';
+        document.previewSurveyForm.submit();
+    }
+
+    function sendMail(){
+        document.getElementById("actionmethod").value='sendMail';
+        document.previewSurveyForm.submit();
+    }
+    
+    function printPreviewSurvey(){
+    	window.open("/lms/mgr_SurveyQuestionPreview.do?method=showSurveyView&surveyId=${takeSurveyForm.survey.id}&printPreview=true");
+    }
+
+</script>
+</head>
+
+<body>
+<form name="previewSurveyForm" method="POST" action="mgr_SurveyQuestionPreview.do">
+
+    <input type="hidden" id="actionmethod" name="method" value=""/>
+    <input type="hidden" id="action" name="nextPageIndex" value="$!{context.nextPageIndex}"/>
+
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+		<tr> <!-- First Block -->
+			<td id="header" border="0" cellpadding="0" cellspacing="0" colspan="2">
+             <!-- header -->
+             #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+                 #parse("snippets/adminHeader.vm")
+             #else
+                 #parse("snippets/managerHeader.vm")
+             #end
+             <!-- header-end -->
+			 </td>
+		</tr>
+		
+         <tr id="main"> <! SECOND BLOCK -->
+				<!-- <LEFT NAGIVATION> -->
+				<td id="left-navigation" valign="top">
+					 <table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->
+
+        <!-- left-pannel-content -->
+           
+				#parse("snippets/compliance/complianceLeftMenu.vm")
+            <!-- left-pannel-content-end -->
+			</table>
+			</td>
+			
+             <TD id="content" >
+					<div id="scrollable">
+
+                <!-- Logo+Manage-User -->
+                
+                            <!-- Page Description -->
+                            <div id="pageDescription" class="page_description" >
+                                <!-- Page Icon -->
+                                <div id="pageIcon" class="icon_surveys"></div>
+                                <!-- Page Heading -->
+                                <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.surveyPreview.caption.title")</div>
+                                <!-- Page Description -->
+                                <div id="pageDescriptionText">$brander.getBrandElement("lms.administrator.searchMember.caption.currentlypreviewing")</div>
+                            </div>
+                        
+                            <div style="border:0px solid red;width:100%;">
+							<div style="float:right; margin-top:3px;margin-right:20px;">
+							  <a onclick="printPreviewSurvey();return false;" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.Instructor.button.print")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							  #if($!{context.nextPageIndex} != '0')
+							<div style="float:right; margin-top:3px;margin-right:5px;">
+							  <a onClick="nextForm('next');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.accreditation.wizard.buttonTextNext")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>
+							 #end
+							<div style="float:right; margin-top:3px;margin-right:5px;">
+							  <a onClick="backForm('back');" style="text-decoration:none;">
+								  <div class="btn_start"></div>
+								  <div class="btn_normal">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.BackToEntitlements")</div>
+								  <div class="btn_end"></div>
+							  </a>
+							</div>				
+                             
+                            </div>
+                        
+                <!-- Logo+Manage-User-end -->
+
+                <div class="group-name">
+                     $brander.getBrandElement("lms.mycourses.dropdown.survey") : ${takeSurveyForm.survey.surveyRef.name}
+                </div>
+
+                <div class="$brander.getBrandElement("lms.mycourses.cssClass.content-Block")" style="width:107%;">
+
+
+                <div style="height:23px; margin-left: 40%;">
+					<div id="search-survey-search" style="float:left; margin-top:3px;">
+					  <a onClick="showSearchBox(document.getElementById('srch'));" style="text-decoration:none;">
+						  <div class="btn_start"></div>
+						  <div class="btn_normal">$brander.getBrandElement("lms.administrator.searchMember.caption.send")</div>
+						  <div class="btn_end"></div>
+					  </a>
+					</div>                   
+                </div>
+
+                 
+
+
+
+                <div id="searchBox" class="visible" style="height:100px;"><!-- Search input window -->
+                    <div style="padding: 5px">$brander.getBrandElement("lms.administrator.searchMember.caption.sendsurvey")</div>
+                    <div style="padding: 5px">
+                        <div style="width:75px; float:left">$brander.getBrandElement("lms.login.caption.EmailAddress")</div>
+                        <div style="float:left">
+                            <input type="text" onKeyPress="if(event.keyCode==13){sendMail();}" id="mailAddress" name="mailAddress" style="font-size:9px; width:170px" class="search_field" />
+                        </div>
+                        <br style="clear:both" />
+                    </div>
+                    <div style="padding: 5px"></div>
+                    <div style="padding: 5px;margin-left:40px;height:20px;">
+                        <div id="search-survey-search" style="margin-left:27px;" onClick="showSearchBox(this);">
+                            <a class="button"><span class="button">$brander.getBrandElement("lms.manageUser.regInvitation4.preview.button.cancel.caption")</span></a>
+                        </div>
+                        <div id="search-survey-search"  onClick="sendMail();">
+							<a class="button"><span class="button">$brander.getBrandElement("lms.administrator.searchMember.caption.send")</span></a>
+                        </div>
+                        
+                    </div>
+                </div><!-- Search input window -->
+
+                #set($questionCount = ${takeSurveyForm.survey.questionList.size()})
+                #set($questionNumber = $!{context.questionNo})
+                #if($questionCount > 0)
+                    #set($maxQuestionIndex = $questionCount - 1)
+                    #foreach($index in [0..$maxQuestionIndex])
+                        #set($surveyQuestion = ${takeSurveyForm.survey.questionList.get($index)})
+                        #set($prefix = "survey.questionList[$index]")
+                        #set($questionNumber = $questionNumber + 1)
+
+                        <!-- User-left-right-list -->
+                        <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                            <div id="e12" style="border:0px solid red;float:left;width:100%; padding-bottom:10px;">
+                                <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="border:0px solid red; padding-left:15px;word-wrap:break-word; ">
+                                    #if(${surveyQuestion.surveyQuestionRef.required} != false) <div class="required_field"><font color="#FF0000">&nbsp;*</font></div> #end $questionNumber. ${surveyQuestion.surveyQuestionRef.text}
+                                </div>
+                            </div>
+                            <div style="border:0px solid green;float:left;width:100%; padding-bottom:15px; ">
+                                $surveyQuestion.renderQuestion($prefix)
+                            </div>
+                        </div>
+                        <!-- End-User-left-right-list -->
+                    #end
+                #end
+
+                #if($!{context.nextPageIndex} == '0')
+                    #if(${context.showTerms} != "false")
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <div id="e12" style="border:0px solid red;float:left;width:100%;">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $brander.getBrandElement("lms.administrator.searchMember.caption.agreement")
+                            </div>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            <textarea readonly="true" style="margin-left:20px; margin-bottom:10px; margin-top:10px; background:white;" cols="88" rows="4">$!{context.showTerms}</textarea>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            <input type="checkbox" style="margin-left:22px;"></input> $brander.getBrandElement("lms.administrator.searchMember.caption.agree")
+                        </div>
+                    </div>
+                    #end
+
+                    #if(${context.showLinks} != "false")
+                    <div id="e7b" class="$brander.getBrandElement("lms.manageUser.addNewLearner.cssClass.User-checkbox-box")">
+                        <div id="e12" style="border:0px solid red;float:left;width:100%; margin-bottom:10px;">
+                            <div class="$brander.getBrandElement("lms.learner.displaySurvey.cssClass.input_field_area-user-f2-b")" style="padding-left:15px;word-wrap:break-word;">
+                                $brander.getBrandElement("lms.survey.caption.links")
+                            </div>
+                        </div>
+                        <div style="border:0px solid green;float:left;width:100%;">
+                            #foreach($link in ${context.showLinks})
+                            <span style="color:blue; text-decoration:underline; cursor:pointer; margin-top:10px; margin-left:20px;">
+                               <a href="$link.urlName">$link.urlName</a><br>
+                            </span>
+                            #end
+                        </div>
+                        <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                        <div id="e12" class="$brander.getBrandElement("lms.learner.SelfRegistrationlogin.cssClass.search-content-row1a")"><!-- using for space --></div>
+                    </div>
+                    #end
+                #end
+
+                </div>
+            </div><!-- right-pannel -->
+        </td></tr><!-- content2a -->
+
+		<tr> <!-- Footer BLOCK -->
+		 <td id="footer" colspan="2">
+        <!-- footer -->
+        #if($userData.isLMSAdministrator() && $adminCurrentMode == 'ROLE_LMSADMINISTRATOR')
+            #parse("snippets/adminFooter.vm")
+        #else
+            #parse("snippets/managerFooter.vm")
+        #end
+        <!-- footer-end -->
+		</td>
+		</tr>
+
+    </table><!-- main-container -->
+</form>
+<div id="printDiv"></div>
+</body>
+</html>

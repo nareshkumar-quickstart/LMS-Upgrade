@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        #parse("snippets/learnerNewHead.vm")
+         <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
+         <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
+
+
+        <script>
+            function FormSubmit(buttonclick) {
+                document.getElementById('action').value=buttonclick;
+                document.enrollmentForm.submit();
+            }
+
+            $(document).ready(function()
+            {
+                
+            });
+        </script>
+        <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+</head>
+#macro( EnrollmentTreeviewManageOrgGroup $treeNodes )
+    #set($lastDepth = 0)
+    #set($arrParent = [])   
+    #foreach($node in $treeNodes)
+        #set($depthDiff = ${node.depth} - ${lastDepth})
+        #set ($var=$velocityCount%2)
+        #if ($!{var}==0)
+            #set ($rowColor="org_row2")
+        #else 
+            #set ($rowColor="org_row1")
+        #end
+        #set ($val=0)
+        $arrParent.add($node.depth,$node.value.id)
+        #if ($!{node.depth}>0)
+            #set ($val=$node.depth - 1)
+            #set($parentId=$arrParent.get($val))
+        #end
+        <div id="row$velocityCount" name="row" class="$rowColor" indx="$velocityCount" parentRef="$!{parentId}">
+            <div class="icon_blank">&nbsp;</div>
+            #foreach($i in [1..${node.depth}])
+                #if ($!{node.depth}>0)
+                    <div class="icon_blank2"></div>
+                #end
+            #end
+            #if(${node.isLeaf()})
+            <div id="divIcon$velocityCount" class="icon_collapse_list" iscollapsed="false" parentRef="$!{parentId}"></div>
+            #else
+            <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${orgGroupTreeAsList.size()});" nodeid="${node.value.id}"></div>
+            #end
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroup${node.value.id}" name="groups" value="${node.value.id}" #if(${node.selected}) checked #end #if(!${node.enabled}) disabled #end /></div>
+            #set ($padLimit=100-$node.depth*5)
+            <div class="row_title">#dotPaddingWithOutTitle(${node.value.name},$padLimit)</div>
+        </div>
+    #end
+#end
+<body>
+    <form name="enrollmentForm" action="mgr_assignEnrollments.do" method="POST"> 
+	<table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
+	   <tr> <!-- First Block -->
+			<td id="header" colspan="2"><!-- header -->
+            <!-- header -->
+            #parse("snippets/managerWizardHeader.vm")
+            <!-- header-end -->
+			</td></tr>
+			
+		<tr id="main"> <! SECOND BLOCK -->
+            <!-- left-pannel-content -->
+			<td id="left-navigation" valign="top" style="width:195px;">
+				<table id="table-bands" border="0" cellpadding="0" cellspacing="0"> <!-- Table 3 -->					
+                <div>
+                    <div id="l-menu-back">
+                        <div class="$brander.getBrandElement("lms.assignEnrollment.cssClass.l-menu-back-text-h")">$brander.getBrandElement("lms.assignEnrollment.caption.wizard") </br>Showing 2 of 7</div>
+                        <div class="l-menu-back-text-inact">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep1a")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text-act")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2")<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep2a")</b></div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep3")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep4")</div>
+                        <div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep5")</div>
+						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6")<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep6a")</div>
+                        						<div class="$brander.getBrandElement("lms.manageUser.editLearner.cssClass.l-menu-back-text")">$brander.getBrandElement("lms.assignEnrollment.caption.wizardStep7")</div>
+                    </div>
+                </div><!-- left-pannel-content-end -->
+			</table></td>
+			
+                <!-- right-pannel-content -->
+			<TD id="content-rightpanel">
+		    <div id="scrollable">
+                    #springBind("enrollmentForm.groups")
+                    #if($status.error)
+                    <div id="message_box"><!-- error-box -->
+                        <img id="close_message" style="float:right;cursor:pointer"  src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                        #set ($error = $brander.getBrandElement($errorCode))
+                        <div class="width40pct">
+                            <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                            <div class="message_box_align">$error</div>
+                        </div>
+                        #end
+                    </div><!-- error-box -->
+                    #end
+
+                    <!-- Logo+Manage-User -->
+         <table id="table-page-description" border="0" cellpadding="0" cellspacing="0" style="margin-top:15px;margin-bottom:15px">
+		    <tr>
+			<td id="page-icon" class="page-icon-plan">
+			    &nbsp;
+			</td>
+			<td id="page-description">
+			    <div id="page-heading">$brander.getBrandElement("lms.assignEnrollment.step2-orgGroups.caption.title")</div>
+			    <div id="page-help">$brander.getBrandElement("lms.assignEnrollment.step2-orgGroups.caption.description")</div>
+			</td>
+		    </tr>
+		</table>          
+		
+                    <!-- Logo+Manage-User-end -->
+
+                    <div class="content-Block-new"><!-- content-Block -->
+                        <div class="Block-Contain-header">
+                            <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.manageUser.addNewLearner.caption.SelectOrganizationGroup")</div>
+                        </div>
+                        #EnrollmentTreeviewManageOrgGroup($orgGroupTreeAsList)
+                    </div><!-- content-Block -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                    <div class="managerBtn"><!-- button-div -->
+                        <input type="hidden" id="currentpage" name="_page" value="2"/>
+                        <input type="hidden" id="wizardSubmitter" name="wizardSubmitter" />
+						<div style="float:right; margin-top:3px;">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target4');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Next</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:right; margin-top:3px;margin-right:5px;">
+						  <a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_target0');" style="text-decoration:none;">
+							  <div class="btn_start"></div>
+							  <div class="btn_normal">Previous</div>
+							  <div class="btn_end"></div>
+						  </a>
+						</div>
+						<div style="float:left; margin-top:3px;">
+							<a onClick="submitButtonForm(document.enrollmentForm,'wizardSubmitter','_cancel');" style="text-decoration:none;">
+								<div class="btn_start"></div>
+								<div class="btn_normal">Cancel</div>
+								<div class="btn_end"></div>
+							</a>
+						</div>	
+						
+                    </div><!-- button-div -->
+                    <!-- space -->
+                    <div class="manager-bottom-space"></div>
+                    <!-- space -->
+                </div><!-- right-pannel-content-end -->
+            </div><!-- content2-area-end -->
+			</td></tr>
+					  <tr> <!-- Footer BLOCK -->
+			<td id="footer" colspan="2">
+            <!-- footer -->
+            #parse("snippets/managerFooter.vm")
+            <!-- footer-end -->
+			</td></tr>
+        </table><!-- main-container -->
+    </form>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   #parse("snippets/accreditation/accreditationDefaultHead.vm")
+    <script type="text/javascript" language="javascript" src="javascript/360js.js" ></script>
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function(){
+            $('#content2a').scroll(function(){
+                $('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});
+            });
+            $('#close_message').click(function(){
+                $("#message_box").animate({
+                   opacity: .5
+                }, "slow", "linear", function(){$("#message_box").hide();} );
+            });
+        });
+
+        function cancelCustomField() {
+            document.getElementById('action').value="cancelEditCustomField";
+            document.editCustomField.submit();
+        }
+
+        function saveCustomField() {
+            document.getElementById('action').value="saveCustomField";
+            document.editCustomField.submit();
+        }
+    </script>
+</head>
+
+<body>
+    <div id="main-container"><!-- main-container -->
+
+        <!--Header Start -->
+        #parse("snippets/instructorHeader.vm")
+        <!-- Header End -->
+
+        <!-- Body Start -->
+        <div id="frame_body"><!-- frame_body -->
+
+			#parse("snippets/accreditation/sidebar_custom_field.vm")
+
+            <div class="scrollable" id="content2a"><!-- scrollable -->
+
+                #springBind("addResourceForm.*")
+                #if($status.error)
+                    <!-- error-box -->
+                    <div id="message_box">
+                        <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+                        #foreach($errorCode in $status.errorCodes)
+                            #set ($error = $brander.getBrandElement($errorCode))
+                            <div class="width40pct">
+                                <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                                <div class="message_box_align">$error</div>
+                            </div>
+                        #end
+                    </div>
+                    <!-- error-box -->
+                #end
+
+                <!-- Page Description -->
+                <div id="pageDescription" class="page_description">
+                    <!-- Page Icon -->
+                    <div id="pageIcon" class="icon_custom_field"></div>
+                    <!-- Page Heading -->
+                    <div id="pageHeading" class="page_heading">$brander.getBrandElement("lms.accreditation.editCustomField.caption.title")</div>
+                    <!-- Page Description -->
+                    <div id="pageDescriptionText">$brander.getBrandElement("lms.accreditation.editCustomField.caption.subTitle")</div>
+                </div>
+
+                <form name="editCustomField" method="post" action="ins_manageResources.do">
+                    <input type="hidden" id="action" name="method" />
+                    <div class="search_box_result"><!-- search_box_result -->
+                        <div class="box_header"><span class="box_heading">$brander.getBrandElement("lms.accreditation.addCredentialCustomField.caption.Field-Type")</span></div>
+
+                        #springBind("addResourceForm.fieldType")
+                        #if($!{status.value} == "Radio Button" )
+                            #parse("instructor/manageResources/editCustomField/edit_customfield_radio.vm")
+                        #elseif($!{status.value} == "Choose Menu" || $!{status.value} == "Check Box" )
+                            #parse("instructor/manageResources/editCustomField/edit_customfield_check.vm")
+                        #else
+                            #parse("instructor/manageResources/editCustomField/edit_customfield_text.vm")
+                        #end
+                    </div><!-- search_box_result -->
+
+                    <!-- ******************************************************** -->
+                    <div class="wizard_button_container">
+                        <div class="wizard_button_placeHolder">
+                            #set($tabindexSave=$tabindex+2)
+                            <div class="btn-right" tabIndex="$tabindexSave">
+                              <a class="button_wizard" onClick="saveCustomField();"><span class="button_wizard">$brander.getBrandElement("lms.accreditation.caption.Save")</span></a>
+                            </div>
+
+                            <div class="btn-right" style="width:10px;">&nbsp;&nbsp;&nbsp;&nbsp</div>
+                            #set($tabindex=$tabindex+1)
+                            <div class="btn-right" tabIndex="$tabindex">
+                              <a class="button_wizard" onClick="cancelCustomField();"><span class="button_wizard">$brander.getBrandElement("lms.accreditation.wizard.buttonTextCancel")</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div><!-- scrollable -->
+
+        </div>
+        <!-- Body End -->
+
+        <!-- Footer Start -->
+        #parse("snippets/instructor/instructorFooter.vm")
+        <!-- Footer End -->
+
+    </div><!-- main-container -->
+
+</body>
+</html>
