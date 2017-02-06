@@ -65,7 +65,7 @@ public class AddTrainingPlanValidator implements Validator {
 		
 			boolean isSelected=false;
 			for(EnrollmentCourseView courseView:form.getEnrollmentCourseViewList()){
-				if(courseView.isSelected()){
+				if(courseView.getSelected()){
 					isSelected=true;
 					break;
 				}
@@ -189,7 +189,7 @@ public class AddTrainingPlanValidator implements Validator {
 		boolean anySelected = false;
 		for(EnrollmentCourseView courseView : form.getEnrollmentCourseViewList()){
 			
-			if(courseView.isSelected()){
+			if(courseView.getSelected()){
 				anySelected=true;
 				break;
 			}

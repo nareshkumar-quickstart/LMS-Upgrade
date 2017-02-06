@@ -96,7 +96,7 @@ public class EnrollmentCourseView implements Serializable, Comparable<Enrollment
 	private Long enrollmentId;
 	private String businessKey;
 	private String alphaNumeicCourseId;
-	private  Boolean selected = false;
+	private Boolean selected = Boolean.FALSE;
 	private String enrollmentStartDate;
 	private String enrollmentEndDate;
 	private List<SynchronousClass> syncClasses;
@@ -104,7 +104,6 @@ public class EnrollmentCourseView implements Serializable, Comparable<Enrollment
 	
 	public EnrollmentCourseView() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public EnrollmentCourseView(String courseName, Long courseId, String courseType, String courseCode, BigInteger totalSeats,
@@ -367,11 +366,10 @@ public class EnrollmentCourseView implements Serializable, Comparable<Enrollment
 		this.alphaNumeicCourseId = alphaNumeicCourseId;
 	}
 
-	public  Boolean isSelected() {
-		return selected;
-	}
-
 	public  Boolean getSelected() {
+		if(selected==null){
+			selected=Boolean.FALSE;
+		}
 		return selected;
 	}
 	

@@ -733,7 +733,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private List<EnrollmentCourseView> getSelectedCourses(SaveEnrollmentParam saveEnrollmentParam) {
 		List<EnrollmentCourseView> selectedEntitlementItems = new ArrayList<EnrollmentCourseView>();
 		for (EnrollmentCourseView course : saveEnrollmentParam.getCourseEntItems()) {
-		    if (course.isSelected()) {
+		    if (course.getSelected()) {
 		    	selectedEntitlementItems.add(course);
 		    }
 		}

@@ -183,7 +183,7 @@ public class AssignTrainingPlanValidator implements Validator {
 		else { // [09/17/2010] LMS-6859 :: Validations on Synchronous Courses enrollment
 			if( form.isSyncCourseSelected() ) {
 				for (EnrollmentCourseView item : form.getEnrollmentCourseViewList() ) {				
-					if (item.isSelected()
+					if (item.getSelected()
 							&& (item.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || item.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) ) {
 						
 						if (item.getSyncClasses() == null) {

@@ -137,7 +137,7 @@ public class AddEnrollmentValidator implements Validator {
 		if( ! form.getCourseSearchStay().trim().equalsIgnoreCase("stay") ) {
 			for( EnrollmentCourseView ecv : form.getEnrollmentCourseViewList() ) {
 				seatsRemaining=ecv.getTotalSeats()-ecv.getSeatsUsed();
-				if( ecv.isSelected() ) {
+				if( ecv.getSelected() ) {
 					anySelected = true;
 					selectedCoursesCount++;
 					//break;
@@ -183,7 +183,7 @@ public class AddEnrollmentValidator implements Validator {
 		
 		for( EnrollmentCourseView enrollCourse : form.getEnrollmentCourseViewList() ) 
 		{
-			if(enrollCourse.isSelected()) 
+			if(enrollCourse.getSelected()) 
 			{
 				Date sd1 = enrollCourse.getEntitlementStartDate(); 
 					//allCustomerEntitlements.getEntitlement().getStartDate();
@@ -251,7 +251,7 @@ public class AddEnrollmentValidator implements Validator {
 			//for( int loop = 0 ; loop < form.getCourseEntitlementItems().size() ; loop ++ ) {
 			for(EnrollmentCourseView enrollCourse : form.getEnrollmentCourseViewList()) 
 			{
-				if(enrollCourse.isSelected()) 
+				if(enrollCourse.getSelected()) 
 				{
 					//for( CourseEntitlementDetails course : form.getCourseEntitlementDetails() ) {
 					//--if(enrollCourse.getEnrollmentStartDate().isEmpty() || enrollCourse.getEnrollmentEndDate().isEmpty()) {
@@ -327,7 +327,7 @@ public class AddEnrollmentValidator implements Validator {
 		
 		if( form.isSelectedSyncCourse() ) {
 			for (EnrollmentCourseView item : form.getEnrollmentCourseViewList() ) {				
-				if (item.isSelected()) {
+				if (item.getSelected()) {
 					totalCourses++;
 					
 					if ( item.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || item.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {

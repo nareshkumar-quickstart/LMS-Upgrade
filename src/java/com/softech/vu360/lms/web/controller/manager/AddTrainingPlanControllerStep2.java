@@ -369,7 +369,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
  			form.setSyncCourseSelected(false);
  			form.setNonSyncCourseSelected(false);
  			for(EnrollmentCourseView enrollment : form.getEnrollmentCourseViewList()) {
-				if(enrollment.isSelected()){
+				if(enrollment.getSelected()){
 					if(enrollment.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || enrollment.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)){
 						form.setSyncCourseSelected(true); 								
 						List<SynchronousClass> syncClasses=synchronousClassService.getSynchronousClassesForEnrollment(enrollment.getCourseId(), this.getLearnersTobeEnrolled(form).size());

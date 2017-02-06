@@ -22,6 +22,7 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -170,6 +171,7 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		return attachedUser;
 	}
 
+	@Transactional
 	public VU360User updateUser(VU360User updatedUser) {
 		updatedUser = entityManager.merge(updatedUser);
 		return updatedUser;

@@ -1147,7 +1147,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 			SynchronousClass synchronousClass = null;
 			
 			for (EnrollmentCourseView enrollment : form.getEnrollmentList()) {
-				if (enrollment.isSelected()) {
+				if (enrollment.getSelected()) {
 					
 					courseId = Long.valueOf(enrollment.getCourseId());
 					customerContractId = Long.valueOf(enrollment.getEntitlementId());

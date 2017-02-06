@@ -87,7 +87,7 @@ public class AddTrainingPlanCoursesWizardController extends AbstractWizardFormCo
 		
 		List<TrainingPlanCourse> trainingPlanCourses = trainingPlanService.getTrainingPlanCourses(trainingPlan);
 		for(EnrollmentCourseView courseView : addTrainingPlanForm.getEnrollmentCourseViewList()) {			
-			if(courseView.isSelected()){
+			if(courseView.getSelected()){
 				boolean addCourse = true;
 				for (TrainingPlanCourse trainingPlanCourse : trainingPlanCourses) {
 					if (trainingPlanCourse.getCourse().getId().equals(courseView.getCourseId())){

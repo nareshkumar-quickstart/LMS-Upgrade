@@ -2,22 +2,26 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.softech.vu360.lms</groupId>
 	<artifactId>TSM-Maven-Version</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>5.0.0.1</version>
 	<packaging>war</packaging>
 	<name>TSM</name>
 	<description>TSM Maven version</description>
 
   	<properties>
   		<additionalparam>-Xdoclint:none</additionalparam>
- 	    <java-version>1.8</java-version>
+
  	    <!-- Spring -->
-		<spring.framework.version>4.1.6.RELEASE</spring.framework.version>
-		<spring-data-jpa.version>1.9.6.RELEASE</spring-data-jpa.version>
-		<spring.security.version>4.0.0.RELEASE</spring.security.version>
+		<spring-data-jpa.version>1.11.0.RELEASE</spring-data-jpa.version>
+		<spring.framework.version>4.3.6.RELEASE</spring.framework.version>
+		<spring-security.version>4.2.1.RELEASE</spring-security.version>
+		<spring-ws-security.version>2.4.0.RELEASE</spring-ws-security.version>
 		
 		<!-- Hibernate -->
-		<hibernate-core.version>4.3.11.Final</hibernate-core.version>
+		<hibernate-core.version>5.1.4.Final</hibernate-core.version>
 		
+		<!-- Others -->
+ 	    <java-version>1.8</java-version>
+		<activemq-core.version>5.14.3</activemq-core.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
 		<maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
 		<maven-war-plugin.version>2.6</maven-war-plugin.version>
@@ -117,11 +121,11 @@
 			              <directory>src/static</directory>
 			              <filtering>false</filtering>
 			            </resource>
-			            <resource>
+ 			            <resource>
 			              <directory>src/lib</directory>
 			              <filtering>false</filtering>
 			              <targetPath>WEB-INF/lib</targetPath>
-			            </resource>
+			            </resource> 
 			          </webResources>
 			          
 	            	<warName>lms</warName>
@@ -132,11 +136,23 @@
   	</build>
   
   <dependencies>
-  	<dependency>
-  		<groupId>org.apache.activemq</groupId>
-  		<artifactId>activemq-all</artifactId>
-  		<version>5.13.1</version>
-  	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jms</artifactId>
+		<version>${spring.framework.version}</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.activemq</groupId>
+	    <!-- <artifactId>activemq-all</artifactId> -->
+	    <artifactId>activemq-camel</artifactId>
+	    <version>${activemq-core.version}</version>
+	    <exclusions>
+	    	<exclusion>
+	    		<artifactId>geronimo-jta_1.0.1B_spec</artifactId>
+	    		<groupId>org.apache.geronimo.specs</groupId>
+	    	</exclusion>
+	    </exclusions>
+	</dependency>
   	<dependency>
   		<groupId>org.hibernate</groupId>
   		<artifactId>hibernate-entitymanager</artifactId>
@@ -147,6 +163,79 @@
   				<groupId>xml-apis</groupId>
   			</exclusion>
   		</exclusions>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework.data</groupId>
+  		<artifactId>spring-data-jpa</artifactId>
+  		<version>${spring-data-jpa.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-context-support</artifactId>
+  		<version>${spring.framework.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-oxm</artifactId>
+  		<version>${spring.framework.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-webmvc</artifactId>
+  		<version>${spring.framework.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-websocket</artifactId>
+  		<version>${spring.framework.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework.ws</groupId>
+  		<artifactId>spring-ws-security</artifactId>
+  		<version>${spring-ws-security.version}</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>spring-security-core</artifactId>
+  				<groupId>org.springframework.security</groupId>
+  			</exclusion>
+  			<exclusion>
+  				<artifactId>wss4j-ws-security-dom</artifactId>
+  				<groupId>org.apache.wss4j</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework.security</groupId>
+  		<artifactId>spring-security-config</artifactId>
+  		<version>${spring-security.version}</version>
+  		<exclusions>
+  			<exclusion>
+  				<artifactId>spring-security-core</artifactId>
+  				<groupId>org.springframework.security</groupId>
+  			</exclusion>
+  		</exclusions>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.springframework.security</groupId>
+  		<!-- <artifactId>spring-security-taglibs</artifactId> -->
+  		<artifactId>spring-security-web</artifactId>
+  		<version>${spring-security.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>javax.servlet-api</artifactId>
+  		<version>3.0.1</version>
+  		<scope>provided</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.velocity</groupId>
+  		<artifactId>velocity</artifactId>
+  		<version>1.7</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>velocity-tools</groupId>
+  		<artifactId>velocity-tools</artifactId>
+  		<version>1.4</version>
   	</dependency>
   	<dependency>
   		<groupId>org.apache.httpcomponents</groupId>
@@ -168,37 +257,6 @@
   		<groupId>org.codehaus.jackson</groupId>
   		<artifactId>jackson-mapper-asl</artifactId>
   		<version>1.7.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework.data</groupId>
-  		<artifactId>spring-data-jpa</artifactId>
-  		<version>${spring-data-jpa.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-context-support</artifactId>
-  		<version>${spring.framework.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.apache.velocity</groupId>
-  		<artifactId>velocity</artifactId>
-  		<version>1.7</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>velocity-tools</groupId>
-  		<artifactId>velocity-tools</artifactId>
-  		<version>1.4</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework.security</groupId>
-  		<artifactId>spring-security-config</artifactId>
-  		<version>${spring.security.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>javax.servlet</groupId>
-  		<artifactId>javax.servlet-api</artifactId>
-  		<version>3.0.1</version>
-  		<scope>provided</scope>
   	</dependency>
   	<dependency>
   		<groupId>commons-fileupload</groupId>
@@ -231,6 +289,11 @@
   		<artifactId>javax.inject</artifactId>
   		<version>1</version>
   	</dependency>
+	<dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.17</version>
+	</dependency>
   	<dependency>
   		<groupId>net.sf.spring-json</groupId>
   		<artifactId>spring-json</artifactId>
@@ -298,16 +361,6 @@
   		</exclusions>
   	</dependency>
   	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-oxm</artifactId>
-  		<version>${spring.framework.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-webmvc</artifactId>
-  		<version>${spring.framework.version}</version>
-  	</dependency>
-  	<dependency>
   		<groupId>com.lowagie</groupId>
   		<artifactId>itext</artifactId>
   		<version>2.1.7</version>
@@ -325,27 +378,6 @@
   				<groupId>bouncycastle</groupId>
   			</exclusion>
   		</exclusions>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-test</artifactId>
-  		<version>${spring.framework.version}</version>
-  		<scope>test</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework.security</groupId>
-  		<artifactId>spring-security-taglibs</artifactId>
-  		<version>${spring.security.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework</groupId>
-  		<artifactId>spring-websocket</artifactId>
-  		<version>${spring.framework.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>org.springframework.ws</groupId>
-  		<artifactId>spring-ws-security</artifactId>
-  		<version>2.2.2.RELEASE</version>
   	</dependency>
   	<dependency>
   		<groupId>wsdl4j</groupId>
@@ -581,6 +613,18 @@
   		<version>2.0.8</version>
   	</dependency>
   	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-test</artifactId>
+  		<version>${spring.framework.version}</version>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>junit</groupId>
+  		<artifactId>junit</artifactId>
+  		<version>4.12</version>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
   		<groupId>jackson-annotations</groupId>
   		<artifactId>jackson-annotations</artifactId>
   		<version>2.7.3</version>
@@ -642,12 +686,6 @@
   		<version>1.0</version>
   		<systemPath>${project.basedir}/src/lib/aws-1.0.jar</systemPath>
   		<scope>system</scope>
-  	</dependency>
-  	<dependency>
-  		<groupId>junit</groupId>
-  		<artifactId>junit</artifactId>
-  		<version>4.12</version>
-  		<scope>test</scope>
   	</dependency>
   </dependencies>
 </project>

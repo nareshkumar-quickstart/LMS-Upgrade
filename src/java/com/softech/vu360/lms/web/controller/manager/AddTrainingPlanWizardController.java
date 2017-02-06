@@ -130,7 +130,7 @@ public class AddTrainingPlanWizardController extends AbstractWizardFormControlle
 		Course course = null;
 		for(EnrollmentCourseView courseView : addTrainingPlanForm.getEnrollmentCourseViewList()){
 			
-			if(courseView.isSelected()){
+			if(courseView.getSelected()){
 				course = courseCourseGrpService.getCourseById(courseView.getCourseId());
 				selectedCourses.add(course);
 			}
@@ -310,7 +310,7 @@ public class AddTrainingPlanWizardController extends AbstractWizardFormControlle
 			Course course=null;
 			for(EnrollmentCourseView courseView : addTrainingPlanForm.getEnrollmentCourseViewList()){
 				
-				if(courseView.isSelected()){
+				if(courseView.getSelected()){
 					course=new Course();
 					course.setId(courseView.getCourseId());
 					course.setName(courseView.getCourseName());

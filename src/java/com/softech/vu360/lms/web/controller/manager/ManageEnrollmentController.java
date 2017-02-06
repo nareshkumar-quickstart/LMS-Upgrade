@@ -369,7 +369,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		form.setSelectedNonSyncCourse(false);
 		for (EnrollmentCourseView item : form.getEnrollmentCourseViewList()) {
 
-		    if (item.isSelected()) {
+		    if (item.getSelected()) {
 			if (item.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || item.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
 				List<SynchronousClass> syncClasses=synchronousClassService.getSynchronousClassesForEnrollment(item.getCourseId(), this.getLearnersTobeEnrolled(form).size());
 				item.setSyncClasses(syncClasses);
@@ -435,7 +435,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 	form.setSelectedNonSyncCourse(false);
 	for (EnrollmentCourseView item : form.getEnrollmentCourseViewList()) {
 
-	    if (item.isSelected()) {
+	    if (item.getSelected()) {
 		if (item.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE)||item.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
 		    form.setSelectedSyncCourse(true);
 		    form.setLearnersToBeEnrolled(getLearnersTobeEnrolled(form).size());
@@ -963,7 +963,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		form.setAttemptedToEnroll(learnersToBeEnrolled.size());
 		int noOfCoursesSelected = 0;
 		for (EnrollmentCourseView courseView : form.getEnrollmentCourseViewList()) {
-		    if (courseView.isSelected()){
+		    if (courseView.getSelected()){
 		    	noOfCoursesSelected++;
 		    }
 		}
