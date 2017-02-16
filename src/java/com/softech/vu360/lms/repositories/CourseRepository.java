@@ -125,6 +125,7 @@ public interface CourseRepository extends JpaRepository<Course,Long>, CourseRepo
 	//@Query("SELECT id , courseType,courseTitle  FROM Course WHERE courseTitle like '%:name%' and courseType IN (:courseType) and id IN (:alertTriggerFilterId)")
 	//public List<Course> findByNameLikeAndCourseTypeInAndIdIn(String name,String courseType,Long alertTriggerFilterId);
 	
+	public List<Course> findByBusinessKeyEquals(String businessKey);
 	
 	
 	

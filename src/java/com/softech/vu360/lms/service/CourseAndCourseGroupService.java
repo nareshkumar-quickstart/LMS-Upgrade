@@ -130,4 +130,6 @@ public interface CourseAndCourseGroupService {
 	 * @return		List of Courses
 	 */
 	public List<Course> getActiveCourses(Long id);
+	
+	public List<Course> getCourseByBusinessKey(String businessKey);
 }

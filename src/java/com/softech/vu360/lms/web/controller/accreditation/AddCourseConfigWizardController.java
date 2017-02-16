@@ -233,6 +233,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 			}
 			
 			courseConfiguration.setEnableIdentityValidation(form.getCourseConfiguration().getEnableIdentityValidation());
+			courseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
 			//courseConfiguration.setMustCompleteCourseEvaluation(form.isMustCompleteCourseEvaluation());
                  
 			if( form.isCertificateEnabled()){

@@ -127,6 +127,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				form.setValidationNoMissedQuestionsAllowed(form.getCourseConfiguration().getValidationNoMissedQuestionsAllowed()+"");
 				form.setValidationTimeBetweenQuestion(form.getCourseConfiguration().getValidationTimeBetweenQuestion()+"");
 				form.setEnableIdentityValidation(form.getCourseConfiguration().getEnableIdentityValidation());
+				form.setEnableSmartProfileValidation(form.isEnableSmartProfileValidation());
 				form.setNumberOfValidationQuestions(form.getCourseConfiguration().getNumberOfValidationQuestions()+"");
 				
 				
@@ -284,6 +285,10 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 					form.setPostLockoutAssessmentActiveWindow(form.getCourseConfiguration().isPostLockoutAssessmentActiveWindow());
 					//form.setPostEnableviewAssessmentResults(form.getCourseConfiguration().getPostAssessmentConfiguration().isViewassessmentresultsEnabled());
 					form.setPostEnableviewAssessmentResults(form.getCourseConfiguration().isViewassessmentresultsEnabled());
+					form.setEnableDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
+					form.setEnableSelfRegistrationProctor(form.isEnableSelfRegistrationProctor());
+					form.setEnableSmartProfileValidation(form.isEnableSmartProfileValidation());
+										
 				//QUIZ
 					
 					form.setQuizAssessmentEnabled(form.getCourseConfiguration().isQuizEnabled());
@@ -714,6 +719,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		}
 		
 		mycourseConfiguration.setEnableIdentityValidation(form.isEnableIdentityValidation());
+		mycourseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
 		
 		
 		
@@ -1083,7 +1089,10 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		}else{
 			mycourseConfiguration.setCaRealEstateCE(false);
 		}
-
+		
+		// TODO: mycourseConfiguration.setRequireSelfRegistrationProctor(form.isRequireIdentityValidation());
+		mycourseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
+		//mycourseConfiguration.setRequireDefineUniqueQuestionValidation(form.isRequireDefineUniqueQuestionValidation());
 		
 		accreditationService.saveCourseConfiguration(mycourseConfiguration);
 

@@ -643,6 +643,38 @@ public class ManageUserStatusController extends VU360BaseMultiActionController {
 		return modelAndView;
 	}
 
+	public ModelAndView changeMailingStatus(HttpServletRequest request,
+			HttpServletResponse response, Object command, BindException errors)
+			throws Exception {
+		ManageUserStatusForm form = (ManageUserStatusForm) command;
+		userStatusUpdateUtil.updateMailingStatuses(form.getUserstatuses(),form.getUpdate_mailingStatus());
+		
+
+		HashMap context = initializePageContext(form, isShowAll(request));
+		context.put("sortDirection", 1);
+		context.put("sortColumnIndex", 0);
+		
+		ModelAndView modelAndView = new ModelAndView(manageUserStatusTemplate,CONTEXT, context);
+
+		return modelAndView;
+	}
+	
+	public ModelAndView changeReportingStatus(HttpServletRequest request,
+			HttpServletResponse response, Object command, BindException errors)
+			throws Exception {
+		ManageUserStatusForm form = (ManageUserStatusForm) command;
+		userStatusUpdateUtil.updateReportingStatuses(form.getUserstatuses(),form.getUpdate_reportingStatus());
+		
+
+		HashMap context = initializePageContext(form, isShowAll(request));
+		context.put("sortDirection", 1);
+		context.put("sortColumnIndex", 0);
+		
+		ModelAndView modelAndView = new ModelAndView(manageUserStatusTemplate,CONTEXT, context);
+
+		return modelAndView;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public ModelAndView searchUserStatus(HttpServletRequest request,
 			HttpServletResponse response, Object command, BindException errors)

@@ -57,14 +57,9 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	private String unitOfTimeToComplete=UNIT_MINUTES;
 	private boolean courseEvaluationSpecified = false;
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private boolean enableDefineUniqueQuestionValidation;
+	private boolean enableSelfRegistrationProctor;
+	private boolean enableSmartProfileValidation;
 	
 	// for pagination
 	private String pageIndex;
@@ -1911,6 +1906,32 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	public void setPostEnableviewAssessmentResults(
 			boolean postEnableviewAssessmentResults) {
 		this.postEnableviewAssessmentResults = postEnableviewAssessmentResults;
+	}
+
+	public boolean isEnableDefineUniqueQuestionValidation() {
+		return enableDefineUniqueQuestionValidation;
+	}
+
+	public void setEnableDefineUniqueQuestionValidation(
+			boolean enableDefineUniqueQuestionValidation) {
+		this.enableDefineUniqueQuestionValidation = enableDefineUniqueQuestionValidation;
+	}
+
+	public boolean isEnableSelfRegistrationProctor() {
+		return enableSelfRegistrationProctor;
+	}
+
+	public void setEnableSelfRegistrationProctor(
+			boolean enableSelfRegistrationProctor) {
+		this.enableSelfRegistrationProctor = enableSelfRegistrationProctor;
+	}
+
+	public boolean isEnableSmartProfileValidation() {
+		return enableSmartProfileValidation;
+	}
+
+	public void setEnableSmartProfileValidation(boolean enableSmartProfileValidation) {
+		this.enableSmartProfileValidation = enableSmartProfileValidation;
 	}
 
 }

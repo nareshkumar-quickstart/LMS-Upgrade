@@ -2043,6 +2043,11 @@
    		<property name="batchImportConnectionManager" ref="batchImportConnectionManager" />
 	</bean>
 
+	<bean id="regulatoryReportingAdminController" class="com.softech.vu360.lms.web.controller.RegulatoryReportingAdminController">
+        <property name="regulatoryReportingAdminTemplate" value="regulatoryReportingAdmin"/>
+   		<property name="acmReportImportConnectionManager" ref="acmReportImportConnectionManager" />
+ 	</bean>
+ 	
     <bean id="forgetPasswordController" class="com.softech.vu360.lms.web.controller.ForgetPasswordController">
   	<property name="methodNameResolver">
                 <bean class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
@@ -4715,6 +4720,27 @@
         </property>
     </bean>
 
+	+<!-- ========================= IMPORT DOCUSIGNE TEMPLATE IDS FROM CVS FILE ============================ -->
+ 
+    <bean id="acmRegulatoryReportingInfo" class="com.softech.vu360.lms.web.controller.accreditation.RegulatoryReportingInfoController">
+         <property name="methodNameResolver">
+             <bean class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+                 <property name="paramName" value="method"/>
+             </bean>
+         </property>
+         <property name="commandName" value="importRegulatoryReportingInfoForm"/>
+ 		<property name="commandClass" value="com.softech.vu360.lms.web.controller.model.ImportRegulatoryReportingInfoForm"/>   
+    		<property name="startTemplate" value="accreditation/reportingTools/importRegulatoryReportingInfo" />
+    		<property name="finishTemplate" value="accreditation/reportingTools/importRegulatoryReportingInfoFinish" />
+    		<property name="acmjmsTemplate" ref="acmjmsTemplate"/>
+    		<property name="regulatoryReportingService" ref="regulatoryReportingService"/>
+         <property name="validator" ref="importRegulatoryReportingValidator"/>
+     </bean>
+      <bean id="importRegulatoryReportingValidator" class="com.softech.vu360.lms.web.controller.validator.Accreditation.ImportRegulatoryReportingValidator">
+         <property name="regulatoryReportingService" ref="regulatoryReportingService"/>
+      </bean> 
+ 
+ 
     <bean id="predictController" class="com.softech.vu360.lms.web.controller.PredictController" />
     
     <bean id="legacyCertificateGenerator" class="com.softech.vu360.lms.web.controller.LegacyCertificateGenerator">
@@ -5196,6 +5222,8 @@
               
               /batchImportAdmin.do=batchImportAdminController
               /legacy/generateCertificate.do=legacyCertificateGenerator
+              /acmRegulatoryReportingInfo.do=acmRegulatoryReportingInfo
+               /regulatoryReportingAdminController.do=regulatoryReportingAdminController
             </value>
         </property>
     </bean>

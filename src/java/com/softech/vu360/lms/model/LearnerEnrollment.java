@@ -81,6 +81,12 @@ public class LearnerEnrollment implements Serializable {
     @Column(name = "ENROLLMENTSTATUS")
     private String enrollmentStatus = ACTIVE;
 
+    @Column(name = "CARDMAILINGSTATUS")
+    private String cardMailingStatus = null;
+    
+    @Column(name = "COURSEREPORTINGSTATUS")
+    private String courseReportingStatus = null;
+    
     @OneToOne(mappedBy="learnerEnrollment" , cascade = { CascadeType.PERSIST, CascadeType.MERGE },fetch=FetchType.LAZY) 
     private LearnerCourseStatistics courseStatistics;
     
@@ -118,6 +124,12 @@ public class LearnerEnrollment implements Serializable {
     
     @Column(name = "CERTIFICATETF")
     private Boolean enableCertificate;
+    
+    @Column(name = "CARDMAILINGDATE")
+    private Date cardMailingDate = null;
+    
+    @Column(name = "COURSEREPORTINGDATE")
+    private Date courseReportingDate = null;
     
     @OneToMany(mappedBy = "enrollment")
     private List<ProctorEnrollment> proctorEnrollment = new ArrayList<ProctorEnrollment>();
@@ -461,6 +473,38 @@ public class LearnerEnrollment implements Serializable {
 		course.setId(courseID);
 		course.setCourseGUID(courseGUID);
 		this.course = course;
+	}
+
+	public String getCardMailingStatus() {
+		return cardMailingStatus;
+	}
+
+	public void setCardMailingStatus(String cardMailingStatus) {
+		this.cardMailingStatus = cardMailingStatus;
+	}
+
+	public String getCourseReportingStatus() {
+		return courseReportingStatus;
+	}
+
+	public void setCourseReportingStatus(String courseReportingStatus) {
+		this.courseReportingStatus = courseReportingStatus;
+	}
+
+	public Date getCardMailingDate() {
+		return cardMailingDate;
+	}
+
+	public void setCardMailingDate(Date cardMailingDate) {
+		this.cardMailingDate = cardMailingDate;
+	}
+
+	public Date getCourseReportingDate() {
+		return courseReportingDate;
+	}
+
+	public void setCourseReportingDate(Date courseReportingDate) {
+		this.courseReportingDate = courseReportingDate;
 	}
     
     

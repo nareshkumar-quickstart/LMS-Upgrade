@@ -64,6 +64,9 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
     private String courseApprovalPeriodUnit;
     private boolean reportingRequired;
     private int reportingTimeframe;
+    private boolean certificateOrCardRequired;
+    private int  shippableItemProcessingTime;
+    private String  shippableItemName;
     private List<CreditReportingField> reportingFields = new ArrayList<CreditReportingField>();
     private List<com.softech.vu360.lms.web.controller.model.customfield.CustomField> customFields = new ArrayList<com.softech.vu360.lms.web.controller.model.customfield.CustomField>();
     private List<CustomFieldValue> customFieldValues = new ArrayList<CustomFieldValue>();
@@ -85,6 +88,7 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
     protected String providerApprovalPeriodStr = "0";
     protected String courseApprovalPeriodStr = "0";    
     private String reportingTimeframeStr = "0";
+    private String shippableTimeframeStr = "0";
 
     /**
      * Reinitializes the form instance properties with regulator category loaded
@@ -98,6 +102,7 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         this.category=regulatorCategory;
         this.categoryType = regulatorCategory.getCategoryType();
         this.displayName = regulatorCategory.getDisplayName();
+        this.shippableItemName = regulatorCategory.getShippableItemName();
         this.validationRequired = regulatorCategory.getValidationRequired();
         this.validationFrequency =  (int) regulatorCategory.getValidationFrequency();
         //this.modalitiesAllowed.clear();
@@ -127,6 +132,9 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         this.courseApprovalPeriodUnit = regulatorCategory.getCourseApprovalPeriodUnit();
         this.reportingRequired = regulatorCategory.getReportingRequired();
         this.reportingTimeframe = regulatorCategory.getReportingTimeframe();
+        this.certificateOrCardRequired = regulatorCategory.getCertificateOrCardRequired();
+        this.shippableItemProcessingTime = regulatorCategory.getShippableItemProcessingTime();
+        this.shippableItemName = regulatorCategory.getShippableItemName();
         this.reportingFields.clear();
         this.reportingFields.addAll(regulatorCategory.getReportingFields());
         this.customFields.clear();        
@@ -141,7 +149,8 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         this.finalAssessmentPassingRatePercentageStr = Double.toString(this.finalAssessmentPassingRatePercentage);
         this.providerApprovalPeriodStr = Integer.toString(this.providerApprovalPeriod);
         this.courseApprovalPeriodStr = Integer.toString(this.courseApprovalPeriod);
-        this.reportingTimeframeStr = String.valueOf((int) this.reportingTimeframe); 
+        this.reportingTimeframeStr = String.valueOf((int) this.reportingTimeframe);
+        this.shippableTimeframeStr = String.valueOf((int) this.shippableItemProcessingTime);
     }
 
     public long getId() {
@@ -442,6 +451,7 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         category.setRegulator(getRegulator());
         category.setCategoryType(categoryType);
         category.setDisplayName(displayName);
+        category.setShippableItemName(shippableItemName);
         category.setValidationRequired(validationRequired);
         //category.getModalitiesAllowed().clear();
         category.setModalitiesAllowed(modalitiesAllowed);
@@ -464,7 +474,8 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         category.setProviderApprovalPeriodUnit(providerApprovalPeriodUnit);
         category.setCourseApprovalRequired(courseApprovalRequired);
         category.setCourseApprovalPeriodUnit(courseApprovalPeriodUnit);
-        category.setReportingRequired(reportingRequired);   
+        category.setReportingRequired(reportingRequired);
+        category.setCertificateOrCardRequired(certificateOrCardRequired);
         category.setCustomFieldValues(this.getCustomFieldValues());
         //Please load customfields inside customfields method, use of it here is causing other fuctionality to crash when this crashes.
         //loadCustomFields(category);
@@ -481,6 +492,9 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         category.setCourseApprovalPeriod(Integer.valueOf
                 (courseApprovalPeriodStr));
         category.setReportingTimeframe(Integer.valueOf(reportingTimeframeStr));
+        category.setCertificateOrCardRequired(certificateOrCardRequired);
+        category.setShippableItemName(shippableItemName);
+        category.setShippableItemProcessingTime(Integer.valueOf(shippableTimeframeStr));
 
         return category;
     }
@@ -842,6 +856,38 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
 
 	public void setReportingTimeframeStr(String reportingTimeframeStr) {
 		this.reportingTimeframeStr = reportingTimeframeStr;
+	}
+
+	public boolean isCertificateOrCardRequired() {
+		return certificateOrCardRequired;
+	}
+
+	public void setCertificateOrCardRequired(boolean certificateOrCardRequired) {
+		this.certificateOrCardRequired = certificateOrCardRequired;
+	}
+
+	public int getShippableItemProcessingTime() {
+		return shippableItemProcessingTime;
+	}
+
+	public void setShippableItemProcessingTime(int shippableItemProcessingTime) {
+		this.shippableItemProcessingTime = shippableItemProcessingTime;
+	}
+
+	public String getShippableItemName() {
+		return shippableItemName;
+	}
+
+	public void setShippableItemName(String shippableItemName) {
+		this.shippableItemName = shippableItemName;
+	}
+
+	public String getShippableTimeframeStr() {
+		return shippableTimeframeStr;
+	}
+
+	public void setShippableTimeframeStr(String shippableTimeframeStr) {
+		this.shippableTimeframeStr = shippableTimeframeStr;
 	}
     
 }

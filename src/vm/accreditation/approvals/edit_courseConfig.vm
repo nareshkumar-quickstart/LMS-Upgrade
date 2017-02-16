@@ -40,13 +40,21 @@
             tooglePostNoResultMessage();            
             
             $('#enableIdentityValidation').change(function(){                                
-                var status=true;
-                if($(this).is(':checked')){status=false;}
-	               $('#validationTimeBetweenQuestion').attr('disabled', status);
-	               $('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
-	               $('#validationNoMissedQuestionsAllowed').attr('disabled', status);                
+              var status = $(this).is(':checked') ? false : true;
+                $('#enableSmartProfileValidation').attr('disabled', status);
+               	$('#enableSmartProfileValidation').trigger('change');               
             });
+            $('#enableSmartProfileValidation').change(function(){                                
+                var status = false;
+                if($(this).is(':checked') || !$('#enableIdentityValidation').is(':checked'))	{
+                	status = true;
+            	}
+               	$('#validationTimeBetweenQuestion').attr('disabled', status);
+               	$('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
+               	$('#validationNoMissedQuestionsAllowed').attr('disabled', status);                
+             });
             $('#enableIdentityValidation').trigger('change');
+            $('#enableSmartProfileValidation').trigger('change');
             
             $('#seattimeenabled').change(function(){                                
                 var status=true;
@@ -1738,10 +1746,7 @@ The name of the hidden fields is same as the name of the check box wit an unders
                          <div class="search_box_result" id="validation">
                          <div class="box_header" onmousedown="collapseTable('validation', 'validationIcon')"><div id = "validationIcon" class="icon_down" style="margin-top:7px;" ></div><span class="box_heading">Validation</span></div>
                          <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
-                                <tbody><tr>
-                                <td height="30" colspan="2"><b>&nbsp;&nbsp;Content Policies</b></td>
-                                <td width="20"></td>
-                                <td width="48%"></td>
+                               <tbody>
                             </tr>
                             <tr>
                                 <td width="20px" height="5"></td>
@@ -1756,6 +1761,21 @@ The name of the hidden fields is same as the name of the check box wit an unders
                                         <td><div class="row_text">Enable Identity Validation</div></td>
                                         <td></td>
                                         <td></td>
+                                </tr>
+                                <tr>
+	                                <td height="30" colspan="2"><b>&nbsp;&nbsp;Content Policies</b></td>
+	                                <td width="20"></td>
+	                                <td width="48%"></td>
+                                </tr>
+                                <tr>
+                                	#springBind("courseConfigForm.enableSmartProfileValidation")
+                            		<td>
+                            			<input type="checkbox" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end />
+                            			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
+                       			</td>
+                                    <td><div class="row_text">Smart Profile Validation</div></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                              #*   <tr>
                                         #springBind("courseConfigForm.requireIdentityValidationEverySeconds")

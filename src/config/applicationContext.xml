@@ -341,6 +341,7 @@
 		<property name="statisticsService" ref="statisticsService" />
 		<property name="learnersToBeMailedService" ref="learnersToBeMailedService" />
 		<property name="auditCourseStatusService" ref="auditCourseStatusService" />
+		<property name="enrollmentService" ref="enrollmentService" />
 	</bean>
 
 	<bean id="enrollLearnerAsyncTask" class="com.softech.vu360.util.EnrollLearnerAsyncTask">
@@ -475,10 +476,16 @@
 		<property name="batchImportMessageListener" ref="batchImportMessageListener" />
 		<property name="activeMQConnectionStateMonitor" ref="activeMQTransportListener" />
 	</bean>
-
+	
+	<bean id="acmReportImportConnectionManager" class="com.softech.vu360.lms.batchImport.ACMReportImportConnectionManager">
+    		<property name="regulatoryReportingMessageListener" ref="regulatoryReportingMessageListener" />
+    		<property name="activeMQConnectionStateMonitor" ref="activeMQTransportListener" />
+ 	</bean>
+ 
 	<bean id="activeMQTransportListener"
 		class="com.softech.vu360.lms.batchImport.ActiveMQConnectionStateMonitor">
 		<property name="batchImportConnectionManager" ref="batchImportConnectionManager" />
+		<property name="acmReportImportConnectionManager" ref="acmReportImportConnectionManager"/>
 	</bean>
 
 	<bean id="activeMQConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -508,13 +515,23 @@
 	<bean id="destinationQueue" class="org.apache.activemq.command.ActiveMQQueue">
 		<constructor-arg value="${amq.queue.name}" />
 	</bean>
-
+	
+	<bean id="acmdestinationQueue" class="org.apache.activemq.command.ActiveMQQueue">
+ 		<constructor-arg value="${amq.acm.queue.name}" />
+ 	</bean>
+ 
 	<!-- A JmsTemplate instance that uses the cached connection and destination -->
 	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="activeMQConnectionFactory" />
 		<property name="defaultDestination" ref="destinationQueue" />
 	</bean>
-
+	
+	<bean id="acmjmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+ 		<property name="connectionFactory" ref="activeMQConnectionFactory" />
+ 		<property name="defaultDestination" ref="acmdestinationQueue" />
+ 	</bean>
+ 	
+ 
 	<!-- A POJO that implements the JMS message listener (Receiving Message) -->
 	<bean id="batchImportMessageListener"
 		class="com.softech.vu360.lms.batchImport.BatchImportMessageListener">
@@ -523,7 +540,12 @@
 		<property name="customerService" ref="customerService" />
 	</bean>
 
-
+	<!-- A POJO that implements the JMS message listener (Receiving Message) -->
+ 	<bean id="regulatoryReportingMessageListener" class="com.softech.vu360.lms.batchImport.RegulatoryReportingMessageListener">
+         <property name="enrollmentService" ref="enrollmentService" />
+ 	</bean>
+ 	
+ 
 	<bean id="legacyCertificateService" class="com.softech.vu360.lms.service.impl.LegacyCertificateService"/>
 
 	<!-- A container confiugration <bean id="listenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer"> 
@@ -573,7 +595,13 @@
  	</bean>
  	
  	<import resource="lms-api-services-application-context.xml" />
-
+	
+	<bean id="regulatoryReportingService" class="com.softech.vu360.lms.service.impl.RegulatoryReportingServiceImpl">
+ 		<property name="courseAndCourseGroupService" ref="courseAndCourseGroupService" />
+ 		<property name="learnerService" ref="learnerService" />
+ 		<property name="enrollmentService" ref="enrollmentService" />
+ 	</bean>
+ 
 	<jee:jndi-lookup 
 		id="dataSource"
 	   	jndi-name="jdbc/lcms"

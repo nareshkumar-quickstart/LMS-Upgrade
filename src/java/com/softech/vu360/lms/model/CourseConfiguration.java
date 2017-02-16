@@ -324,6 +324,17 @@ public class CourseConfiguration implements SearchableKey {
 	@Column(name = "CA_VALIDATION_TF")
 	private Boolean caRealEstateCE;
 	
+	@Column(name="RESTRICT_INCOMPLETE_JS_TEMPLATE")
+	private Boolean mustMasterAllLessonActivities;
+	
+	@Column(name="DEFINEUNIQUEQUESTION_VALIDATION_TF")
+	private Boolean requireDefineUniqueQuestionValidation;
+	
+	@Column(name="SELF_REGISTRATION_PROCTOR_TF")
+	private Boolean requireSelfRegistrationProctor;
+	
+	@Column(name="PROFILEBASED_VALIDATION_TF")
+	private Boolean requireSmartProfileValidation;
 	
 	public AssessmentConfiguration getPreAssessmentConfiguration() {
 		for (AssessmentConfiguration asmntConfig : assessmentConfigurations) {
@@ -2643,5 +2654,42 @@ public class CourseConfiguration implements SearchableKey {
 	public Boolean getCaRealEstateCE() {
 		return caRealEstateCE;
 	}
+
+	public Boolean getMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities;
+	}
+
+	public void isMustMasterAllLessonActivities(
+			Boolean mustMasterAllLessonActivities) {
+		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities;
+	}
+
+	public Boolean getRequireDefineUniqueQuestionValidation() {
+		return requireDefineUniqueQuestionValidation;
+	}
+
+	public void isRequireDefineUniqueQuestionValidation(
+			Boolean requireDefineUniqueQuestionValidation) {
+		this.requireDefineUniqueQuestionValidation = requireDefineUniqueQuestionValidation;
+	}
+
+	public Boolean getRequireSelfRegistrationProctor() {
+		return requireSelfRegistrationProctor;
+	}
+
+	public void isRequireSelfRegistrationProctor(
+			Boolean requireSelfRegistrationProctor) {
+		this.requireSelfRegistrationProctor = requireSelfRegistrationProctor;
+	}
+
+	public Boolean isRequireSmartProfileValidation() {
+		return requireSmartProfileValidation;
+	}
+
+	public void setRequireSmartProfileValidation(
+			Boolean requireSmartProfileValidation) {
+		this.requireSmartProfileValidation = requireSmartProfileValidation;
+	}
+	
 	
 }

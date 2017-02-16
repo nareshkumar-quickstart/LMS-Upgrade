@@ -3,6 +3,7 @@ package com.softech.vu360.lms.web.listener;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import com.softech.vu360.lms.batchImport.ACMReportImportConnectionManager;
 
 import com.softech.vu360.lms.batchImport.BatchImportConnectionManager;
 
@@ -12,7 +13,9 @@ public class SpringContextListener implements ApplicationListener  {
         if(event instanceof ContextRefreshedEvent) {
             ContextRefreshedEvent cxt = (ContextRefreshedEvent)event;
             BatchImportConnectionManager bicm = (BatchImportConnectionManager)cxt.getApplicationContext().getBean("batchImportConnectionManager");
+            ACMReportImportConnectionManager acmreportcm = (ACMReportImportConnectionManager)cxt.getApplicationContext().getBean("acmReportImportConnectionManager");
             bicm.startListening();
+            acmreportcm.startListening();
         }
     }
     
