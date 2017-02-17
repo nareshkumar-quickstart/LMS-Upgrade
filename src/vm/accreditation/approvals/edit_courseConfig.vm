@@ -39,22 +39,17 @@
             disableMinimumTimeBeforeStartElements();
             tooglePostNoResultMessage();            
             
-            $('#enableIdentityValidation').change(function(){                                
-              var status = $(this).is(':checked') ? false : true;
-                $('#enableSmartProfileValidation').attr('disabled', status);
-               	$('#enableSmartProfileValidation').trigger('change');               
+            $('#enableIdentityValidation').change(function(){
+                 var status=true;
+                 if($(this).is(':checked')){status=false;}
+                        $('#validationTimeBetweenQuestion').attr('disabled', status);
+                        $('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
+                        $('#validationNoMissedQuestionsAllowed').attr('disabled', status);
+                        $('#validationNoMissedQuestionsAllowed').attr('disabled', status);
+                        $('#enableSmartProfileValidation').attr('disabled', status);
+                        $('#standardValidation').attr('disabled', status);                
             });
-            $('#enableSmartProfileValidation').change(function(){                                
-                var status = false;
-                if($(this).is(':checked') || !$('#enableIdentityValidation').is(':checked'))	{
-                	status = true;
-            	}
-               	$('#validationTimeBetweenQuestion').attr('disabled', status);
-               	$('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
-               	$('#validationNoMissedQuestionsAllowed').attr('disabled', status);                
-             });
             $('#enableIdentityValidation').trigger('change');
-            $('#enableSmartProfileValidation').trigger('change');
             
             $('#seattimeenabled').change(function(){                                
                 var status=true;
@@ -1767,16 +1762,7 @@ The name of the hidden fields is same as the name of the check box wit an unders
 	                                <td width="20"></td>
 	                                <td width="48%"></td>
                                 </tr>
-                                <tr>
-                                	#springBind("courseConfigForm.enableSmartProfileValidation")
-                            		<td>
-                            			<input type="checkbox" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end />
-                            			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
-                       			</td>
-                                    <td><div class="row_text">Smart Profile Validation</div></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+                                
                              #*   <tr>
                                         #springBind("courseConfigForm.requireIdentityValidationEverySeconds")
                                         <td></td>
@@ -1808,6 +1794,25 @@ The name of the hidden fields is same as the name of the check box wit an unders
                                     <td></td>
                                     <td></td>
                                 </tr>
+                                
+                               #springBind("courseConfigForm.enableSmartProfileValidation")
+                                 <tr>
+                                 	<td colspan="4">
+ 	                                	<table>
+ 	                                		<tr>
+ 	                                			<td>
+ 		                                			<input type="radio" id="standardValidation" name="$!{status.expression}" #if ($!{status.value} == "false") checked #end value="false"/>
+ 		                            				<label for="standardValidation">Standard Validation</label>
+ 	                                			</td>
+ 	                                			<td>
+ 		                                			<input type="radio" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end value="true" />
+ 			                            			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
+ 		                            				<label for="$!{status.expression}">Smart Profile Validation</label>
+ 	                                			</td>
+ 	                                		</tr>
+ 	                        			</table>
+                         			</td>
+                                 </tr>
                                 
                                 <tr>
                                         <td height="5"></td>

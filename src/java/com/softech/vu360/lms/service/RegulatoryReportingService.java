@@ -9,6 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface RegulatoryReportingService {
 	
 	public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod);
-	public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,String>> errorList);
+	public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,String>> errorList, String reportingMehtod);
 	public boolean UpdateEnrollmentInfo(MultipartFile file);
 }

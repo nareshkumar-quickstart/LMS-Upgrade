@@ -77,7 +77,7 @@ public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod
 	            		
 	            	}
 	            	else{
-	            		fileErrors = fileErrors == null ? "Student ID "+ strSplittedIds[0] +" cannot be found," : fileErrors + "Student ID "+ strSplittedIds[0] +" cannot be found,";
+	            		fileErrors = fileErrors == null ? "Student ID "+ strSplittedIds[0] +" cannot be found, " : fileErrors + " Student ID "+ strSplittedIds[0] +" cannot be found,";
 	            	}
 	            	
 	            	lstEnrollmentIds.add(Long.parseLong(strSplittedIds[1]));
@@ -88,7 +88,7 @@ public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod
 	            		}
 	            	}
 	            	else{
-	            		fileErrors = fileErrors == null ? "Enrollment ID "+ strSplittedIds[1] +" cannot be found against the given Student ID," : fileErrors + "Enrollment ID "+ strSplittedIds[1] +" cannot be found against the given Student ID,";
+	            		fileErrors = fileErrors == null ? "Enrollment ID "+ strSplittedIds[1] +" cannot be found against the given Student ID," : fileErrors + " Enrollment ID "+ strSplittedIds[1] +" cannot be found against the given Student ID,";
 	            	}
 	            	
 	            	lstCourse = courseAndCourseGroupService.getCourseByBusinessKey(strSplittedIds[2]);
@@ -100,13 +100,13 @@ public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod
 		            			
 		            		}
 		            		else{ 
-		            			fileErrors = fileErrors == null ? "Course ID cannot be found against the given Student ID.," : fileErrors + "Course ID cannot be found against the given Student ID.,";
+		            			fileErrors = fileErrors == null ? "Course ID cannot be found against the given Student ID., " : fileErrors + " Course ID cannot be found against the given Student ID.,";
 		            		}
 		            	 }
 		              }
 	            		
 	            	}else{
-	            		fileErrors = fileErrors == null ? "Course ID cannot be found against the given Student ID.," : fileErrors + "Course ID cannot be found against the given Student ID.,";
+	            		fileErrors = fileErrors == null ? "Course ID cannot be found against the given Student ID.," : fileErrors + " Course ID cannot be found against the given Student ID.,";
 	            	}
 	            	
 	            	DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -114,9 +114,9 @@ public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod
 	            	
 	            	if(isAfterToday(mailedDate)){
 	            		if("certificateMailingDate".equals(reportingMethod))
-	            			fileErrors = fileErrors == null ? "Mailing Date cannot be a future date," : fileErrors + "Mailing Date cannot be a future date,";
+	            			fileErrors = fileErrors == null ? "Mailing Date cannot be a future date," : fileErrors + " Mailing Date cannot be a future date,";
 	            		else if("courseReportingDate".equals(reportingMethod))
-	            			fileErrors = fileErrors == null ? "Reporting Date cannot be a future date," : fileErrors + "Reporting Date cannot be a future date,";
+	            			fileErrors = fileErrors == null ? "Reporting Date cannot be a future date," : fileErrors + " Reporting Date cannot be a future date,";
 	            	}
 	            	
 	            	
@@ -225,7 +225,7 @@ public Map<String,Object> ReadCSVfile(MultipartFile file, String reportingMethod
 	}
 
 	@Override
-public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,String>> errorList) {
+	public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,String>> errorList, String reporttingMehtod) {
 
 		
 		
@@ -239,7 +239,10 @@ public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,Str
 		try{
 		CSVWriter writer = new CSVWriter(new OutputStreamWriter(byteArrayStream), csv_separator);
 		
-		csvHeading.append("Student ID" + csv_separator + "Enrollment ID" + csv_separator + "Course ID" + csv_separator + "Date emailed" + csv_separator + "Errors" + "\r\n");
+		if("certificateMailingDate".equals(reporttingMehtod))
+			 		csvHeading.append("Student ID" + csv_separator + "Enrollment ID" + csv_separator + "Course ID" + csv_separator + "Card/Certificate Mailing Date" + csv_separator + "Errors Message" + "\r\n");
+		else if("courseReportingDate".equals(reporttingMehtod))
+			 		csvHeading.append("Student ID" + csv_separator + "Enrollment ID" + csv_separator + "Course ID" + csv_separator + "Course Reporting Date" + csv_separator + "Errors Message" + "\r\n");
 
 		String[] headingEntries = csvHeading.toString().split(Character.toString(csv_separator) + "");
 		writer.writeNext(headingEntries);
@@ -305,10 +308,10 @@ public ByteArrayOutputStream getRegulatoryReportingErrorsCSV(List<Map<String,Str
     			
 	            if(strSplittedIds!=null && strSplittedIds.length==4 && (strSplittedIds[0]!=null && strSplittedIds[0].length() > 0) && (strSplittedIds[1]!=null && strSplittedIds[1].length() > 0) && (strSplittedIds[2]!=null && strSplittedIds[2].length() > 0) && (strSplittedIds[3]!=null && strSplittedIds[3].length() > 0)){
 	            	
-	            	if(StringUtils.containsIgnoreCase(strSplittedIds[3], "Date Mailed")){
+	              if(StringUtils.containsIgnoreCase(strSplittedIds[3], "Mailing Date")){
 	            	  reportingMethod = "cardMailingDate";
 	              }
-	              else if(StringUtils.containsIgnoreCase(strSplittedIds[3], "Date Reported")){
+	              else if(StringUtils.containsIgnoreCase(strSplittedIds[3], "Reporting Date")){
 	            	  reportingMethod = "certificateReportingDate";
 	              }
 	              else{	

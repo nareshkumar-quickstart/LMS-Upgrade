@@ -23,25 +23,15 @@
             $('.numeric').numeric({allow:"."});
         });
 		
-		$('#enableIdentityValidation').change(function(){                                
-                var status = $(this).is(':checked') ? false : true;
-                $('#enableSmartProfileValidation').attr('disabled', status);
-               	$('#enableSmartProfileValidation').trigger('change');               
-            });
-        $('#enableSmartProfileValidation').change(function(){                                
-                var status = false;
-                if($(this).is(':checked') || !$('#enableIdentityValidation').is(':checked'))	{
-                	status = true;
-            	}
-               	$('#validationTimeBetweenQuestion').attr('disabled', status);
-               	$('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
-               	$('#validationNoMissedQuestionsAllowed').attr('disabled', status);                
-            });
-            $('#enableIdentityValidation').trigger('change');
-            $('#enableSmartProfileValidation').trigger('change');
-            
-         });
-		
+		function toggleControls(isChecked)
+		{
+			var form = document.getElementById('addCourseConfigForm');
+			form.validationTimeBetweenQuestion.disabled = !isChecked
+			form.allowSecondsToAnswerEachQuestion.disabled = !isChecked
+			form.validationNoMissedQuestionsAllowed.disabled = !isChecked
+			form.standardValidation.disabled = !isChecked
+			form.enableSmartProfileValidation.disabled = !isChecked
+		}
     </script>
 </head>
 <body onload=toggleControls(document.getElementById('enableIdentityValidation').checked);>
@@ -132,17 +122,6 @@
                     </tr>
                     
                     <tr>
-                    	#springBind("courseConfigForm.enableSmartProfileValidation")
-                		<td>
-                			<input type="checkbox" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end />
-                			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
-            			</td>
-                        <td><div class="row_text">Smart Profile Validation</div></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    
-					<tr>
                         #springBind("courseConfigForm.validationTimeBetweenQuestion")    
     					<td></td>
     					<td><div class="row_text">Time between question <input type="text" class="input_text_inline numeric"  id="${status.expression}" name="${status.expression}" value="$!{status.value}" style="width:30px;"/> Seconds</div></td>
@@ -179,13 +158,26 @@
     					<td></td>
                         <td></td>
 					</tr>*#
-					<tr>
-                        
-    					<td>&nbsp;</td>
-						<td>&nbsp;</td>
-    					<td></td>
-                        <td></td>
-					</tr>
+					
+					#springBind("courseConfigForm.enableSmartProfileValidation")
+                    <tr>
+                    	<td colspan="4">
+                        	<table>
+                        		<tr>
+                        			<td>
+                            			<input type="radio" id="standardValidation" name="$!{status.expression}" #if ($!{status.value} == "false") checked #end value="false"/>
+                        				<label for="standardValidation">Standard Validation</label>
+                        			</td>
+                        			<td>
+                            			<input type="radio" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end value="true" />
+                            			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
+                        				<label for="$!{status.expression}">Smart Profile Validation</label>
+                        			</td>
+                        		</tr>
+                			</table>
+            			</td>
+                    </tr>
+                    
 					<tr>
     					<td height="5"></td>
 						<td></td>

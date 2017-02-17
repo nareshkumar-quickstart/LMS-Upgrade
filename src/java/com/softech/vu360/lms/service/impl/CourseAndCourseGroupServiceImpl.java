@@ -1312,6 +1312,6 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	@Override
 	public List<Course> getCourseByBusinessKey(String businessKey) {
 		// TODO Auto-generated method stub
-		return this.courseRepository.findByBusinessKeyEquals(businessKey);
+		return this.courseRepository.findByBussinesskeyEquals(businessKey);
 	}
 }

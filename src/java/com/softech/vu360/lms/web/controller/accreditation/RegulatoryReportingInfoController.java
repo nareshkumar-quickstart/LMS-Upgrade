@@ -170,7 +170,7 @@ public class RegulatoryReportingInfoController extends VU360BaseMultiActionContr
 		else{
 			  if(lstErrors != null && !lstErrors.isEmpty()){
 	            	
-	            	ByteArrayOutputStream csvText = (ByteArrayOutputStream) regulatoryReportingService.getRegulatoryReportingErrorsCSV(lstDataList);
+				    ByteArrayOutputStream csvText = (ByteArrayOutputStream) regulatoryReportingService.getRegulatoryReportingErrorsCSV(lstDataList,form.getReportingMethod());
 	            	
 					String documentPath = VU360Properties.getVU360Property("document.regulatoryReporting.errorcsv.saveLocation");
 					csvwriter = new FileOutputStream(documentPath+ File.separator + loggedInUserVO.getId()+"_errorCreditReport.csv");
