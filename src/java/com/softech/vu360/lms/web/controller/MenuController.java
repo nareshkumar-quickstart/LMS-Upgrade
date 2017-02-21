@@ -42,7 +42,7 @@ public class MenuController implements Controller {
 			if ( !StringUtils.isBlank(actionUrl) ) {
 				//RequestDispatcher rd = request.getRequestDispatcher(actionUrl.trim());
 				//rd.forward(request, response);
-				return new ModelAndView(defaultTemplate, "context", context);
+				return new ModelAndView(new StringBuilder().append("redirect:").append(actionUrl).toString());
 			}
 			
 		} catch (Exception e) {
