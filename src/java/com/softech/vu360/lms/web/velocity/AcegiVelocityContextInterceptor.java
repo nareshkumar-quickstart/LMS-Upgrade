@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.WebUtils;
 
 import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.BrandDomain;
@@ -131,18 +132,6 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 					&& auth.getPrincipal() instanceof com.softech.vu360.lms.vo.VU360User) {
 				com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) auth.getPrincipal();
 
-				//LMS-16713 - this is temporary solution once the authorMode development is completed it will be removed
-				//also remove all code from all footer .VM files.
-				if( menuSession.getAttribute("authorMode") == null){
-					boolean b = authorService.isAuthor(loggedInUser.getId());
-					menuSession.setAttribute("authorMode", b); //LMS-20662
-					menuSession.setAttribute("authorModeRedirectionURL", VU360Properties.getVU360Property("lms.authorMode.Redirection.URL") );
-				}
-				
-				modelAndView.addObject("authorMode", ((Boolean) menuSession.getAttribute("authorMode")) ); // LMS-20662
-				modelAndView.addObject("authorModeRedirectionURL", ((String) menuSession.getAttribute("authorModeRedirectionURL")) );
-				
-
 				if(modelAndView.getViewName().compareTo("json")!=0) {
 					modelAndView.addObject("userData", loggedInUser);
 					modelAndView.addObject("userPermissionChecker", userPermissionChecker);
@@ -234,27 +223,33 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			
 
 			Brander brander = null;
-			brander = getBrander(request, response, auth, brander);
+			brander = getBrander(request, response, auth);
 
 			modelAndView.addObject("formUtil", FormUtil.getInstance());
 			modelAndView.addObject("brander", brander);
 			modelAndView.addObject("lang", new Language());
-			modelAndView.addObject("brand", "default");
+			modelAndView.addObject("brand", brander.getName());
 			modelAndView
 					.addObject("userAgent", request.getHeader("User-Agent"));
 			modelAndView.addObject("currentView", modelAndView.getViewName());
 			modelAndView.addObject("locale", request.getLocale());
 			modelAndView.addObject("request",request);
 			modelAndView.addObject("nullTool",new NullTool());
-			if(SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null && (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof VU360User))
+			
+			Cookie casCookie = WebUtils.getCookie(request, "isCASAuthenticated");
+			boolean isCASAuthenticated = false; 
+			if (casCookie != null) {
+				isCASAuthenticated = true;
+			}
+			
+			if(isCASAuthenticated && SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null && (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof VU360User))
 				modelAndView.addObject("logoutSuccessUrl", CASStorefrontUtil.getLogOutUrl((VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
 		}
 		super.postHandle(request, response, handler, modelAndView);
 	}
 
-	private Brander getBrander(HttpServletRequest request, HttpServletResponse response, Authentication auth,
-			Brander brander) {
-		
+	private Brander getBrander(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
+		Brander brander = null;
 		com.softech.vu360.lms.vo.Language lang = new com.softech.vu360.lms.vo.Language();
 		BrandDomain brandDomain;
 		String paramLanguage = request.getParameter("lang");
