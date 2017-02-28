@@ -60,6 +60,10 @@ public class ManageUserStatus implements SearchableKey {
 	private String startDate;
 	private String endDate;
     private long learnerId;
+    public String cardMailingDate;
+    public String cardMailingStatus;
+    public String reportingDate;
+    public String reportingStatus;   
 	
 	
 	public Long getCourseApprovalId() {
@@ -273,5 +277,29 @@ public class ManageUserStatus implements SearchableKey {
     public void setLearnerId(long learnerId) {
         this.learnerId = learnerId;
     }
-
+	public String getCardMailingDate() {
+		return cardMailingDate;
+	}
+	public void setCardMailingDate(String cardMailingDate) {
+		this.cardMailingDate = cardMailingDate;
+	}
+	public String getCardMailingStatus() {
+		return cardMailingStatus;
+	}
+	public void setCardMailingStatus(String cardMailingStatus) {
+		this.cardMailingStatus = cardMailingStatus;
+	}
+	public String getReportingDate() {
+		return reportingDate;
+	}
+	public void setReportingDate(String reportingDate) {
+		this.reportingDate = reportingDate;
+	}
+	public String getReportingStatus() {
+		return reportingStatus;
+	}
+	public void setReportingStatus(String reportingStatus) {
+		this.reportingStatus = reportingStatus;
+	}
+    
 }

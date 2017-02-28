@@ -160,11 +160,18 @@ public class RegulatorCategory implements SearchableKey {
 	@Column(name = "REPORTINGTIMEFRAME")
 	private Integer  reportingTimeframe = 0;
 	
+	@Column(name = "CERTIFICATEORCARDREQUIREDTF")
+	private Boolean certificateOrCardRequired;
+	
+	@Column(name = "SHIPPABLEITEMPROCESSINGTIME")
+	private Integer shippableItemProcessingTime;
+	
+	@Column(name = "SHIPPABLEITEMNAME")
+	private String  shippableItemName;
+	
 	public Long getId() {
 		return id;
 	}
-
-
 
 	public void setId(Long id) {
 		this.id = id;
@@ -751,4 +758,40 @@ public class RegulatorCategory implements SearchableKey {
 		}
 	}
 
+
+
+	public Boolean getCertificateOrCardRequired() {
+		return certificateOrCardRequired;
+	}
+
+
+
+	public void setCertificateOrCardRequired(Boolean certificateOrCardRequired) {
+		this.certificateOrCardRequired = certificateOrCardRequired;
+	}
+
+
+
+	public Integer getShippableItemProcessingTime() {
+		return shippableItemProcessingTime;
+	}
+
+
+
+	public void setShippableItemProcessingTime(Integer shippableItemProcessingTime) {
+		this.shippableItemProcessingTime = shippableItemProcessingTime;
+	}
+
+
+
+	public String getShippableItemName() {
+		return shippableItemName;
+	}
+
+
+
+	public void setShippableItemName(String shippableItemName) {
+		this.shippableItemName = shippableItemName;
+	}
+	
 }

@@ -27,6 +27,7 @@ import com.softech.vu360.lms.model.LearnerSCOStatistics;
 import com.softech.vu360.lms.model.LearnerSelfStudyCourseActivity;
 import com.softech.vu360.lms.model.OrgGroupEntitlement;
 import com.softech.vu360.lms.model.TrainingPlanAssignment;
+import com.softech.vu360.lms.model.VU360User;
 
 
 
@@ -213,5 +214,5 @@ public class CustomerEntitlementRepositoryImpl implements CustomerEntitlementRep
 		
 		return listCustomerEntitlement;
 	}
-
+	
 }

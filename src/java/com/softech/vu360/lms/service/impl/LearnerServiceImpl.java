@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import com.softech.vu360.lms.model.Address;
 import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.Course;
 import com.softech.vu360.lms.model.CourseApproval;
+import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.CreditReportingField;
 import com.softech.vu360.lms.model.CreditReportingFieldValue;
 import com.softech.vu360.lms.model.CreditReportingFieldValueChoice;
@@ -63,6 +65,7 @@ import com.softech.vu360.lms.model.SSNCreditReportingFiled;
 import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.model.Widget;
 import com.softech.vu360.lms.repositories.AddressRepository;
 import com.softech.vu360.lms.repositories.ContentOwnerRepository;
@@ -92,12 +95,14 @@ import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.ActiveDirectoryService;
 import com.softech.vu360.lms.service.AuthorService;
 import com.softech.vu360.lms.service.CustomerService;
+import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
 import com.softech.vu360.lms.service.UserWidgetService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.CustomerUtil;
+import com.softech.vu360.lms.vo.UniqueQuestionAnswerVO;
 import com.softech.vu360.lms.web.controller.manager.AssignSurveyController;
 import com.softech.vu360.lms.web.controller.model.LearnerValidationQASetDTO;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
@@ -172,6 +177,7 @@ public class LearnerServiceImpl implements LearnerService {
 	private CustomerService customerService = null;
 	private UserWidgetService userWidgetService;
 	private ActiveDirectoryService activeDirectoryService = null;
+	private EnrollmentService enrollmentService = null;
 	private VU360UserService vu360UserService;
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 	
@@ -988,24 +994,44 @@ public class LearnerServiceImpl implements LearnerService {
 		if (CollectionUtils.isNotEmpty(existingMemberships)) {
 			for (LearnerGroupMember member : existingMemberships) {
 				if (listSelectedLearner.contains(member.getLearner())) {
-					log.warn("duplicate membership found, fail safe logic executing:"
-							+ member.getLearner().getVu360User().getUsername());
+					log.warn("duplicate UG membership found, fail safe logic executing:"+member.getLearner().getVu360User().getUsername());
 					listSelectedLearner.remove(member.getLearner());
 				}
 			}
 		}
-		LearnerGroupMember temp = null;
-		List<Learner> savedSuccessfullly = new ArrayList<Learner>();
+		List<OrganizationalGroupMember> existingOrgGroupMembers =
+	            organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn(learnerGroup.getOrganizationalGroup().getId(), learnersArray);
+	        if (CollectionUtils.isNotEmpty(existingOrgGroupMembers)) {
+	          for (OrganizationalGroupMember member : existingOrgGroupMembers) {
+	            if (listSelectedLearner.contains(member.getLearner())) {
+	              log.warn("duplicate OG membership found, fail safe logic executing:"
+	                  + member.getLearner().getVu360User().getUsername());
+	              listSelectedLearner.remove(member.getLearner());
+	            }
+	          }
+	        }
+			
+		LearnerGroupMember learnerGroupMember = null;
 		for (Learner learner : listSelectedLearner) {
 			log.debug("... addLearnersInLearnerGroup start *3 learner.getId()"+ learner.getId()); 
-			temp = new LearnerGroupMember();
-			temp.setLearner(learnerRepository.findOne(learner.getId()));
-			temp.setLearnerGroup(learnerGroup);
-			savedSuccessfullly.add(learnerGroupMemberRepository.saveLGM(temp)
-					.getLearner());
+			learnerGroupMember = new LearnerGroupMember();
+			learnerGroupMember.setLearner(learner);
+			learnerGroupMember.setLearnerGroup(learnerGroup);
+			learnerGroupMemberRepository.saveLGM(learnerGroupMember).getLearner();
 			log.debug("...addLearnersInLearnerGroup end *3");
 		}
-	}
+		
+		OrganizationalGroupMember orgGroupMember = null;
+        for (Learner learner : listSelectedLearner) {
+          log.debug("... addLearnersInOrgGroup start *4 learner.getVu360User().getId()"
+              + learner.getVu360User().getId());
+          orgGroupMember = new OrganizationalGroupMember();
+          orgGroupMember.setLearner(learner);
+          orgGroupMember.setOrganizationalGroup(learnerGroup.getOrganizationalGroup());
+          organizationalGroupMemberRepository.saveOGM(orgGroupMember).getLearner();
+          log.debug("...addLearnersInOrgGroup end *4");
+        }
+    }
 	
 
 	public void addLearnerInLearnerGroup(Learner learner,
@@ -2442,7 +2468,101 @@ public class LearnerServiceImpl implements LearnerService {
 		this.vu360UserService = vu360UserService;
 	}
 	
+	public List<LearnerValidationAnswers> getLearnerUniqueQuestionsAnswers(long learnerId,long courseConfigurationId){
+			List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerUniqueValidationQuestionsAnswers(learnerId, courseConfigurationId);
+			return answers;
+    }
+	
+   public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId){
+		
+		LearnerValidationAnswers questionanswer = learnerValidationAnswerRepository.findByQuestionId(questionId);
 
+		return questionanswer;
+	}
+
+   public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionNoAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId){
+		UniqueQuestionAnswerVO uniqueQuestionAnswerVO = null;
+		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = new ArrayList<>();
+		
+		if(lstValidationQuestion!=null && !lstValidationQuestion.isEmpty()){
+			for( ValidationQuestion learnerValidationQuestion :lstValidationQuestion){
+				uniqueQuestionAnswerVO = new UniqueQuestionAnswerVO();
+				uniqueQuestionAnswerVO.setLearnerId(learnerId);
+				uniqueQuestionAnswerVO.setQuestion(learnerValidationQuestion.getQuestion());
+				uniqueQuestionAnswerVO.setQuestionId(learnerValidationQuestion.getId().longValue());
+				uniqueQuestionAnswerVO.setQuestionType(learnerValidationQuestion.getQuestionType());
+				uniqueQuestionAnswerVO.setAnswer("");
+				lstuniqueQuestionAnswerVO.add(uniqueQuestionAnswerVO);
+		  }
+		}
+		return lstuniqueQuestionAnswerVO;
+	}
+   
+   public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionAvailableAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId, long courseConfigurationId){
+		UniqueQuestionAnswerVO uniqueQuestionAnswerVO = null;
+		List<LearnerValidationAnswers> lstAnswers = null;
+		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = new ArrayList<>();
+		
+		lstAnswers = getLearnerUniqueQuestionsAnswers(learnerId, courseConfigurationId);
+		
+		if(lstValidationQuestion!=null && !lstValidationQuestion.isEmpty()){
+			if(lstAnswers!=null && !lstAnswers.isEmpty()){
+			for( ValidationQuestion learnerValidationQuestion :lstValidationQuestion){
+				for(LearnerValidationAnswers learnerValidationAnswers:lstAnswers){
+					if(learnerValidationAnswers.getQuestionId() == learnerValidationQuestion.getId().longValue()){
+						uniqueQuestionAnswerVO = new UniqueQuestionAnswerVO();
+						uniqueQuestionAnswerVO.setLearnerId(learnerId);
+						uniqueQuestionAnswerVO.setQuestion(learnerValidationQuestion.getQuestion());
+						uniqueQuestionAnswerVO.setQuestionId(learnerValidationQuestion.getId().longValue());
+						uniqueQuestionAnswerVO.setQuestionType(learnerValidationQuestion.getQuestionType());
+						uniqueQuestionAnswerVO.setAnswer(learnerValidationAnswers.getAnswer());
+						uniqueQuestionAnswerVO.setAnswerId(learnerValidationAnswers.getId());
+						lstuniqueQuestionAnswerVO.add(uniqueQuestionAnswerVO);
+			  }
+			 }
+			}
+		  }
+		}
+		return lstuniqueQuestionAnswerVO;
+	}
+   
+   public Map<Object,Object> getLearnerUniqueQuestions(long learnerId){
+		
+		Learner learner = getLearnerByID(learnerId);
+		List<ValidationQuestion> lstValidationQuestion = null;
+		List<LearnerValidationAnswers> lstAnswers = null;
+		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = null;
+		LinkedHashMap<Object,Object> mpUniqueQuestions = new LinkedHashMap<Object,Object>();
+		if(learner != null){
+			List<LearnerEnrollment>  lstLearnerEnrollment = enrollmentService.getAllLearnerEnrollmentsByLearner(learner);
+			for(LearnerEnrollment le :lstLearnerEnrollment){
+				//if(le.getCourse().getCourseConfigTemplate() != null){
+				//CourseConfiguration courseCongifuration = accreditationService.getCourseConfigurationByTemplateId(le.getCourse().getCourseConfigTemplate().getId(), true);
+				CourseApproval courseApproval = accreditationService.getCourseApprovalByCourse(le.getCourse());
+				if(courseApproval != null && courseApproval.getTemplate() != null){
+				CourseConfiguration courseCongifuration = accreditationService.getCourseConfigurationByTemplateId(courseApproval.getTemplate().getId(), true);
+				if(courseCongifuration != null && courseCongifuration.isRequireDefineUniqueQuestionValidation()){
+					lstValidationQuestion = accreditationService.getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration.getId());
+					if(lstValidationQuestion != null && !lstValidationQuestion.isEmpty()){
+						lstAnswers = getLearnerUniqueQuestionsAnswers(learnerId, courseCongifuration.getId());
+						if(lstAnswers !=null && !lstAnswers.isEmpty()){
+							lstuniqueQuestionAnswerVO = this.getLearnerUniqueQestionAvailableAnswers(lstValidationQuestion,learnerId, courseCongifuration.getId());
+						}
+						else{
+							lstuniqueQuestionAnswerVO = getLearnerUniqueQestionNoAnswers(lstValidationQuestion,learnerId);
+						}
+						mpUniqueQuestions.put("courseName_"+le.getCourse().getId(), le.getCourse().getCourseTitle());
+						if(lstuniqueQuestionAnswerVO != null && !lstuniqueQuestionAnswerVO.isEmpty())
+						  mpUniqueQuestions.put("questionanswerLst_"+le.getCourse().getId(),lstuniqueQuestionAnswerVO);
+					}
+				  
+				}
+			  }
+			}		
+		}
+		return mpUniqueQuestions;
+	}
+   
 	public LearnerValidationQASetDTO getLearnerValidationQuestions(
 			long learnerId) {
 		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository
@@ -2454,7 +2574,25 @@ public class LearnerServiceImpl implements LearnerService {
 		return dto;
 	}
 	
+	public List<LearnerValidationAnswers> getLearnerUniquesValidationQuestions(long learnerId){
+		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerValidationQuestions(learnerId);
+        return answers;
+	}
+	
+	@Transactional
+	public void saveLearnerUniquesValidationQuestions(LearnerValidationAnswers answer){
+		learnerValidationAnswerRepository.save(answer);
+    }
+	
+	public LearnerValidationAnswers loadForUpdateLearnerValidationAnswers(long answer){
+		return learnerValidationAnswerRepository.findOne(answer);
+	}
 
+	@Transactional
+	public LearnerValidationAnswers updateLearnerValidationAnswers(LearnerValidationAnswers lva ){
+		return learnerValidationAnswerRepository.save(lva );
+		
+	}
 	@Transactional
 	public void saveLearnerValidationAnswers(LearnerValidationQASetDTO qaDTO,
 			Learner learner) {
@@ -2852,4 +2990,13 @@ public class LearnerServiceImpl implements LearnerService {
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGrpRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
 	}
+
+	public EnrollmentService getEnrollmentService() {
+		return enrollmentService;
+	}
+
+	public void setEnrollmentService(EnrollmentService enrollmentService) {
+		this.enrollmentService = enrollmentService;
+	}
+	
 }

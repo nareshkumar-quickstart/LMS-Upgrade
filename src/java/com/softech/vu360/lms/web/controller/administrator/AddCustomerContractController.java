@@ -242,7 +242,7 @@ public class AddCustomerContractController extends VU360BaseMultiActionControlle
 			List<OrganisationalGroupEntitlementItem> organisationalGroupEntitlementItems = new ArrayList<OrganisationalGroupEntitlementItem>();
 			for(OrganizationalGroup organizationalGroup:organizationalGroups) {
 				OrganisationalGroupEntitlementItem organisationalGroupEntitlementItem=new OrganisationalGroupEntitlementItem();
-				organisationalGroupEntitlementItem.setMaxEnrollments("");
+				organisationalGroupEntitlementItem.setMaxEnrollments("0");
 				organisationalGroupEntitlementItem.setOrganisationalGroupId(organizationalGroup.getId());
 				organisationalGroupEntitlementItem.setOrganisationalGroupName(organizationalGroup.getName());
 				organisationalGroupEntitlementItem.setSelected(false);

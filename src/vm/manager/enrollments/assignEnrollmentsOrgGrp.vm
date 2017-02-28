@@ -4,18 +4,62 @@
         #parse("snippets/learnerNewHead.vm")
          <link rel="stylesheet" type="text/css" href="brands/default/en/css/css_orgGroup-tree.css"/>
          <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
-
+         <script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
 
         <script>
+        	function confirm(message, callback) {
+		        $('#parentOrgGroupConfirmation').modal({
+		            close:false,
+		            position: ["40%",],
+		            overlayId:'confirmModalOverlay',
+		            containerId:'confirmModalContainer', 
+		            onShow: function (dialog) {
+		                dialog.data.find('.alert_message_box_text_3').append(message);
+		                dialog.data.find('.yes').click(function () {
+		                    if (jQuery.isFunction(callback)) {
+		                        callback.apply();
+		                    }
+		                    jQuery.modal.close();
+		                });
+		            }
+		        });
+			}
+			
             function FormSubmit(buttonclick) {
                 document.getElementById('action').value=buttonclick;
                 document.enrollmentForm.submit();
             }
 
-            $(document).ready(function()
-            {
-                
-            });
+           $(document).ready(function(){
+	  
+				$("div[name = 'row'][indx != '1'] input:checkbox[name='groups']").change(function() {
+				  	var that = $(this);
+				  	that.parent().parent().parent().find("div[parentref='"+ that.val() +"'] input:checkbox[name='groups']").each(function(index, domObject) {
+				    	$(domObject).attr("checked", that.is(':checked'));
+				    	$(domObject).trigger("change");
+					});
+				});
+	    		$("div[name = 'row'][indx = '1'] input:checkbox[name='groups']").change(function() {
+				  	var that = $(this);
+				  	var isParent = that.parent().parent().is("[name='row'][indx='1']");
+				  	if(isParent && that.is(":checked")) { 
+				  	
+				  		var callback = function() {
+						  	that.parent().parent().parent().find("div[parentref='"+ that.val() +"'] input:checkbox[name='groups']").each(function(index, domObject) {
+						    	$(domObject).attr("checked", that.is(':checked'));
+						    	$(domObject).trigger("change");
+				    		});
+				  		}
+				  		confirm("Would you like to enroll every organization underneath the selected organization? Click <strong>Yes</strong> to select all organizations and <strong>No</strong> to select only the main organization.", callback);
+					} else {
+						that.parent().parent().parent().find("div[parentref='"+ that.val() +"'] input:checkbox[name='groups']").each(function(index, domObject) {
+					    	$(domObject).attr("checked", that.is(':checked'));
+					    	$(domObject).trigger("change");
+			    		});
+					}
+			  	});
+		    
+		    });
         </script>
         <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
 </head>
@@ -163,5 +207,16 @@
 			</td></tr>
         </table><!-- main-container -->
     </form>
+ <div id='parentOrgGroupConfirmation' style='display:none'><!-- Alert Message Box starts -->
+     <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+     <div class="alert_message_box_icon"></div>
+     <div class="alert_message_box_text_3"></div>
+     <br style="clear:both" />
+ 	 <div class='buttons'>
+         <div class='simplemodal-close'>
+ 			<a class="button" onClick=""><span class="yes button">Yes</span></a>
+ 			<a class="button" onClick=""><span class="no button">No</span></a>				
+         </div>
+ </div>   
 </body>
 </html>

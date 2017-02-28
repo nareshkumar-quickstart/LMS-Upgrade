@@ -68,4 +68,6 @@ public interface LearnerGroupRepository extends CrudRepository<LearnerGroup, Lon
 			+ "    )", nativeQuery=true)
 	List<LearnerGroup> getLearnerGroupsUnderAlertTriggerFilter(@Param("alertTriggerFilterId")Long alertTriggerFilterId , @Param("groupName")String groupName);
 	
+	List<LearnerGroup> findByOrganizationalGroupIdIn(Long orgGroupIds[]);
+	
 }

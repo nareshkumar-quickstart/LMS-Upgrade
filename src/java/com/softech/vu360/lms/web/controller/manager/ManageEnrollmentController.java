@@ -1,6 +1,7 @@
 package com.softech.vu360.lms.web.controller.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -894,7 +895,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 			    	entitlementDate = DateUtil.getDateObject(strEntDate);
 			    }
 			    enrollmentCourseViewList = entitlementService.getCoursesForEnrollmentByCustomer(customer, course.getCourseTitle(), "",
-					"", entitlementDate, intLimit);
+					"", entitlementDate, null, intLimit);
 				for (int k = 0; k < enrollmentCourseViewList.size(); k++) {
 				    if (enrollmentCourseViewList.get(k) != null) {
 				    	enrollmentCourseViewList.get(k).setSelected(true);
@@ -1134,10 +1135,13 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 	    // intLimit);
 
 	    List<EnrollmentCourseView> enrollmentCourseViewList = new ArrayList<EnrollmentCourseView>();
+	    
+	 // @MariumSaud : LMS-21702 -- Filter course on the basis of organization group as per enrollment method selected
+	    Long[] customerEntitlementIds = getCustomerEntitlementIdsByOrgGrps(form,form.getEnrollmentMethod());
 
 	   
 		enrollmentCourseViewList = entitlementService.getCoursesForEnrollmentByCustomer(customer, form.getSearchCourseName(),
-			form.getSearchCourseId(), form.getSearchEntitlementName(), entitlementDate, intLimit);
+			form.getSearchCourseId(), form.getSearchEntitlementName(), entitlementDate, customerEntitlementIds, intLimit);
 
 	    form.setEnrollmentCourseViewList(enrollmentCourseViewList);
 	    if (form.getEnrollmentCourseViewList().size() <= SEARCH_COURSE_PAGE_SIZE)
@@ -1152,6 +1156,57 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 
     }
 
+ // @MariumSaud : LMS-21702 : Filter course on the basis of following Enrollment Method
+    // 1. User -- Only those courses contract will displays whose OrgGroupEntitlement bound with the organizationGroup of selected Learners.
+    // 2. OrganizationGroup -- Only those courses contract will displays whose OrgGroupEntitlement bound with the selected organizationGroup.
+    // 3. UserGroup -- Only those courses contract will displays whose OrgGroupEntitlement bound with the selected LearnerGroups organizationGroup.
+    public Long[] getCustomerEntitlementIdsByOrgGrps(EnrollmentDetailsForm form, String enrollmentMethod){
+    	List<Long> customerEntitlementIds= new ArrayList<Long>();
+    	if(enrollmentMethod.equals(ENROLLMENT_METHOD_LEARNER)){
+    		Long selectedLearnerId[]=new Long[form.getSelectedLearners().size()];
+			if(!form.getSelectedLearners().isEmpty()){
+				for(int i=0;i<form.getSelectedLearners().size();i++){
+					selectedLearnerId[i] = form.getSelectedLearners().get(i).getUser().getLearner().getId(); 
+				}
+				customerEntitlementIds = entitlementService.getCustomerEntitlementForOrgGroupEntitlementsByLearnerIds(selectedLearnerId);
+			}
+    	}
+    	else if(enrollmentMethod.equals(ENROLLMENT_METHOD_ORGGROUP)){
+    		List<String> list = Arrays.asList(form.getGroups());
+    		// Converting String[] to List<Long>
+    		List<Long> selectedOrgGrpIds = new ArrayList<Long>();
+    		for(String s : list){
+    			selectedOrgGrpIds.add(Long.valueOf(s));
+    		}
+    		
+    		customerEntitlementIds = entitlementService.getCustomerEntitlementForOrgGroupEntitlementsByOrgGrpIds(selectedOrgGrpIds);
+    	}
+    	else if(enrollmentMethod.equals(ENROLLMENT_METHOD_LEARNERGROUP)){
+    		
+    		List<Long> selectedLearnerGrpIds = new ArrayList<Long>();
+    		
+    	    List<LearnerGroupEnrollmentItem> learnerGroupEnrollmentItems = form.getLearnerGroupEnrollmentItems();
+    	    if (learnerGroupEnrollmentItems != null && learnerGroupEnrollmentItems.size() > 0) {
+    		for (LearnerGroupEnrollmentItem item : learnerGroupEnrollmentItems) {
+    		    if (item.isSelected()) {
+    		    	selectedLearnerGrpIds.add(item.getLearnerGroupId());
+    		    	}
+    			}
+    	    }
+    		
+    	    customerEntitlementIds = entitlementService.getCustomerEntitlementForOrgGroupEntitlementsByLearnerGroupIds(selectedLearnerGrpIds);
+    		
+    	}
+    	
+    	if(customerEntitlementIds!=null){
+    		Long[] entitlementIds = new Long[customerEntitlementIds.size()];
+        	entitlementIds = customerEntitlementIds.toArray(entitlementIds);
+        	return entitlementIds;
+    	}
+    	
+    	return null;
+    }
+    
     void coursesSearchShowAll(EnrollmentDetailsForm form) {
 	// show all courses is requested
 	if (form.getCourseSearchType().trim().equalsIgnoreCase("showAll")) {

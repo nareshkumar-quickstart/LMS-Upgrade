@@ -13,6 +13,7 @@ import com.softech.vu360.lms.model.RegulatorCategory;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.AuditCourseStatusService;
+import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.StatisticsService;
 
@@ -23,6 +24,7 @@ public class UserStatusUpdateUtil {
 	private StatisticsService statisticsService = null;
     private LearnersToBeMailedService learnersToBeMailedService;
     private AuditCourseStatusService auditCourseStatusService;
+    private EnrollmentService enrollmentService;
 
 	public AccreditationService getAccreditationService() {
 		return accreditationService;
@@ -46,6 +48,44 @@ public class UserStatusUpdateUtil {
 
 	public void setStatisticsService(StatisticsService statisticsService) {
 		this.statisticsService = statisticsService;
+	}
+	
+public boolean updateMailingStatuses(List<Long> userstatuses,String update_mailingStatus){
+		
+		// foreach learner-enrollment selected on the form.
+				for (Long userstatus : userstatuses) {
+					// Learner-Enrollment-Id is provided from the form.
+                   LearnerEnrollment learnerEnrollment = enrollmentService.loadForUpdateLearnerEnrollment(userstatus);
+                   // Check if the Learner-Enrollment-Id is valid.
+	            	if(learnerEnrollment != null){
+	            		// set the Update the mailing status
+	 		             learnerEnrollment.setCardMailingStatus(update_mailingStatus);	            			 
+	            		 }
+	            	    //Update the LearnerEnrollment
+	            		enrollmentService.updateEnrollment(learnerEnrollment);
+	            	}
+				
+		return true;
+		
+	}
+	
+	public boolean updateReportingStatuses(List<Long> userstatuses,String update_reportingStatus){
+		
+		// foreach learner-enrollment selected on the form.
+				for (Long userstatus : userstatuses) {
+					// Learner-Enrollment-Id is provided from the form.
+                   LearnerEnrollment learnerEnrollment = enrollmentService.loadForUpdateLearnerEnrollment(userstatus);
+                   // Check if the Learner-Enrollment-Id is valid.
+	            	if(learnerEnrollment != null){
+	            		// set the Update the mailing status
+	 		             learnerEnrollment.setCourseReportingStatus(update_reportingStatus);	            			 
+	            		 }
+	            	    //Update the LearnerEnrollment
+	            		enrollmentService.updateEnrollment(learnerEnrollment);
+	            	}
+				
+		return true;
+		
 	}
 	
 	public boolean updateStatuses(List<Long> userstatuses, String update_courseStatus, Brander brander, Long loggedInUserID, boolean reversalPermission)	{
@@ -332,5 +372,12 @@ public class UserStatusUpdateUtil {
 	public void setAuditCourseStatusService(AuditCourseStatusService auditCourseStatusService) {
 		this.auditCourseStatusService = auditCourseStatusService;
 	}
+	
+	public EnrollmentService getEnrollmentService() {
+		return enrollmentService;
+	}
 
+	public void setEnrollmentService(EnrollmentService enrollmentService) {
+		this.enrollmentService = enrollmentService;
+	}
 }

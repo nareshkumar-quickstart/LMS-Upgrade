@@ -39,13 +39,16 @@
             disableMinimumTimeBeforeStartElements();
             tooglePostNoResultMessage();            
             
-            $('#enableIdentityValidation').change(function(){                                
-                var status=true;
-                if($(this).is(':checked')){status=false;}
-	               $('#validationTimeBetweenQuestion').attr('disabled', status);
-	               $('#allowSecondsToAnswerEachQuestion').attr('disabled', status);
-	               $('#validationNoMissedQuestionsAllowed').attr('disabled', status);                
-            });
+            $('#enableIdentityValidation').change(function(){
+                var status = $(this).is(':checked');
+				$('#validationTimeBetweenQuestion, #allowSecondsToAnswerEachQuestion, #validationNoMissedQuestionsAllowed, input[name=validationTypes], #uniqueQuestions input, #uniqueQuestions select').each(function() {
+					var that = $(this);
+					if(status == true)
+            			that.removeAttr('disabled');
+            		else
+            			that.attr('disabled', true);
+            	});
+           	});
             $('#enableIdentityValidation').trigger('change');
             
             $('#seattimeenabled').change(function(){                                
@@ -120,161 +123,162 @@
 			});*/
 			
 			
-			//Proctor On fun binding.
-			$("#pvt_requireProctorValidation").click( function(){
-			
-			   	$('input:radio[name=proctorValidatorName]:nth(0)').attr('checked',true);
-	        	$('input:radio[name=proctorValidatorName]:nth(1)').attr('checked',false);
-	        	$('input:radio[name=proctorValidatorName]:nth(0)').attr('disabled', false);
-	        	$('input:radio[name=proctorValidatorName]:nth(1)').attr('disabled', false);
-			
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('disabled', false);
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('checked', false);
-				//$('input:radio[name=requireNyInsurance]:nth(1)').attr('checked',true);
-	
-				
-				$('#lvf_requireLearnerValidation').attr('checked', true);
-				$('#lvt_requireLearnerValidation').attr('checked', false);
-				//$('#lvf_requireLearnerValidation').attr('disabled', true);
-				//$('#lvt_requireLearnerValidation').attr('disabled', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('checked', false);
-				$('input:radio[name=caRealEstateCE]:nth(1)').attr('checked', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('disabled', true);
-				
-				
-				/*
-				No radio button field value transfer to action/form incase of disability
-				to handle this issue, we have to generated field 
-				so that it can initlization with new value. 
-							
-				if ($("#lvr").length > 0) $("#lvr").remove();
-				if ($("#lvr").length <= 0){
-					var hiddenField = '<input name="requireLearnerValidation" type="hidden" value="false" id="lvr">';
-					$("#lvf_requireLearnerValidation").after(hiddenField);
-				}*/	
-	
-			});
-			//Proctor Off fun binding.
-			$("#pvf_requireProctorValidation").click(function(){
-			
-				$('input:radio[name=proctorValidatorName]:nth(0)').attr('checked', false);
-				$('input:radio[name=proctorValidatorName]:nth(1)').attr('checked', false);
-				$('input:radio[name=proctorValidatorName]:nth(0)').attr('disabled', true);
-				$('input:radio[name=proctorValidatorName]:nth(1)').attr('disabled', true);
-				
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('checked', false);
-				//$('input:radio[name=requireNyInsurance]:nth(1)').attr('checked',true);
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('disabled', true);
-				
-				//$('#lvf_requireLearnerValidation').attr('checked', true);
-				//$('#lvf_requireLearnerValidation').attr('disabled', false);
-				//$('#lvt_requireLearnerValidation').attr('disabled', false);
-				
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('checked', false);
-				$('input:radio[name=caRealEstateCE]:nth(1)').attr('checked', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('disabled', true);
-				
-				if ($("#lvr").length > 0) $("#lvr").remove();
-				
-			});
-			
-			//Learner Policies - > Required Learner Validation - when ON
-			$("#lvt_requireLearnerValidation").click( function(){
-
-				$('#pvt_requireProctorValidation').attr('checked', false);
-				//$('#pvt_requireProctorValidation').attr('disabled', true);
-				$('#pvf_requireProctorValidation').attr('checked', true);
-				//$('#pvf_requireProctorValidation').attr('disabled', true);
-
-				$('input:radio[name=proctorValidatorName]:nth(0)').attr('disabled', true);
-				$('input:radio[name=proctorValidatorName]:nth(1)').attr('disabled', true);
-				
-				$('#pvt_requireProctorValidation').attr('checked', false);
-				$('#pvf_requireProctorValidation').attr('checked', true);
-				
-				//$('input:radio[name=requireNyInsurance]:nth(1)').attr('checked', true);
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('disabled', true);
-
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('checked', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('disabled', false);
-
-				/*
-				No radio button field value transfer to action/form incase of disability
-				to handle this issue, we have to generated field 
-				so that it can initlization with new value. 
-								
-				if ($("#pvr").length > 0) $("#pvr").remove();
-				if ($("#pvr").length <= 0){
-					var generateHiddenField = '<input name="requireProctorValidation" type="hidden" value="false" id="pvr">'; 
-					$("#pvf_requireProctorValidation").after(generateHiddenField);
-				}*/
-			});
-			//Learner Policies - > Required Learner Validation - when OFF
-			$("#lvf_requireLearnerValidation").click( function(){
-				//$('#pvt_requireProctorValidation').attr('checked', true);
-				
-				//$('input:radio[name=requireAnsi]:nth(0)').attr('checked', false);
-				//$('input:radio[name=requireAnsi]:nth(1)').attr('checked', true);
-				//$('input:radio[name=requireAnsi]:nth(0)').attr('disabled', true);
-				
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('checked', false);
-				//$('input:radio[name=requireNyInsurance]:nth(1)').attr('checked', true);
-				//$('input:radio[name=requireNyInsurance]:nth(0)').attr('disabled', true);
-
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('checked', false);
-				$('input:radio[name=caRealEstateCE]:nth(1)').attr('checked', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('disabled', true);
-
-				//$('#pvt_requireProctorValidation').attr('checked', false);
-				//$('#pvf_requireProctorValidation').attr('checked', true);
-				//$('#pvt_requireProctorValidation').attr('disabled', false);
-				//$('#pvf_requireProctorValidation').attr('disabled', false);
-				
-				if ($("#pvr").length > 0) $("#pvr").remove();
-	
-			});
-
-			// incase of both validation off then disable=false 			
-			var pv = $('input:radio[name=requireProctorValidation]:checked').val();
-			var lv = $('input:radio[name=requireLearnerValidation]:checked').val();
-			/*
-			if( pv == 'false' && lv =='false' ){
-				##alert('Both shoul be off');
-				$('#pvt_requireProctorValidation').attr('disabled', false);
-				$('#pvf_requireProctorValidation').attr('disabled', false);
-				$('#lvt_requireLearnerValidation').attr('disabled', false);
-				$('#lvf_requireLearnerValidation').attr('disabled', false);
-			}
-			*/
-			
-            if( lv =='false' ){
-				##incase of refresh the page (in perticular case) both radio are displayed checked. (LMS-13599)
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('checked', false);
-				$('input:radio[name=caRealEstateCE]:nth(1)').attr('checked', true);
-				$('input:radio[name=caRealEstateCE]:nth(0)').attr('disabled', true);
-				
-			}
-			/*
-			if( pv =='false' ){
-				##incase of refresh the page (in perticular case) both radio are displayed checked. (LMS-13599)
-				$('input:radio[name=requireAnsi]:nth(0)').attr('checked', false);
-				$('input:radio[name=requireAnsi]:nth(1)').attr('checked', true);
-				$('input:radio[name=requireAnsi]:nth(0)').attr('disabled', true);
-			}
-			
-			if( pv =='true' ){
-					var hiddenField = '<input name="requireLearnerValidation" type="hidden" value="false" id="lvr">';
-					$("#lvf_requireLearnerValidation").after(hiddenField);
-			}
-			if( lv =='true' ){
-					var generateHiddenField = '<input name="requireProctorValidation" type="hidden" value="false" id="pvr">'; 
-					$("#pvf_requireProctorValidation").after(generateHiddenField);
-			}
-			*/
+			$("#pvt_requireProctorValidation, #pvf_requireProctorValidation").change(function() {
+            	if($(this).val() == "true") {
+	            	$("#lvf_requireLearnerValidation").attr("checked", true);
+	            	$("#proctorValidatorName").removeAttr("disabled");
+	            	$("#caRealEstateCE").attr("disabled", true);
+            	} else {
+	            	$("#proctorValidatorName").attr("disabled", true);
+            	}
+            });
             
-                     
+            $("#lvt_requireLearnerValidation, #lvf_requireLearnerValidation").change(function() {
+            	if($(this).val() == "true") {
+	            	$("#pvf_requireProctorValidation").attr("checked", true);
+	            	$("#caRealEstateCE").removeAttr("disabled");
+	            	$("#proctorValidatorName").attr("disabled", true);
+            	} else {
+            		$("#caRealEstateCE").attr("disabled", true);
+            	}
+            });
+                       
+            $("input[name=validationTypes]").change(function() {
+            	var that = $(this);
+            	var selected = that.next("input:hidden");
+        		$(this).parent().parent().find("input[name=validationTypes]:radio").each(function() {
+        			var radio = $(this);
+        			var hidden = radio.next("input:hidden");
+        			hidden.val(selected.attr("id") == hidden.attr("id") ? "true" : "false");
+        		});
+        		$('#uniqueQuestions').css('display', that.next().get(0).id == "enableDefineUniqueQuestionValidation" && that.is(":checked") ? 'block' : 'none');
+            });
+			
+			$('#dataTable #chkAll:checkbox').change(function () {
+   				if($(this).is(":checked")) $("#dataTable input[name*=uquestionId_chk]:checkbox").attr("checked","checked");
+   				else $("#dataTable input[name*=uquestionId_chk]:checkbox").removeAttr("checked");
+			});
+			
+			$("#dataTable input[name*=uquestionId_chk]:checkbox").live("change", function () {
+   				if ($("#dataTable input[name*=uquestionId_chk]:checked").length == $("#dataTable input[name*=uquestionId_chk]").length) {
+   					$("#dataTable #chkAll:checkbox").attr("checked","checked");
+				} else { 
+					$("#dataTable #chkAll:checkbox").removeAttr("checked");
+				}
+			});
         });
+        
+        function addRow(tableID) {
 
+			var table = document.getElementById(tableID);
+
+			var rowCount = table.rows.length;
+			var row = table.insertRow(rowCount);
+
+			var cell1 = row.insertCell(0);
+			var element1 = document.createElement("input");
+			element1.type = "checkbox";
+			element1.name="uquestionId_chk_"+ rowCount;
+			element1.id='id_chk' + rowCount;
+			cell1.appendChild(element1);
+			
+			var element1_1 = document.createElement("input");
+			element1_1.type = "hidden";
+			element1_1.name="uquestionId_"+ rowCount;
+			element1_1.id='id_hdn' + rowCount;
+			cell1.appendChild(element1_1);
+
+            var cell2 = row.insertCell(1);
+			var element2 = document.createElement("input");
+			element2.type = "text";
+			element2.name = "uquestionName_"+ rowCount;
+			element2.id='id_txt' + rowCount;
+			cell2.appendChild(element2);
+			
+			var cell4 = row.insertCell(2);
+ 			var element3 = document.createElement("select");
+ 			element3.type = "text";
+ 			element3.name = "uquestionType_"+ rowCount;
+ 			element3.id='id_sec' + rowCount;
+				
+			var option = document.createElement("option");
+             option.text = "Text Entry";
+             option.value = "Qtype_0";
+             element3.appendChild(option);
+             
+             var option = document.createElement("option");
+             option.text = "True False";
+             option.value = "Qtype_1";
+             element3.appendChild(option);
+			
+			cell4.appendChild(element3);
+			
+			$("#dataTable #chkAll:checkbox").removeAttr("checked");
+			
+			}	
+			
+		function chkAllrows(){
+           var chkAll = document.getElementById("chkAll");
+           var table = document.getElementById("dataTable");
+           var rowCount = table.rows.length;
+
+           if(chkAll.checked){
+              for(var i=1; i<rowCount; i++) {
+	              var row = table.rows[i];
+	              var chkbox = row.cells[0].childNodes[0];
+	              chkbox.checked = true;
+	           }
+             }
+           }
+
+		function deleteUniqueQuestion(tableID){
+		 
+				confirm("Are you sure you want to delete this question", 
+ 				function () {					
+ 					deleteRow(tableID);
+                 }
+             );
+         }
+		
+		function hasblankUniqueQuestion() {
+  			if($("#dataTable tr input:text[name*=uquestionName]").length == 0) return true;
+  			if($("#dataTable tr input:text[name*=uquestionName][value='']").length > 0) return true;
+  			return false;
+		}
+		
+		function deleteRow(tableID) {
+			try {
+			var table = document.getElementById(tableID);
+			var rowCount = table.rows.length;
+            var id = null;
+            //var deletedIds = new Array(table.rows.length)
+            var deletedIds = " ";
+			for(var i=1; i<rowCount; i++) {
+				var row = table.rows[i];
+	            var deletedIds;
+				var chkbox = table.rows[i].cells[0].children[0];
+				
+				if(null != chkbox && true == chkbox.checked) {
+				 //console.log(chkbox.value);
+                   
+                    deletedIds = deletedIds + chkbox.value + ',';
+					//deletedIds[i] = chkbox.value;
+					table.deleteRow(i);
+					rowCount--;
+					i--;
+				}
+			}
+			if(deletedIds!=null){
+
+			     //document.getElementById('actionmethod').value='deleteQuestion';
+			     document.getElementById('uquestionDeleteId').value = deletedIds;
+			     //document.editCourseConfigForm.submit();
+			}
+			}catch(e) {
+ 				alert(e);
+  			}
+			}
+			
 function requireProctorValidationChange(){
 	return;
 	
@@ -308,11 +312,43 @@ function setControls(){
 	requireProctorValidationChange();	
 }
 
-
-        function saveCourseConfig() {
-            document.getElementById('actionmethod').value='saveCourseConfig';
-            document.editCourseConfigForm.submit();
-        }		
+function custom_alert1(output_msg, title_msg)
+        {
+           $('#alertMessage').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(output_msg);
+                    // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+}			
+       
+       
+       function saveCourseConfig() {
+            
+       if ($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').prev().is(':checked')) {
+			    if (hasblankUniqueQuestion()) {
+			        custom_alert1("Blank Unique Questions are not allowed");
+			    } else {
+			        document.getElementById('actionmethod').value = 'saveCourseConfig';
+			        document.editCourseConfigForm.submit();
+			    }
+			} else {
+			    document.getElementById('actionmethod').value = 'saveCourseConfig';
+			    document.editCourseConfigForm.submit();
+			}
+	    }
 
 		function setProperties(){
 			#springBind("courseConfigForm.acknowledgeText")
@@ -652,24 +688,31 @@ function unlinkCertificate(){
             }
 
             function publishCourseConfig(){
-				confirm("Are you sure you want to publish this course configuration? This may disturb the live user(s).", 
-					function () {					
-						setProperties();
-						var form = document.editCourseConfigForm;
-                        form.action = "acc_manageCourseConfig.do?method=saveAndPublish"; 
-                        form.submit();
-                    }
-                );
+				var confirmValidationQuestions = function() { 
+        						confirm("Are you sure you want to publish this course configuration? This may disturb the live user(s).", function () {					
+									setProperties();
+									var form = document.editCourseConfigForm;
+			                        form.action = "acc_manageCourseConfig.do?method=saveAndPublish"; 
+			                        form.submit();
+			                    });
+            				}
+            	if ($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').prev().is(':checked')) {
+				    if (hasblankUniqueQuestion()) {
+				        custom_alert1("Blank Unique Questions are not allowed");
+				    } else {
+				        confirmValidationQuestions();
+				    }
+				} else {
+				    confirmValidationQuestions();
+				}
             }
-
-
-
 </script>
 </head>
 
 <body>
 <form name="editCourseConfigForm" method="post" action="acc_manageCourseConfig.do">
 <input type="hidden" id="actionmethod" name="method" value=""/>
+<input type="hidden" id="uquestionDeleteId" name="uquestionDeleteId" value=""/>
 
    <table id="table-layout" border="0" cellpadding="0" cellspacing="0"> <!-- Table 1 -->
 		<tr> <!-- First Block -->
@@ -1616,120 +1659,108 @@ The name of the hidden fields is same as the name of the check box wit an unders
         			 <div class="box_header" onmousedown="collapseTable('SpecialPostAssessmentValidation', 'postIcon')"><div id = "postIcon" class="icon_down" style="margin-top:7px;" ></div><span class="box_heading">Special Post Assessment Validation</span></div>
 
 		             <!-- ****************************************************************************** -->
-		             <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
-					<tbody>
-					<tr>
-						<td width="02%" height="5"></td>
-						<td width="40%"></td>
-						<td width="30%"></td>
-						<td width="20%"></td>
-					</tr>
-					</tbody>
-					<tr>
-    					<td colspan="4" height="10">Proctor Policies</td>
-					</tr>
-					<tr>
-    					<td colspan="4" height="10"></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="row_text">$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidation")</div></td>
-    					<td>
+		             <table heigth="100%" width="40%" border="0" cellpadding="2">
+ 						<tr>
+ 							<td colspan="4" height="10">Proctor Policies</td>
+ 						</tr>
+ 						<tr>
+ 							<td colspan="4" height="10"></td>
+ 						</tr>
+ 						<tr>
+ 							<td></td>
+							<td><div class="row_text">$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidation")</div></td>
+							<td>
 							#springBind("courseConfigForm.requireProctorValidation")
-							<div class="btn_radio3"><input type="radio" id="pvt_${status.expression}" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOn")</div>
-							<div class="btn_radio3"><input type="radio" id="pvf_${status.expression}" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOff")</div>
-						</td>
-                        <td></td>
-					</tr>
-					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							#springBind("courseConfigForm.requireProctorValidation")
-							#set ($requireProctorVal=${status.value})
-							
-							
-							#springBind("courseConfigForm.proctorValidatorName")
-                            <div class="btn_radio3">&nbsp;&nbsp;
-                            	<input type="radio" tabindex="23" id="" name="proctorValidatorName" value="ansi" #if(${status.value}=="ansi") checked #end  #if(${requireProctorVal}=="false") disabled #end/> 
-                            	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.ansi")
-                            </div>
-                            <div style="" class="btn_radio3">&nbsp;&nbsp;
-                            	<input type="radio" id="" name="proctorValidatorName" value="nyInsurance" #if(${status.value}=="nyInsurance") checked #end #if(${requireProctorVal}=="false") disabled #end /> 
-                            	$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.nyInsurance")
-                            </div>
-						</td>
-    					<td>
-    					</td>
-                        <td></td>
-					</tr>
-					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
-					</tr>
-					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
-					</tr>
-					
-					<!-- Learner Policies -->
-					<tr>
-    					<td colspan="4" height="10">Learner Policies</td>
-					</tr>
-					<tr>
-    					<td colspan="4" height="10"></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class="row_text">$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidation")</div></td>
-    					<td>
-							#springBind("courseConfigForm.requireLearnerValidation")
-							<div class="btn_radio3"><input type="radio" name="${status.expression}" id="lvt_${status.expression}" value="true" #if(${status.value}=="true") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOn")</div>
-							<div class="btn_radio3"><input type="radio" name="${status.expression}" id="lvf_${status.expression}" value="false" #if(${status.value}=="false") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOff")</div>
-						</td>
-                        <td></td>
-					</tr>
-					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							#springBind("courseConfigForm.requireLearnerValidation")
-							#if($status.value)
-	    						#springBind("courseConfigForm.caRealEstateCE")
-	                            <div class="btn_radio3">&nbsp;&nbsp;<input type="radio" tabindex="23" id="${status.expression}" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end  /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCE")</div>
-	                            <input style="visibility:hidden;" type="radio" tabindex="23" id="h_${status.expression}" name="${status.expression}" value="false" />
-							#else
-	    						#springBind("courseConfigForm.caRealEstateCE")
-	                            <div class="btn_radio3">&nbsp;&nbsp;<input type="radio" tabindex="23" id="${status.expression}" name="${status.expression}" value="true" disabled  /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCE")</div>
-	                            <input style="visibility:hidden;" type="radio" tabindex="23" id="$h_{status.expression}" name="${status.expression}" value="false" checked />
-							#end
-						</td>
-    					<td>
-    						
-    					</td>
-                        <td></td>
-					</tr>
-					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
-					</tr>
-			 </table>	
+							<div class="btn_radio3"><input type="radio" id="pvt_${status.expression}" name="${status.expression}" value="true" #if(${status.value}=="true") checked #end/> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOn")</div>
+								<div class="btn_radio3"><input type="radio" id="pvf_${status.expression}" name="${status.expression}" value="false" #if(${status.value}=="false") checked #end/> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireProctorValidationOff")</div>
+							</td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td height="5"></td>
+							<td></td>
+							<td></td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td>
+								#springBind("courseConfigForm.requireProctorValidation")
+								#set ($requireProctorVal=${status.value})
+								
+								#springBind("courseConfigForm.proctorValidatorName")
+								<select id="proctorValidatorName" name="proctorValidatorName" #if(${requireProctorVal}=="false") disabled #end>
+									<option value="ansi"#if(${status.value}=="ansi") selected #end>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.ansi")</option>
+									<option value="nyInsurance"#if(${status.value}=="nyInsurance") selected #end>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.nyInsurance")</option>
+									<option value="TREC"#if(${status.value}=="TREC") selected #end>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.TREC")</option>
+								</select>
+							</td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td height="5"></td>
+							<td></td>
+							<td></td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td height="5"></td>
+							<td></td>
+							<td></td>
+				            <td></td>
+						</tr>
+						
+						<!-- Learner Policies -->
+						<tr>
+							<td colspan="4" height="10">Learner Policies</td>
+						</tr>
+						<tr>
+							<td colspan="4" height="10"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div class="row_text">$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidation")</div></td>
+							<td>
+								#springBind("courseConfigForm.requireLearnerValidation")
+								<div class="btn_radio3"><input type="radio" name="${status.expression}" id="lvt_${status.expression}" value="true" #if(${status.value}=="true") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOn")</div>
+								<div class="btn_radio3"><input type="radio" name="${status.expression}" id="lvf_${status.expression}" value="false" #if(${status.value}=="false") checked #end /> $brander.getBrandElement("lms.accraditation.courseConfiguation.caption.requireLearnerValidationOff")</div>
+							</td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td height="5"></td>
+							<td></td>
+							<td></td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td></td>
+							<td>
+								#springBind("courseConfigForm.requireLearnerValidation")
+								#if($status.value)
+									#springBind("courseConfigForm.caRealEstateCE")
+				                    <select id="${status.expression}" name="${status.expression}">
+				                    	<option value="true" #if(${status.value}=="true") selected #end>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCE")</option>
+				                    </select>
+								#else
+									#springBind("courseConfigForm.caRealEstateCE")
+				                    <select id="${status.expression}" name="${status.expression}" disabled="disabled">
+				                    	<option value="true" #if(${status.value}=="true") selected #end>$brander.getBrandElement("lms.accraditation.courseConfiguation.caption.caRealEstateCE")</option>
+				                    </select>
+								#end
+							</td>
+				            <td></td>
+						</tr>
+						<tr>
+							<td height="5"></td>
+							<td></td>
+							<td></td>
+				            <td></td>
+						</tr>
+					 </table>
+								
 		             <!-- ****************************************************************************** -->
 	        	  </div>
 
@@ -1738,10 +1769,7 @@ The name of the hidden fields is same as the name of the check box wit an unders
                          <div class="search_box_result" id="validation">
                          <div class="box_header" onmousedown="collapseTable('validation', 'validationIcon')"><div id = "validationIcon" class="icon_down" style="margin-top:7px;" ></div><span class="box_heading">Validation</span></div>
                          <table heigth="100%" width="100%" border="0" cellpadding="0" cellspacing="3">
-                                <tbody><tr>
-                                <td height="30" colspan="2"><b>&nbsp;&nbsp;Content Policies</b></td>
-                                <td width="20"></td>
-                                <td width="48%"></td>
+                               <tbody>
                             </tr>
                             <tr>
                                 <td width="20px" height="5"></td>
@@ -1757,6 +1785,12 @@ The name of the hidden fields is same as the name of the check box wit an unders
                                         <td></td>
                                         <td></td>
                                 </tr>
+                                <tr>
+	                                <td height="30" colspan="2"><b>&nbsp;&nbsp;Content Policies</b></td>
+	                                <td width="20"></td>
+	                                <td width="48%"></td>
+                                </tr>
+                                
                              #*   <tr>
                                         #springBind("courseConfigForm.requireIdentityValidationEverySeconds")
                                         <td></td>
@@ -1789,12 +1823,78 @@ The name of the hidden fields is same as the name of the check box wit an unders
                                     <td></td>
                                 </tr>
                                 
+                                 <tr>
+                                 	<td colspan="4">
+ 	                                	<table>
+ 	                                		<tr>
+ 	                                		#springBind("courseConfigForm.enableSmartProfileValidation")
+	                                			#set($enableSmartValidation=$status.value)
+	                                			#springBind("courseConfigForm.enableDefineUniqueQuestionValidation")
+	                                			#set($enableDefineUniqueQuestionValidation=$status.value)
+ 	                                			<td>
+ 		                                			<input type="radio" id="standardValidation" name="validationTypes" #if($enableSmartValidation == false && $enableDefineUniqueQuestionValidation == false) checked #end"/>
+ 		                            				<label for="standardValidation">Standard Validation</label>
+ 	                                			</td>
+ 	                                			#springBind("courseConfigForm.enableSmartProfileValidation")
+ 	                                			<td>
+ 		                                			<input type="radio" name="validationTypes" #if ($!{status.value} == true) checked #end" />
+		                                			<input type="hidden" id="$!{status.expression}" name="$!{status.expression}" value="$!{status.value}" />
+ 		                            				<label for="$!{status.expression}">Smart Profile Validation</label>
+ 	                                			</td>
+ 	                                			#springBind("courseConfigForm.enableDefineUniqueQuestionValidation")
+	                                			<td>
+	                                			    <input type="radio" name="validationTypes" #if ($!{status.value} == true) checked #end" />
+	                                			    <input type="hidden" id="$!{status.expression}" name="$!{status.expression}" value="$!{status.value}" />
+		                            				<label for="$!{status.expression}">Define Unique Questions</label>
+	                                			</td>
+ 	                                		</tr>
+ 	                        			</table>
+                         			</td>
+                                 </tr>
+                                
                                 <tr>
                                         <td height="5"></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
                                 </tr>
+                                
+                                <tr>
+                                
+    					        <td colspan="4" align="left">
+    					        <div id="uniqueQuestions">
+    					        #springBind("courseConfigForm.lstUniqueQuestionsVO")
+    					        <div>
+    					          <INPUT type="button" class="add-validation" onclick="addRow('dataTable')" />
+    					          <INPUT type="button" class="delete-validation" onclick="deleteUniqueQuestion('dataTable')" />
+    					        </div>
+                                  <TABLE id="dataTable" width="550px" border="0">
+		                             <TR>
+		                             
+			                                <TD><input type="checkbox" name="chkAll" id="chkAll" onclick="chkAllrows()"></TD>
+			                                <TD class="row_text">Question</TD>
+			                                <TD class="row_text">Question Type</TD>
+		                             </TR>
+		                             #foreach ($uniqueQuestion in $!{status.value})
+		                             <TR>
+			                                <TD>
+			                                  <input type="checkbox" name="uquestionId_chk" value="$uniqueQuestion.id">
+			                                  <input type="hidden" name="uquestionId_$uniqueQuestion.questionId" value="$uniqueQuestion.id">
+			                                </TD>
+			                                <TD><input type="text" id="Text" name = "uquestionName_$uniqueQuestion.questionId" value="$uniqueQuestion.question"></TD>
+			                                <TD> <div class="row_text"><select class="row_text" type="text" name = "uquestionType_$uniqueQuestion.questionId">
+			                                       <option value="Qtype_0" #if($uniqueQuestion.questionType=='Qtype_0') selected #else #end>Text Entry</option>
+			                                       <option value="Qtype_1" #if($uniqueQuestion.questionType=='Qtype_1') selected #else #end>True False</option>
+			                                     </select>
+			                                     </div>
+			                                </TD>
+		                             </TR>
+		                             #end
+	                             </TABLE>
+    					       </div>
+    					     </td>
+						
+					</tr>
                          </tbody></table>
                  </div>
 				 
@@ -2090,7 +2190,46 @@ The name of the hidden fields is same as the name of the check box wit an unders
 </table>
 
 	#parse("snippets/deleteConfirmation.vm")
+	
+	<STYLE type="text/css">
+
+.message_box_text{
+    float: left;
+    font-family: Tahoma;
+    font-size: 12px;
+    height: 40px;
+    margin-right: 5px;
+    margin-top: 15px;
+    width: 330px;
+    }
+</style>    
+<div id='alertMessage' style='display:none'>
+    <div class='alert_message_box_title' style="width: 478px;"><span>&nbsp;&nbsp;Error</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="message_box_text"></div>
+    <br style="clear:both" />	
+    <div class='buttons'>
+        <div class='simplemodal-close' style="width:220px">
+            <div>
+                <a class="" onClick=""><span class="yes button">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">OK</div>
+                        <div class="btn_end"></div>
+                    </span>	</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>	
+	
 
 </form>
 </body>
+<script>
+$(document).ready(function(){
+	var enableDefineUniqueQuestionValidation = "$courseConfigForm.enableDefineUniqueQuestionValidation";
+  	if(enableDefineUniqueQuestionValidation === 'true') $('#uniqueQuestions').show();
+  	else $('#uniqueQuestions').hide();
+});
+</script>
 </html>

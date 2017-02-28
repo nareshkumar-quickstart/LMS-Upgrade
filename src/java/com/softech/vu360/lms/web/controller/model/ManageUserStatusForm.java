@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.web.controller.model;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,12 @@ public class ManageUserStatusForm implements ILMSBaseInterface {
 	private byte[] affidavitFileData;
 	private Long learnerEnrollmentId;
 	private boolean reversalPermission = false;
+	
+	private String cardMailingStatus;
+	private Date cardMailingDate = null;
+	    
+	private String reportingStatus;
+	private Date reportingDate = null;
 	
 	public List<Map<Object, Object>> manageUserStatusList = null;
 
@@ -113,6 +120,8 @@ public class ManageUserStatusForm implements ILMSBaseInterface {
 	private String startDate;
 	private String endDate;
 	private ManageUserStatus manageUserStatus = null;
+	private String update_mailingStatus;
+	private String update_reportingStatus;
 
 	public String getFirstName() {
 		return firstName;
@@ -295,4 +304,46 @@ public class ManageUserStatusForm implements ILMSBaseInterface {
 	public void setReversalPermission(boolean reversalPermission) {
 		this.reversalPermission = reversalPermission;
 	}
+
+	public String getCardMailingStatus() {
+		return cardMailingStatus;
+	}
+
+	public void setCardMailingStatus(String cardMailingStatus) {
+		this.cardMailingStatus = cardMailingStatus;
+	}
+
+	public Date getCardMailingDate() {
+		return cardMailingDate;
+	}
+
+	public void setCardMailingDate(Date cardMailingDate) {
+		this.cardMailingDate = cardMailingDate;
+	}
+
+	public Date getReportingDate() {
+		return reportingDate;
+	}
+
+	public void setReportingDate(Date reportingDate) {
+		this.reportingDate = reportingDate;
+	}
+
+	public String getUpdate_mailingStatus() {
+		return update_mailingStatus;
+	}
+
+	public void setUpdate_mailingStatus(String update_mailingStatus) {
+		this.update_mailingStatus = update_mailingStatus;
+	}
+
+	public String getUpdate_reportingStatus() {
+		return update_reportingStatus;
+	}
+
+	public void setUpdate_reportingStatus(String update_reportingStatus) {
+		this.update_reportingStatus = update_reportingStatus;
+	}
+	
+	
 }

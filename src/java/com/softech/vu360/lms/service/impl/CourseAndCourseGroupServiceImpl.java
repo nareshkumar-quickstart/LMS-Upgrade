@@ -1308,4 +1308,10 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		//return courseAndCourseGroupDAO.getActiveCourses(id);
 		return this.courseRepository.getActiveCoursOfCourseGroup(id);
 	}
+
+	@Override
+	public List<Course> getCourseByBusinessKey(String businessKey) {
+		// TODO Auto-generated method stub
+		return this.courseRepository.findByBussinesskeyEquals(businessKey);
+	}
 }

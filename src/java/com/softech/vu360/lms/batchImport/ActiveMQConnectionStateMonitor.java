@@ -10,6 +10,9 @@ public class ActiveMQConnectionStateMonitor implements TransportListener {
 
 	private static final Logger log = Logger.getLogger(ActiveMQConnectionStateMonitor.class);
 	private BatchImportConnectionManager batchImportConnectionManager;
+	private ACMReportImportConnectionManager acmReportImportConnectionManager;
+	
+
 	private static int checkingAvailability=0;
 
 	  @Override
@@ -24,11 +27,13 @@ public class ActiveMQConnectionStateMonitor implements TransportListener {
 	    	if(checkingAvailability==0){
 	    		checkingAvailability=1;
 	    		batchImportConnectionManager.stopListening();
+	    		acmReportImportConnectionManager.stopListening();
 
 			    while(true){
 			    	System.out.println(new Timestamp(System.currentTimeMillis())+"~~ Checking Availability in Monitoring class");
 			    	if(batchImportConnectionManager.findServerStatus().equals(BatchImportConnectionManager.AMQ_SERVER_AVAILABLE)){
 			    		batchImportConnectionManager.startListening();
+			    		acmReportImportConnectionManager.startListening();
 			    		break;
 			    	}
 			    	else{
@@ -61,6 +66,14 @@ public class ActiveMQConnectionStateMonitor implements TransportListener {
 		public void setBatchImportConnectionManager(
 				BatchImportConnectionManager batchImportConnectionManager) {
 			this.batchImportConnectionManager = batchImportConnectionManager;
+		}
+		
+		public ACMReportImportConnectionManager getAcmReportImportConnectionManager() {
+			return acmReportImportConnectionManager;
+		}
+
+		public void setAcmReportImportConnectionManager(ACMReportImportConnectionManager acmReportImportConnectionManager) {
+			this.acmReportImportConnectionManager = acmReportImportConnectionManager;
 		}
 
 }

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,7 @@ import com.softech.vu360.lms.model.InstructorConnectCourse;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerCourseStatistics;
 import com.softech.vu360.lms.model.LearnerEnrollment;
+import com.softech.vu360.lms.model.LearnerGroup;
 import com.softech.vu360.lms.model.LearnerSCOStatistics;
 import com.softech.vu360.lms.model.LearnerSelfStudyCourseActivity;
 import com.softech.vu360.lms.model.OrgGroupEntitlement;
@@ -56,6 +58,7 @@ import com.softech.vu360.lms.model.SynchronousCourse;
 import com.softech.vu360.lms.model.TrainingPlanAssignment;
 import com.softech.vu360.lms.model.TrainingPlanCourse;
 import com.softech.vu360.lms.model.TrainingPlanCourseView;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.WebinarCourse;
 import com.softech.vu360.lms.repositories.CourseCustomerEntitlementItemRepository;
 import com.softech.vu360.lms.repositories.CourseCustomerEntitlementRepository;
@@ -71,6 +74,7 @@ import com.softech.vu360.lms.repositories.LearnerEnrollmentRepository;
 import com.softech.vu360.lms.repositories.LearnerSCOStatisticsRepository;
 import com.softech.vu360.lms.repositories.LearnerSelfStudyCourseActivityRepository;
 import com.softech.vu360.lms.repositories.OrgGroupEntitlementRepository;
+import com.softech.vu360.lms.repositories.OrganizationalGroupMemberRepository;
 import com.softech.vu360.lms.repositories.SubscriptionCourseRepository;
 import com.softech.vu360.lms.repositories.TrainingPlanAssignmentRepository;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
@@ -121,6 +125,8 @@ public class EntitlementServiceImpl implements EntitlementService {
 	private LearnerSCOStatisticsRepository learnerSCOStatisticsRepository = null;
 	@Inject
 	private LearnerSelfStudyCourseActivityRepository learnerSelfStudyCourseActivityRepository = null;
+	@Inject
+	private OrganizationalGroupMemberRepository organizationalGroupMemberRepository = null;
 	
 	
 	//private static final int DEFAULT_TOS_IN_DAYS = (Integer.parseInt(VU360Properties.getVU360Property("defaultTOS")));
@@ -155,7 +161,7 @@ public class EntitlementServiceImpl implements EntitlementService {
         List<OrgGroupEntitlement> orggroupEntitlements = orgGroupEntitlementRepository.findByCustomerEntitlementId(customerEntitlement.getId()); //Wajahat Ali
         List<OrgGroupEntitlement> nonZeroOrgGroupEntitlements = new ArrayList<OrgGroupEntitlement>();
         for (OrgGroupEntitlement oge : orggroupEntitlements) {
-            if (oge.getMaxNumberSeats() > 0) {
+            if (oge.getMaxNumberSeats() >= 0) {
                 nonZeroOrgGroupEntitlements.add(oge);
             }
         }
@@ -962,7 +968,7 @@ public class EntitlementServiceImpl implements EntitlementService {
     @SuppressWarnings("null")
 	public OrgGroupEntitlement getMaxAvaiableOrgGroupEntitlementByLearner(Learner learner, long entitlementId) {
 
-        List<OrgGroupEntitlement> orgGroupEntitlementsForCustomerEntitlement = orgGroupEntitlementRepository.findByCustomerEntitlementId(entitlementId);//Wajahat Ali // this.getOrgGroupsEntilementsForCustomerEntitlement(customerEntitlement);
+        List<OrgGroupEntitlement> orgGroupEntitlementsForCustomerEntitlement = orgGroupEntitlementRepository.findByCustomerEntitlementIdAndMaxNumberSeatsGreaterThanEqual(entitlementId,0L);//Wajahat Ali // this.getOrgGroupsEntilementsForCustomerEntitlement(customerEntitlement);
         //Modified By Marium Saud: Replace the method orgGroupLearnerGroupService.getOrgGroupsByLearner(learner) because for each learner enrollment Organizational Group
         // will be fetched along with its all children (as List<OrganizationalGroup> childrenOrgGroups) in OrganizationalGroup.java is marked as Eager (LMS-21545,LMS-21541)
         //List<OrganizationalGroup> orgGroupsForLearner = orgGroupLearnerGroupService.getOrgGroupsByLearner(learner);
@@ -972,7 +978,9 @@ public class EntitlementServiceImpl implements EntitlementService {
         if (orgGroupEntitlementsForCustomerEntitlement != null || orgGroupEntitlementsForCustomerEntitlement.size() > 0) {           
             for (OrgGroupEntitlement orgGroupentitlement : orgGroupEntitlementsForCustomerEntitlement) {
                 for (OrganizationalGroup orgGroup : orgGroupsForLearner) {
-                    if (orgGroupentitlement.getOrganizationalGroup().getId().equals(orgGroup.getId()) && orgGroupentitlement.hasAvailableSeats(1)) {
+                // @MariumSaud : LMS-21702 : Removing Enrollment dependency from OrgGrpEntitlement Available Seats as MaxSeat column has been removed from Contract Creation
+                //  if (orgGroupentitlement.getOrganizationalGroup().getId().equals(orgGroup.getId()) && orgGroupentitlement.hasAvailableSeats(1)) {
+                    if (orgGroupentitlement.getOrganizationalGroup().getId().equals(orgGroup.getId())) {
                         return orgGroupentitlement;
                     }
                 }
@@ -1160,14 +1168,14 @@ public class EntitlementServiceImpl implements EntitlementService {
     }
 
     public List<EnrollmentCourseView> getCoursesForEnrollmentByCustomer(Customer customer, 
-    		String courseName, String courseCode, String entitlementName, Date date, int resultSetLimit) {
+    		String courseName, String courseCode, String entitlementName, Date date, Long[] customerEntitlementIds, int resultSetLimit) {
     	/**Modified By Marium Saud LMS-20163 : TSM: Manager Mode > Plan & Enroll: System is showing Webinar course while its enrollment end date has been closed.
     	 * The added List enrollmentCourseViewList holds the filtered Course records.
     	 * 
     	 */
     	List<EnrollmentCourseView> enrollmentCourseViewList = new ArrayList<EnrollmentCourseView>(500);//setting initial capacity reasonable as dynamic increase is expensive operation
     	Long customerId = customer.getId();
-    	List<EnrollmentCourseView> enrollmentCourseViews = enrollmentCourseViewRepository.getCoursesForEnrollment(customerId, courseName, courseCode, entitlementName, date);
+    	List<EnrollmentCourseView> enrollmentCourseViews = enrollmentCourseViewRepository.getCoursesForEnrollment(customerId, courseName, courseCode, entitlementName, date, customerEntitlementIds);
     	if (!org.springframework.util.CollectionUtils.isEmpty(enrollmentCourseViews)) {
     		for (EnrollmentCourseView enrollmentCourseView : enrollmentCourseViews) {
     			long courseId = enrollmentCourseView.getCourseId();
@@ -1414,10 +1422,10 @@ public class EntitlementServiceImpl implements EntitlementService {
         return enrollmentCourseViewList;
     }
     
-    public List<EnrollmentCourseView> getCoursesForTrainingPlanByCustomer(Customer customer, String courseName, String courseId, String entitlementName, Date date, int resultSetLimit) {
+    public List<EnrollmentCourseView> getCoursesForTrainingPlanByCustomer(Customer customer, String courseName, String courseId, String entitlementName, Date date, Long[] customerEntitlementIds, int resultSetLimit) {
 
         //List<Map<Object, Object>> resultSet = entitlementDAO.getCoursesForEnrollment(customer, courseName, courseId, entitlementName, date, resultSetLimit); 
-        List<Map<Object, Object>> resultSet = courseRepository.findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(customer.getId(), courseName, courseId, entitlementName, date);
+        List<Map<Object, Object>> resultSet = courseRepository.findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(customer.getId(), courseName, courseId, entitlementName, date, customerEntitlementIds);
        
         List<EnrollmentCourseView> trainingPlanCourseViewList = new ArrayList<EnrollmentCourseView>(500);//setting initial capacity reasonable as dynamic increase is expensive operation
         EnrollmentCourseView trainingPlanCourseView = null;
@@ -3139,6 +3147,90 @@ public class EntitlementServiceImpl implements EntitlementService {
     		}
     		return maxExpirationDate;
     }
+   
+   // @MariumSaud : LMS-21702 -- The method will return all customerEntitlementIds bound with selected organizationGroups
+    @Override
+    public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByOrgGrpIds(List<Long> orgGrpIds) {
+ 	   Long[] orgGrpIdArray = new Long[orgGrpIds.size()];
+ 	   orgGrpIdArray = orgGrpIds.toArray(orgGrpIdArray);	
+ 	   
+ 	   List<OrgGroupEntitlement> organizationEntitlement = new ArrayList<OrgGroupEntitlement>();
+ 	   organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGrpIdArray,0L);
+ 	   
+ 	   Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
+ 	   for(OrgGroupEntitlement orgGrpEntitlement : organizationEntitlement){
+ 		   customerEntitlementIds.add(orgGrpEntitlement.getCustomerEntitlement().getId());
+ 	   }
+ 	   
+ 	   if(!customerEntitlementIds.isEmpty()){
+ 		   return new ArrayList<Long>(customerEntitlementIds);
+ 	   }
+    	   return null;
+    }
+    
+    // @MariumSaud : LMS-21702 -- The method will return all customerEntitlementIds bound with organizationGroups of Learners
+    @Override
+    public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerIds(Long learnerIds[]) {
+           log.debug("looking for orgGroupEntitlements for Learners");
+           
+           List<OrganizationalGroup> orgGroups = orgGroupLearnerGroupService.getOrgGroupsByLearners(learnerIds);
+
+			if ( orgGroups == null || orgGroups.isEmpty() ) {
+				// return empty resut set.
+				return new ArrayList<Long>();
+			}
+			Long[] orgGroupIdArray = new Long[orgGroups.size()];
+			int count=0;
+			for (OrganizationalGroup orgGroup:orgGroups){
+				orgGroupIdArray[count]=orgGroup.getId();
+				count++;
+
+			}
+           List<OrgGroupEntitlement> results = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0L);
+           
+           Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
+           for(OrgGroupEntitlement oge :results){
+        	   customerEntitlementIds.add(oge.getCustomerEntitlement().getId());
+           }
+           if(!customerEntitlementIds.isEmpty()){
+    		   return new ArrayList<Long>(customerEntitlementIds);
+    	   }
+       	   return null;
+    }
+   
+ // @MariumSaud : LMS-21702 -- The method will return all customerEntitlementIds bound with organizationGroups of LearnerGroup 
+    @Override
+    public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerGroupIds(List<Long> learnerGrpIds) {
+    	   Long[] learnerGrpIdsArray = new Long[learnerGrpIds.size()];
+    	   learnerGrpIdsArray = learnerGrpIds.toArray(learnerGrpIdsArray);	
+    	   
+    	   List<LearnerGroup> learnerGroups = orgGroupLearnerGroupService.getLearnerGroupsByLearnerGroupIDs(learnerGrpIdsArray);
+
+			if ( learnerGroups == null || learnerGroups.isEmpty() ) {
+				// return empty resut set.
+				return new ArrayList<Long>();
+			}
+			
+			Long[] orgGroupIdArray = new Long[learnerGroups.size()];
+			int count=0;
+			for (LearnerGroup lg : learnerGroups){
+				orgGroupIdArray[count] = lg.getOrganizationalGroup().getId();
+				count++;
+
+			}
+    	   
+    	   List<OrgGroupEntitlement> organizationEntitlement = new ArrayList<OrgGroupEntitlement>();
+    	   organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0L);
+    	   
+    	   Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
+    	   for(OrgGroupEntitlement orgGrpEntitlement : organizationEntitlement){
+    		   customerEntitlementIds.add(orgGrpEntitlement.getCustomerEntitlement().getId());
+    	   }
+    	   if(!customerEntitlementIds.isEmpty()){
+    		   return new ArrayList<Long>(customerEntitlementIds);
+    	   }
+       	   return null;
+    } 
    
    private void deleteCourseCustomerEntitlementItems(List<CourseCustomerEntitlementItem> entitlementItems){
 	   
