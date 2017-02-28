@@ -146,16 +146,14 @@
             $("input[name=validationTypes]").change(function() {
             	var that = $(this);
             	var selected = that.next("input:hidden");
-        		$(this).parent().parent().find("input:radio").each(function() {
+        		$(this).parent().parent().find("input[name=validationTypes]:radio").each(function() {
         			var radio = $(this);
         			var hidden = radio.next("input:hidden");
         			hidden.val(selected.attr("id") == hidden.attr("id") ? "true" : "false");
         		});
         		$('#uniqueQuestions').css('display', that.next().get(0).id == "enableDefineUniqueQuestionValidation" && that.is(":checked") ? 'block' : 'none');
             });
-			$("input[name=validationTypes]").each(function() {
-				$(this).trigger("change");
-			});
+			
 			$('#dataTable #chkAll:checkbox').change(function () {
    				if($(this).is(":checked")) $("#dataTable input[name*=uquestionId_chk]:checkbox").attr("checked","checked");
    				else $("#dataTable input[name*=uquestionId_chk]:checkbox").removeAttr("checked");
@@ -690,14 +688,23 @@ function unlinkCertificate(){
             }
 
             function publishCourseConfig(){
-				confirm("Are you sure you want to publish this course configuration? This may disturb the live user(s).", 
-					function () {					
-						setProperties();
-						var form = document.editCourseConfigForm;
-                        form.action = "acc_manageCourseConfig.do?method=saveAndPublish"; 
-                        form.submit();
-                    }
-                );
+				var confirmValidationQuestions = function() { 
+        						confirm("Are you sure you want to publish this course configuration? This may disturb the live user(s).", function () {					
+									setProperties();
+									var form = document.editCourseConfigForm;
+			                        form.action = "acc_manageCourseConfig.do?method=saveAndPublish"; 
+			                        form.submit();
+			                    });
+            				}
+            	if ($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').prev().is(':checked')) {
+				    if (hasblankUniqueQuestion()) {
+				        custom_alert1("Blank Unique Questions are not allowed");
+				    } else {
+				        confirmValidationQuestions();
+				    }
+				} else {
+				    confirmValidationQuestions();
+				}
             }
 </script>
 </head>
@@ -2218,4 +2225,11 @@ The name of the hidden fields is same as the name of the check box wit an unders
 
 </form>
 </body>
+<script>
+$(document).ready(function(){
+	var enableDefineUniqueQuestionValidation = "$courseConfigForm.enableDefineUniqueQuestionValidation";
+  	if(enableDefineUniqueQuestionValidation === 'true') $('#uniqueQuestions').show();
+  	else $('#uniqueQuestions').hide();
+});
+</script>
 </html>

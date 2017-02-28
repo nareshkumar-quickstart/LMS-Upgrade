@@ -994,24 +994,44 @@ public class LearnerServiceImpl implements LearnerService {
 		if (CollectionUtils.isNotEmpty(existingMemberships)) {
 			for (LearnerGroupMember member : existingMemberships) {
 				if (listSelectedLearner.contains(member.getLearner())) {
-					log.warn("duplicate membership found, fail safe logic executing:"
-							+ member.getLearner().getVu360User().getUsername());
+					log.warn("duplicate UG membership found, fail safe logic executing:"+member.getLearner().getVu360User().getUsername());
 					listSelectedLearner.remove(member.getLearner());
 				}
 			}
 		}
-		LearnerGroupMember temp = null;
-		List<Learner> savedSuccessfullly = new ArrayList<Learner>();
+		List<OrganizationalGroupMember> existingOrgGroupMembers =
+	            organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn(learnerGroup.getOrganizationalGroup().getId(), learnersArray);
+	        if (CollectionUtils.isNotEmpty(existingOrgGroupMembers)) {
+	          for (OrganizationalGroupMember member : existingOrgGroupMembers) {
+	            if (listSelectedLearner.contains(member.getLearner())) {
+	              log.warn("duplicate OG membership found, fail safe logic executing:"
+	                  + member.getLearner().getVu360User().getUsername());
+	              listSelectedLearner.remove(member.getLearner());
+	            }
+	          }
+	        }
+			
+		LearnerGroupMember learnerGroupMember = null;
 		for (Learner learner : listSelectedLearner) {
 			log.debug("... addLearnersInLearnerGroup start *3 learner.getId()"+ learner.getId()); 
-			temp = new LearnerGroupMember();
-			temp.setLearner(learnerRepository.findOne(learner.getId()));
-			temp.setLearnerGroup(learnerGroup);
-			savedSuccessfullly.add(learnerGroupMemberRepository.saveLGM(temp)
-					.getLearner());
+			learnerGroupMember = new LearnerGroupMember();
+			learnerGroupMember.setLearner(learner);
+			learnerGroupMember.setLearnerGroup(learnerGroup);
+			learnerGroupMemberRepository.saveLGM(learnerGroupMember).getLearner();
 			log.debug("...addLearnersInLearnerGroup end *3");
 		}
-	}
+		
+		OrganizationalGroupMember orgGroupMember = null;
+        for (Learner learner : listSelectedLearner) {
+          log.debug("... addLearnersInOrgGroup start *4 learner.getVu360User().getId()"
+              + learner.getVu360User().getId());
+          orgGroupMember = new OrganizationalGroupMember();
+          orgGroupMember.setLearner(learner);
+          orgGroupMember.setOrganizationalGroup(learnerGroup.getOrganizationalGroup());
+          organizationalGroupMemberRepository.saveOGM(orgGroupMember).getLearner();
+          log.debug("...addLearnersInOrgGroup end *4");
+        }
+    }
 	
 
 	public void addLearnerInLearnerGroup(Learner learner,

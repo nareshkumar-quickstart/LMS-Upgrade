@@ -2288,7 +2288,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 
 	@Override
 	public List<ValidationQuestion> getUniqueValidationQuestionByCourseConfigurationId(long id) {
-		return validationQuestionRepository.findByCourseConfigurationIdEqualsAndCourseConfigurationRequireDefineUniqueQuestionValidationIsTrue(id);
+		return validationQuestionRepository.findByCourseConfigurationId(id);
 	}
 
 	@Override

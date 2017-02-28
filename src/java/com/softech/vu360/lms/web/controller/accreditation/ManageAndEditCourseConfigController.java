@@ -125,6 +125,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 
 					//List<ValidationQuestion>  lsValidationQuestions = accreditationService.getUniqueValidationQuestion(form.getCourseConfiguration().getId());
 
+					form.setLstUniqueQuestionsVO(null);
 					if(lsValidationQuestions != null && !lsValidationQuestions.isEmpty()){
 						for(ValidationQuestion validationQuestion:lsValidationQuestions){
 							UniqueQuestionsVO uniqueQuestionsVO = new UniqueQuestionsVO();
@@ -156,8 +157,8 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				form.setValidationNoMissedQuestionsAllowed(form.getCourseConfiguration().getValidationNoMissedQuestionsAllowed()+"");
 				form.setValidationTimeBetweenQuestion(form.getCourseConfiguration().getValidationTimeBetweenQuestion()+"");
 				form.setEnableIdentityValidation(form.getCourseConfiguration().getEnableIdentityValidation());
-				form.setEnableSmartProfileValidation(form.isEnableSmartProfileValidation());
-				form.setEnableDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
+				form.setEnableSmartProfileValidation(form.getCourseConfiguration().isRequireSmartProfileValidation());
+				form.setEnableDefineUniqueQuestionValidation(form.getCourseConfiguration().isRequireDefineUniqueQuestionValidation());
 				form.setNumberOfValidationQuestions(form.getCourseConfiguration().getNumberOfValidationQuestions()+"");
 				
 				// course Policy
@@ -683,6 +684,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		 
 		 if(lstUniquesQueVO!=null && !lstUniquesQueVO.isEmpty()){
 			 form.getCourseConfiguration().setLstUniqueQuestionsVO(lstUniquesQueVO);
+			 form.setLstUniqueQuestionsVO(lstUniquesQueVO);
 		 }
 		
 /*
@@ -1200,6 +1202,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 						validationQuestion.setCreatedBy(VU360User);
 						validationQuestion.setCreatedDate(new Date());
 						accreditationService.saveValidationQuestion(validationQuestion);
+						uniqueQuestionsVO.setId(validationQuestion.getId().toString());
 						validationQuestion = accreditationService.loadForUpdateValidationQuestion(validationQuestion.getId());
 						validationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + validationQuestion.getId());
 						accreditationService.saveValidationQuestion(validationQuestion);
@@ -1223,24 +1226,25 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 						accreditationService.saveValidationQuestion(updatedvalidationQuestion);
 					}
 					
-					if(request.getParameter("uquestionDeleteId") !=null){
-						String[] selectedUniqueQuestionValues = request.getParameter("uquestionDeleteId").toString().split(",");
-						List<String> lststrUniqueQuestions = Arrays.asList(selectedUniqueQuestionValues);
-						List<Long> lstUniqueQuestionIds = new ArrayList<>();
-						for(String uniqueQuestionsId : lststrUniqueQuestions){
-							if( StringUtils.isNotBlank(uniqueQuestionsId.trim()) ) {
-								lstUniqueQuestionIds.add(Long.parseLong(uniqueQuestionsId.trim()));
-							}	
-						 }
-					     if(lstUniqueQuestionIds != null && !lstUniqueQuestionIds.isEmpty()){
-						   accreditationService.deleteValidationQuestion(lstUniqueQuestionIds);
-					     }
-					  }	
+						
 				}
-
 			}
 		 }
-	  }
+		if (request.getParameter("uquestionDeleteId") != null) {
+			String[] selectedUniqueQuestionValues =
+			request.getParameter("uquestionDeleteId").toString().split(",");
+			List<String> lststrUniqueQuestions = Arrays.asList(selectedUniqueQuestionValues);
+			List<Long> lstUniqueQuestionIds = new ArrayList<>();
+			for (String uniqueQuestionsId : lststrUniqueQuestions) {
+			    if (StringUtils.isNotBlank(uniqueQuestionsId.trim())) {
+				   lstUniqueQuestionIds.add(Long.parseLong(uniqueQuestionsId.trim()));
+				}
+			}
+			if (lstUniqueQuestionIds != null && !lstUniqueQuestionIds.isEmpty()) {
+			   accreditationService.deleteValidationQuestion(lstUniqueQuestionIds);
+			}
+		}
+	}	
 	}
 
 	public ModelAndView saveCourseConfig( HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
@@ -1386,6 +1390,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		uniqueQuestionsVO.setQuestion(question);
 		uniqueQuestionsVO.setQuestionType(questionType);
 		uniqueQuestionsVO.setId(questionId);
+		uniqueQuestionsVO.setQuestionId(id);
 		return uniqueQuestionsVO;
 		
 	}

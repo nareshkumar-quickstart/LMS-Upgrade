@@ -16,8 +16,6 @@ public interface ValidationQuestionRepository extends CrudRepository<ValidationQ
 	
 	public List<ValidationQuestion> findByCourseConfigurationId(long id);
 	
-	public List<ValidationQuestion> findByCourseConfigurationIdEqualsAndCourseConfigurationRequireDefineUniqueQuestionValidationIsTrue(long id);
-	
 	public void deleteByIdIn(List<Long> lsValidationQuestionIds);
 
 }
