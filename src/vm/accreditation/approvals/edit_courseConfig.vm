@@ -156,6 +156,18 @@
 			$("input[name=validationTypes]").each(function() {
 				$(this).trigger("change");
 			});
+			$('#dataTable #chkAll:checkbox').change(function () {
+   				if($(this).is(":checked")) $("#dataTable input[name*=uquestionId_chk]:checkbox").attr("checked","checked");
+   				else $("#dataTable input[name*=uquestionId_chk]:checkbox").removeAttr("checked");
+			});
+			
+			$("#dataTable input[name*=uquestionId_chk]:checkbox").live("change", function () {
+   				if ($("#dataTable input[name*=uquestionId_chk]:checked").length == $("#dataTable input[name*=uquestionId_chk]").length) {
+   					$("#dataTable #chkAll:checkbox").attr("checked","checked");
+				} else { 
+					$("#dataTable #chkAll:checkbox").removeAttr("checked");
+				}
+			});
         });
         
         function addRow(tableID) {
@@ -197,11 +209,14 @@
              element3.appendChild(option);
              
              var option = document.createElement("option");
-             option.text = "True Flase";
+             option.text = "True False";
              option.value = "Qtype_1";
              element3.appendChild(option);
 			
 			cell4.appendChild(element3);
+			
+			$("#dataTable #chkAll:checkbox").removeAttr("checked");
+			
 			}	
 			
 		function chkAllrows(){
@@ -221,30 +236,16 @@
 		function deleteUniqueQuestion(tableID){
 		 
 				confirm("Are you sure you want to delete this question", 
-					function () {					
-						
-						deleteRow(tableID);
-						//alert(blankUniqueQuestion());
-                    }
-                );
-            }
+ 				function () {					
+ 					deleteRow(tableID);
+                 }
+             );
+         }
 		
-		function blankUniqueQuestion(){
-		    var table = document.getElementById('dataTable');
-			var rowCount = table.rows.length;
-            var id = null;
-           
-			for(var i=1; i<rowCount; i++) {
-				var row = table.rows[i];
-				//alert(row.innerHTML);
-			    var txtQuestion = table.rows[i].cells[1].children[0];
-			    if(txtQuestion.value != null && txtQuestion.value!=""){
-				}
-			    else{
-			      return false;
-			    }
-        	}
-			return true;
+		function hasblankUniqueQuestion() {
+  			if($("#dataTable tr input:text[name*=uquestionName]").length == 0) return true;
+  			if($("#dataTable tr input:text[name*=uquestionName][value='']").length > 0) return true;
+  			return false;
 		}
 		
 		function deleteRow(tableID) {
@@ -338,24 +339,18 @@ function custom_alert1(output_msg, title_msg)
        
        function saveCourseConfig() {
             
-       if($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').is(':checked'))
-        {
-	     if(!blankUniqueQuestion())
-	       {
-	         //alert("Blank Unique Questions are not allowed");
-	         custom_alert1("Blank Unique Questions are not allowed");
-	       }
-	     else
-	     {
-	     document.getElementById('actionmethod').value='saveCourseConfig';
-         document.editCourseConfigForm.submit();
-	  }
-	}
-	else{
-		 document.getElementById('actionmethod').value='saveCourseConfig';
-         document.editCourseConfigForm.submit();
-	}    
-  }		
+       if ($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').prev().is(':checked')) {
+			    if (hasblankUniqueQuestion()) {
+			        custom_alert1("Blank Unique Questions are not allowed");
+			    } else {
+			        document.getElementById('actionmethod').value = 'saveCourseConfig';
+			        document.editCourseConfigForm.submit();
+			    }
+			} else {
+			    document.getElementById('actionmethod').value = 'saveCourseConfig';
+			    document.editCourseConfigForm.submit();
+			}
+	    }
 
 		function setProperties(){
 			#springBind("courseConfigForm.acknowledgeText")

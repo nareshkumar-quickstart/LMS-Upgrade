@@ -22,9 +22,10 @@
                   $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
                }
             );
-            var x = document.getElementById('uniqueQuestions');
-            x.style.display = 'none';
+            
             $('.numeric').numeric({allow:"."});
+            
+            if(!$('#enableDefineUniqueQuestionValidation').prev().is(':checked')) $('#uniqueQuestions').hide();
             
             $('#enableIdentityValidation').change(function(){
             	console.log("#enableIdentityValidation change event");
@@ -163,27 +164,13 @@ function ChangeValidation(radioId){
           }
         }
         
- function blankUniqueQuestion(){
-		    var table = document.getElementById('dataTable');
-			var rowCount = table.rows.length;
-            var id = null;
-            
-			for(var i=1; i<rowCount; i++) {
-				var row = table.rows[i];
-				//alert(row.innerHTML);
-			    var txtQuestion = table.rows[i].cells[1].children[0];
-			    if(txtQuestion.value != null && txtQuestion.value!=""){
-			
-			    }
-			    else{
-			      return false;
-			    }
-			}
-			return true;	
-		}
+ function hasblankUniqueQuestion() {
+  	if($("#dataTable tr input:text[name*=uquestionName]").length == 0) return true;
+  	if($("#dataTable tr input:text[name*=uquestionName][value='']").length > 0) return true;
+  	return false;	
+ }
 		
- function custom_alert1(output_msg, title_msg)
-        {
+ function custom_alert1(output_msg, title_msg) {
            $('#alertMessage').modal({
                     close:false,
                     position: ["40%",],
@@ -203,25 +190,23 @@ function ChangeValidation(radioId){
                         });
                     }
                 });
-}	
+				}	
  
- function proceedNext() {
+ 			function proceedNext() {
             
-       if($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').is(':checked'))
-        {
+       			if($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').prev().is(':checked')) {
 	     
-	     if(!blankUniqueQuestion())
-	       {
-	         custom_alert1("Blank Unique Questions are not allowed");
-	       }
-	     else
-	     {
-         submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
-	  }
-	}
-	else{
-		 submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
-	}
+	     			if(hasblankUniqueQuestion()) {
+ 	         			custom_alert1("Blank Unique Questions are not allowed");
+        			}
+ 	     			else {
+          				submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
+ 	  				}
+ 				}
+ 				else {
+ 		 			submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
+ 				}
+			}
  }
     </script>
 </head>
