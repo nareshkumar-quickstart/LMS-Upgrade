@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.util.CollectionUtils;
 
 import com.softech.vu360.lms.model.Customer;
@@ -372,4 +371,8 @@ public class SecurityAndRolesServiceImpl implements SecurityAndRolesService {
 		return lmsFeatureRepository.findAllActiveLMSFeaturesByUser(loggedInUserId, customerId, roleType);
 	}
 	
+	@Override
+	public String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId, String roleType, List<String> disabledFeatureCode) {
+		return lmsFeatureRepository.getAnyEnabledFeatureCodeInDisplayOrderByRoleType(userId, roleType, disabledFeatureCode);
+	}
 }

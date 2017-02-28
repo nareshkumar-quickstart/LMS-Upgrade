@@ -1323,7 +1323,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 
 			Customer customer = null;
-			if (loggedInUser.isLMSAdministrator())
+			if (vu360UserService.hasAdministratorRole(loggedInUser))
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			else
 				customer = loggedInUser.getLearner().getCustomer();

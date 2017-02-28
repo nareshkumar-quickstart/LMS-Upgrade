@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,7 @@ import com.softech.vu360.lms.model.Proctor;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.ProctorService;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.ProctorStatusEnum;
 import com.softech.vu360.util.SendMailService;
@@ -72,6 +74,8 @@ public class ChangeMemberRoleController extends MultiActionController implements
 	
 	private LearnerService learnerService = null;
 	private ProctorService proctorService = null;
+	@Inject
+	private VU360UserService vu360UserService = null;
 	HttpSession session = null;
 
 	public void afterPropertiesSet() throws Exception {
@@ -407,10 +411,10 @@ public class ChangeMemberRoleController extends MultiActionController implements
 					pageNo = (pageNo < 0) ? 0 : pageNo + 1;
 				}
 				session.setAttribute("pageNo", pageNo);
-				if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+				if( !vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 					if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 						results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								pageNo,ADD_ROLE_PAGE_SIZE, sortBy, Integer
@@ -419,7 +423,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 					}
 				} else {
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							pageNo,ADD_ROLE_PAGE_SIZE, sortBy, Integer
@@ -563,11 +567,11 @@ public class ChangeMemberRoleController extends MultiActionController implements
 		}
 
 		session.setAttribute("pageNo", pageNo);
-		if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+		if( !vu360UserService.hasAdministratorRole(loggedInUser) &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 			if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 				
 				results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,ADD_ROLE_PAGE_SIZE, sortBy, Integer
@@ -576,7 +580,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 				
 		}else {
 			results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					pageNo,ADD_ROLE_PAGE_SIZE, sortBy, Integer
@@ -636,7 +640,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 		if (StringUtils.isNotBlank(roleType) && roleType.equalsIgnoreCase(LMSRole.ROLE_INSTRUCTOR)) {
 			results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 					session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					pageNo,	ADD_ROLE_PAGE_SIZE, sortBy, Integer.parseInt(sortDirection));
@@ -656,7 +660,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 		} else {
 			results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 				session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-				loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+				vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 				loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 				loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 				pageNo,	ADD_ROLE_PAGE_SIZE, sortBy, Integer.parseInt(sortDirection));
@@ -683,7 +687,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 		session.setAttribute("pageNo", pageNo);
 		// results=orgGroupLearnerGroupService.findAllLearnersNotInLearnerGroup(objGroup,"",loggedInUser,sortBy,Integer.parseInt(sortDirection));
 		results = learnerService.findAllLearners("", 
-				loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+				vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 				loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 				loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 				sortBy, Integer.parseInt(sortDirection));
@@ -710,7 +714,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 			session.setAttribute("rolesortDirection",sortDirection);
 			results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 					session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					pageNo,	ADD_ROLE_PAGE_SIZE, sortBy, Integer.parseInt(sortDirection));
@@ -718,13 +722,13 @@ public class ChangeMemberRoleController extends MultiActionController implements
 		} else if (session.getAttribute("searchType").toString()
 				.equalsIgnoreCase(ADD_ROLE_ALL_SEARCH_ACTION)) {
 			results = learnerService.findAllLearners("",
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					sortBy, Integer.parseInt(sortDirection));
 		} else {
 			results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					Integer.parseInt(session.getAttribute("pageNo").toString()),ADD_ROLE_PAGE_SIZE,sortBy, Integer.parseInt(session.getAttribute("rolesortDirection").toString()));

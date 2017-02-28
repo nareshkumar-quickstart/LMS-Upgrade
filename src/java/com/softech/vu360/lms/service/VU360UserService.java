@@ -85,4 +85,15 @@ public interface VU360UserService extends UserDetailsService {
 	//Added By Marium Saud
 	public int countUserByEmailAddress(String emailAddress);
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
+	void checkForPermission(VU360User user);
+	boolean hasLearnerRole(VU360User user);
+	boolean hasProctorRole(VU360User user);
+	boolean hasAdministratorRole(VU360User user);
+	boolean hasTrainingAdministratorRole(VU360User user);
+	boolean hasAccessToFeatureGroup(Long userId, String featureGroup);
+	boolean hasAccessToFeatureCode(Long userId, String featureCode);
+	boolean hasAccessToFeatureGroup(Long userId, Long roleId, String featureGroup);
+	boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode);
+	List<String> getEnabledFeatureGroups(Long userId, Long roleId);
+	List<String> getEnabledFeatureGroups(Long userId);
 }

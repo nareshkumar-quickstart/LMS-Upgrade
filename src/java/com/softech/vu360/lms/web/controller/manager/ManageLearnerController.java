@@ -955,7 +955,7 @@ public class ManageLearnerController extends MultiActionController implements In
 			
 
 			Customer customer = null;
-			if (loggedInUser.isLMSAdministrator())
+			if (vu360UserService.hasAdministratorRole(loggedInUser))
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			else
 				customer = loggedInUser.getLearner().getCustomer();
@@ -1181,7 +1181,7 @@ public class ManageLearnerController extends MultiActionController implements In
 			} else {
 				node.setEnabled(true);
 			}*/
-			if(!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+			if(!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 
 				for(OrganizationalGroup og : loggedInUser.getTrainingAdministrator().getManagedGroups()) {
 					if(	og.getId().longValue() == orgGroup.getId().longValue()) {
