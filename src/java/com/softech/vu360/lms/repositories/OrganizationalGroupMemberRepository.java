@@ -35,4 +35,6 @@ public interface OrganizationalGroupMemberRepository extends CrudRepository<Orga
 	List<OrganizationalGroupMember> findByLearnerIdOrderByOrganizationalGroupNameAsc(@Param("Id") Long learnerId);
 	
 	public void deleteByLearnerId(Long learnerId);
+	
+	List<OrganizationalGroupMember> findDistinctByLearnerIdIn(@Param("Id") Long [] learnerIdArray);
 }

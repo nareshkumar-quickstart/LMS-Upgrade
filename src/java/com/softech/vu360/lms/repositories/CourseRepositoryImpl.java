@@ -109,7 +109,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
 	}
 
 	@Override
-	public List<Map<Object, Object>> findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(Long customerId, String courseName,String courseId, String entitlementName, Date date){
+	public List<Map<Object, Object>> findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(Long customerId, String courseName,String courseId, String entitlementName, Date date, Long[] customerEntitlementIds){
 		StringBuilder queryString = new StringBuilder("select * from CourseViewForEnrollLearner where Customer_id=" + customerId);
 
 		if(! StringUtils.isBlank(courseName))
@@ -120,7 +120,8 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
 			queryString.append(" and ENTITLEMENT_NAME like '%" +entitlementName+ "%'");
 		if((date!=null))
 			queryString.append(" and EXPIRATION_DATE <= '"+ FormUtil.getInstance().formatDate(date, "yyyy-MM-dd") +"'");
-
+		if(customerEntitlementIds!=null)
+			queryString.append(" and CUSTOMERENTITLEMENT_ID IN (" +customerEntitlementIds+ ")");
 		queryString.append(" order by courseName");
 		
 		Query query = entityManager.createNativeQuery(queryString.toString());

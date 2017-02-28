@@ -28,7 +28,7 @@ public class OrgGroupEntitlementRepositoryImpl implements OrgGroupEntitlementRep
 	public List<OrgGroupEntitlement> getOrgGroupEntitlemnetsForLearner(Long learnerId) {
 		String queryString = "select oge.* from ORGANIZATIONALGROUPENTITLEMENT oge "
 				+ " inner join LEARNER_ORGANIZATIONALGROUP lorg on lorg.ORGANIZATIONALGROUP_ID = oge.ORGANIZATIONALGROUP_ID "
-				+ " where oge.ALLOWSELFENROLLMENTTF=1 and oge.SEATS>0 and lorg.LEARNER_ID = "+learnerId;
+				+ " where oge.ALLOWSELFENROLLMENTTF=1 and oge.SEATS>=0 and lorg.LEARNER_ID = "+learnerId;
 		Query query = entityManager.createNativeQuery(queryString, OrgGroupEntitlement.class);
 		List<OrgGroupEntitlement> listOrgGroupEntitlement = (List<OrgGroupEntitlement>) query.getResultList();
 		return listOrgGroupEntitlement;
@@ -38,9 +38,9 @@ public class OrgGroupEntitlementRepositoryImpl implements OrgGroupEntitlementRep
 	public List<OrgGroupEntitlement> getAvailableOrgGroupEntitlementsOfLearner(Learner learner, List<OrganizationalGroup> orgGroups) {
 		List<OrgGroupEntitlement> ls=null;
 		if(orgGroups!=null && !orgGroups.isEmpty()){
-			ls = orgGroupEntitlementRespository.findByMaxNumberSeatsGreaterThanAndAllowSelfEnrollmentTrueAndOrganizationalGroupIdIn(0l, orgGroups);
+			ls = orgGroupEntitlementRespository.findByMaxNumberSeatsGreaterThanEqualAndAllowSelfEnrollmentTrueAndOrganizationalGroupIdIn(0l, orgGroups);
 		}else{
-			ls = orgGroupEntitlementRespository.findByMaxNumberSeatsGreaterThanAndAllowSelfEnrollmentTrue(0l); 
+			ls = orgGroupEntitlementRespository.findByMaxNumberSeatsGreaterThanEqualAndAllowSelfEnrollmentTrue(0l); 
 		}
 		return ls;
 	}

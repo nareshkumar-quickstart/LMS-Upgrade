@@ -87,7 +87,7 @@ public class EnrollmentDetailsForm  implements ILMSBaseInterface{
 	//Enrollment Summary
 	private String prevToDate = "true";
 	private boolean duplicates = false;
-	private boolean onConfirmation = false;
+	private boolean onConfirmation = true;
 	private boolean enrollConfirmation = false;
 	
 	List <SurveySuggestedCourse> surveySuggestedCourses = new ArrayList<SurveySuggestedCourse>();

@@ -67,7 +67,7 @@ public class AddTrainingPlanForm  implements ILMSBaseInterface{
 	private boolean isNonSyncCourseSelected=false;
 	
 	private boolean duplicates = false;
-	private boolean onConfirmation = false;
+	private boolean onConfirmation = true;
 	private boolean enrollConfirmation = false;
 
 	// for forwarding to pages

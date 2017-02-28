@@ -27,6 +27,8 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
+import com.softech.vu360.lms.vo.UniqueQuestionsVO;
+
 /**
  * 
  * @author marium.saud
@@ -335,6 +337,10 @@ public class CourseConfiguration implements SearchableKey {
 	
 	@Column(name="PROFILEBASED_VALIDATION_TF")
 	private Boolean requireSmartProfileValidation;
+	
+	//Learners Unique Questions
+	@Transient
+	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
 	
 	public AssessmentConfiguration getPreAssessmentConfiguration() {
 		for (AssessmentConfiguration asmntConfig : assessmentConfigurations) {
@@ -2655,29 +2661,29 @@ public class CourseConfiguration implements SearchableKey {
 		return caRealEstateCE;
 	}
 
-	public Boolean getMustMasterAllLessonActivities() {
+	public Boolean isMustMasterAllLessonActivities() {
 		return mustMasterAllLessonActivities;
 	}
 
-	public void isMustMasterAllLessonActivities(
+	public void setMustMasterAllLessonActivities(
 			Boolean mustMasterAllLessonActivities) {
 		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities;
 	}
 
-	public Boolean getRequireDefineUniqueQuestionValidation() {
+	public Boolean isRequireDefineUniqueQuestionValidation() {
 		return requireDefineUniqueQuestionValidation;
 	}
 
-	public void isRequireDefineUniqueQuestionValidation(
+	public void setRequireDefineUniqueQuestionValidation(
 			Boolean requireDefineUniqueQuestionValidation) {
 		this.requireDefineUniqueQuestionValidation = requireDefineUniqueQuestionValidation;
 	}
 
-	public Boolean getRequireSelfRegistrationProctor() {
+	public Boolean isRequireSelfRegistrationProctor() {
 		return requireSelfRegistrationProctor;
 	}
 
-	public void isRequireSelfRegistrationProctor(
+	public void setRequireSelfRegistrationProctor(
 			Boolean requireSelfRegistrationProctor) {
 		this.requireSelfRegistrationProctor = requireSelfRegistrationProctor;
 	}
@@ -2689,6 +2695,14 @@ public class CourseConfiguration implements SearchableKey {
 	public void setRequireSmartProfileValidation(
 			Boolean requireSmartProfileValidation) {
 		this.requireSmartProfileValidation = requireSmartProfileValidation;
+	}
+
+	public List<UniqueQuestionsVO> getLstUniqueQuestionsVO() {
+		return lstUniqueQuestionsVO;
+	}
+
+	public void setLstUniqueQuestionsVO(List<UniqueQuestionsVO> lstUniqueQuestionsVO) {
+		this.lstUniqueQuestionsVO = lstUniqueQuestionsVO;
 	}
 	
 	

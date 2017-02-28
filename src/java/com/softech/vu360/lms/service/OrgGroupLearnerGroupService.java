@@ -72,4 +72,6 @@ public interface OrgGroupLearnerGroupService {
 	
 	public List<OrganizationalGroup>  getOrgGrpsForLearner(Learner learner);
 	public List<Learner> getAllLearnersByLearnerGroupId(Long id);
+	public List<OrganizationalGroup>  getOrgGroupsByLearners(Long learnerIds[]);
+	public List<LearnerGroup>  getLearnerGroupsByLearnerGroupIDs(Long learnerGroupId[]);
 }

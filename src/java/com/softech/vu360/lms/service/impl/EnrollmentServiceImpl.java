@@ -676,33 +676,77 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 					customerContract = this.entitlementService.getCustomerEntitlementById(customerContract.getId());
 				    isValidEnrollment = customerContract.hasAvailableSeats(1);
 				    if (isValidEnrollment) {
-						OrgGroupEntitlement orgGroupContract = this.entitlementService.getMaxAvaiableOrgGroupEntitlementByLearner(learner,
-							customerContract.getId());
-						if (orgGroupContract != null && !orgGroupContract.hasAvailableSeats(1)) {
-						    orgGroupContract = null;
-						}
-						// Create New Enrollment
-						LearnerEnrollment learnerEnrollment = new LearnerEnrollment();
-						learnerEnrollment.setLearner(learner);
-						learnerEnrollment.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
-						learnerEnrollment.setEnrollmentDate(enrollmentDate);
-						learnerEnrollment.setEnrollmentStartDate(enrollmentStartDate);
-						learnerEnrollment.setEnrollmentEndDate(enrollmentEndDate);
-						learnerEnrollment.setCourse(course);
-						if (synchronousClass != null) {
-						    learnerEnrollment.setSynchronousClass(synchronousClass);
-						}
-						learnerEnrollment = this.addEnrollment(learnerEnrollment, customerContract, orgGroupContract);
-						courseEntitlement.setEnrollmentId(learnerEnrollment.getId());
-						if (learnerEnrollment != null && learnerEnrollment.getId() > 0) {
-						    newEnrollmentCount++;
-						    enrollmentVO.getLearnerEnrollments().add(learnerEnrollment);
-						    enrollmentVO.getUniqueLearners().add(learner);
-						    enrollmentVO.getUniqueCourses().add(course);
-						} else {
-						    isValidEnrollment = false;
-						}
-				    }
+				    	
+					    // LMS-21702 : Validations will be proceed as follows:
+					    // 1. If learner's org grp is not bound to any contract then learner enrolllment will be proceed with no organization Group Entitlement.
+					    // 2. If learner's org grp is bound to any contract then learner enrollment will be proceed with org grp Entitlement, with further validation for
+					    // learner's org grp matches contract's org group.
+					    	
+					    boolean isExists = false;
+					    if(isExists){
+							OrgGroupEntitlement orgGroupContract = this.entitlementService.getMaxAvaiableOrgGroupEntitlementByLearner(learner,
+									customerContract.getId());
+							
+								if(orgGroupContract!=null){
+									// Create New Enrollment
+									LearnerEnrollment learnerEnrollment = new LearnerEnrollment();
+									learnerEnrollment.setLearner(learner);
+									learnerEnrollment.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
+
+									learnerEnrollment.setEnrollmentDate(enrollmentDate);
+									learnerEnrollment.setEnrollmentStartDate(enrollmentStartDate);
+									learnerEnrollment.setEnrollmentEndDate(enrollmentEndDate);
+
+									learnerEnrollment.setCourse(course);
+									if (synchronousClass != null) {
+									    learnerEnrollment.setSynchronousClass(synchronousClass);
+									}
+									
+									
+										learnerEnrollment = this.addEnrollment(learnerEnrollment, customerContract, orgGroupContract);
+										courseEntitlement.setEnrollmentId(learnerEnrollment.getId());
+										if (learnerEnrollment != null && learnerEnrollment.getId() > 0) {
+										    newEnrollmentCount++;
+										    enrollmentVO.getLearnerEnrollments().add(learnerEnrollment);
+										    enrollmentVO.getUniqueLearners().add(learner);
+										    enrollmentVO.getUniqueCourses().add(course);
+										} else {
+										    isValidEnrollment = false;
+										}
+								} 
+								else{
+									isValidEnrollment = false;
+								}
+					    }
+					    else{
+							// Create New Enrollment
+							LearnerEnrollment learnerEnrollment = new LearnerEnrollment();
+							learnerEnrollment.setLearner(learner);
+							learnerEnrollment.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
+
+							learnerEnrollment.setEnrollmentDate(enrollmentDate);
+							learnerEnrollment.setEnrollmentStartDate(enrollmentStartDate);
+							learnerEnrollment.setEnrollmentEndDate(enrollmentEndDate);
+
+							learnerEnrollment.setCourse(course);
+							if (synchronousClass != null) {
+							    learnerEnrollment.setSynchronousClass(synchronousClass);
+							}
+							
+							
+								learnerEnrollment = this.addEnrollment(learnerEnrollment, customerContract, null);
+								courseEntitlement.setEnrollmentId(learnerEnrollment.getId());
+								if (learnerEnrollment != null && learnerEnrollment.getId() > 0) {
+								    newEnrollmentCount++;
+								    enrollmentVO.getLearnerEnrollments().add(learnerEnrollment);
+								    enrollmentVO.getUniqueLearners().add(learner);
+								    enrollmentVO.getUniqueCourses().add(course);
+								} else {
+								    isValidEnrollment = false;
+								}
+					    }
+
+					}
 				}
 			    }
 	

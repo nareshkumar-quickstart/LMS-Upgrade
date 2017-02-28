@@ -19,4 +19,5 @@ public interface OrgGroupEntitlementRepositoryCustom {
 	//public void deleteCustomerEntitlement( CustomerEntitlement objCustomerEntitlement);
 	@Deprecated
 	public List<OrgGroupEntitlement> getOrgGroupEntitlemnetsForLearner(Long learnerId);
+	
 }

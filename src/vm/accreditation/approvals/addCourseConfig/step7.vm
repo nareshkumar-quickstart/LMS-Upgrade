@@ -5,6 +5,7 @@
    
     <script type="text/javascript" src="javascript/jquery.alphanumeric.pack.js"></script>
 	<script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>
+	<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
     <script type="text/javascript" language="javascript">
          $(document).ready(function(){
             $('#content2a').scroll(function(){
@@ -15,23 +16,213 @@
                    opacity: .5
                 }, "slow", "linear", function(){$("#message_box").hide();} );
             });
+            
             $("INPUT[type='checkbox'][name='chk']").click(
                function(){
                   $(this).parent().find("INPUT[type='hidden']").attr('value', $(this).is(':checked'));
                }
             );
+            var x = document.getElementById('uniqueQuestions');
+            x.style.display = 'none';
             $('.numeric').numeric({allow:"."});
+            
+            $('#enableIdentityValidation').change(function(){
+            	console.log("#enableIdentityValidation change event");
+                var status = $(this).is(':checked');
+				$('#validationTimeBetweenQuestion, #allowSecondsToAnswerEachQuestion, #validationNoMissedQuestionsAllowed, input[name=validationTypes], #uniqueQuestions input, #uniqueQuestions select').each(function() {
+					var that = $(this);
+					if(status == true)
+            			that.removeAttr('disabled');
+            		else
+            			that.attr('disabled', true);
+            	});
+           	});
+            
+			$("input[name=validationTypes]").change(function() {
+				console.log("input[name=validationTypes] change event");
+            	var that = $(this);
+            	var selected = that.next("input:hidden");
+        		$(this).parent().parent().find("input:radio").each(function() {
+        			var radio = $(this);
+        			var hidden = radio.next("input:hidden");
+        			hidden.val(selected.attr("id") == hidden.attr("id") ? "true" : "false");
+        			console.log(hidden.attr("id") + ":" + hidden.val());
+        		});
+        		$('#uniqueQuestions').css('display', that.next().get(0).id == "enableDefineUniqueQuestionValidation" && that.is(":checked") ? 'block' : 'none');
+            });
+            
+            $('#chkAll:checkbox').change(function () {
+   				if($(this).is(":checked")) $("#dataTable input[id*=id_chk]:checkbox").attr("checked","checked");
+   				else $("#dataTable input[id*=id_chk]:checkbox").removeAttr("checked");
+			});
+			
+			$("#dataTable input[id*=id_chk]:checkbox").live("change", function () {
+				console.log("ticking ...");
+   				if ($("#dataTable input[id*=id_chk]:checked").length == $("#dataTable input[id*=id_chk]").length) {
+			      	$("#chkAll:checkbox").attr("checked","checked");
+			    } else {
+			    	$("#chkAll:checkbox").removeAttr("checked");
+			    }
+			});
         });
 		
 		function toggleControls(isChecked)
 		{
+			console.log("toggleControls ...");
 			var form = document.getElementById('addCourseConfigForm');
 			form.validationTimeBetweenQuestion.disabled = !isChecked
 			form.allowSecondsToAnswerEachQuestion.disabled = !isChecked
 			form.validationNoMissedQuestionsAllowed.disabled = !isChecked
-			form.standardValidation.disabled = !isChecked
-			form.enableSmartProfileValidation.disabled = !isChecked
+			$("input[name=validationTypes][type=radio]").attr("disabled", !isChecked);
 		}
+		
+		function addRow(tableID) {
+
+			var table = document.getElementById(tableID);
+
+			var rowCount = table.rows.length;
+			var row = table.insertRow(rowCount);
+
+			var cell1 = row.insertCell(0);
+			var element1 = document.createElement("input");
+			element1.type = "checkbox";
+			element1.name="uquestionId_chk_"+ rowCount;
+			element1.id='id_chk' + rowCount;
+			cell1.appendChild(element1);
+			
+			var element1_1 = document.createElement("input");
+			element1_1.type = "hidden";
+			element1_1.name="uquestionId_"+ rowCount;
+			element1_1.id='id_hdn' + rowCount;
+			cell1.appendChild(element1_1);
+
+            var cell2 = row.insertCell(1);
+			var element2 = document.createElement("input");
+			element2.type = "text";
+			element2.name = "uquestionName_"+ rowCount;
+			element2.id='id_txt' + rowCount;
+			cell2.appendChild(element2);
+			
+			var cell4 = row.insertCell(2);
+			var element3 = document.createElement("select");
+			element3.type = "text";
+			element3.name = "uquestionType_"+ rowCount;
+			element3.id='id_sec' + rowCount;
+			
+			var option = document.createElement("option");
+            option.text = "Text Entry";
+            option.value = "Qtype_0";
+            element3.appendChild(option);
+            
+            var option = document.createElement("option");
+            option.text = "True False";
+            option.value = "Qtype_1";
+            element3.appendChild(option);
+			
+			cell4.appendChild(element3);
+
+
+		}
+		
+		function deleteRow(tableID) {
+			try {
+			var table = document.getElementById(tableID);
+			
+			var rowCount = table.rows.length;
+            
+			for(var i=1; i<rowCount; i++) {
+				var row = table.rows[i];
+				var chkbox = row.cells[0].childNodes[0];
+				if(null != chkbox && true == chkbox.checked) {
+					table.deleteRow(i);
+					rowCount--;
+					i--;
+				}
+
+
+			}
+			}catch(e) {
+				alert(e);
+			}
+		}
+
+function ChangeValidation(radioId){
+         var radios = document.getElementsByName("learnerValidation");
+         var x = document.getElementById('uniqueQuestions');
+         var val;
+         for(var i = 0; i < radios.length; i++){
+           if(radios[i].checked){
+               val = radios[i].value;
+               if(val==1){
+                x.style.display = 'none';
+               }
+               else if(val == 2){
+                x.style.display = 'block';
+               }
+             }
+          }
+        }
+        
+ function blankUniqueQuestion(){
+		    var table = document.getElementById('dataTable');
+			var rowCount = table.rows.length;
+            var id = null;
+            
+			for(var i=1; i<rowCount; i++) {
+				var row = table.rows[i];
+				//alert(row.innerHTML);
+			    var txtQuestion = table.rows[i].cells[1].children[0];
+			    if(txtQuestion.value != null && txtQuestion.value!=""){
+			
+			    }
+			    else{
+			      return false;
+			    }
+			}
+			return true;	
+		}
+		
+ function custom_alert1(output_msg, title_msg)
+        {
+           $('#alertMessage').modal({
+                    close:false,
+                    position: ["40%",],
+                    overlayId:'confirmModalOverlay',
+                    containerId:'confirmModalContainer', 
+                    onShow: function (dialog) {
+                        dialog.data.find('.message_box_text').append(output_msg);
+
+                        // if the user clicks "yes"
+                        dialog.data.find('.yes').click(function () {
+                            // call the callback
+                            if (jQuery.isFunction(callback)) {
+                                callback.apply();
+                            }
+                            // close the dialog
+                            jQuery.modal.close();
+                        });
+                    }
+                });
+}	
+ 
+ function proceedNext() {
+            
+       if($('#enableIdentityValidation').is(':checked') && $('#enableDefineUniqueQuestionValidation').is(':checked'))
+        {
+	     
+	     if(!blankUniqueQuestion())
+	       {
+	         custom_alert1("Blank Unique Questions are not allowed");
+	       }
+	     else
+	     {
+         submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
+	  }
+	}
+	else{
+		 submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');
+	}
+ }
     </script>
 </head>
 <body onload=toggleControls(document.getElementById('enableIdentityValidation').checked);>
@@ -121,6 +312,17 @@
 	                    <td width="48%"></td>
                     </tr>
                     
+                    #*<tr>
+                    	#springBind("courseConfigForm.enableSmartProfileValidation")
+                		<td>
+                			<input type="checkbox" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end />
+                			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
+            			</td>
+                        <td><div class="row_text">Smart Profile Validation</div></td>
+                        <td></td>
+                        <td></td>
+                    </tr>*#
+                    
                     <tr>
                         #springBind("courseConfigForm.validationTimeBetweenQuestion")    
     					<td></td>
@@ -159,30 +361,57 @@
                         <td></td>
 					</tr>*#
 					
-					#springBind("courseConfigForm.enableSmartProfileValidation")
-                    <tr>
+					<tr>
                     	<td colspan="4">
                         	<table>
                         		<tr>
+                        			#springBind("courseConfigForm.enableSmartProfileValidation")
+                         			#set($enableSmartValidation=$status.value)
+                         			#springBind("courseConfigForm.enableDefineUniqueQuestionValidation")
+                         			#set($enableDefineUniqueQuestionValidation=$status.value)
                         			<td>
-                            			<input type="radio" id="standardValidation" name="$!{status.expression}" #if ($!{status.value} == "false") checked #end value="false"/>
+                            			<input type="radio" id="standardValidation" name="validationTypes" #if($enableSmartValidation == false && $enableDefineUniqueQuestionValidation == false) checked #end/>
                         				<label for="standardValidation">Standard Validation</label>
                         			</td>
+                        			#springBind("courseConfigForm.enableSmartProfileValidation")
                         			<td>
-                            			<input type="radio" id="$!{status.expression}" name="$!{status.expression}" #if ($!{status.value}) checked #end value="true" />
-                            			<input type="hidden" id="$!{status.expression}" name="_$!{status.expression}" value="$!{status.value}"/>
+                            			<input type="radio" name="validationTypes" #if ($!{status.value} == true) checked #end/>
+                            			<input type="hidden" id="$!{status.expression}" name="$!{status.expression}" value="$!{status.value}" />
                         				<label for="$!{status.expression}">Smart Profile Validation</label>
                         			</td>
+                        			#springBind("courseConfigForm.enableDefineUniqueQuestionValidation")
+                         			<td>
+                         			    <input type="radio" name="validationTypes" #if ($!{status.value} == true) checked #end/>
+                         			    <input type="hidden" id="$!{status.expression}" name="$!{status.expression}" value="$!{status.value}" />
+                         				<label for="$!{status.expression}">Define Unique Questions</label>
+                         			</td>
                         		</tr>
                 			</table>
             			</td>
                     </tr>
                     
 					<tr>
-    					<td height="5"></td>
-						<td></td>
-						<td></td>
-                        <td></td>
+    					<td>&nbsp;</td>
+ 								<td>&nbsp;</td>
+     					<td></td>
+                    <td></td>
+					</tr>
+					<tr>
+    					<td colspan="4">
+    					<div id="uniqueQuestions">
+    					  <INPUT type="button" class="add-validation" onclick="addRow('dataTable')" />
+                          <INPUT type="button" class="delete-validation" onclick="deleteRow('dataTable')" />
+
+	                      <TABLE id="dataTable" width="350px" border="1">
+		                    <TR>
+								<TD><input type="checkbox" name="chkAll" id="chkAll"></TD>
+								<TD>Question</TD>
+								<TD>Question Type</TD>
+							</TR>
+						</TABLE>
+						</div>
+    				</td>
+						
 					</tr>
 			 </tbody></table>	
              <!-- ****************************************************************************** -->
@@ -193,7 +422,7 @@
         <!-- *********************************************** -->
 		<div class="btn-div">
 			<div style="float:right; margin-top:15px;">
-			  <a onClick="submitButtonForm(document.addCourseConfigForm,'wizardSubmitter','_target8');">
+			  <a onClick="proceedNext();">
 				  <div class="btn_start"></div>
 				  <div class="btn_normal">Next</div>
 				  <div class="btn_end"></div>
@@ -232,6 +461,48 @@
 	</td></tr>
 	
 </table>
+<STYLE type="text/css">
+
+.message_box_text{
+    float: left;
+    font-family: Tahoma;
+    font-size: 12px;
+    height: 40px;
+    margin-right: 5px;
+    margin-top: 15px;
+    width: 330px;
+    }
+</style>    
+<div id='alertMessage' style='display:none'>
+    <div class='alert_message_box_title' style="width: 478px;"><span>&nbsp;&nbsp;Error</span></div>
+    <div class="alert_message_box_icon"></div>
+    <div class="message_box_text"></div>
+    <br style="clear:both" />	
+    <div class='buttons'>
+        <div class='simplemodal-close' style="width:220px">
+            <div>
+                <a class="" onClick=""><span class="yes button">
+                        <div class="btn_start"></div>
+                        <div class="btn_normal">OK</div>
+                        <div class="btn_end"></div>
+                    </span>	</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>	
 </form>
 </body>
+<script>
+$(document).ready(function(){
+  	#foreach($uq in $courseConfigForm.courseConfiguration.lstUniqueQuestionsVO)
+  		var enableDefineUniqueQuestionValidation = "$courseConfigForm.enableDefineUniqueQuestionValidation";
+  		addRow('dataTable')
+  		$("#dataTable tr:last td:eq(1) input").val("$uq.question");
+  		var questionType = "$uq.questionType";
+  		$("#dataTable tr:last td:eq(2) select option[value='" + questionType + "']").attr("selected", "selected");
+  		if(enableDefineUniqueQuestionValidation === 'true') $('#uniqueQuestions').show();
+  	#end
+});
+</script>
 </html>

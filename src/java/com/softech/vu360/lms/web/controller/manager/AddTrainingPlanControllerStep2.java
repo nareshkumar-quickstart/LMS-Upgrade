@@ -299,7 +299,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 			
 				List<CustomerEntitlement> ceList=entitlementService.getActiveCustomerEntitlementsForCustomer(customer); 
 				if (ceList != null && ceList.size() > 0) {
-					tempCourseViewList=entitlementService.getCoursesForTrainingPlanByCustomer(customer, "", "", "", null, 500);
+					tempCourseViewList=entitlementService.getCoursesForTrainingPlanByCustomer(customer, "", "", "", null, null, 500);
 					if(tp!=null){
 						for(TrainingPlanCourse tpCourse : tp.getActiveCourses()) { // [1/27/2011] LMS-7183 :: Retired Course Functionality II
 							for(EnrollmentCourseView view : tempCourseViewList){

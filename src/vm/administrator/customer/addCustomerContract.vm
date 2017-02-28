@@ -8,7 +8,26 @@
 <script type="text/javascript" language="javascript" src="javascript/js_manager.js"></script>
 <script type="text/javascript" src="javascript/ui.datepicker.js"></script>  
 <script src="javascript/360js.js" language="javascript" type="text/javascript" ></script>	
+<script type='text/javascript' src='javascript/jquery.simplemodal.js' ></script>
 <script type="text/javascript" language="javascript">
+
+function confirm(message, callback) {
+		        $('#parentOrgGroupConfirmation').modal({
+		            close:false,
+		            position: ["40%",],
+		            overlayId:'confirmModalOverlay',
+		            containerId:'confirmModalContainer', 
+		            onShow: function (dialog) {
+		                dialog.data.find('.alert_message_box_text_3').append(message);
+		                dialog.data.find('.yes').click(function () {
+		                    if (jQuery.isFunction(callback)) {
+		                        callback.apply();
+		                    }
+		                    jQuery.modal.close();
+		                });
+		            }
+		        });
+}
 function setCourseSelection(checkbox, id){
         document.getElementById(id).value = checkbox.checked;
         $("#"+$("#"+checkbox.id).attr("enrollTextboxid")).attr("disabled", !$("#"+checkbox.id).is(':checked')).val("").focus();
@@ -52,6 +71,36 @@ function submitButtonForm()
 
 $(document).ready(function()
 {
+	$("input:checkbox[class='groups']").attr('checked', 'checked');
+		
+		$("div[name = 'row'][indx != '1'] input:checkbox[class='groups']").change(function() {
+				  	var that = $(this);
+				  	var val = that.attr('enrollTextboxid');
+				  	that.parent().parent().parent().find("div[parentref='"+ val +"'] input:checkbox[class='groups']").each(function(index, domObject) {
+				    	$(domObject).attr("checked", that.is(':checked'));
+				    	$(domObject).trigger("change");
+					});
+		});
+	    
+	    $("div[name = 'row'][indx = '1'] input:checkbox[class='groups']").change(function() {
+				  	var that = $(this);
+				  	var val = that.attr('enrollTextboxid');
+				  	var isParent = that.parent().parent().is("[name='row'][indx='1']");
+				  	if(isParent && that.is(":checked")) { 
+				  		var callback = function() {
+						  	that.parent().parent().parent().find("div[parentref='"+ val +"'] input:checkbox[class='groups']").each(function(index, domObject) {
+						    	$(domObject).attr("checked", that.is(':checked'));
+						    	$(domObject).trigger("change");
+				    		});
+				  		}
+				  		confirm("Would you like every organization to have access to these courses? Click <strong>Yes</strong> to select all organizations and <strong>No</strong> to select only the main organization.", callback);
+					} else {
+						that.parent().parent().parent().find("div[parentref='"+ val +"'] input:checkbox[class='groups']").each(function(index, domObject) {
+					    	$(domObject).attr("checked", that.is(':checked'));
+					    	$(domObject).trigger("change");
+			    		});
+					}
+		});
 	$('#content2a').scroll(function()
 	{
   		$('#message_box').animate({top:$('#content2a').scrollTop()+"px" },{queue: false, duration: 350});  
@@ -73,6 +122,10 @@ $(document).ready(function()
         });
 });
 </script> 
+<!-- @MariumSaud : LMS-20646 : Following are the Changes made to remove MaxEnrollment Field against OrgGrp and make all Org Grp selecetd By default -->
+<!-- 1. Remove the maxEnrollment input field -->
+<!-- 2. For input type="checkbox" mark class="groups" in order to implement Select/UnSelectAll functionality -->
+<!-- 3. Remove onclick="setCourseSelection(this,this.id);" from input type="checkbox" as there is no need for this field validation. -->
 #macro( treeviewEntitlement $treeNodes )
     #set($lastDepth = 0)
     #set($arrParent = [])
@@ -87,7 +140,7 @@ $(document).ready(function()
             #set ($rowColor="org_row1")
         #end
         #set ($val=0)
-        $arrParent.add($node.depth,$node.value.id)
+        $arrParent.add($node.depth,$node.value.organisationalGroupId)
         #if ($!{node.depth}>0)
             #set ($val=$node.depth - 1)
             #set($parentId=$arrParent.get($val))
@@ -104,13 +157,14 @@ $(document).ready(function()
             #else 
             <div id="divIcon$velocityCount" class="icon_collapse" onclick="tRows(this,${summaryForm.treeAsList.size()});" nodeid="$node.value.organisationalGroupId"></div>
             #end
-            <div class="org_checkbox"><input type="checkbox" id="_orgGroupSelect${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].selected" #if(${node.value.selected}) checked #end #if(!${node.enabled}) disabled #end onclick="setCourseSelection(this,this.id);" enrollTextboxid="_maxenroll${node.value.organisationalGroupId}"/>
+            <!-- LMS-20646 :  <div class="org_checkbox"><input type="checkbox" id="_orgGroupSelect${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].selected" #if(${node.value.selected}) checked #end #if(!${node.enabled}) disabled #end onclick="setCourseSelection(this,this.id);" enrollTextboxid="_maxenroll${node.value.organisationalGroupId}"/> -->
+            <div class="org_checkbox"><input type="checkbox" id="_orgGroupSelect${node.value.organisationalGroupId}" class="groups" name="organisationalGroupEntitlementItems[$index].selected" #if(${node.value.selected}) checked #end #if(!${node.enabled}) disabled #end enrollTextboxid="${node.value.organisationalGroupId}"/>
             <input type="hidden" id="_orgGroup${node.value.organisationalGroupId}" name="organisationalGroupEntitlementItems[$index].organisationalGroupId" value="${node.value.organisationalGroupId}" />
             <input type="hidden" id="_orgGroupName$count" name="organisationalGroupEntitlementItems[$index].organisationalGroupName" value="${node.value.organisationalGroupName}" /></div>
             #set ($padLimit=60-$node.depth*5)
             <div class="row_title">#dotPaddingWithOutTitle(${node.value.organisationalGroupName},$padLimit)</div>
-            <div class="head_1b-e-1-admin-tree" style="padding-right:25px;"  >
-			<input type="text" id="_maxenroll${node.value.organisationalGroupId}" value="$!{node.value.maxEnrollments}" name="organisationalGroupEntitlementItems[$index].maxEnrollments" class="search_field"  /></div>
+            <!-- LMS-20646 : <div class="head_1b-e-1-admin-tree" style="padding-right:25px;"  >
+			<input type="text" id="_maxenroll${node.value.organisationalGroupId}" value="$!{node.value.maxEnrollments}" name="organisationalGroupEntitlementItems[$index].maxEnrollments" class="search_field"  /></div>-->
         </div>
         #set($index = $index + 1)
         #set($count = $count + 1)
@@ -281,9 +335,7 @@ $(document).ready(function()
             <div class="content-Block-new" style="margin-top:20px">
                 <div class="Block-Contain-header">
                     <div class="User-checkbox-row-d2a">$brander.getBrandElement("lms.changeOrganisationalGroupEntitlements.col.header")</div>
-                    <div class="head_1a-a1"></div>
-                    <div class="head_1b-e-tree-adim">$brander.getBrandElement("lms.administrator.entitlementUpdate.caption.MaxEnrollments")</div>
-                </div>
+                    </div>
                #treeviewEntitlement($!{summaryForm.treeAsList})
             </div>
             <!-- tree-end -->
@@ -334,5 +386,16 @@ $(document).ready(function()
 	</td></TR>
 </TABLE>
 </form>
+<div id='parentOrgGroupConfirmation' style='display:none'><!-- Alert Message Box starts -->
+     <div class='header'><span>$brander.getBrandElement("lms.manageUser.searchLearner.messageBox.pleaseConfirm")</span></div>
+     <div class="alert_message_box_icon"></div>
+     <div class="alert_message_box_text_3"></div>
+     <br style="clear:both" />
+ 	 <div class='buttons'>
+         <div class='simplemodal-close'>
+ 			<a class="button" onClick=""><span class="yes button">Yes</span></a>
+ 			<a class="button" onClick=""><span class="no button">No</span></a>				
+         </div>
+ </div>
 </body>
 </html>

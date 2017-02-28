@@ -1,6 +1,8 @@
 package com.softech.vu360.lms.web.controller.accreditation;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -21,10 +23,13 @@ import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.CourseConfigurationTemplate;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.service.AccreditationService;
+import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.accreditation.CourseConfigForm;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.AddCourseConfigValidator;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.FormUtil;
 import com.softech.vu360.util.GUIDGeneratorUtil;
 
@@ -43,6 +48,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 	private String selectCertificateController = null;
 	private final String PROCTOR_VALIDATOR_ANSI = "ansi";
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
+	private final String PROCTOR_VALIDATOR_TREC = "TREC";
 	
 	public AddCourseConfigWizardController() {
 		super();
@@ -103,51 +109,113 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 
 	protected Map<Object, Object> referenceData(HttpServletRequest request, Object command, Errors errors,
 			int page) throws Exception {
-		AddCourseConfigValidator validator = (AddCourseConfigValidator)this.getValidator();
-		CourseConfigForm form = (CourseConfigForm)command;
-		switch(page){
-		case 0:
-			break;
-		case 1:
-			if( StringUtils.isBlank(form.getCourseConfiguration().getAcknowledgeText() ) )
-				form.getCourseConfiguration().setAcknowledgeText("");
-			form.getCourseConfiguration().setAcknowledgeText(form.getCourseConfiguration().getAcknowledgeText().replaceAll("\"","'"));
-			
-			form.getCourseConfiguration().setAcknowledgeText( form.getCourseConfiguration().getAcknowledgeText().replaceAll("\r\n", "") );
-			form.getCourseConfiguration().setAcknowledgeText( form.getCourseConfiguration().getAcknowledgeText().replaceAll("\n", "<br>") );
-			form.getCourseConfiguration().setAcknowledgeText( form.getCourseConfiguration().getAcknowledgeText().replaceAll("\r", "<br>") );
-                        
-            initCourseConfigFormWithCertificate(request, form, accreditationService);
-            
-			break;
-		case 2:
-			String acknowledgeText = "" ;
-			if(request.getParameter("message") != null ) {
-				acknowledgeText = request.getParameter("message") ;
-				form.getCourseConfiguration().setAcknowledgeText(acknowledgeText);
+		CourseConfigForm form = (CourseConfigForm) command;
+
+		switch (page) {
+			case 0:
+				break;
+			case 1:
+				if (StringUtils.isBlank(form.getCourseConfiguration()
+						.getAcknowledgeText()))
+					form.getCourseConfiguration().setAcknowledgeText("");
+				form.getCourseConfiguration().setAcknowledgeText(
+						form.getCourseConfiguration().getAcknowledgeText()
+								.replaceAll("\"", "'"));
+	
+				form.getCourseConfiguration().setAcknowledgeText(
+						form.getCourseConfiguration().getAcknowledgeText()
+								.replaceAll("\r\n", ""));
+				form.getCourseConfiguration().setAcknowledgeText(
+						form.getCourseConfiguration().getAcknowledgeText()
+								.replaceAll("\n", "<br>"));
+				form.getCourseConfiguration().setAcknowledgeText(
+						form.getCourseConfiguration().getAcknowledgeText()
+								.replaceAll("\r", "<br>"));
+	
+				initCourseConfigFormWithCertificate(request, form,
+						accreditationService);
+	
+				break;
+			case 2:
+				String acknowledgeText = "";
+				if (request.getParameter("message") != null) {
+					acknowledgeText = request.getParameter("message");
+					form.getCourseConfiguration().setAcknowledgeText(
+							acknowledgeText);
+				}
+	
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				/*
+				 * {
+				 * 
+				 * CourseConfiguration mycourseConfiguration =
+				 * form.getCourseConfiguration();
+				 * 
+				 * List<UniqueQuestionsVO> lstUQV =
+				 * mycourseConfiguration.getLstUniqueQuestionsVO();
+				 * UniqueQuestionsVO uniqueQuesVO = null; List<UniqueQuestionsVO>
+				 * lstUniquesQueVO = new ArrayList<>();
+				 * 
+				 * ArrayList<String> parameterNames = new ArrayList<String>();
+				 * Enumeration enumeration = request.getParameterNames(); while
+				 * (enumeration.hasMoreElements()) { String parameterName = (String)
+				 * enumeration.nextElement();
+				 * 
+				 * if(parameterName.contains("uquestionName_")){ String id =
+				 * parameterName.substring(parameterName.indexOf('_')+1);
+				 * uniqueQuesVO = getUniqueQuestion(Integer.parseInt(id),request);
+				 * lstUniquesQueVO.add(uniqueQuesVO); }
+				 * 
+				 * }
+				 * 
+				 * if(lstUniquesQueVO!=null && !lstUniquesQueVO.isEmpty()){
+				 * form.getCourseConfiguration
+				 * ().setLstUniqueQuestionsVO(lstUniquesQueVO); } }
+				 */
+				break;
+			case 8: {
+				UniqueQuestionsVO uniqueQuesVO = null;
+				List<UniqueQuestionsVO> lstUniquesQueVO = new ArrayList<>();
+	
+				Enumeration enumeration = request.getParameterNames();
+				while (enumeration.hasMoreElements()) {
+					String parameterName = (String) enumeration.nextElement();
+	
+					if (parameterName.contains("uquestionName_")) {
+						String id = parameterName.substring(parameterName
+								.indexOf('_') + 1);
+						uniqueQuesVO = getUniqueQuestion(Integer.parseInt(id),
+								request);
+						lstUniquesQueVO.add(uniqueQuesVO);
+					}
+	
+				}
+	
+				if (lstUniquesQueVO != null && !lstUniquesQueVO.isEmpty()) {
+					form.getCourseConfiguration().setLstUniqueQuestionsVO(
+							lstUniquesQueVO);
+				}
+	
 			}
-			
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
-		case 7:
-			break;
-		case 8:
-			break;
-		case 9:
-			break;
-		case 10:
-			break;
-		case 11: //select configuration template	
-			break;
-		default:
-			break;
+	
+				break;
+			case 9:
+				break;
+			case 10:
+				break;
+			case 11: // select configuration template
+				break;
+			default:
+				break;
 		}
 		return super.referenceData(request, page);
 	}
@@ -159,6 +227,8 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 		
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().
 		getPrincipal();
+		
+		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
 		ContentOwner contentOwner = null;
 		if( loggedInUser.getRegulatoryAnalyst() != null )
 
@@ -234,7 +304,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 			
 			courseConfiguration.setEnableIdentityValidation(form.getCourseConfiguration().getEnableIdentityValidation());
 			courseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
-			//courseConfiguration.setMustCompleteCourseEvaluation(form.isMustCompleteCourseEvaluation());
+			courseConfiguration.setRequireDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
                  
 			if( form.isCertificateEnabled()){
             	courseConfiguration.setCompletionCertificate(form.getCompletionCertificate());
@@ -535,6 +605,10 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 					courseConfiguration.setRequiredNyInsurance(true);
 				else
 					courseConfiguration.setRequiredNyInsurance(false);
+				if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_TREC))
+					courseConfiguration.setRequireSelfRegistrationProctor(true);
+				else
+				    courseConfiguration.setRequireSelfRegistrationProctor(false);
 			}
 			else{
 				courseConfiguration.setRequiredNyInsurance(false);
@@ -542,13 +616,49 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 			}
 			courseConfiguration.setRequireLearnerValidation(form.isRequireLearnerValidation());
 			courseConfiguration.setCaRealEstateCE(form.isCaRealEstateCE());
+			
+			courseConfiguration.setRequireDefineUniqueQuestionValidation(form.getCourseConfiguration().isRequireDefineUniqueQuestionValidation());
+			courseConfiguration.setRequireSmartProfileValidation(form.getCourseConfiguration().isRequireSmartProfileValidation());
 
 			courseConfiguration.setSuggestedCourse(form.isSuggestedCourse());
 			courseConfiguration.setRateCourse(form.isRateCourse());
 			log.debug("Allow Course Rating Value " + form.isRateCourse());
 			accreditationService.saveCourseConfiguration(courseConfiguration);
+			
+			if(courseConfiguration!=null){
+				if(form.getCourseConfiguration().getEnableIdentityValidation() && form.getCourseConfiguration().isRequireDefineUniqueQuestionValidation() && form.getCourseConfiguration().getLstUniqueQuestionsVO() !=null && !form.getCourseConfiguration().getLstUniqueQuestionsVO().isEmpty()){
+					for(UniqueQuestionsVO uniqueQuestionsVO :form.getCourseConfiguration().getLstUniqueQuestionsVO()){
+						ValidationQuestion validationQuestion = new ValidationQuestion();
+						validationQuestion.setQuestion(uniqueQuestionsVO.getQuestion());
+						
+						if(uniqueQuestionsVO.getQuestionType().equals("Qtype_0")){
+						     validationQuestion.setQuestionType("Text Entry");
+						}
+						else if(uniqueQuestionsVO.getQuestionType().equals("Qtype_1")){
+						     validationQuestion.setQuestionType("True False");
+						}
+						
+						validationQuestion.setCourseConfiguration(courseConfiguration);
+						validationQuestion.setLanguage(VU360User.getLanguage());
+						validationQuestion.setIsActive(true);
+						validationQuestion.setCreatedBy(VU360User);
+						validationQuestion.setCreatedDate(new Date());
+						validationQuestion.setModifiedBy(VU360User);
+						validationQuestion.setModifiedDate(new Date());
+						
+						accreditationService.saveValidationQuestion(validationQuestion);
+						
+						ValidationQuestion updatedvalidationQuestion = accreditationService.loadForUpdateValidationQuestion(validationQuestion.getId());		
+						if(updatedvalidationQuestion != null){
+							updatedvalidationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + updatedvalidationQuestion.getId());
+							accreditationService.saveValidationQuestion(updatedvalidationQuestion);
+						
+						
+					}
+				}
+			}
 		}
-		
+	}	
 		return new ModelAndView(finishTemplate);
 	}
 
@@ -617,6 +727,19 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 			break;
 		}
 		super.validatePage(command, errors, page, finish);
+	}
+	
+	public UniqueQuestionsVO getUniqueQuestion(int id,HttpServletRequest request){
+		UniqueQuestionsVO uniqueQuestionsVO = new UniqueQuestionsVO();
+		String question = request.getParameter("uquestionName_"+id);
+		String questionType = request.getParameter("uquestionType_"+id);
+		String questionId = request.getParameter("uquestionId_"+id);
+		//String questionId = request.getParameter("");
+		uniqueQuestionsVO.setQuestion(question);
+		uniqueQuestionsVO.setQuestionType(questionType);
+		uniqueQuestionsVO.setId(questionId);
+		return uniqueQuestionsVO;
+		
 	}
 
 	protected ModelAndView processCancel(HttpServletRequest request,

@@ -190,14 +190,29 @@ public class ViewEntitlementDetailsController extends VU360BaseMultiActionContro
 		Long customerId = details.getCurrentCustomerId();
 
 		OrganizationalGroup rootOrgGroup =  orgGroupLearnerGroupService.getRootOrgGroupForCustomer(customerId);
-		TreeNode orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup);
-		List<TreeNode> treeAsList = orgGroupRoot.bfs();
-		List<OrgGroupEntitlement> orgGroupEntitlements = entitlementService.
-			getOrgGroupsEntilementsForCustomerEntitlement(custEntitlement);
-		for(int loop3=0; loop3<orgGroupEntitlements.size(); loop3++){
-			OrganizationalGroup orgGroup = orgGroupEntitlements.get(loop3).getOrganizationalGroup();
-			map1.put(orgGroup.getId(), new Integer(orgGroupEntitlements.get(loop3).getMaxNumberSeats()));
+		
+		List<OrgGroupEntitlement> orgGroupEntitlements = entitlementService.getOrgGroupsEntilementsForCustomerEntitlement(custEntitlement);
+		TreeNode orgGroupRoot = null;
+		Set<OrganizationalGroup> og = new HashSet<>();
+		og.add(rootOrgGroup);
+		
+		if(orgGroupEntitlements!=null && orgGroupEntitlements.size()>0){
+			for(int loop3=0; loop3<orgGroupEntitlements.size(); loop3++){
+				OrganizationalGroup orgGroup = orgGroupEntitlements.get(loop3).getOrganizationalGroup();
+				
+				OrganizationalGroup orgGroupTemp=orgGroup;
+				while(orgGroupTemp.getParentOrgGroup()!=null){
+					og.add(orgGroupTemp);
+					orgGroupTemp = orgGroupTemp.getParentOrgGroup(); 
+				}
+				og.add(orgGroup);
+				map1.put(orgGroup.getId(), new Integer(orgGroupEntitlements.get(loop3).getMaxNumberSeats()));
+			}
+			
+			orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup, og);
 		}
+		
+		List<TreeNode> treeAsList = orgGroupRoot!=null ? orgGroupRoot.bfs() : null;
 		
 		context.put("orgGroupTreeAsList", treeAsList);
 		context.put("countmap", map1);
@@ -454,7 +469,25 @@ public class ViewEntitlementDetailsController extends VU360BaseMultiActionContro
 		return null;
 	}
 	
-	
+	private TreeNode getOrgGroupTree( TreeNode parentNode, OrganizationalGroup orgGroup, Set<OrganizationalGroup> sOG ) {
+
+		if( orgGroup != null && sOG.contains(orgGroup)) {
+
+			TreeNode node = new TreeNode(orgGroup);
+			List<OrganizationalGroup> childGroups = orgGroup.getChildrenOrgGroups();
+			for( int i=0; i<childGroups.size(); i++ ){
+				OrganizationalGroup childOrgGroup = childGroups.get(i);
+				if(sOG.contains(childOrgGroup))
+				node = getOrgGroupTree(node, childOrgGroup, sOG);
+			}
+			if( parentNode != null ) {
+				parentNode.addChild(node);
+				return parentNode;
+			} else
+				return node;
+		}
+		return null;
+	}
 	
 	public ModelAndView viewSubscriptionEntitlementDetails(HttpServletRequest request, HttpServletResponse response,
 			Object command, BindException errors) throws Exception {

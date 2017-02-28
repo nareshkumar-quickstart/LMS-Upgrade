@@ -8,6 +8,6 @@ import com.softech.vu360.lms.model.EnrollmentCourseView;
 public interface EnrollmentCourseViewRepositoryCustom {
 
 	List<EnrollmentCourseView> getCoursesForEnrollment(Long customerId, String courseName, String courseCode, String contractName, int startIndex, int endIndex);
-	List<EnrollmentCourseView> getCoursesForEnrollment(Long customerId, String courseName, String courseCode, String contractName, Date date);
+	List<EnrollmentCourseView> getCoursesForEnrollment(Long customerId, String courseName, String courseCode, String contractName, Date date, Long[] customerEntitlementIds);
 	
 }

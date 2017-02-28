@@ -63,6 +63,7 @@ import com.softech.vu360.lms.model.RegulatoryApproval;
 import com.softech.vu360.lms.model.SingleSelectCreditReportingField;
 import com.softech.vu360.lms.model.SingleSelectCustomField;
 import com.softech.vu360.lms.model.StaticCreditReportingField;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.repositories.AffidavitRepository;
 import com.softech.vu360.lms.repositories.AssetRepository;
 import com.softech.vu360.lms.repositories.CertificateBookmarkAssociationRepository;
@@ -96,6 +97,7 @@ import com.softech.vu360.lms.repositories.RegulatorCategoryRepository;
 import com.softech.vu360.lms.repositories.RegulatorRepository;
 import com.softech.vu360.lms.repositories.RegulatoryAnalystRepository;
 import com.softech.vu360.lms.repositories.RegulatoryApprovalRepository;
+import com.softech.vu360.lms.repositories.ValidationQuestionRepository;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.CourseApprovalVO;
@@ -185,6 +187,8 @@ public class AccreditationServiceImpl implements AccreditationService {
 	LearnerCourseStatisticsRepository learnerCourseStatisticsRepository;
 	@Inject
 	CustomFieldValueRepository customFieldValueRepository;
+	@Inject
+	ValidationQuestionRepository validationQuestionRepository;
 
 	private static final Logger log = Logger
 			.getLogger(AccreditationServiceImpl.class.getName());
@@ -1298,6 +1302,10 @@ public class AccreditationServiceImpl implements AccreditationService {
 		return courseConfigurationRepository.findOne(id);
 	}
 
+	public ValidationQuestion loadForUpdateValidationQuestion(long id) {
+		return validationQuestionRepository.findOne(id);
+	}
+	
 	public CreditReportingField loadForUpdateCreditReportingField(long id) {
 		return creditReportingFieldRepository.findOne(id);
 	}
@@ -2270,6 +2278,24 @@ public class AccreditationServiceImpl implements AccreditationService {
 		    }
 		}
         return courseIdsSubList;
+	}
+
+	@Override
+	@Transactional
+	public ValidationQuestion saveValidationQuestion(ValidationQuestion validationQuestion) {
+		return validationQuestionRepository.save(validationQuestion);
+	}
+
+	@Override
+	public List<ValidationQuestion> getUniqueValidationQuestionByCourseConfigurationId(long id) {
+		return validationQuestionRepository.findByCourseConfigurationIdEqualsAndCourseConfigurationRequireDefineUniqueQuestionValidationIsTrue(id);
+	}
+
+	@Override
+	@Transactional
+	public void deleteValidationQuestion(List<Long> lsValidationQuestionIds) {
+		validationQuestionRepository.deleteByIdIn(lsValidationQuestionIds);
+		
 	}
 
 }

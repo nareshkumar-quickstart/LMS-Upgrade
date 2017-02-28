@@ -665,7 +665,7 @@ public class AddTrainingPlanWizardController extends AbstractWizardFormControlle
 
 		Map<Long,EnrollmentCourseView> enrollmentCourseViewUniqueMap=new HashMap<Long, EnrollmentCourseView>();
 		List<EnrollmentCourseView> trainingPlanCourseViewList = entitlementService.getCoursesForEnrollmentByCustomer(customer , 
-				form.getSearchCourseName() , form.getSearchCourseId() , form.getSearchEntitlementName() ,entitlementDate, intLimit);
+				form.getSearchCourseName() , form.getSearchCourseId() , form.getSearchEntitlementName() ,entitlementDate, null , intLimit);
 		
 		for(EnrollmentCourseView enrollmentCourseView:trainingPlanCourseViewList) {
 			if(!enrollmentCourseViewUniqueMap.containsKey(enrollmentCourseView.getCourseId()))

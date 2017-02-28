@@ -3,8 +3,10 @@ package com.softech.vu360.lms.web.controller.accreditation;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,11 +28,14 @@ import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.CourseConfigurationTemplate;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
+import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.accreditation.CourseConfigForm;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.AddCourseConfigValidator;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.lms.webservice.client.LCMSClientWS;
 import com.softech.vu360.util.CourseTemplateSort;
 import com.softech.vu360.util.FormUtil;
@@ -45,6 +50,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 	private static final Logger log = Logger.getLogger(ManageAndEditInstructorController.class.getName());
 	private final String PROCTOR_VALIDATOR_ANSI = "ansi";
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
+	private final String PROCTOR_VALIDATOR_TREC = "TREC";
 	private AccreditationService accreditationService;
 	private CourseAndCourseGroupService courseAndCourseGroupService;
 //	HttpSession session = null;
@@ -72,8 +78,10 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 			String methodName) throws Exception {
 		if( command instanceof CourseConfigForm ) {
 			CourseConfigForm form = (CourseConfigForm)command;
+			List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
 
 			if( methodName.equals("editCourseConfig")){
+				int qId = 0;
 				CourseConfiguration courseConfig = null;
 				Long id = Long.parseLong(request.getParameter("templateId"));
 				if( id != null ) 
@@ -112,6 +120,27 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 						form.setAcknowledgeText( form.getCourseConfiguration().getAcknowledgeText().replaceAll("\n", "<br>") );
 						form.setAcknowledgeText( form.getCourseConfiguration().getAcknowledgeText().replaceAll("\r", "<br>") );
 					}
+					
+					List<ValidationQuestion>  lsValidationQuestions = accreditationService.getUniqueValidationQuestionByCourseConfigurationId(form.getCourseConfiguration().getId());
+
+					//List<ValidationQuestion>  lsValidationQuestions = accreditationService.getUniqueValidationQuestion(form.getCourseConfiguration().getId());
+
+					if(lsValidationQuestions != null && !lsValidationQuestions.isEmpty()){
+						for(ValidationQuestion validationQuestion:lsValidationQuestions){
+							UniqueQuestionsVO uniqueQuestionsVO = new UniqueQuestionsVO();
+							uniqueQuestionsVO.setQuestion(validationQuestion.getQuestion());
+							uniqueQuestionsVO.setQuestionId(qId++);
+							uniqueQuestionsVO.setId(validationQuestion.getId().toString());
+							if(validationQuestion.getQuestionType().equals("True False")){
+								uniqueQuestionsVO.setQuestionType("Qtype_1");
+							}
+							else if(validationQuestion.getQuestionType().equals("Text Entry")){
+								uniqueQuestionsVO.setQuestionType("Qtype_0");
+							}
+							lstUniqueQuestionsVO.add(uniqueQuestionsVO);
+						}
+						form.setLstUniqueQuestionsVO(lstUniqueQuestionsVO);
+					}	
 				
 				//form.setAllowNumberofAttemptsToAnswerCorrectly(form.getCourseConfiguration().getAllowNumberofAttemptsToAnswerCorrectly()+"");
 				form.setAllowSecondsToAnswerEachQuestion(form.getCourseConfiguration().getAllowSecondsToAnswerEachQuestion()+"");
@@ -128,15 +157,10 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				form.setValidationTimeBetweenQuestion(form.getCourseConfiguration().getValidationTimeBetweenQuestion()+"");
 				form.setEnableIdentityValidation(form.getCourseConfiguration().getEnableIdentityValidation());
 				form.setEnableSmartProfileValidation(form.isEnableSmartProfileValidation());
+				form.setEnableDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
 				form.setNumberOfValidationQuestions(form.getCourseConfiguration().getNumberOfValidationQuestions()+"");
 				
-				
-				
-				
-				
-				
 				// course Policy
-				
 				form.setShowStandardIntroduction(form.getCourseConfiguration().getShowStandardIntroduction());
 				
 				form.setShowOrientationScenes(form.getCourseConfiguration().getShowOrientationScenes());
@@ -285,7 +309,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 					form.setPostLockoutAssessmentActiveWindow(form.getCourseConfiguration().isPostLockoutAssessmentActiveWindow());
 					//form.setPostEnableviewAssessmentResults(form.getCourseConfiguration().getPostAssessmentConfiguration().isViewassessmentresultsEnabled());
 					form.setPostEnableviewAssessmentResults(form.getCourseConfiguration().isViewassessmentresultsEnabled());
-					form.setEnableDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
+					form.setEnableDefineUniqueQuestionValidation(form.getCourseConfiguration().isRequireDefineUniqueQuestionValidation());
 					form.setEnableSelfRegistrationProctor(form.isEnableSelfRegistrationProctor());
 					form.setEnableSmartProfileValidation(form.isEnableSmartProfileValidation());
 										
@@ -389,11 +413,18 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 							if (isRequiredAnsi != null) {
 								if(isRequiredAnsi) {
 									form.setProctorValidatorName(PROCTOR_VALIDATOR_ANSI);
-								} else {
+								} else if(form.getCourseConfiguration().isRequiredNyInsurance()!=null){
 									Boolean isRequiredNyInsurance = form.getCourseConfiguration().isRequiredNyInsurance();
 									if (isRequiredNyInsurance != null) {
 										if (isRequiredNyInsurance) {
 											form.setProctorValidatorName(PROCTOR_VALIDATOR_NY_INSURANCE);
+										}
+									}
+								} else if(form.getCourseConfiguration().isRequireSelfRegistrationProctor()!=null){
+									Boolean isRequireSelfRegistrationProctor = form.getCourseConfiguration().isRequireSelfRegistrationProctor();
+									if (isRequireSelfRegistrationProctor != null) {
+										if (isRequireSelfRegistrationProctor) {
+											form.setProctorValidatorName(PROCTOR_VALIDATOR_TREC);
 										}
 									}
 								}
@@ -617,15 +648,65 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		return new ModelAndView(editCourseConfigTemplate);
 	}
 
-	private void saveCourseConfiguration(Object command)throws Exception{
+	private void saveCourseConfiguration(Object command, HttpServletRequest request)throws Exception{
 		
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
+		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
+		
 		final int MAX_PRE_POST_QUIZ_ATTEMPT = 9999999; 
+		
+		ArrayList<String> lstUniqueQuestions = null;
+		List<UniqueQuestionsVO> uniqueQuestionList = new ArrayList<UniqueQuestionsVO>();
 	
 		CourseConfigForm form = (CourseConfigForm)command;
 		CourseConfiguration mycourseConfiguration = form.getCourseConfiguration();
+		
+		List<UniqueQuestionsVO> lstUQV = mycourseConfiguration.getLstUniqueQuestionsVO();
+		UniqueQuestionsVO uniqueQuesVO = null;
+		List<UniqueQuestionsVO> lstUniquesQueVO = new ArrayList<>();
+		 
 		mycourseConfiguration.getCourseConfigTemplate().setLastUpdatedDate(new Date());
+		
+		ArrayList<String> parameterNames = new ArrayList<String>();
+		 Enumeration enumeration = request.getParameterNames();
+		    while (enumeration.hasMoreElements()) {
+		        String parameterName = (String) enumeration.nextElement();
+		       
+		        if(parameterName.contains("uquestionName_")){
+		        	String id = parameterName.substring(parameterName.indexOf('_')+1);
+		        	uniqueQuesVO =  getUniqueQuestion(Integer.parseInt(id),request);
+		        	lstUniquesQueVO.add(uniqueQuesVO);
+		        }
+		        
+		    }
+		 
+		 if(lstUniquesQueVO!=null && !lstUniquesQueVO.isEmpty()){
+			 form.getCourseConfiguration().setLstUniqueQuestionsVO(lstUniquesQueVO);
+		 }
+		
+/*
+		    if(request.getParameterValues("data") != null){
+	    	   lstUniqueQuestions = new ArrayList<String>(Arrays.asList(request.getParameterValues("data")));
+	    	   String question = null;
+	    	   String questionType = null;
+	    	   UniqueQuestionsVO uniqueQuestionsVO = null;
+	    	   for(String  uniqueQuestion:lstUniqueQuestions){
+	    		   if(!uniqueQuestion.contains("Qtype_")){
+	    			   uniqueQuestionsVO = new UniqueQuestionsVO();
+	    			   question = uniqueQuestion;
+	    			   uniqueQuestionsVO.setQuestion(question);
+	    		}
+	    		   else{
+	    			   questionType = uniqueQuestion;
+	    			   uniqueQuestionsVO.setQuestionType(questionType);
+	    			   uniqueQuestionList.add(uniqueQuestionsVO);
+	    			   uniqueQuestionsVO = null;
+	    		   }
+	    	    }
+	    	    form.getCourseConfiguration().setLstUniqueQuestionsVO(uniqueQuestionList);
+	    	   }
+	    */	   
 		
 		if(StringUtils.isNotBlank(form.getIdleTimeAmount()+"")){
 			mycourseConfiguration.setIdleTimeAmount(Integer.parseInt(form.getIdleTimeAmount()));
@@ -717,13 +798,6 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		if(!(form.getNumberOfValidationQuestions().isEmpty() || form.getNumberOfValidationQuestions()==null)){
 			mycourseConfiguration.setNumberOfValidationQuestions(FormUtil.parseNumber(form.getNumberOfValidationQuestions()));
 		}
-		
-		mycourseConfiguration.setEnableIdentityValidation(form.isEnableIdentityValidation());
-		mycourseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
-		
-		
-		
-		
 		
 		// course Policy
 		
@@ -1077,6 +1151,11 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				mycourseConfiguration.setRequiredNyInsurance(true);
 			else
 				mycourseConfiguration.setRequiredNyInsurance(false);
+			
+			if(form.getProctorValidatorName().equalsIgnoreCase("TREC"))
+			    mycourseConfiguration.setRequireSelfRegistrationProctor(true);
+			else
+			    mycourseConfiguration.setRequireSelfRegistrationProctor(false);
 		}
 		else{
 			mycourseConfiguration.setRequiredNyInsurance(false);
@@ -1090,12 +1169,78 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 			mycourseConfiguration.setCaRealEstateCE(false);
 		}
 		
-		// TODO: mycourseConfiguration.setRequireSelfRegistrationProctor(form.isRequireIdentityValidation());
-		mycourseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
-		//mycourseConfiguration.setRequireDefineUniqueQuestionValidation(form.isRequireDefineUniqueQuestionValidation());
+		mycourseConfiguration.setEnableIdentityValidation(form.isEnableIdentityValidation());
+		if(form.isEnableIdentityValidation()) {
+		   mycourseConfiguration.setRequireSmartProfileValidation(form.isEnableSmartProfileValidation());
+		   mycourseConfiguration.setRequireDefineUniqueQuestionValidation(form.isEnableDefineUniqueQuestionValidation());
+		}
 		
 		accreditationService.saveCourseConfiguration(mycourseConfiguration);
+		
+		if(mycourseConfiguration!=null && form.isEnableDefineUniqueQuestionValidation()){
+			if(form.getCourseConfiguration().getLstUniqueQuestionsVO()!=null){
+				
+				for(UniqueQuestionsVO uniqueQuestionsVO :form.getCourseConfiguration().getLstUniqueQuestionsVO()){
+					ValidationQuestion validationQuestion = new ValidationQuestion();
+					validationQuestion.setQuestion(uniqueQuestionsVO.getQuestion());
+					
+					if(uniqueQuestionsVO.getQuestionType().equals("Qtype_0")){
+					     validationQuestion.setQuestionType("Text Entry");
+					}
+					else if(uniqueQuestionsVO.getQuestionType().equals("Qtype_1")){
+					     validationQuestion.setQuestionType("True False");
+					}
+                    validationQuestion.setModifiedBy(VU360User);
+					validationQuestion.setModifiedDate(new Date());
+					
+					if(StringUtils.isEmpty(uniqueQuestionsVO.getId())){
+						validationQuestion.setLanguage(VU360User.getLanguage());
+						validationQuestion.setIsActive(true);
+						validationQuestion.setCourseConfiguration(mycourseConfiguration);
+						validationQuestion.setCreatedBy(VU360User);
+						validationQuestion.setCreatedDate(new Date());
+						accreditationService.saveValidationQuestion(validationQuestion);
+						validationQuestion = accreditationService.loadForUpdateValidationQuestion(validationQuestion.getId());
+						validationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + validationQuestion.getId());
+						accreditationService.saveValidationQuestion(validationQuestion);
+					}
+					else if(!StringUtils.isEmpty(uniqueQuestionsVO.getId())){ 	
+					ValidationQuestion updatedvalidationQuestion = accreditationService.loadForUpdateValidationQuestion(Long.parseLong(uniqueQuestionsVO.getId()));		
+					
+					if(updatedvalidationQuestion != null){
+						updatedvalidationQuestion.setQuestion(uniqueQuestionsVO.getQuestion());
+						
+						if(uniqueQuestionsVO.getQuestionType().equals("Qtype_0")){
+							updatedvalidationQuestion.setQuestionType("Text Entry");
+						}
+						else if(uniqueQuestionsVO.getQuestionType().equals("Qtype_1")){
+							updatedvalidationQuestion.setQuestionType("True False");
+						}
+						updatedvalidationQuestion.setModifiedBy(VU360User);
+						updatedvalidationQuestion.setModifiedDate(new Date());
+						
+						updatedvalidationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + updatedvalidationQuestion.getId());
+						accreditationService.saveValidationQuestion(updatedvalidationQuestion);
+					}
+					
+					if(request.getParameter("uquestionDeleteId") !=null){
+						String[] selectedUniqueQuestionValues = request.getParameter("uquestionDeleteId").toString().split(",");
+						List<String> lststrUniqueQuestions = Arrays.asList(selectedUniqueQuestionValues);
+						List<Long> lstUniqueQuestionIds = new ArrayList<>();
+						for(String uniqueQuestionsId : lststrUniqueQuestions){
+							if( StringUtils.isNotBlank(uniqueQuestionsId.trim()) ) {
+								lstUniqueQuestionIds.add(Long.parseLong(uniqueQuestionsId.trim()));
+							}	
+						 }
+					     if(lstUniqueQuestionIds != null && !lstUniqueQuestionIds.isEmpty()){
+						   accreditationService.deleteValidationQuestion(lstUniqueQuestionIds);
+					     }
+					  }	
+				}
 
+			}
+		 }
+	  }
 	}
 
 	public ModelAndView saveCourseConfig( HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
@@ -1106,7 +1251,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				return new ModelAndView(editCourseConfigTemplate);
 			}
 
-			saveCourseConfiguration(command);
+			saveCourseConfiguration(command,request);
 			
 		}catch(Exception e){
 			logger.error(e.getMessage(), e);
@@ -1126,6 +1271,33 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		return new ModelAndView(editCourseConfigTemplate);
 	}
 
+	public ModelAndView deleteQuestion( HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
+
+		try{
+			
+			CourseConfigForm form = (CourseConfigForm)command;
+			if(request.getParameter("uquestionDeleteId") !=null){
+			String[] selectedUniqueQuestionValues = request.getParameter("uquestionDeleteId").toString().split(",");
+			List<String> lststrUniqueQuestions = Arrays.asList(selectedUniqueQuestionValues);
+			List<Long> lstUniqueQuestionIds = new ArrayList<>();
+			for(String uniqueQuestionsId : lststrUniqueQuestions){
+				if( StringUtils.isNotBlank(uniqueQuestionsId.trim()) ) {
+					lstUniqueQuestionIds.add(Long.parseLong(uniqueQuestionsId.trim()));
+				}	
+			 }
+		 if(lstUniqueQuestionIds != null && !lstUniqueQuestionIds.isEmpty()){
+			   accreditationService.deleteValidationQuestion(lstUniqueQuestionIds);
+		     }
+		  }	
+
+		}catch(Exception e){
+			logger.error(e.getMessage(), e);
+		}
+					 
+		return new ModelAndView(searchCourseConfigTemplate);
+	
+	}
+	
 	public ModelAndView saveAndPublish( HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
 
 		try{
@@ -1136,7 +1308,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				return new ModelAndView(editCourseConfigTemplate);
 			}
 
-			saveCourseConfiguration(command);
+			saveCourseConfiguration(command,request);
 
 			if(!getLcmsClientWS().invokeCourseConfigurationUpdated(getAccreditationService().getCourseConfigurationById(form.getCourseConfiguration().getId()))){
 				errors.reject("error.courseConfiguration.publish.failure", "");
@@ -1170,6 +1342,28 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		AddCourseConfigValidator validator = (AddCourseConfigValidator)this.getValidator();
 		CourseConfigForm form = (CourseConfigForm)command;
 
+		/*
+		ArrayList<String> parameterNames = new ArrayList<String>();
+		 Enumeration enumeration = request.getParameterNames();
+		 UniqueQuestionsVO uniqueQuesVO = null;
+		 List<UniqueQuestionsVO> lstUniquesQueVO = new ArrayList<>();
+		    while (enumeration.hasMoreElements()) {
+		        String parameterName = (String) enumeration.nextElement();
+		       
+		        if(parameterName.contains("uquestionName_")){
+		        	String id = parameterName.substring(parameterName.indexOf('_')+1);
+		        	  
+		        	uniqueQuesVO =  getUniqueQuestion(Integer.parseInt(id),request);
+		        	lstUniquesQueVO.add(uniqueQuesVO);
+		        }
+		        
+		    }
+		 
+		 if(lstUniquesQueVO!=null && !lstUniquesQueVO.isEmpty()){
+			 form.getCourseConfiguration().setLstUniqueQuestionsVO(lstUniquesQueVO);
+		 }
+        */
+		
 		if( methodName.equals("saveCourseConfig")) {
 			validator.validateStep1(form, errors);
 			validator.validateStep2(form, errors);
@@ -1183,6 +1377,19 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		}
 	}
 
+	public UniqueQuestionsVO getUniqueQuestion(int id,HttpServletRequest request){
+		UniqueQuestionsVO uniqueQuestionsVO = new UniqueQuestionsVO();
+		String question = request.getParameter("uquestionName_"+id);
+		String questionType = request.getParameter("uquestionType_"+id);
+		String questionId = request.getParameter("uquestionId_"+id);
+		//String questionId = request.getParameter("");
+		uniqueQuestionsVO.setQuestion(question);
+		uniqueQuestionsVO.setQuestionType(questionType);
+		uniqueQuestionsVO.setId(questionId);
+		return uniqueQuestionsVO;
+		
+	}
+	
 	public AccreditationService getAccreditationService() {
 		return accreditationService;
 	}
