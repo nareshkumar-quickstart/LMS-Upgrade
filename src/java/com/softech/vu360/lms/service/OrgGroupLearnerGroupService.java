@@ -49,7 +49,6 @@ public interface OrgGroupLearnerGroupService {
 	public OrganizationalGroup saveOrganizationalGroupFromBatchImport(OrganizationalGroup orgGroup);
 	public OrganizationalGroup getRootOrgGroupForCustomer(Long customerId);
     public LearnerGroup getLearnerGroupByLearnerGroupId(long id);
-	public List<LearnerGroup>  getLearnerGroupsByLearnerGroupIDs(String learnerGroupId[]);
 	public List<LearnerGroup> findLearnerGroupByName( String name, Customer customer,VU360User loggedInUser);
 	public OrganizationalGroup getOrgGroupsByHiererchyString(String spliter,String hiererchy,Customer customer,VU360User loggedInUser);
 	public OrganizationalGroup saveOrganizationalGroupForCustomerProfile(OrganizationalGroup orgGroup);

@@ -1136,8 +1136,16 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 
 	    List<EnrollmentCourseView> enrollmentCourseViewList = new ArrayList<EnrollmentCourseView>();
 	    
-	 // @MariumSaud : LMS-21702 -- Filter course on the basis of organization group as per enrollment method selected
-	    Long[] customerEntitlementIds = getCustomerEntitlementIdsByOrgGrps(form,form.getEnrollmentMethod());
+	    Long[] customerEntitlementIds = null;
+	    
+	    // @MariumSaud : LMS-22023 -- The method will return 'true' if manager Permission for 'Enforce Org. Group Enrollment Restriction' is Enabled for Customer else return 'false'
+	    //                            If 'true' then Course Filteration will be applied on basis of organizational group else all courses will be open
+	    boolean isEnabled = entitlementService.isEnforceOrgGroupEnrollmentRestrictionEnable(customer);
+	    
+	    if(isEnabled){
+	    	// @MariumSaud : LMS-21702 -- Filter course on the basis of organization group as per enrollment method selected
+		    customerEntitlementIds = getCustomerEntitlementIdsByOrgGrps(form,form.getEnrollmentMethod());
+	    }
 
 	   
 		enrollmentCourseViewList = entitlementService.getCoursesForEnrollmentByCustomer(customer, form.getSearchCourseName(),

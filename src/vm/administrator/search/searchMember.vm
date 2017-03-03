@@ -53,14 +53,28 @@
 			return stringToTrim.replace(/\s+$/,"");
 		}
         
+        function replaceAll(str, find, replace) {
+ 		  return str.replace(new RegExp(find, 'g'), replace);
+ 		} 
+ 
 		function doSearchLearner() {
 		
 		   chkLearner = document.getElementById('constrainedLearnerSearch');
 		   
-			var firstName= trim( ltrim( rtrim( document.searchLearnerForm.searchFirstName.value ) ) );
-			var lastName= trim( ltrim( rtrim( document.searchLearnerForm.searchLastName.value ) ) );
+			var firstName=  trim( ltrim( rtrim( document.searchLearnerForm.searchFirstName.value ) ) ) ;
+ 			var lastName= trim( ltrim( rtrim( document.searchLearnerForm.searchLastName.value ) ) ) ;
 			var email= trim( ltrim( rtrim( document.searchLearnerForm.searchEmailAddress.value ) ) );
 			
+			//LMS-22049
+			//firstName = replaceAll(firstName, "%" , "");
+ 			//lastName = replaceAll(lastName, "%" , "");
+ 			
+			if(firstName.length != 0 && firstName.length < 2 ){
+				return false;
+			}
+			else if(lastName.length != 0 && lastName.length < 2 ) {
+				return false;
+			}
 			
 			if(chkLearner != null && chkLearner.checked){
         		// do nothing 

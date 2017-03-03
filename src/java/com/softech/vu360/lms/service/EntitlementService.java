@@ -219,4 +219,5 @@ public interface EntitlementService {
         public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByOrgGrpIds(List<Long> orgGrpIds);
         public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerIds(Long learnerIds[]);
         public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerGroupIds(List<Long> learnerGrpIds);
+        public boolean isEnforceOrgGroupEnrollmentRestrictionEnable(Customer customer);
 }

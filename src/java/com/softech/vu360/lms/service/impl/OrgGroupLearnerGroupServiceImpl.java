@@ -330,25 +330,6 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
         return learnerGroupRepository.findOne(id);
     }
     
-	public List<LearnerGroup>  getLearnerGroupsByLearnerGroupIDs(String learnerGroupId[]){
-		return learnerGroupRepository.findByIdIn(this.castStringArrayToLong(learnerGroupId));
-	}
-	
-	public Long[] castStringArrayToLong(String[] strings) {
-	    Long[] intarray=new Long[strings.length];
-	    int i=0;
-	    for(String str:strings){
-	        try {
-	            intarray[i]=Long.parseLong(str);
-	            i++;
-	        } catch (NumberFormatException e) {
-	            throw new IllegalArgumentException("Not a number: " + str + " at index " + i, e);
-	        }
-	    }
-	    
-	    return intarray;
-	}
-	
 	public OrganizationalGroup saveOrganizationalGroupFromBatchImport(OrganizationalGroup orgGroup){
 		return	organizationalGroupRepository.save(orgGroup);
 	}

@@ -657,20 +657,20 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		Query query = entityManager.createQuery(queryString.toString());
 		
 		if (!StringUtils.isBlank(searchCriteria)) {
-			query.setParameter("firstName", "%"+firstName+"%");
-			query.setParameter("lastName", "%"+lastName+"%");
-			query.setParameter("emailAddress", "%"+email+"%");
+			query.setParameter("firstName", firstName+"%");
+			query.setParameter("lastName", lastName+"%");
+			query.setParameter("emailAddress", email+"%");
 		}
 		else{
 			
 			if ( !StringUtils.isBlank(firstName) ) {
-				query.setParameter("firstName", "%"+firstName+"%");
+				query.setParameter("firstName", firstName+"%");
 			}
 			if ( !StringUtils.isBlank(lastName) ) {
-				query.setParameter("lastName", "%"+lastName+"%");
+				query.setParameter("lastName", lastName+"%");
 			}
 			if ( !StringUtils.isBlank(email) ) {
-				query.setParameter("emailAddress", "%"+email+"%");
+				query.setParameter("emailAddress", email+"%");
 			}
 		}
 		
