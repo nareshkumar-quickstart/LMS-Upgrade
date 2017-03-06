@@ -45,7 +45,6 @@ public interface LearnerGroupRepository extends CrudRepository<LearnerGroup, Lon
 				+ " WHERE og.CUSTOMER_ID = :customerID GROUP BY og.ID", nativeQuery = true)
 	List<Object[]> getLearnerCountByOrganizationalGroup( @Param("customerID") Long customerID);
 	
-	//public List<LearnerGroup>  getLearnerGroupsByLearnerGroupIDs(String learnerGroupId[])
 	public List<LearnerGroup>  findByIdIn(Long learnerGroupId[]);
 	
 	@Query(value = "SELECT ID , CUSTOMER_ID, NAME, ORGANIZATIONALGROUP_ID "

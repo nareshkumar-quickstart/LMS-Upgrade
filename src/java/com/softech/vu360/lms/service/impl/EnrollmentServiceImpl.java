@@ -677,13 +677,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				    isValidEnrollment = customerContract.hasAvailableSeats(1);
 				    if (isValidEnrollment) {
 				    	
-					    // LMS-21702 : Validations will be proceed as follows:
-					    // 1. If learner's org grp is not bound to any contract then learner enrolllment will be proceed with no organization Group Entitlement.
-					    // 2. If learner's org grp is bound to any contract then learner enrollment will be proceed with org grp Entitlement, with further validation for
+				    	// LMS-22023 : Validations will be proceed as follows:
+					    // 1. If Manager level Permission "Enforce Org. Group Enrollment Restriction" is set to 'Disable' then learner enrolllment will be proceed with no organization Group Entitlement.
+					    // 2. If Manager level Permission "Enforce Org. Group Enrollment Restriction" is set to 'Enable' then learner enrollment will be proceed with org grp Entitlement, with further validation for
 					    // learner's org grp matches contract's org group.
 					    	
-					    boolean isExists = false;
-					    if(isExists){
+				    	boolean isEnabled = this.entitlementService.isEnforceOrgGroupEnrollmentRestrictionEnable(learner.getCustomer());
+					    if(isEnabled){
 							OrgGroupEntitlement orgGroupContract = this.entitlementService.getMaxAvaiableOrgGroupEntitlementByLearner(learner,
 									customerContract.getId());
 							

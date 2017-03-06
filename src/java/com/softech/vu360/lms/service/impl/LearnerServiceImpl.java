@@ -48,6 +48,7 @@ import com.softech.vu360.lms.model.LMSAdministrator;
 import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.model.LMSRoleLMSFeature;
 import com.softech.vu360.lms.model.Learner;
+import com.softech.vu360.lms.model.LearnerCourseStatistics;
 import com.softech.vu360.lms.model.LearnerEnrollment;
 import com.softech.vu360.lms.model.LearnerGroup;
 import com.softech.vu360.lms.model.LearnerGroupItem;
@@ -1778,13 +1779,16 @@ public class LearnerServiceImpl implements LearnerService {
 				}
 				
 			} else {
-				registrationInvitations = registrationInvitationRepository
-						.findDistinctByOrgGroupsIdInAndCustomerIdAndInvitationNameContainingIgnoreCase(
-								FormUtil.getPropertyArrayFromList(loggedinUser
-										.getTrainingAdministrator()
-										.getManagedGroups()), customer.getId(),
-								invitationName);
-			}
+				if(loggedinUser.getTrainingAdministrator().getManagedGroups() != null && !loggedinUser.getTrainingAdministrator().getManagedGroups().isEmpty()){
+  					Set<OrganizationalGroup> orgSet = new HashSet<OrganizationalGroup>(loggedinUser.getTrainingAdministrator().getManagedGroups());
+  				     if(orgSet!=null && !orgSet.isEmpty()){
+  				    	registrationInvitations = registrationInvitationRepository
+  								.findDistinctByOrgGroupsIdInAndCustomerIdAndInvitationNameContainingIgnoreCase(
+  										FormUtil.getPropertyArrayFromList(new ArrayList<OrganizationalGroup>(orgSet)), customer.getId(),
+  										invitationName); 
+  				       }
+  				     }
+  				   }
 		}
 		return registrationInvitations;
 
@@ -1943,11 +1947,17 @@ public class LearnerServiceImpl implements LearnerService {
 				log.info("CreditReportingField before deep merge id = " + id
 						+ ", FieldLabel = " + crfOriginal.getFieldLabel());
 			}
+			else{
+				crfOriginal = crfRepository.findOne(id);
+			}
 		} catch (Exception e) {
 			log.error("Exception on getting CreditReportingField before deep merge ...:"
 					+ e);
 		}
 
+		// due to LMS-16564, we have to set CRField it again.- fresh Copy from db
+	    creditReportingfieldValue.setReportingCustomField(crfOriginal);
+				
 		creditReportingfieldValue = crfValueRepository
 				.save(creditReportingfieldValue);
 
@@ -2536,28 +2546,48 @@ public class LearnerServiceImpl implements LearnerService {
 		if(learner != null){
 			List<LearnerEnrollment>  lstLearnerEnrollment = enrollmentService.getAllLearnerEnrollmentsByLearner(learner);
 			for(LearnerEnrollment le :lstLearnerEnrollment){
-				//if(le.getCourse().getCourseConfigTemplate() != null){
-				//CourseConfiguration courseCongifuration = accreditationService.getCourseConfigurationByTemplateId(le.getCourse().getCourseConfigTemplate().getId(), true);
-				CourseApproval courseApproval = accreditationService.getCourseApprovalByCourse(le.getCourse());
-				if(courseApproval != null && courseApproval.getTemplate() != null){
-				CourseConfiguration courseCongifuration = accreditationService.getCourseConfigurationByTemplateId(courseApproval.getTemplate().getId(), true);
-				if(courseCongifuration != null && courseCongifuration.isRequireDefineUniqueQuestionValidation()){
-					lstValidationQuestion = accreditationService.getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration.getId());
-					if(lstValidationQuestion != null && !lstValidationQuestion.isEmpty()){
-						lstAnswers = getLearnerUniqueQuestionsAnswers(learnerId, courseCongifuration.getId());
-						if(lstAnswers !=null && !lstAnswers.isEmpty()){
-							lstuniqueQuestionAnswerVO = this.getLearnerUniqueQestionAvailableAnswers(lstValidationQuestion,learnerId, courseCongifuration.getId());
-						}
-						else{
-							lstuniqueQuestionAnswerVO = getLearnerUniqueQestionNoAnswers(lstValidationQuestion,learnerId);
-						}
-						mpUniqueQuestions.put("courseName_"+le.getCourse().getId(), le.getCourse().getCourseTitle());
-						if(lstuniqueQuestionAnswerVO != null && !lstuniqueQuestionAnswerVO.isEmpty())
-						  mpUniqueQuestions.put("questionanswerLst_"+le.getCourse().getId(),lstuniqueQuestionAnswerVO);
-					}
-				  
+				if(le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_PROGRESS)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_COMPLETE)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.LOCKED)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_PENDING)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_RECEIVED)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_DISPUTED)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTING_PENDING)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT)
+				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTED)) {
+				      
+	                  CourseApproval courseApproval =
+	                      accreditationService.getCourseApprovalByCourse(le.getCourse());
+	                  if (courseApproval != null && courseApproval.getTemplate() != null) {
+	                    CourseConfiguration courseCongifuration =
+	                        accreditationService.getCourseConfigurationByTemplateId(courseApproval
+	                            .getTemplate().getId(), true);
+	                    if (courseCongifuration != null
+	                        && courseCongifuration.isRequireDefineUniqueQuestionValidation()) {
+	                      lstValidationQuestion =
+	                          accreditationService
+	                              .getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration
+	                                  .getId());
+	                      if (lstValidationQuestion != null && !lstValidationQuestion.isEmpty()) {
+	                        lstAnswers =
+	                            getLearnerUniqueQuestionsAnswers(learnerId, courseCongifuration.getId());
+	                        if (lstAnswers != null && !lstAnswers.isEmpty()) {
+	                          lstuniqueQuestionAnswerVO =
+	                              getLearnerUniqueQestionAvailableAnswers(lstValidationQuestion, learnerId,
+	                                  courseCongifuration.getId());
+	                        } else {
+	                          lstuniqueQuestionAnswerVO =
+	                              getLearnerUniqueQestionNoAnswers(lstValidationQuestion, learnerId);
+	                        }
+	                        mpUniqueQuestions.put("courseName_" + le.getCourse().getId(), le.getCourse()
+	                            .getCourseTitle());
+	                        if (lstuniqueQuestionAnswerVO != null && !lstuniqueQuestionAnswerVO.isEmpty())
+	                          mpUniqueQuestions.put("questionanswerLst_" + le.getCourse().getId(),
+	                              lstuniqueQuestionAnswerVO);
+	                      }
+	                    }
+	                  }
 				}
-			  }
 			}		
 		}
 		return mpUniqueQuestions;

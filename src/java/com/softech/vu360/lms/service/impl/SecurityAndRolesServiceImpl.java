@@ -371,5 +371,12 @@ public class SecurityAndRolesServiceImpl implements SecurityAndRolesService {
 	public List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType) {
 		return lmsFeatureRepository.findAllActiveLMSFeaturesByUser(loggedInUserId, customerId, roleType);
 	}
-	
+	@Override
+	public CustomerLMSFeature getCustomerLMSFeatureByFeatureCode(Long customerID,String featureCode){
+	    return customerLmsFeatureRepository.findByLmsFeatureFeatureCodeEqualsAndCustomerIdEquals(featureCode,customerID);
+	}
+	@Override
+	public DistributorLMSFeature getDistributorLMSFeatureByFeatureCode(Long distributorID, String featureCode) {
+		return distributorLmsFeatureRepository.findByLmsFeatureFeatureCodeEqualsAndDistributorIdEquals(featureCode, distributorID);
+	}
 }

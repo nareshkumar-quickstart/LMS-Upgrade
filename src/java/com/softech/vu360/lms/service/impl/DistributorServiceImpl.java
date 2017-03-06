@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -44,6 +45,7 @@ import com.softech.vu360.lms.repositories.LMSAdministratorRepository;
 import com.softech.vu360.lms.repositories.LMSFeatureRepository;
 import com.softech.vu360.lms.repositories.RepositorySpecificationsBuilder;
 import com.softech.vu360.lms.repositories.VU360UserRepository;
+import com.softech.vu360.lms.repositories.VU360UserRepositoryImpl;
 import com.softech.vu360.lms.service.AuthorService;
 import com.softech.vu360.lms.service.BrandService;
 import com.softech.vu360.lms.service.CustomerService;
@@ -63,6 +65,8 @@ import com.softech.vu360.util.VU360Branding;
  */
 public class DistributorServiceImpl implements DistributorService {
 
+	private static final Logger log = Logger.getLogger(DistributorServiceImpl.class
+			.getName());
 	@Inject
 	AddressRepository addressRepository;
 	@Inject
@@ -1258,50 +1262,60 @@ public class DistributorServiceImpl implements DistributorService {
 
 		List<VU360User> userList = new ArrayList<VU360User>();
 		RepositorySpecificationsBuilder<VU360User> sb_VU360User = new RepositorySpecificationsBuilder<VU360User>();
+		
+		firstName = firstName.replaceAll("%", "");
+		lastName = lastName.replaceAll("%", "");
+		email = email.replaceAll("%", "");
+		
+		if( (lastName.length()+firstName.length()+email.length()) >= 2  ) {
+			if(loggedInUser.getLmsAdministrator()!=null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
+				
+				Collection<String> distributorIds = getAdminRestrictionExpression(loggedInUser);
 
-		if(loggedInUser.getLmsAdministrator()!=null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
-			
-			Collection<String> distributorIds = getAdminRestrictionExpression(loggedInUser);
+				sb_VU360User.with("learner_customer_distributor_id",
+						sb_VU360User.JOIN_IN, distributorIds.toArray(), "AND");
+			}
 
-			sb_VU360User.with("learner_customer_distributor_id",
-					sb_VU360User.JOIN_IN, distributorIds.toArray(), "AND");
+			if (!StringUtils.isBlank(searchCriteria)) {
+				sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
+						searchCriteria, "OR");
+				sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
+						searchCriteria, "OR");
+				sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
+						searchCriteria, "OR");
+			} else {
+				sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
+						firstName, "AND");
+				sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
+						lastName, "AND");
+				sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
+						email, "AND");
+			}
+
+			sb_VU360User.with("learner_id",
+					sb_VU360User.JOIN_GREATER_THAN_EQUALS_TO, -1, "AND");
+
+			Sort sortSpec = orderBy(sortDirection, sortBy);
+
+			PageRequest pageRequest = null;
+			if (retrieveRowCount != -1 && pageIndex >= 0) {
+				pageRequest = new PageRequest(pageIndex / retrieveRowCount,
+						retrieveRowCount, sortSpec);
+				Page<VU360User> page = vU360UserRepository.findAll(
+						sb_VU360User.build(), pageRequest);
+				resultSet.total = ((int) (long) page.getTotalElements());
+				userList = page.getContent();
+			} else {
+				userList = vU360UserRepository.findAll(sb_VU360User.build(),
+						sortSpec);
+				resultSet.total = userList.size();
+			}
+			return userList;
 		}
-
-		if (!StringUtils.isBlank(searchCriteria)) {
-			sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
-					searchCriteria, "OR");
-			sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
-					searchCriteria, "OR");
-			sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
-					searchCriteria, "OR");
-		} else {
-			sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
-					firstName, "AND");
-			sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
-					lastName, "AND");
-			sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
-					email, "AND");
+		else{
+			log.info("Max 2 char to search learner.");
+			return new ArrayList<VU360User>();
 		}
-
-		sb_VU360User.with("learner_id",
-				sb_VU360User.JOIN_GREATER_THAN_EQUALS_TO, -1, "AND");
-
-		Sort sortSpec = orderBy(sortDirection, sortBy);
-
-		PageRequest pageRequest = null;
-		if (retrieveRowCount != -1 && pageIndex >= 0) {
-			pageRequest = new PageRequest(pageIndex / retrieveRowCount,
-					retrieveRowCount, sortSpec);
-			Page<VU360User> page = vU360UserRepository.findAll(
-					sb_VU360User.build(), pageRequest);
-			resultSet.total = ((int) (long) page.getTotalElements());
-			userList = page.getContent();
-		} else {
-			userList = vU360UserRepository.findAll(sb_VU360User.build(),
-					sortSpec);
-			resultSet.total = userList.size();
-		}
-		return userList;
 	}
 
 	public List<VU360User> getAllLearners(String firstName, String lastName,

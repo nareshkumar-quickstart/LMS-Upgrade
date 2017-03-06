@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -39,8 +40,10 @@ import com.softech.vu360.lms.model.CourseGroupCustomerEntitlement;
 import com.softech.vu360.lms.model.CourseGroupCustomerEntitlementItem;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerEntitlement;
+import com.softech.vu360.lms.model.CustomerLMSFeature;
 import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.DistributorEntitlement;
+import com.softech.vu360.lms.model.DistributorLMSFeature;
 import com.softech.vu360.lms.model.EnrollmentCourseView;
 import com.softech.vu360.lms.model.InstructorConnectCourse;
 import com.softech.vu360.lms.model.Learner;
@@ -82,12 +85,14 @@ import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
+import com.softech.vu360.lms.service.SecurityAndRolesService;
 import com.softech.vu360.lms.service.SubscriptionService;
 import com.softech.vu360.lms.service.SynchronousClassService;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.ArrangeCourseGroupTree;
 import com.softech.vu360.util.CourseSort;
 import com.softech.vu360.util.TreeNode;
+import com.softech.vu360.util.VU360Properties;
 /**
  * @author jason
  * @modified by Faisal A. Siddiqui
@@ -130,6 +135,7 @@ public class EntitlementServiceImpl implements EntitlementService {
 	
 	
 	//private static final int DEFAULT_TOS_IN_DAYS = (Integer.parseInt(VU360Properties.getVU360Property("defaultTOS")));
+	private static final String ENFORCE_ORG_GROUP_ENROLLMENT_RESTRICTION_FEATURE_CODE = "lms.permissions.manager.planAndEnroll.enforceOrgGroupEnrollmentRestriction.featureCode";
 	private static final Logger log = Logger.getLogger(EntitlementServiceImpl.class.getName());
     //private EntitlementDAO entitlementDAO = null;
     private CustomerService customerService = null;
@@ -140,6 +146,7 @@ public class EntitlementServiceImpl implements EntitlementService {
     private EnrollmentService enrollmentService = null;
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
     private SubscriptionService subscriptionService;
+    private SecurityAndRolesService securityAndRolesService = null;
 
     
 	public CustomerService getCustomerService() {
@@ -901,7 +908,20 @@ public class EntitlementServiceImpl implements EntitlementService {
         }
     	Collection<CourseGroupCustomerEntitlement> courseGroupEnts = courseGroupCustomerEntitlementRepository.getActiveCourseGroupCustomerEntitlement(customer, courseId);//entitlementDAO.getCourseGroupCustomerEntitlementItemByCourseId(customer, courseId);
         if(CollectionUtils.isNotEmpty(courseGroupEnts)){
-        	availableCustomerEntitlements.addAll(courseGroupEnts);
+        	//Wajahat: Extra check to filter expired Contracts (This can also be done in the Sql)
+            for(CourseGroupCustomerEntitlement cge : courseGroupEnts){
+        		if(cge.getEndDate()==null){
+        	     	Date expireDate = new Date(cge.getStartDate().getTime() + TimeUnit.DAYS.toMillis(cge.getDefaultTermOfServiceInDays()));
+        	        if(expireDate.compareTo(new Date(System.currentTimeMillis()))>=0){
+        	        	//System.out.println("Contract should be added: "+cge.getId());
+        	 	    	availableCustomerEntitlements.add(cge);
+        	   		}
+           		}
+         		else{
+        			availableCustomerEntitlements.add(cge);
+          		}
+             }
+        	 //availableCustomerEntitlements.addAll(courseGroupEnts);
         }
         return availableCustomerEntitlements;
     }
@@ -2730,15 +2750,32 @@ public class EntitlementServiceImpl implements EntitlementService {
 		for(CourseGroup cG : cgIDs.values()){
 			
 			cG = courseAndCourseGroupService.getCourseGroupById(cG.getId());
-			for (Iterator iterator = cG.getCourses().iterator(); iterator.hasNext();) {
-				Course cc = (Course) iterator.next();
-			}
-			cG.setCourses(cG.getActiveCourses());
+			/** Commented By MairumSaud: This piece of code is of no uise and causing number of queries to be executing when search for CourseGroup is performed.
+  			 * Which is affecting the search performance
+  			 *   
+ 			 for (Iterator iterator = cG.getCourses().iterator(); iterator.hasNext();) {
+ 				Course cc = (Course) iterator.next();
+ 				
+ 				if(cc.getId()== 56530 || cc.getId()==56531){
+ 					System.out.println(cc.getName()+"|"+cc.isRetired()+"|"+cc.isActive()+"|"+cc.getCourseStatus()+"|"+cc.getId());
+  				}
+  			} 
+  			 */
+			/**
+			* Modified By MariumSaud : LMS-21943 : getActiveCourses() is hitting performance and throwing 'OutOfMemory Exception'
+			* replaced cG.getActiveCourses from new method that will return all active courses against given Course Group Id.
+			* 
+			* cG.setCourses(cG.getActiveCourses());
+			*/
+					
+			List<Course> activeCourses = this.getActiveCourses(cG.getId());
+			cG.setCourses(activeCourses);
 			
 			
 			courseGroups.put(cG, cG.getActiveCourses());
 			for(CourseGroup childCG : cG.getAllChildrenInHierarchy()){
-				childCG.setCourses(childCG.getActiveCourses());
+				// childCG.setCourses(childCG.getActiveCourses()); Commented inn reference to the above mentioned reason
+				childCG.setCourses(this.getActiveCourses(childCG.getId()));
 				courseGroups.put(childCG, childCG.getActiveCourses());
 			}
 		}
@@ -2748,6 +2785,15 @@ public class EntitlementServiceImpl implements EntitlementService {
 		
 	}
 	
+	/**
+	* @author 		marium.saud
+	* @param		id	CourseGroup Id
+	* @return		List of Courses
+	*/
+	public List<Course> getActiveCourses(Long id) {
+	  return courseAndCourseGroupService.getActiveCourses(id);
+	}
+		
 	public HashMap<CourseGroup, List<Course>> findAvailableCourseGroups(Distributor distributor, List<Long> courseGroudIdList){
 		
 		List<Map<Object, Object>> results = courseGroupRepository.findByAvailableCourseGroups(distributor,courseGroudIdList);
@@ -3128,9 +3174,18 @@ public class EntitlementServiceImpl implements EntitlementService {
  		public void setSubscriptionService(SubscriptionService subscriptionService) {
  			this.subscriptionService = subscriptionService;
  		}
+  
+      public SecurityAndRolesService getSecurityAndRolesService() {
+			return securityAndRolesService;
+		}
 
-        
-   public Date getMaxDistributorEntitlementEndDate(Distributor distributor){    	
+		public void setSecurityAndRolesService(
+				SecurityAndRolesService securityAndRolesService) {
+			this.securityAndRolesService = securityAndRolesService;
+		}
+
+	
+	 public Date getMaxDistributorEntitlementEndDate(Distributor distributor){    	
        List<DistributorEntitlement> listDistributorEntitlements =this.getAllDistributorEntitlements(distributor);
 	   Date maxExpirationDate=new Date();
     		for(DistributorEntitlement de:listDistributorEntitlements){
@@ -3230,6 +3285,32 @@ public class EntitlementServiceImpl implements EntitlementService {
     		   return new ArrayList<Long>(customerEntitlementIds);
     	   }
        	   return null;
+    } 
+   
+    // @MariumSaud : LMS-22023 -- The method will return 'true' if manager Permission for 'Enforce Org. Group Enrollment Restriction' is Enabled for Customer else return 'false'
+    @Override
+    public boolean isEnforceOrgGroupEnrollmentRestrictionEnable(Customer customer){
+ 	   
+ 	   String enforceOrgGroupEnrollmentRestrictionFeatureCode = "";
+ 	   
+ 	   if(VU360Properties.getVU360Property(ENFORCE_ORG_GROUP_ENROLLMENT_RESTRICTION_FEATURE_CODE) != null) {
+ 		   enforceOrgGroupEnrollmentRestrictionFeatureCode = VU360Properties.getVU360Property(ENFORCE_ORG_GROUP_ENROLLMENT_RESTRICTION_FEATURE_CODE).toString();
+ 		}
+ 	   
+ 	   if(!StringUtils.isEmpty(enforceOrgGroupEnrollmentRestrictionFeatureCode)) {
+ 			
+ 		    DistributorLMSFeature distributorLMSFeature = securityAndRolesService.getDistributorLMSFeatureByFeatureCode(customer.getDistributor().getId(), enforceOrgGroupEnrollmentRestrictionFeatureCode);
+ 			CustomerLMSFeature customerLMSFeatures = securityAndRolesService.getCustomerLMSFeatureByFeatureCode(customer.getId(), enforceOrgGroupEnrollmentRestrictionFeatureCode);
+ 			
+ 			if(distributorLMSFeature!=null && customerLMSFeatures != null) {
+ 				 boolean enforceOrgGroupEnrollmentRestrictionAtResellerLevel = distributorLMSFeature.getEnabled();
+ 				 boolean enforceOrgGroupEnrollmentRestrictionAtCustomerLevel = customerLMSFeatures.getEnabled();
+ 				 if(enforceOrgGroupEnrollmentRestrictionAtResellerLevel&&enforceOrgGroupEnrollmentRestrictionAtCustomerLevel){
+ 				 	return true;
+ 				 }
+ 			}
+ 		}
+ 	      return false;
     } 
    
    private void deleteCourseCustomerEntitlementItems(List<CourseCustomerEntitlementItem> entitlementItems){

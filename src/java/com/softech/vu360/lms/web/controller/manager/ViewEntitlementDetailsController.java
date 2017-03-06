@@ -191,32 +191,13 @@ public class ViewEntitlementDetailsController extends VU360BaseMultiActionContro
 
 		OrganizationalGroup rootOrgGroup =  orgGroupLearnerGroupService.getRootOrgGroupForCustomer(customerId);
 		
-		List<OrgGroupEntitlement> orgGroupEntitlements = entitlementService.getOrgGroupsEntilementsForCustomerEntitlement(custEntitlement);
-		TreeNode orgGroupRoot = null;
-		List<TreeNode> treeAsList = null;
-		
-		if(orgGroupEntitlements!=null && orgGroupEntitlements.size()>0) {//If org group entitlement exists then show the limited org groups hierarchy
-			Set<OrganizationalGroup> og = new HashSet<>();
-			og.add(rootOrgGroup);
-			if(orgGroupEntitlements!=null && orgGroupEntitlements.size()>0){
-				for(int loop3=0; loop3<orgGroupEntitlements.size(); loop3++){
-					OrganizationalGroup orgGroup = orgGroupEntitlements.get(loop3).getOrganizationalGroup();
-					
-					OrganizationalGroup orgGroupTemp=orgGroup;
-					while(orgGroupTemp.getParentOrgGroup()!=null){
-						og.add(orgGroupTemp);
-						orgGroupTemp = orgGroupTemp.getParentOrgGroup(); 
-					}
-					og.add(orgGroup);
-					map1.put(orgGroup.getId(), new Integer(orgGroupEntitlements.get(loop3).getMaxNumberSeats()));
-				}
-				orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup, og);
-			}
-			treeAsList = orgGroupRoot!=null ? orgGroupRoot.bfs() : null;
-		}
-		else { // For existing data there will not be any mapping in OrgGroupEntitlement so as per requirement we will show all org group hierarchy
-			orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup);
-			treeAsList = orgGroupRoot.bfs();
+		TreeNode orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup);
+		List<TreeNode> treeAsList = orgGroupRoot.bfs();
+		List<OrgGroupEntitlement> orgGroupEntitlements = entitlementService.
+			getOrgGroupsEntilementsForCustomerEntitlement(custEntitlement);
+		for(int loop3=0; loop3<orgGroupEntitlements.size(); loop3++){
+			OrganizationalGroup orgGroup = orgGroupEntitlements.get(loop3).getOrganizationalGroup();
+			map1.put(orgGroup.getId(), new Integer(orgGroupEntitlements.get(loop3).getMaxNumberSeats()));
 		}
 		
 		context.put("orgGroupTreeAsList", treeAsList);
