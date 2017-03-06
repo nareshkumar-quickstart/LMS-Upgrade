@@ -59,6 +59,7 @@ public interface CourseAndCourseGroupService {
 	public void deleteCustomCourse(long customCourseIdArray[]);
 	public WebLinkCourse getWebLinkCourseByID(long id);
 	public Course getCourseByGUID(String guid);
+	public Course getCourseByGUIDRefreshCourse(String guid);
 	public List<Course> getCoursesByGUIDs(String[] guids);
 	public Course getCourseByCourseId(String courseId);
 	public Course getCourseByIdWithNoCache(Long id);

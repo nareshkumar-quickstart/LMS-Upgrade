@@ -1314,4 +1314,9 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		// TODO Auto-generated method stub
 		return this.courseRepository.findByBussinesskeyEquals(businessKey);
 	}
+
+	@Override
+	public Course getCourseByGUIDRefreshCourse(String guid) {
+		return this.courseRepository.findByCourseGUID(guid);
+	}
 }

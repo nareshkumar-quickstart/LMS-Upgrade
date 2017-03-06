@@ -47,6 +47,7 @@ public class LearnerProfileForm  implements ILMSBaseInterface{
 	private long timeZoneId = 0;
 	private List<LicenseOfLearner> learnerOfLicense=null;	 
 	private LearnerValidationQASetDTO learnerValidationQASet;
+	private boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions = false;
 	
 	/**
 	 * @return the creditReportingFields
@@ -173,5 +174,12 @@ public class LearnerProfileForm  implements ILMSBaseInterface{
 	}
 	public void setMpValidationQuestion(Map<Object, Object> mpValidationQuestion) {
 	    this.mpValidationQuestion = mpValidationQuestion;
+	}
+	public boolean isHasAnyInProgressEnrollmentOfStandardValidationQuestions() {
+	    return hasAnyInProgressEnrollmentOfStandardValidationQuestions;
+	}
+	
+	public void setHasAnyInProgressEnrollmentOfStandardValidationQuestions(boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions) {
+	   this.hasAnyInProgressEnrollmentOfStandardValidationQuestions = hasAnyInProgressEnrollmentOfStandardValidationQuestions;
 	}
 }

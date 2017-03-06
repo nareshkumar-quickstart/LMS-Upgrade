@@ -49,6 +49,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 	private final String PROCTOR_VALIDATOR_ANSI = "ansi";
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
 	private final String PROCTOR_VALIDATOR_TREC = "TREC";
+	private final String ONLINE_PROCTORING = "ONLINEPROCTORING";
 	
 	public AddCourseConfigWizardController() {
 		super();
@@ -609,10 +610,16 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 					courseConfiguration.setRequireSelfRegistrationProctor(true);
 				else
 				    courseConfiguration.setRequireSelfRegistrationProctor(false);
+				if(form.getProctorValidatorName().equalsIgnoreCase(ONLINE_PROCTORING))
+					courseConfiguration.setRequireOnlineProctoring(true);
+				else
+				    courseConfiguration.setRequireOnlineProctoring(false);
 			}
 			else{
 				courseConfiguration.setRequiredNyInsurance(false);
 				courseConfiguration.setRequiredAnsi(false);
+				courseConfiguration.setRequireSelfRegistrationProctor(false);
+				courseConfiguration.setRequireOnlineProctoring(false);
 			}
 			courseConfiguration.setRequireLearnerValidation(form.isRequireLearnerValidation());
 			courseConfiguration.setCaRealEstateCE(form.isCaRealEstateCE());
