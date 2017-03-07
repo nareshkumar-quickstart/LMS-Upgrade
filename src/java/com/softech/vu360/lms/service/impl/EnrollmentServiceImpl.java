@@ -187,10 +187,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		    // LMS-6747
 		    // now iterate over all courses and generate a learner enrollment
 		    // for it and enroll the learner
-		    LearnerEnrollment le = new LearnerEnrollment();
 		    Date today = new Date(System.currentTimeMillis());
 		    for (Course c : coursesToEnroll) {
-				le = new LearnerEnrollment();
+		    	LearnerEnrollment le = new LearnerEnrollment();
 				le.setCourse(c);
 				le.setEnrollmentStartDate(today);
 				le.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
@@ -204,7 +203,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		
 				// For Sync Course
 				if ((c.getCourseType().equals(SynchronousCourse.COURSE_TYPE) || c.getCourseType().equals(WebinarCourse.COURSE_TYPE)) 
-						&& !subItem.equals("")) {
+						&& !subItem.isEmpty()) {
 					log.info("This is Synchronous Course");
 					SynchronousClass syncClass = null;
 					if(subItem.equals("-1")) {
@@ -786,6 +785,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     // [2/8/2011] LMS-8769 :: Admin Mode > Manage Enrollments: System is showing
     // incorrect Locked Course Status
+    @Override
     public LockedCourse getLastLockedCourse(LearnerEnrollment le) {
 		try {
 			LockedCourse lockedCourses = lockedCourseRepository.findFirstByEnrollmentIdAndCourselockedTrueOrderByIdDesc(le.getId());
@@ -844,6 +844,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		7			0 / 1 / null	expired/swapped							do enrollment
 		8		expired by date		completed/inprogress/notstarted/		do enrollment
      */
+    @Override
     public Map<Object, Object> selfEnrollTheLearner(VU360User user, String courseId, String synchronousClassId) {
 	boolean isSyncCourse = false;
 	Map<Object, Object> returnVal = new HashMap<Object, Object>();
@@ -863,7 +864,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				);
 	}
 	//in case of expired enrollment, allow to make new one.
-	if (le!=null && isEnrollDateNotExpired==false) le=null;
+	if (le!=null && !isEnrollDateNotExpired) 
+		le=null;
 	
 	if (le==null || isCompleted || !isNotStartedOrInprogress  ) {
 			// new enrollment start here..
@@ -874,10 +876,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		    }
 		    List<CustomerEntitlement> availableEntitlementsForCustomer = entitlementService.getActiveCustomerContractByCourseId(user.getLearner()
 			    .getCustomer(), Long.valueOf(courseId));
-		    LearnerEnrollment newEnrollment = null;
+		    LearnerEnrollment newEnrollment;
 		    CustomerEntitlement entitlement = null;
-		    if (availableEntitlementsForCustomer != null && availableEntitlementsForCustomer.size() > 0)
-			entitlement = availableEntitlementsForCustomer.get(0);
+		    if (CollectionUtils.isNotEmpty(availableEntitlementsForCustomer))
+		    	entitlement = availableEntitlementsForCustomer.get(0);
+		    
 		    if (entitlement == null) {
 				returnVal.put("error", "lms.learnerenrollment.error.seatsNotAvailable");
 				return returnVal;
@@ -887,24 +890,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				    returnVal.put("error", "lms.learnerenrollment.error.seatsNotAvailable");
 				    return returnVal;
 				}
-				//Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));		
-				//Learner learner = user.getLearner();
 				LearnerEnrollment learnerEnrollment = new LearnerEnrollment();
 				learnerEnrollment.setCourse(course);
 				learnerEnrollment.setCustomerEntitlement(entitlement);
 				learnerEnrollment.setLearner(user.getLearner());
-				learnerEnrollment.setEnrollmentStartDate(FormUtil.formatToDayStart(new Date())); // [2/22/2011]
-														 // LMS-9042
-														 // ::
-														 // Enrollment
-														 // Start
-														 // and
-														 // End
-														 // dates
-														 // should
-														 // have
-														 // proper
-														 // time
+				learnerEnrollment.setEnrollmentStartDate(FormUtil.formatToDayStart(new Date())); 
+				// [2/22/2011] LMS-9042 :: Enrollment Start and End dates should have proper time
 				learnerEnrollment.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
 				learnerEnrollment.setOrgGroupEntitlement(oge);
 	
@@ -927,8 +918,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 						isSyncCourse = true;
 				    }
 				} catch (Exception e) {
-				    log.error("Error in Fetching Synchronous Class");
-				    log.error(e);
+				    log.error("Error in Fetching Synchronous Class",e);
 				}
 	
 				// end Sync Class association
@@ -1257,18 +1247,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		 */
 			
 		/*for (CourseGroupView cgView : cgViewList) {
-			
-			
-			
 		    parentCourseGroupId = cgView.getParentCourseGroupId();
 		    if (cgViewMap.get(parentCourseGroupId) == null) {
 			// this means we haven't got parent in collection and have to
 			// fetch it from database
 			CourseGroup cg = courseAndCourseGroupService.getCourseGroupById(parentCourseGroupId);
 			while (cg != null) {
-				
 				if(cgViewMap.get(cg.getId())==null){
-					
 				    CourseGroupView view = new CourseGroupView();
 				    view.setGroupName(cg.getName());
 				    view.setId(cg.getId());
@@ -1278,12 +1263,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				    	view.setParentCourseGroupId(cg.getParentCourseGroup().getId());
 				    }
 				    cg = cg.getParentCourseGroup();
-				    
-			    
 				}
 				else
 					cg=null;
-			    
 			}
 		    }
 		}
@@ -1303,36 +1285,27 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			log.error("Error during retrieve course groups:"+e.getMessage(), e);
 		}
 		
-		// these 2 lines encapsulates the logic of creating tree nodes
-		AvailableCoursesTree tree = new AvailableCoursesTree(cgViewMap);
-			
-		//tree.build(); // already building in controller so not required here
-		return tree;
+		return new AvailableCoursesTree(cgViewMap);
     }
 
-    // MyCoursesController Logic Re-factoring
-
+    // Refactor this method to reduce its Cognitive Complexity from 371 to the 340.
+    @Override
     public Map displayMyCourses(VU360User user, Brander brand, List<CourseGroupView> courseGroups, List<MyCoursesItem> filteredMyCourses,
 	    List sortedCourseGroups, String viewType, String search, Boolean isFirstTimeView) {
 
-		Map<Object, Object> context = new HashMap<Object, Object>();
-		Date today = new Date();
+		Map<Object, Object> context = new HashMap<>();
+		final long currentTimeInMillis = System.currentTimeMillis();
+		final int totMillisInDay=1000 * 60 * 60 * 24;
 		Learner learner = user.getLearner();
 	
 		log.debug("Searched Content :: " + search);
 	
-		List<MyCoursesCourseGroup> myCoursesCourseGroups = new ArrayList<MyCoursesCourseGroup>();
+		List<MyCoursesCourseGroup> myCoursesCourseGroups = new ArrayList<>();
 	
-		boolean isCourseCatalog = false;
 		if (viewType.equalsIgnoreCase(COURSECATALOG_MYCOURSES_VIEW)) {
-	
-		    courseGroups = courseGroupAndCoursesForView(search, learner);
-		    context.put("courseGroupList", courseGroups);
-	
-		    isCourseCatalog = true;
-	
-		} else if (!isCourseCatalog) {// runs on null view Type
-		    List<LearnerEnrollment> enrollments = null;
+		    context.put("courseGroupList", courseGroupAndCoursesForView(search, learner));
+		} else {// runs on null view Type
+		    List<LearnerEnrollment> enrollments;
 		    if (viewType.equalsIgnoreCase(EXPIRED_MYCOURSES_VIEW)) {
 		    	enrollments = entitlementService.getExpiredLearnerEnrollmentsByLearner(learner, search);
 		    } else if (viewType.equalsIgnoreCase(COMPLETED_MYCOURSES_VIEW)) {
@@ -1342,12 +1315,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		    }
 		    
 		    if (viewType.equalsIgnoreCase(COURSES_ABOUT_TO_EXPIRED_MYCOURSES_VIEW)) {
-		    	List<LearnerEnrollment> selectedEnrollments = new ArrayList<LearnerEnrollment>();
+		    	List<LearnerEnrollment> selectedEnrollments = new ArrayList<>();
 				for (LearnerEnrollment enrollment : enrollments) {
 				    Date enrlEndDate = enrollment.getEnrollmentEndDate();
 				    if (enrlEndDate != null) {
-						long diff = enrlEndDate.getTime() - today.getTime();
-						long exprDate = (diff / (1000 * 60 * 60 * 24));
+						long diff = enrlEndDate.getTime() - currentTimeInMillis;
+						long exprDate = diff / totMillisInDay;
 			
 						if (! enrollment.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTING_PENDING) && exprDate >= 0
 							&& exprDate <= Integer.parseInt(brand.getBrandElement("lms.learner.mycourses.caption.coursesAboutToExpired.timeline"))) {
@@ -1366,9 +1339,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	
 		}
 	
-		// apply the filter to the alMyCourseItems for the filtered view
-		// that the user
-		// has asked for.
+		// apply the filter to the alMyCourseItems for the filtered view that the user has asked for.
 		Set<MyCoursesCourseGroup> filteredCourseGroups = null;
 	
 		if (viewType.equalsIgnoreCase(RECENT_MYCOURSES_VIEW)) {// runs on null
@@ -1377,21 +1348,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		    filteredMyCourses = MyCoursesCourseGroup.getAllCurrentCourses(filteredCourseGroups);
 		    Collections.sort(filteredMyCourses, new MyCoursesComparator(RECENT_MYCOURSES_VIEW));
 	
-		    if (isFirstTimeView) {
-			if (filteredCourseGroups.size() == 0 && filteredMyCourses.size() == 0) {// if
-												// no
-												// recently
-												// accessed
-												// courses
-												// yet,
-												// show
-												// enrolled
-												// courses
-			    filteredCourseGroups = MyCoursesCourseGroup
-				    .filterCoursesForMyCourses(MyCoursesCourseGroup.FILTER_ENROLLED, myCoursesCourseGroups);
+		    if (isFirstTimeView && filteredCourseGroups.isEmpty() && filteredMyCourses.isEmpty()) {
+				// if no recently accessed courses yet, show enrolled courses
+			    filteredCourseGroups = MyCoursesCourseGroup.filterCoursesForMyCourses(MyCoursesCourseGroup.FILTER_ENROLLED, myCoursesCourseGroups);
 			    viewType = ENROLLED_MYCOURSES_VIEW;
-	
-			}
 		    }
 	
 		} else if (viewType.equalsIgnoreCase(ENROLLED_MYCOURSES_VIEW)) {
@@ -1422,13 +1382,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			    for (MyCoursesItem mci : d.getCurrentMyCoursesItems("enrolled")) {
 			    	// Checking Missing Reporting Field - Start
 			    	try{
-			    			
-		    			//Long courseApprovalId = accreditationService.getCourseApprovalSelected(mci.getEnrollment().getId());
-			    		
 			    		Long courseApprovalId = accreditationService.getCourseApprovalSelected(mci.getEnrollment().getId(), mci.getEnrollment().getLearner().getId(), mci.getEnrollment().getCourse().getCourseGUID());
-		    			
-			    		
-			    		
 		    			if(courseApprovalId !=null && courseApprovalId >0)
 		    			{
 		    				List<CreditReportingField> creditReportingFieldList= new ArrayList<CreditReportingField>(accreditationService.getCreditReportingFieldsByCourseApproval(courseApprovalId));
@@ -1442,11 +1396,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 					    			if (field.isFieldRequired()) {
 										if(creditReportingFieldValueList!=null && !creditReportingFieldValueList.isEmpty()){
 										    for (CreditReportingFieldValue value : creditReportingFieldValueList) {
-										    	System.out.print(value.getReportingCustomField().getId()+"|");
-												if ((value.getReportingCustomField().getId().longValue() == field.getId().longValue())) {
-												    valueFound = true;
-												    //continue CHK_ALL_REPORTING_FIELDS_LOOP;
-												}
+											    valueFound = value.getReportingCustomField().getId().longValue() == field.getId().longValue();
+											    //continue CHK_ALL_REPORTING_FIELDS_LOOP;
 										    }
 										    /* check for static field values */ 
 										    if("STATICCREDITREPORTINGFIELD".equals(field.getFieldType())) {
@@ -1466,7 +1417,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 					    	}
 		    			}
 			    	}catch(Exception e){
-			    		e.printStackTrace();
+			    		log.error(e.getMessage(),e);
 			    	}
 			    	// Checking Missing Reporting Field - End
 			    	
@@ -1476,30 +1427,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 					if(learnerEnrollment.getCourse().getCourseConfigTemplate() !=null){
 					CourseConfiguration courseconfig = accreditationService.getCourseConfigurationByTemplateId(learnerEnrollment.getCourse().getCourseConfigTemplate().getId(),true);
 					
-					if(courseconfig != null){
-						if(courseconfig.getAssessmentConfigurations() != null)
-						{
-							for(AssessmentConfiguration assesmentConfiguration:courseconfig.getAssessmentConfigurations()){
-								if(assesmentConfiguration.getAssessmentType().equals("PostAssessment")){
-									if(assesmentConfiguration.getViewassessmentresultsEnabled()!=null && assesmentConfiguration.getViewassessmentresultsEnabled()){
-										if(getviewAssessmentResults(mci.getEnrollment().getId())){
-											  mci.put("viewAssessmentResults", 1);
-											  mci.setViewAssessmentResults(1);											
-										}
-										else{
-											  mci.put("viewAssessmentResults", 0);
-											  mci.setViewAssessmentResults(0);										
-										}
-		
+					if(courseconfig != null && courseconfig.getAssessmentConfigurations() != null)	{
+						for(AssessmentConfiguration assesmentConfiguration:courseconfig.getAssessmentConfigurations()){
+							if(assesmentConfiguration.getAssessmentType().equals("PostAssessment")){
+								if(assesmentConfiguration.getViewassessmentresultsEnabled()!=null && assesmentConfiguration.getViewassessmentresultsEnabled()){
+									if(getviewAssessmentResults(mci.getEnrollment().getId())){
+										mci.put("viewAssessmentResults", 1);
+										mci.setViewAssessmentResults(1);											
 									}
 									else{
-										  mci.put("viewAssessmentResults", 0);
-										  mci.setViewAssessmentResults(0);									
+										mci.put("viewAssessmentResults", 0);
+										mci.setViewAssessmentResults(0);										
 									}
+								}else{
+									mci.put("viewAssessmentResults", 0);
+									mci.setViewAssessmentResults(0);									
 								}
-								  
 							}
-								
 						}
 					}
 					
@@ -1539,17 +1483,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 					
 					// if course is	already	completed
 					if (courseStatus.equals("completed") || courseStatus.equals("userdeclinedaffidavit") ) { 
-									
-						
-						if(learnerEnrollment.getCourse().getCourseConfigTemplate() != null)
-						{
-							
-							if(courseconfig.getAllowFaceook())
-							{
+						if(learnerEnrollment.getCourse().getCourseConfigTemplate() != null && courseconfig.getAllowFaceook()){
 							  mci.put("allowFacebook", 1);
 							  mci.setAllowFacebook(1);
-							}
-							
 						}
 						if (courseCategoryType.equalsIgnoreCase("Weblink")) {
 							// if it is a weblink course
@@ -1571,49 +1507,32 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	
 					mci.put("syncInProgress", currentlyInSession);
 					mci.put("courseIconToShow",
-						getCourseIconToShow(le, currentlyInSession, mci.get("courseIdKey").toString(), mci.get("courseCategoryType")
-							.toString()));
+						getCourseIconToShow(le, currentlyInSession, mci.get("courseIdKey").toString(), mci.get("courseCategoryType").toString()));
 	
-					// Code by OWS for Stats regarding synchronous
-					// courses
+					// Code by OWS for Stats regarding synchronous courses
 	
 	//              Ticket: LMS-14013 - Synchronous Courses should not be marked Complete at Class End Date or Enrollment End Date automatically
 	//              Change: Commented the below sync. course condition
 					if (courseCategoryType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || courseCategoryType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE) ) {
-	//
 					    LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(le);
 					    newCourseStats.setPercentComplete(this.getPercentCompleteForSyncCourse(le));
-	//				    boolean sendCompletionMail = false;
-					    if (newCourseStats.getPercentComplete() == 100
-						    && /*(!newCourseStats.isCompleted() || !newCourseStats.getStatus().equalsIgnoreCase(LearnerCourseStatistics.COMPLETED))*/!newCourseStats.isCourseCompleted()) {
-	//					newCourseStats.setCompleted(true);
-	//					newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
-	//					newCourseStats.setCompletionDate(new Date());
-	//
-					    	
+					    if (newCourseStats.getPercentComplete() == 100 && !newCourseStats.isCourseCompleted()) {
 						/**
 						 * added by muhammad akif for -- LMS-16163
 						 * for course completion automatic/manual
 						 */
 						    if (le.getSynchronousClass() != null && le.getSynchronousClass().isAutomatic()!=null && le.getSynchronousClass().isAutomatic()){
 								mci.put("courseStatus", LearnerCourseStatistics.COMPLETED);
-			//					sendCompletionMail = true;
 								mci.put("completionPercent", newCourseStats.getPercentComplete());
-			//				    }
-			//				    statsService.saveLearnerCourseStatistics(newCourseStats);
-			//				    if (sendCompletionMail) {
-			//					learnersToBeMailedService.emailCourseCompletionCertificate(le.getId());
 						    }
 					    
 					    }
-	//
 					} else if (courseCategoryType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
 	
 					    LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(le);
 					    newCourseStats.setPercentComplete(this.getPercentCompleteForSyncCourse(le));
 					    boolean sendCompletionMail = false;
-					    if (newCourseStats.getPercentComplete() == 100
-						    && /*(!newCourseStats.isCompleted() || !newCourseStats.getStatus().equalsIgnoreCase(LearnerCourseStatistics.COMPLETED))*/!newCourseStats.isCourseCompleted()) {
+					    if (newCourseStats.getPercentComplete() == 100 && !newCourseStats.isCourseCompleted()) {
 							newCourseStats.setCompleted(true);
 							newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
 		
@@ -1630,7 +1549,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	
 				    }
 				} catch (Exception e) {
-				    log.error("Exception in saving Sync Course Stats: " + e.getMessage());
+				    log.error("Exception in saving Sync Course Stats: " + e.getMessage(),e);
 				}
 			    }
 			}
@@ -1645,7 +1564,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		context.put("viewType", viewType);
 		context.put("search", search);
 		context.put("courseGroupList", courseGroups);
-		// context.put("catalogMap", catalogMap);
 		log.debug("displaying view:" + viewType);
 	
 		return context;
@@ -2295,7 +2213,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 	
     private List<CourseGroupView> courseGroupAndCoursesForView(String search, Learner learner) {
-		List<CustomerEntitlement> customerEntitlements = new ArrayList<CustomerEntitlement>();
+		List<CustomerEntitlement> customerEntitlements = new ArrayList<>();
 		List<CourseGroupView> courseGroups = MyCoursesCourseGroup.generateCourseCatalogView(learner.getId(), customerEntitlements, courseAndCourseGroupService, search);
 		for (CourseGroupView grpView : courseGroups) {
 		    for (CourseView courseView : grpView.getCourses()) {
@@ -2355,144 +2273,106 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		}
     }
 
+    // Cyclomatic Complexity of this method decreased from 49 to 42
     private String getCourseIconToShow(LearnerEnrollment le, boolean currentlyInSession, String strCourseId, String courseType) {
-
-	if (le != null) {
-	    if (le.getSynchronousClass() != null) {
-		if (le.getSynchronousClass().getMeetingType() != null) {
-		    if (currentlyInSession && !le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-			return "lms.pixel.iconOnlineAnimatedSync";
-		    else
-			return "lms.pixel.iconOnlineSync";// virtual classroom
-							  // icon
-		} else {
-		    if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-			return "lms.pixel.dimIconOffineSync";// classroom icon
-
-		    return "lms.pixel.iconOffineSync";
-		}
-
-	    } else if (courseType.equalsIgnoreCase(DiscussionForumCourse.COURSE_TYPE)) {
-		if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-		    return "lms.pixel.dimIconDFC";
-
-		return "lms.pixel.iconDFC";
-	    } else if (courseType.equalsIgnoreCase(WebLinkCourse.COURSE_TYPE)) {
-		if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-		    return "lms.pixel.dimIconWeblink";
-
-		return "lms.pixel.iconWeblink";
-	    } else if (courseType.equalsIgnoreCase(SelfPacedCourse.COURSE_TYPE)) {
-		if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-		    return "lms.pixel.dimIconSelfPaced";
-
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(ScormCourse.COURSE_TYPE)) {
-	    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-	    		return "lms.pixel.dimIconSelfPaced";
-
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(LegacyCourse.COURSE_TYPE)) {
-	    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-	    		return "lms.pixel.dimIconSelfPacedLegacy";
-
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(HomeworkAssignmentCourse.COURSE_TYPE)) {
-	    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-	    		return "lms.pixel.dimHomeworkAssignment";
-
-		return "lms.pixel.homeworkAssignment";
-	    } else if (courseType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
-	    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
-	    		return "lms.pixel.dimInstructorConnect";
-
-		return "lms.pixel.instructorConnect";
-	    }
-	    
-	    // LMS-11223 -- Changed by - Rehan Rana ----   Start   -----
-	    // set the correct Icons for Online and offline Synchronous Courses  
-	    else if (courseType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
-			List<SynchronousClass> syncClasses = new ArrayList<SynchronousClass>();
-			boolean isOnline = false;
-
-			syncClasses = synchronousClassService.getSynchronousClassByCourseId(Long.parseLong(strCourseId));
-			if (syncClasses == null || syncClasses.size() == 0)
-			    return "lms.pixel.iconOnlineGif";
-
-			for (SynchronousClass syncClass : syncClasses) {
-			    if (syncClass.getMeetingType() != null) {// i.e. this is online
-			    	isOnline = true;
-			    	break;
-			    }
-			}
-			syncClasses=null;
-			
-			if (isOnline) return "lms.pixel.iconOnlineSync";
-			else 	      return "lms.pixel.iconOffineSync";
-		}
-	    // LMS-11223 -------   END   ------------
-	    
-	    else // i.e. its a non sync course
-	    {
-	    	return "lms.pixel.iconOnlineGif";// this is true ultimately.
-	    }
-	} else // i.e. this may be for catalog courses since no enrollment
-	{
-	    // Now check if this course has any sync class associated with it
-	    if (courseType == null) {
-		return "lms.pixel.iconOnlineGif";
-	    } else if (courseType.equalsIgnoreCase(DiscussionForumCourse.COURSE_TYPE)) {
-		return "lms.pixel.iconDFC";
-	    } else if (courseType.equalsIgnoreCase(WebLinkCourse.COURSE_TYPE)) {
-		return "lms.pixel.iconWeblink";
-	    } else if (courseType.equalsIgnoreCase(SelfPacedCourse.COURSE_TYPE)) {
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(ScormCourse.COURSE_TYPE)) {
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(LegacyCourse.COURSE_TYPE)) {
-		return "lms.pixel.iconSelfPaced";
-	    } else if (courseType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE) ) {
-		List<SynchronousClass> syncClasses = new ArrayList<SynchronousClass>();
-		boolean isOnline = false;
-
-		syncClasses = synchronousClassService.getSynchronousClassByCourseId(Long.parseLong(strCourseId));
-		if (syncClasses == null || syncClasses.size() == 0)
-		    return "lms.pixel.iconOnlineGif";
-
-		for (SynchronousClass syncClass : syncClasses) {
-		    if (syncClass.getMeetingType() != null) {// i.e. this is online
-				isOnline = true;
-				break;
-		    }
-		}
-		if (isOnline)
-		    return "lms.pixel.iconOnlineSync";
-		else
-		    return "lms.pixel.iconOffineSync";
-	    } else if (courseType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
-			List<SynchronousClass> syncClasses = new ArrayList<SynchronousClass>();
-			boolean isOnline = false;
-			syncClasses = synchronousClassService.getSynchronousClassByCourseId(Long.parseLong(strCourseId));
-			if (syncClasses == null || syncClasses.size() == 0)
-			    return "lms.pixel.iconOnlineGif";
+		if (le != null) {
+		    if (le.getSynchronousClass() != null) {
+				if (le.getSynchronousClass().getMeetingType() != null) {
+				    if (currentlyInSession && !le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+				    	return "lms.pixel.iconOnlineAnimatedSync";
+				    else
+				    	return "lms.pixel.iconOnlineSync";// virtual classroom icon
+				} else {
+				    if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+				    	return "lms.pixel.dimIconOffineSync";// classroom icon
+		
+				    return "lms.pixel.iconOffineSync";
+				}
 	
-			for (SynchronousClass syncClass : syncClasses) {
-			    if (syncClass.getMeetingType() != null) {// i.e. this is online
-					isOnline = true;
-					break;
-			    }
-			}
-			if (isOnline)
-			    return "lms.pixel.iconOnlineSync";
-			else
-			    return "lms.pixel.iconOffineSync";
+		    } else if (courseType.equalsIgnoreCase(DiscussionForumCourse.COURSE_TYPE)) {
+				if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+				    return "lms.pixel.dimIconDFC";
+		
+				return "lms.pixel.iconDFC";
 		    } else if (courseType.equalsIgnoreCase(WebLinkCourse.COURSE_TYPE)) {
-		    	return "lms.pixel.iconWeblink";
+				if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+				    return "lms.pixel.dimIconWeblink";
+		
+				return "lms.pixel.iconWeblink";
+		    } else if (courseType.equalsIgnoreCase(SelfPacedCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(ScormCourse.COURSE_TYPE)) {
+				if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+		    		return "lms.pixel.dimIconSelfPaced";
+		
+				return "lms.pixel.iconSelfPaced";
+		    } else if (courseType.equalsIgnoreCase(LegacyCourse.COURSE_TYPE)) {
+		    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+		    		return "lms.pixel.dimIconSelfPacedLegacy";
+	
+		    	return "lms.pixel.iconSelfPaced";
+		    } else if (courseType.equalsIgnoreCase(HomeworkAssignmentCourse.COURSE_TYPE)) {
+		    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+		    		return "lms.pixel.dimHomeworkAssignment";
+	
+		    	return "lms.pixel.homeworkAssignment";
+		    } else if (courseType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
+		    	if (le.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.EXPIRED))
+		    		return "lms.pixel.dimInstructorConnect";
+	
+		    	return "lms.pixel.instructorConnect";
+		    }
+		    // LMS-11223 -- Changed by - Rehan Rana ----   Start   -----
+		    // set the correct Icons for Online and offline Synchronous Courses  
+		    else if (courseType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
+				boolean isOnline = false;
+				List<SynchronousClass> syncClasses = synchronousClassService.getSynchronousClassByCourseId(Long.parseLong(strCourseId));
+				if (syncClasses == null || syncClasses.isEmpty())
+				    return "lms.pixel.iconOnlineGif";
+	
+				for (SynchronousClass syncClass : syncClasses) {
+				    if (syncClass.getMeetingType() != null) {// i.e. this is online
+				    	isOnline = true;
+				    	break;
+				    }
+				}
+				
+				return isOnline? "lms.pixel.iconOnlineSync" : "lms.pixel.iconOffineSync";
+			}
+		    // LMS-11223 -------   END   ------------
+		    else{ // i.e. its a non sync course
+		    	return "lms.pixel.iconOnlineGif";// this is true ultimately.
+		    }
+		} else {// i.e. this may be for catalog courses since no enrollment
+		    // Now check if this course has any sync class associated with it
+		    if (courseType == null) {
+		    	return "lms.pixel.iconOnlineGif";
+		    } else if (courseType.equalsIgnoreCase(DiscussionForumCourse.COURSE_TYPE)) {
+		    	return "lms.pixel.iconDFC";
 		    } else if (courseType.equalsIgnoreCase(HomeworkAssignmentCourse.COURSE_TYPE)) {
 		    	return "lms.pixel.homeworkAssignment";
-		    } else {
-		    	return "lms.pixel.iconOnlineGif";
+		    } else if (courseType.equalsIgnoreCase(WebLinkCourse.COURSE_TYPE)) {
+		    	return "lms.pixel.iconWeblink";
+		    } else if (courseType.equalsIgnoreCase(SelfPacedCourse.COURSE_TYPE) 
+		    		|| courseType.equalsIgnoreCase(ScormCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(LegacyCourse.COURSE_TYPE)) {
+		    	return "lms.pixel.iconSelfPaced";
+		    } else if (courseType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || courseType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE) 
+		    		|| courseType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
+				boolean isOnline = false;
+				List<SynchronousClass> syncClasses = synchronousClassService.getSynchronousClassByCourseId(Long.parseLong(strCourseId));
+				if (syncClasses == null || syncClasses.isEmpty())
+				    return "lms.pixel.iconOnlineGif";
+		
+				for (SynchronousClass syncClass : syncClasses) {
+				    if (syncClass.getMeetingType() != null) {// i.e. this is online
+						isOnline = true;
+						break;
+				    }
+				}
+				if (isOnline)
+				    return "lms.pixel.iconOnlineSync";
+				else
+				    return "lms.pixel.iconOffineSync";
 		    }
+		    return "lms.pixel.iconOnlineGif";
 		}
     }
 

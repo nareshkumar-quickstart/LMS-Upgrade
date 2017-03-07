@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -22,7 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import com.softech.vu360.lms.model.Course;
-//import com.softech.vu360.lms.model.CourseCompletionCriteria;
 import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.Learner;
@@ -48,7 +50,6 @@ import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.vo.SubscriptionVO;
 import com.softech.vu360.lms.web.controller.model.AvailableCoursesTree;
-import com.softech.vu360.lms.web.controller.model.CourseGroupView;
 import com.softech.vu360.lms.web.controller.model.CourseView;
 import com.softech.vu360.lms.web.controller.model.MyCoursesItem;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
@@ -57,9 +58,6 @@ import com.softech.vu360.util.Brander;
 import com.softech.vu360.util.LabelBean;
 import com.softech.vu360.util.VU360Branding;
 import com.softech.vu360.util.VU360Properties;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * The controller for the learner course display page.
@@ -81,7 +79,8 @@ InitializingBean {
 	public static final String COURSES_ABOUT_TO_EXPIRED_MYCOURSES_VIEW = "coursesAboutToExpire";
 	private static final String MANAGE_USER_PREVPAGE_DIRECTION = "prev";
 	private static final String MANAGE_USER_NEXTPAGE_DIRECTION = "next";
-	
+	private static final String STR_SEARCH = "search";
+	private static final String STR_CONTEXT = "context";
 	
 	private static final Logger log = Logger.getLogger(MyCoursesController.class.getName());
 	private String myCoursesTemplate = null;
@@ -102,7 +101,6 @@ InitializingBean {
 	private String courseDescriptionTemplate = null;
 	private String launchTemplate=null;
 	private String mySurveysTemplate=null;
-	//private String bckLID = null;
 
 	// templates to handle un-enrolled courses templates 
 	private String catalogCourseDetailsTemplate = null;
@@ -167,278 +165,163 @@ InitializingBean {
  
 		/**
 		 * This has been implemented for CAS
-		 * If authenticated user is a Manager,
-		 * and coming directly on this page
-		 * system will switch him to Learner
-		 * mode
+		 * If authenticated user is a Manager, and coming directly on this page
+		 * system will switch him to Learner mode
 		 */
 		try {
 			VU360UserAuthenticationDetails authUserdetails = (VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
 			if(!authUserdetails.getCurrentMode().equals(VU360UserMode.ROLE_LEARNER)) {
+				log.debug("Implemented for CAS, redirecting to Learner mode");
 				return new ModelAndView("redirect:mgrSwitchLearnerMode.do?managerSwitchLearnerModeTargetURL=" + request.getRequestURI().replace("/lms", "") + "?" + request.getQueryString());
 			}
 		} catch(Exception ex) {
-			log.error(ex.getStackTrace());
+			log.error(ex.getMessage(),ex);
+		}
+
+		log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~ Start Time (displayMyCourses):"+new Timestamp(System.currentTimeMillis()));
+		
+		String strViewType = request.getParameter("show");
+		String search= request.getParameter(STR_SEARCH);
+		Boolean isFirstTimeView = Boolean.FALSE;
+		
+		if (StringUtils.isBlank(strViewType)) {
+			strViewType = RECENT_MYCOURSES_VIEW; // the default view
+			isFirstTimeView=Boolean.TRUE;
 		}
 		
-		String viewType = request.getParameter("show");
-		String search= request.getParameter("search");
-		String courseGroupId = request.getParameter("courseGroupId");
-		String trainingPlanId = request.getParameter("trainingPlanId");
-		String subscription = request.getParameter("subscription");
-		String selSubscriptionId  = request.getParameter("selSubscription");
-		Boolean isFirstTimeView = false;
-		
-		if (viewType == null || viewType.trim().equalsIgnoreCase("")) {
-			viewType = RECENT_MYCOURSES_VIEW; // the default view
-			isFirstTimeView=true;
-		}
-		
-		if (viewType.equalsIgnoreCase(SURVEY_MYCOURSES_VIEW)) {
+		if (SURVEY_MYCOURSES_VIEW.equalsIgnoreCase(strViewType)) {
 			return new ModelAndView(mySurveysTemplate);
 		}
-		if (viewType.equals("coursecatalog")){
-			log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~ Start Time (Processing):"+new Timestamp(System.currentTimeMillis()));
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext()
-			.getAuthentication().getPrincipal();
-			//log.debug(user == null ? "User null" : " learnerId="
-			//	+ user.getLearner());
+		
+		com.softech.vu360.lms.vo.VU360User userVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		if (COURSECATALOG_MYCOURSES_VIEW.equals(strViewType)){
 			Learner learner = new Learner();
-			learner.setId(user.getLearner().getId());
+			learner.setId(userVO.getLearner().getId());
 			
-			Map<Object, Object> context = new HashMap<Object, Object>();
+			Map<Object, Object> context = new HashMap<>();
 
 			// SWITCH BETWEEN THESE TWO FOR TEST VS LIVE DATA.
 			AvailableCoursesTree myCoursesTree = enrollmentService.getAvailableCoursesTree(learner, search);
-			//AvailableCoursesTree myCoursesTree = new AvailableCoursesTree(testMap);
-
 			myCoursesTree.build();
 			JSONObject rootNodesJSON = myCoursesTree.generateAllNodesJSON();
 
 			context.put("gJON", rootNodesJSON);
-			context.put("viewType", "coursecatalog");
+			context.put("viewType", COURSECATALOG_MYCOURSES_VIEW);
 			log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~ Completion Time (Dispatching):"+new Timestamp(System.currentTimeMillis()));
-			return new ModelAndView(myCoursesTemplate, "context", context);
-			
+			return new ModelAndView(myCoursesTemplate, STR_CONTEXT, context);
 		}
-		if (viewType.equals("subscription")){
-			log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~ Start Time (Processing):"+new Timestamp(System.currentTimeMillis()));
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			com.softech.vu360.lms.vo.Learner learner = user.getLearner();
+		
+		if ("subscription".equals(strViewType)){
+			com.softech.vu360.lms.vo.Learner learner = userVO.getLearner();
 			
 			String direction = request.getParameter("direction");
 			String pageIndex = request.getParameter("pageIndex");
 			String subscriptionId = request.getParameter("cboSubscription");
-			String coursesearch = request.getParameter("courseName");
-			String courseseName = request.getParameter("courseSearch");
-			String subId =  request.getParameter("selSubscription");
-			String totalRecord = null ;
+			String coursesearch = request.getParameter("courseSearch");
+			String selSubscription =  request.getParameter("selSubscription");
+			int totalRecords;
 			String seletctedSubId = null;
 			boolean subUser = false;
 			
-			int iSearchStart = 0;
-			int iSearchEnd = 0;
+			int iSearchStart;
+			int iSearchEnd;
 			
 			HttpSession session = request.getSession();
 			
 			direction = ( direction == null ) ? MANAGE_USER_PREVPAGE_DIRECTION : direction;
 			pageIndex = ( pageIndex == null ) ? "0" : pageIndex;
 			
-			Map<Object, Object> context = new HashMap<Object, Object>();
+			Map<Object, Object> context = new HashMap<>();
 			
-			if(courseseName != null )
-			{
-				coursesearch = courseseName;
-				log.debug("~~~~~~~~~~~~~~~~~~~~~~~~~~ Searched Course Name:"+ courseseName);
+			if(coursesearch== null ){
+				coursesearch = request.getParameter("courseName");
 			}
-			if(subId != null)
-			{
-				if(subId.length() > 0)
-				subscriptionId = subId;
-				else if(session.getAttribute("subId") != null)
-				{
-					if(session.getAttribute("subId").toString().length() > 0)
-						subscriptionId = session.getAttribute("subId").toString();
-				}
-			}
-			else if(session.getAttribute("subId") != null)
-			{
-				if(session.getAttribute("subId").toString().length() > 0)
-					subscriptionId = session.getAttribute("subId").toString();
+			log.debug("Searched Course:"+ coursesearch);
+			
+			if(StringUtils.isNotBlank(selSubscription))	{
+				subscriptionId = selSubscription;
+				session.setAttribute("subId", selSubscription);
+			}else if(session.getAttribute("subId")!=null && session.getAttribute("subId").toString().length() > 0){
+				subscriptionId = session.getAttribute("subId").toString();
 			}
 			
-			List<SubscriptionVO> lstSubscriptionVO = new ArrayList<SubscriptionVO>();
+			List<SubscriptionVO> lstSubscriptionVO = new ArrayList<>();
 			
 			if(subscriptionId != null)
 			{
 				seletctedSubId =    subscriptionId;
 				lstSubscriptionVO = subscriptionService.getUserSubscriptionCourses(learner.getId(), learner.getVu360User().getId(),Long.parseLong(subscriptionId),coursesearch);
 				subUser = true;
+			}else{
+				if(subscriptionService.getUserSubscriptions(learner.getVu360User().getId()) != null 
+						&& !subscriptionService.getUserSubscriptions(learner.getVu360User().getId()).isEmpty()){
+					seletctedSubId = subscriptionService.getUserSubscriptions(learner.getVu360User().getId()).get(0).getSubscriptionId();
+					lstSubscriptionVO = subscriptionService.getUserSubscriptionCourses(learner.getId(), learner.getVu360User().getId(),Long.parseLong(seletctedSubId),coursesearch);
+					subUser = true;
+				}
 			}
+	
+			totalRecords =	lstSubscriptionVO.isEmpty()?-1: lstSubscriptionVO.size();
+			int pageNo = 0;
+			int recordShowing = 0;
+			
+			if( direction.equalsIgnoreCase(MANAGE_USER_PREVPAGE_DIRECTION) ) {
+				pageNo = (pageIndex.isEmpty())?0:Integer.parseInt(pageIndex);
+				pageNo = (pageNo <= 0)?0:pageNo-1;
+				session.setAttribute("prevAction","paging");
+			}else if( direction.equalsIgnoreCase(MANAGE_USER_NEXTPAGE_DIRECTION) ) {
+				pageIndex = request.getParameter("pageIndex");
+				pageNo = (pageIndex.isEmpty())?0:Integer.parseInt(pageIndex);
+				pageNo = (pageNo<0)?0:pageNo+1;
+				session.setAttribute("prevAction","paging");
+			}
+			
+			if (lstSubscriptionVO.size() <= 10)
+				iSearchEnd = lstSubscriptionVO.size() - 1;
 			else
-				{
-				  if(subscriptionService.getUserSubscriptions(learner.getVu360User().getId()) != null)
-				  {
-				    if(subscriptionService.getUserSubscriptions(learner.getVu360User().getId()).size() > 0)
-				    {
-						seletctedSubId = subscriptionService.getUserSubscriptions(learner.getVu360User().getId()).get(0).getSubscriptionId();
-						lstSubscriptionVO = subscriptionService.getUserSubscriptionCourses(learner.getId(), learner.getVu360User().getId(),Long.parseLong(seletctedSubId),coursesearch);
-						subUser = true;
-				    }
-				    else
-				    {
-				    	subUser = false;
-				    }
-				  }
-				}
+				iSearchEnd = 9;
 			
-			/*
+        	iSearchStart= 0;
+			session.setAttribute("pageNo", pageNo);
+			session.setAttribute("direction", direction);
+			session.setAttribute("selectedSubscription", direction);
+			if(coursesearch != null)
+				session.setAttribute("coursesearch", coursesearch);	
 			
-			if(sessionLSTSub.getAttribute("sessionLSTSub")==null){
-				//List<Subscription>  lstSubscription = enrollmentService.getSubscriptionLearnerAssignments(learner.getVu360User().getId());
-				if(subscriptionId != null)
-				   lstSubscriptionVO = subscriptionService.getUserSubscriptionCourses(learner.getId(), learner.getVu360User().getId(),Long.parseLong(subscriptionId));
-				else
-				{
-					String seletctedSubId = subscriptionService.getUserSubscriptions(learner.getVu360User().getId()).get(0).getSubscriptionId();
-					lstSubscriptionVO = subscriptionService.getUserSubscriptionCourses(learner.getId(), learner.getVu360User().getId(),Long.parseLong(seletctedSubId));
-				}
-				selectedSubscriptionId = lstSubscriptionVO.get(0).getSubscriptionId();
-				totalRecord =	(lstSubscriptionVO==null || lstSubscriptionVO.size()<=0)?"-1": lstSubscriptionVO.size() +"";
-				sessionLSTSub.setAttribute("sessionLSTSub",lstSubscriptionVO);
-				lstSubscriptionVO = null;
-			}
+			context.put("viewType", strViewType);//"subscription"
+			context.put("cbosubscription", subscriptionService.getUserSubscriptions(learner.getVu360User().getId()));
+			context.put("isSubUser", subUser);
+			context.put("lstSubscription", lstSubscriptionVO);
+			context.put("totalRecord", totalRecords);
+			context.put("recordShowing", recordShowing);
+			context.put("pageNo", session.getAttribute("pageNo"));
+			context.put("direction", direction);
+			context.put("Search Start",iSearchStart);
+			context.put("Search End", iSearchEnd);
+			context.put("subscriptionId", seletctedSubId);
+			context.put("coursesearch", session.getAttribute("coursesearch"));
 			
-			if(subscriptionId==null){
-				if( sessionLSTSub.getAttribute("sessionLSTSub") == null || ((List<SubscriptionVO>)sessionLSTSub.getAttribute("sessionLSTSub")).size()==0)
-					return new ModelAndView(myCoursesTemplate, "context", context);
-				  lstSubscriptionVO = (List<SubscriptionVO>) sessionLSTSub.getAttribute("sessionLSTSub");
-				totalRecord =	(lstSubscriptionVO==null || lstSubscriptionVO.size()<=0)?"-1": lstSubscriptionVO.size() +"";
-				subscriptionId = lstSubscriptionVO.get(0).getSubscriptionId() + "";
-			}	
-			
-			if(sessionLSTSub.getAttribute("sessionLSTSub")!=null){
-				lstSubscriptionVO = (List<SubscriptionVO>) sessionLSTSub.getAttribute("sessionLSTSub");
-				selectedSubscriptionId = lstSubscriptionVO.get(0).getSubscriptionId();
-				totalRecord =	(lstSubscriptionVO==null || lstSubscriptionVO.size()<=0)?"-1": lstSubscriptionVO.size() +"";
-				
-			}
-			*/
-			/*
-			if(StringUtils.isEmpty(coursesearch) )
-			{
-				selSubscription = subscriptionService.loadSubscriptionById(Long.parseLong(subscriptionId));
-			}
-			*/
-			//else
-			//selSubscription = subscriptionService.searchsubscriptioncourse(Long.parseLong(subscriptionId),coursesearch);
-			//if(lstSubscription != null){
-			//	if(subscriptionId != null)
-			//	{
-			//		for(Subscription subs : lstSubscription)
-			//		{	
-			//			if(subscriptionId.equals(subs.getId().toString()))
-			//			{
-			//				selSubscription = subs;
-			//			}
-			//		}
-			//	}
-				//else
-				//	selSubscription = lstSubscription.get(0);
-		        
-			
-			totalRecord =	(lstSubscriptionVO==null || lstSubscriptionVO.size()<=0)?"-1": lstSubscriptionVO.size() +"";
-					
-				int pageNo = 0;
-				int recordShowing = 0;
-				
-					
-				
-		
-					if( direction.equalsIgnoreCase(MANAGE_USER_PREVPAGE_DIRECTION) ) {
-		
-					pageNo = (pageIndex.isEmpty())?0:Integer.parseInt(pageIndex);
-					pageNo = (pageNo <= 0)?0:pageNo-1;
-					session.setAttribute("prevAction","paging");
-		
-					}else if( direction.equalsIgnoreCase(MANAGE_USER_NEXTPAGE_DIRECTION) ) {
-		
-					pageIndex = request.getParameter("pageIndex");
-					pageNo = (pageIndex.isEmpty())?0:Integer.parseInt(pageIndex);
-					pageNo = (pageNo<0)?0:pageNo+1;
-					session.setAttribute("prevAction","paging");
-					}
-					
-					 if (lstSubscriptionVO.size() <= 10)
-						 iSearchEnd = lstSubscriptionVO.size() - 1;
-			         else
-			        	iSearchEnd = 9;
-			        	iSearchStart= 0;
-					
-					/*
-					if( !lstSubscription.isEmpty() )
-						recordShowing = ((Integer)userList.size()<MANAGE_USER_PAGE_SIZE)?Integer.parseInt(results.get("recordSize").toString()):(Integer.parseInt(session.getAttribute("pageNo").toString())+1)*MANAGE_USER_PAGE_SIZE;
-					*/
-					session.setAttribute("pageNo", pageNo);
-					session.setAttribute("direction", direction);
-					session.setAttribute("selectedSubscription", direction);
-					if(coursesearch != null)
-						session.setAttribute("coursesearch", coursesearch);	
-					if(subId != null)
-					{
-						if(subId.length() > 0)
-						session.setAttribute("subId", subId);
-					}
-					
-					
-					context.put("viewType", "subscription");
-					context.put("cbosubscription", subscriptionService.getUserSubscriptions(learner.getVu360User().getId()));
-					context.put("isSubUser", subUser);
-					//context.put("subscription", selSubscription);
-					context.put("lstSubscription", lstSubscriptionVO);
-					context.put("totalRecord", Integer.parseInt(totalRecord));
-					context.put("recordShowing", recordShowing);
-					context.put("pageNo", session.getAttribute("pageNo"));
-					context.put("direction", direction);
-					context.put("Search Start",iSearchStart);
-					context.put("Search End", iSearchEnd);
-					context.put("subscriptionId", seletctedSubId);
-					context.put("coursesearch", session.getAttribute("coursesearch"));
-			
-					
-			//}
-			
-			return new ModelAndView(myCoursesTemplate, "context", context);
+			return new ModelAndView(myCoursesTemplate, STR_CONTEXT, context);
 			
 		}
 		try {
 			
-			List<CourseGroupView> courseGroups=new ArrayList<CourseGroupView>();
-			List sortedCourseGroups=new ArrayList();
 			List<MyCoursesItem> filteredMyCourses = null;
 			
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext()
-			.getAuthentication().getPrincipal();
-			//log.debug(user == null ? "User null" : " learnerId="
-				//+ user.getLearner());
-			
-			Brander brand = VU360Branding.getInstance()
-					.getBrander((String) request.getSession().getAttribute(VU360Branding.BRAND), new Language());
-			
 			Learner learnerModel = new Learner();
-			learnerModel.setId(user.getLearner().getId());
+			learnerModel.setId(userVO.getLearner().getId());
 			
 			LearnerProfile learnerProfileModel = new LearnerProfile();
-			learnerProfileModel.setId(user.getLearner().getLearnerProfile().getId());
+			learnerProfileModel.setId(userVO.getLearner().getLearnerProfile().getId());
 			
-			if(user.getLearner().getLearnerProfile().getTimeZone() != null) {
-			TimeZone learnerTimeZone = new TimeZone();
-				learnerTimeZone.setId(user.getLearner().getLearnerProfile().getTimeZone().getId());
-				learnerTimeZone.setCode(user.getLearner().getLearnerProfile().getTimeZone().getCode());
-				learnerTimeZone.setHours(user.getLearner().getLearnerProfile().getTimeZone().getHours());
-				learnerTimeZone.setMinutes(user.getLearner().getLearnerProfile().getTimeZone().getMinutes());
-				learnerTimeZone.setZone(user.getLearner().getLearnerProfile().getTimeZone().getZone());
-				
+			if(userVO.getLearner().getLearnerProfile().getTimeZone() != null) {
+				TimeZone learnerTimeZone = new TimeZone();
+				learnerTimeZone.setId(userVO.getLearner().getLearnerProfile().getTimeZone().getId());
+				learnerTimeZone.setCode(userVO.getLearner().getLearnerProfile().getTimeZone().getCode());
+				learnerTimeZone.setHours(userVO.getLearner().getLearnerProfile().getTimeZone().getHours());
+				learnerTimeZone.setMinutes(userVO.getLearner().getLearnerProfile().getTimeZone().getMinutes());
+				learnerTimeZone.setZone(userVO.getLearner().getLearnerProfile().getTimeZone().getZone());
 				learnerProfileModel.setTimeZone(learnerTimeZone);
 			}
 			learnerModel.setLearnerProfile(learnerProfileModel);
@@ -452,21 +335,20 @@ InitializingBean {
 			 */
 			enrollmentService.updateAutoSynchronousCourseStatus(learnerModel);
 			
-			Map<Object, Object> context = enrollmentService.displayMyCourses(vu360UserModel, brand, courseGroups, filteredMyCourses, sortedCourseGroups, viewType, search, isFirstTimeView);
+			Brander brand = VU360Branding.getInstance().getBrander((String) request.getSession().getAttribute(VU360Branding.BRAND), new Language());
+			Map<Object, Object> context = enrollmentService.displayMyCourses(vu360UserModel, brand, new ArrayList<>(), filteredMyCourses, new ArrayList<>(), strViewType, search, isFirstTimeView);
 			
-			context.put("show", viewType);
-			context.put("search", search);
+			context.put("show", strViewType);
+			context.put(STR_SEARCH, search);
 			
 			
 			String lmsDomain=VU360Properties.getVU360Property("lms.domain");
 			context.put("lmsDomain",lmsDomain);
-			context.put("lguid", user.getUserGUID()); //LMS-19305
-			
-			
-			log.debug("HERE");
-			return new ModelAndView(myCoursesTemplate, "context", context);
+			context.put("lguid", userVO.getUserGUID()); //LMS-19305
+			log.debug("learner guid>>"+userVO.getUserGUID());
+			return new ModelAndView(myCoursesTemplate, STR_CONTEXT, context);
 		} catch (Exception e) {
-			log.debug("exception", e);
+			log.error(e.getMessage(), e);
 		}
 		
 		return new ModelAndView(myCoursesTemplate);
@@ -477,30 +359,16 @@ InitializingBean {
 	/*
 	 * Niles Testing
 	 */
-	@SuppressWarnings("unchecked")
 	public ModelAndView displayMyCoursesOverlay(HttpServletRequest request, HttpServletResponse response) {
- 
-
 		try {
-			
-			//VU360User user = (VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			//log.debug(user == null ? "User null" : " learnerId = "+ user.getLearner());
-			//Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());	
-			
 			String courseId = request.getParameter("courseId");
 			String courseGroupId = request.getParameter("courseGroupId"); 
-			
-			//String learnerEnrollmentID = request.getParameter("learnerEnrollmentId");
-			
-			
-			
 			Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
 			String courseGUID = course.getCourseGUID();
 			String courseIdStr=course.getBussinesskey(); //LMS-11993
 			String courseTitle = course.getCourseTitle();
 			String courseType = course.getCourseType();
 			String courseCreditHours = course.getCredithour();
-		
 			String coursePath = null;
 			if(courseGroupId != null && !courseGroupId.trim().equals("")){
 				coursePath = entitlementService.getCoursePathToCourseGroup(Integer.valueOf(courseGroupId));
@@ -544,14 +412,7 @@ InitializingBean {
 			if(course.getCeus()!=null){
 				courseDuration = course.getCeus();
 			}
-
-			//log.debug(learnerEnrollmentID == null ? "learnerEnrollmentID null" : " learnerEnrollmentID=" + learnerEnrollmentID);
-			
-			//Map<Object, Object> context = enrollmentService.displayCourseDetailsPage(learnerEnrollmentID, crntEnrollmentId, user, activeTab, viewType, selEnrollmentPeriod, brand);
-			
-			
 			log.debug("courseGUID " + courseGUID);
-			
 			
 			JSONObject courseDetailsJSON = new JSONObject();
 			courseDetailsJSON.put("courseGUID", courseGUID);
@@ -585,11 +446,11 @@ InitializingBean {
 			pw.flush();
 			pw.close();
 		} catch (IOException e) {
-			log.debug("IOException", e);
+			log.error(e.getMessage(), e);
 		}  catch (IllegalStateException e) {
-			log.debug("IllegalStateException", e);
+			log.error(e.getMessage(), e);
 		} catch (Exception e) {
-			log.debug("exception", e);
+			log.error(e.getMessage(), e);
 		}
 		return null;
 		
@@ -668,7 +529,7 @@ InitializingBean {
 
 					
 					
-			return new ModelAndView(courseDetailsTemplate, "context", context);
+			return new ModelAndView(courseDetailsTemplate, STR_CONTEXT, context);
 				
 			
 		} 
@@ -745,7 +606,7 @@ InitializingBean {
 			context.put("courseCompletionCriteria", courseCompletionCriteria);
 			context.put("userName", user.getFirstName() + " " + user.getLastName());
 
-			return new ModelAndView(courseCompletionReportTemplate, "context", context);
+			return new ModelAndView(courseCompletionReportTemplate, STR_CONTEXT, context);
 
 		}
 		catch (Exception e) {
@@ -775,7 +636,7 @@ InitializingBean {
 			vu360UserModel.setLastName(user.getLastName());
 			Map<Object, Object> context = enrollmentService.displayCourseSampleCompletionReport(vu360UserModel, courseId, viewType);
 
-			return new ModelAndView( catalogCourseCompletionReportTemplate, "context", context);
+			return new ModelAndView( catalogCourseCompletionReportTemplate, STR_CONTEXT, context);
 
 		}
 		catch (Exception e) {
@@ -851,7 +712,7 @@ InitializingBean {
 				log.debug("exception", subException);
 			}
 			//-- end
-			return new ModelAndView(courseDescriptionTemplate, "context",context);
+			return new ModelAndView(courseDescriptionTemplate, STR_CONTEXT,context);
 		} catch (Exception e) {
 			log.debug("exception", e);
 		}
@@ -865,37 +726,26 @@ InitializingBean {
 			log.debug(user == null ? "User null" : " learnerId=" + user.getLearner());
 
 			String courseId = request.getParameter("courseId");
-            //String approvedCreditHours = null;
-			// construct a context for the velocity to use.
-
 			/*
 			 * Can a course description be available to a learner who is not entitled to get it?
 			 */
-			Map<Object, Object> context = new HashMap<Object, Object>();
+			Map<Object, Object> context = new HashMap<>();
 			Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
 
 			CourseApproval objCourseApproval = accreditationService.getCourseApprovalByCourse(course);
 			
-			if(objCourseApproval!=null && objCourseApproval.getApprovedCreditHours()!=null && StringUtils.isNotBlank(objCourseApproval.getApprovedCreditHours())){
+			if(objCourseApproval!=null && objCourseApproval.getApprovedCreditHours()!=null && StringUtils.isNotBlank(objCourseApproval.getApprovedCreditHours())
+					&& Double.parseDouble(objCourseApproval.getApprovedCreditHours())>0){
 				
-				if(Double.parseDouble(objCourseApproval.getApprovedCreditHours())>0)
-					context.put("CourseApprovalCreditHours",  objCourseApproval.getApprovedCreditHours());
-				/*
-				else if(course.getCredithour()!=null && StringUtils.isNotBlank(course.getCredithour()) && Double.parseDouble(course.getCredithour())>0) 
-					context.put("aprovedCreditHours",  course.getCredithour());
-				else
-					context.put("aprovedCreditHours",  course.getCeus());
-				*/
-				
+				context.put("CourseApprovalCreditHours",  objCourseApproval.getApprovedCreditHours());
+			}
+			context.put("course", course);
+			if (user != null){
+				context.put("userName", user.getFirstName() + " " + user.getLastName());
 			}
 			
-			
-			
-			context.put("course", course);
-			context.put("userName", user.getFirstName() + " " + user.getLastName());
-			
 
-			return new ModelAndView(courseDescriptionTemplate, "context",context);
+			return new ModelAndView(courseDescriptionTemplate, STR_CONTEXT,context);
 		} catch (Exception e) {
 			log.debug("exception", e);
 		}
@@ -931,7 +781,7 @@ InitializingBean {
 			context.put("userName", user.getFirstName() + " "
 					+ user.getLastName());
 
-			return new ModelAndView(catalogCourseDescriptionTemplate, "context",
+			return new ModelAndView(catalogCourseDescriptionTemplate, STR_CONTEXT,
 					context);
 		} catch (Exception e) {
 			log.debug("exception", e);
@@ -955,7 +805,7 @@ InitializingBean {
 			vu360UserModel.setLastName(user.getLastName());
 			Map<Object, Object> context = enrollmentService.displayCourseSampleDetails(vu360UserModel, courseId, viewType);
 
-			return new ModelAndView(catalogCourseDetailsTemplate, "context",context);
+			return new ModelAndView(catalogCourseDetailsTemplate, STR_CONTEXT,context);
 		} catch (Exception e) {
 			log.debug("exception", e);
 		}
@@ -975,7 +825,7 @@ InitializingBean {
 			Map<Object, Object> context = enrollmentService.displayScheduleToEnroll(vu360UserService.getUserById(user.getId()), brand, courseId, viewType);
 			
 
-			return new ModelAndView(scheduleToEnrollTemplate, "context",
+			return new ModelAndView(scheduleToEnrollTemplate, STR_CONTEXT,
 					context);
 		} catch (Exception e) {
 			log.debug("exception", e);
@@ -1002,7 +852,7 @@ InitializingBean {
 			context.put("viewAssessmentResultsURL",viewAssessmentResultsURL+enrollmentId);
 			
 			
-			return new ModelAndView(viewAssessmentTemplate, "context", context);
+			return new ModelAndView(viewAssessmentTemplate, STR_CONTEXT, context);
 
 		} catch (Exception e) {
 			log.debug("exception", e);
@@ -1017,7 +867,7 @@ InitializingBean {
 
 		try {
 
-			return new ModelAndView(syncCourseDetailsTemplate, "context", null);
+			return new ModelAndView(syncCourseDetailsTemplate, STR_CONTEXT, null);
 
 		} catch (Exception e) {
 			log.debug("exception", e);
@@ -1051,12 +901,12 @@ InitializingBean {
 			Map<Object, Object> context = enrollmentService.displayViewSchedule(vu360UserService.getUserById(user.getId()), brand, courseId, learnerEnrollmentID);
 			
 			String viewType = request.getParameter("show")!=null ? request.getParameter("show") : "";
-			String search= request.getParameter("search")!=null ? request.getParameter("search") : "";
+			String search= request.getParameter(STR_SEARCH)!=null ? request.getParameter(STR_SEARCH) : "";
 			
 			context.put("show", viewType);
-			context.put("search", search);
+			context.put(STR_SEARCH, search);
 			
-			return new ModelAndView(viewScheduleTemplate, "context",
+			return new ModelAndView(viewScheduleTemplate, STR_CONTEXT,
 					context);
 		} catch (Exception e) {
 			log.debug("exception", e);
@@ -1088,29 +938,10 @@ InitializingBean {
 			
 			JSONObject courseViewJSON = new JSONObject();
 
-			//CourseView courseView,courseView1 = null;   
 			Map<Object,Object> map = new HashMap<Object,Object>();
 			List<CourseView> lstCourseViews = new ArrayList<CourseView>();
 			JSONArray jsonArray = null;
 			try{
-				/*************Test Data*********************** Wajahat: Why is this test here ??
-				map.put("COURSEGROUPNAME", "Test Group Name");
-				map.put("COURSENAME", "Test Course Name");
-				map.put("COURSECODE", "Test Course Code");
-				map.put("COURSETYPE", "SelfPacedCourse");
-				map.put("ENROLLMENT_ID", Long.valueOf("66666"));
-				map.put("CUSTOMERENTITLEMENT_ID", Long.valueOf("88888"));
-				map.put("COURSE_ID", Long.valueOf("2222").intValue());
-				map.put("EnrollmentStatus", "Active");
-				map.put("COURSE_STATUS", "Test Group Name");
-				map.put("APPROVEDCOURSEHOURS", Double.valueOf("2"));
-				map.put("CEUS", Double.valueOf(2));
-				courseView = new CourseView(map);
-				courseView1 = new CourseView(map);
-				
-				lstCourseViews.add(courseView);
-				lstCourseViews.add(courseView1);*/
-				//*************Test Data***********************
 				Learner learnerModel = new Learner();
 				learnerModel.setId(user.getLearner().getId());
 				lstCourseViews = courseAndCourseGroupService.getEntitlementsByCourseGroupId(learnerModel, Long.valueOf(courseGroupId), isTrainingPlan, isMiscellaneous);
@@ -1466,7 +1297,7 @@ InitializingBean {
     
     public ModelAndView getCourseDescription(HttpServletRequest request, HttpServletResponse response){   	
  	   Course course = courseAndCourseGroupService.getCourseByGUID(request.getParameter("courseId")); 	   
-   	   return new ModelAndView(courseDescriptionAjaxTemplate, "context", course.getDescription()); 
+   	   return new ModelAndView(courseDescriptionAjaxTemplate, STR_CONTEXT, course.getDescription()); 
     }
 
  	public String getCourseDescriptionAjaxTemplate() {

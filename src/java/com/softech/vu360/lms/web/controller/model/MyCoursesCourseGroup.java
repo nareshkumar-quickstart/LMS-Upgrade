@@ -47,17 +47,17 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 	
 	private String courseGroupName = StringUtils.EMPTY;
 	
-	public String getCourseGroupName() {
-		return courseGroupName;
-	}
-
-	private static Logger log = Logger.getLogger(MyCoursesCourseGroup.class.getName());	
+	private static final Logger log = Logger.getLogger(MyCoursesCourseGroup.class.getName());	
 	// this will be serialized in the session...
 	private static final long serialVersionUID = -2449128335007281620L;
 
 	private Map internalMap = new HashMap();
 	private Set<MyCoursesItem> currentMyCoursesItems = new HashSet<MyCoursesItem>();
 	private Set<MyCoursesItem> allMyCoursesItems = new HashSet<MyCoursesItem>();
+
+	public String getCourseGroupName() {
+		return courseGroupName;
+	}
 
 	public MyCoursesCourseGroup(CourseGroup courseGroup) {
 		internalMap = new HashMap();
@@ -110,19 +110,10 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 		return internalMap.get(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+	@Override
 	public int compareTo(MyCoursesCourseGroup arg0) {
 		if(arg0.getName().contains("Training Plan:"))
 		{
-//			if(this.getName().contains("Training Plan:") && arg0.getName().contains("Training Plan:"))
-//			{
-//				String name=this.getName().substring(14);
-//				String name2=arg0.getName().substring(14);
-//				return 9999+name.compareToIgnoreCase(name2);
-//			}
-//			else
 			int result=-99999+(this.getName().compareToIgnoreCase(arg0.getName()));
 
 			return result; 
@@ -150,10 +141,10 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 	public static List<CourseGroupView> generateCourseCatalogView(Long learnerId,List<CustomerEntitlement> customerEntitlements,
 			CourseAndCourseGroupService courseAndCourseGroupService, String search) {
 		
-		HashMap<String,CourseGroupView> resultMap=new HashMap<String,CourseGroupView>();
-		String courseGroupName=null;
+		HashMap<String,CourseGroupView> resultMap=new HashMap<>();
+		String courseGroupName;
 		final String MISC = "Miscellaneous";
-		CourseGroupView groupView=null;
+		CourseGroupView groupView;
 		long trainingPlanId = 0;
 		
 		List<CourseGroupView> megaList = new ArrayList<CourseGroupView>();	
@@ -185,7 +176,7 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 		String prevCourseGroupName = "";
 		Integer prevCGroupId = -1;
 		Long prevParentCGroupId = -1L;
-		Integer courseGroupId = null;
+		Integer courseGroupId ;
 		for(Map map:courses)
 		{
 			courseGroupName=map.get("COURSEGROUPNAME").toString();
@@ -195,10 +186,8 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 			if(StringUtils.isNotBlank(courseGroupName)){
 				groupView = resultMap.get(courseGroupName);
 				courseGroupId = BigInteger.valueOf(Long.valueOf(map.get("COURSEGROUP_ID").toString())).intValue();
-			}
-			else
-			{
-				groupView = (CourseGroupView)resultMap.get(MISC);
+			}else{
+				groupView = resultMap.get(MISC);
 				courseGroupName = MISC;
 				courseGroupId = Integer.valueOf(-1);
 			}
@@ -232,15 +221,14 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 		groupView.setGroupName(MISC);
 		groupView.setId(1);
 		groupView.markMisc(Boolean.TRUE);
-		for(Map map:miscCourses)
-		{
+		for(Map map:miscCourses){
 			groupView.addCourse(map);
 		}
 		
 		//Collections.sort(courseGroups, comparator);
 		megaList.addAll(courseGroups);
 		//Now add the Misc Courses to the mega List
-		if(miscCourses!=null && miscCourses.size()>0)
+		if(miscCourses!=null && !miscCourses.isEmpty())
 			megaList.add(groupView);
 		//Collections.sort(trainingPlans, comparator);
 		megaList.addAll(trainingPlans);
@@ -791,7 +779,7 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 	public static List<MyCoursesCourseGroup> arrangeCoursesInCourseGroups(List<CourseGroup> groups)
 	{
 		long startTime=System.currentTimeMillis();
-		String  cgName=null;
+		String  cgName;
 		HashMap mcgMap=new HashMap();
 		log.debug("groups.size=>"+groups.size());
 		List<MyCoursesCourseGroup> results = new ArrayList<MyCoursesCourseGroup>();
@@ -835,15 +823,11 @@ public class MyCoursesCourseGroup extends HashMap<String, Object>  implements IL
 
 	public static List<TreeNode> getCourseGroupsTree(Set<CourseGroup> courseGroupsList)
 	{
-
-
 		List<TreeNode> treeNodesList = new ArrayList<TreeNode>();
 		List<TreeNode> rootNodesReferences = new ArrayList<TreeNode>();
 		TreeNode courseGroupCourseTreeNode = null;
 
 		for (CourseGroup courseGroup : courseGroupsList) {
-			CourseSort courseSort = new CourseSort();
-
 			boolean courseGroupAdded = false;
 			for (TreeNode rootTreeNode : rootNodesReferences) {
 				List<CourseGroup> childCourseGroups = new ArrayList<CourseGroup>();
