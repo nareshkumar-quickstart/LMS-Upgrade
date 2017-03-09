@@ -26,7 +26,7 @@ public interface OrgGroupEntitlementRepository extends CrudRepository<OrgGroupEn
 	public List<OrgGroupEntitlement> findByCustomerEntitlementId(Long id);
 	public List<OrgGroupEntitlement> findByCustomerEntitlementIn(List<OrgGroupEntitlement> orgGroupEntitlementList);
 	public OrgGroupEntitlement findFirstByOrganizationalGroupId(Long id);
-	public List<OrgGroupEntitlement> findByCustomerEntitlementIdAndMaxNumberSeatsGreaterThanEqual(Long id,Long maxNumberSeatsGreaterThan);
+	public List<OrgGroupEntitlement> findByCustomerEntitlementIdAndMaxNumberSeatsGreaterThanEqual(Long id,Integer maxNumberSeatsGreaterThan);
 	/**
 	* @author marium.saud
 	* @param orgGrpIds   orgGrpIds that are selected by user through Enrollment Method Organizational Group method.

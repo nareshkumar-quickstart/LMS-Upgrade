@@ -988,7 +988,7 @@ public class EntitlementServiceImpl implements EntitlementService {
     @SuppressWarnings("null")
 	public OrgGroupEntitlement getMaxAvaiableOrgGroupEntitlementByLearner(Learner learner, long entitlementId) {
 
-        List<OrgGroupEntitlement> orgGroupEntitlementsForCustomerEntitlement = orgGroupEntitlementRepository.findByCustomerEntitlementIdAndMaxNumberSeatsGreaterThanEqual(entitlementId,0L);//Wajahat Ali // this.getOrgGroupsEntilementsForCustomerEntitlement(customerEntitlement);
+        List<OrgGroupEntitlement> orgGroupEntitlementsForCustomerEntitlement = orgGroupEntitlementRepository.findByCustomerEntitlementIdAndMaxNumberSeatsGreaterThanEqual(entitlementId,0);//Wajahat Ali // this.getOrgGroupsEntilementsForCustomerEntitlement(customerEntitlement);
         //Modified By Marium Saud: Replace the method orgGroupLearnerGroupService.getOrgGroupsByLearner(learner) because for each learner enrollment Organizational Group
         // will be fetched along with its all children (as List<OrganizationalGroup> childrenOrgGroups) in OrganizationalGroup.java is marked as Eager (LMS-21545,LMS-21541)
         //List<OrganizationalGroup> orgGroupsForLearner = orgGroupLearnerGroupService.getOrgGroupsByLearner(learner);

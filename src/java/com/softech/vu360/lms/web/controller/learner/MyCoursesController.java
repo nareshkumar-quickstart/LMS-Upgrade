@@ -511,8 +511,7 @@ InitializingBean {
 		log.debug("1- displayCourseDetailsPage freeMemory : "+Runtime.getRuntime().freeMemory());
 
 		try {
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			log.debug(user == null ? "User null" : " learnerId = "+ user.getLearner());
+			com.softech.vu360.lms.vo.VU360User userVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());	
 			
 			// Get request parameters
@@ -524,17 +523,13 @@ InitializingBean {
 			
 			log.debug(learnerEnrollmentID == null ? "learnerEnrollmentID null" : " learnerEnrollmentID=" + learnerEnrollmentID);
 			
-			Map<Object, Object> context = enrollmentService.displayCourseDetailsPage(learnerEnrollmentID, crntEnrollmentId, vu360UserService.getUserById(user.getId()), activeTab, viewType, selEnrollmentPeriod, brand);
-		
-
-					
+			Map<Object, Object> context = enrollmentService.displayCourseDetailsPage(learnerEnrollmentID, crntEnrollmentId, userVO, activeTab, viewType, selEnrollmentPeriod, brand);
 					
 			return new ModelAndView(courseDetailsTemplate, STR_CONTEXT, context);
-				
 			
 		} 
 		catch (Exception e) {
-			log.debug("exception", e);
+			log.error("exception", e);
 		}
 		return new ModelAndView(loginTemplate);
 	}
