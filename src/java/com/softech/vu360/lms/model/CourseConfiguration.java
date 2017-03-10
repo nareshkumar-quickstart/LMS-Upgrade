@@ -338,6 +338,9 @@ public class CourseConfiguration implements SearchableKey {
 	@Column(name="PROFILEBASED_VALIDATION_TF")
 	private Boolean requireSmartProfileValidation;
 	
+	@Column(name = "ONLINE_PROCTORING_TF")
+	private Boolean requireOnlineProctoring;
+	
 	//Learners Unique Questions
 	@Transient
 	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
@@ -2703,6 +2706,14 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setLstUniqueQuestionsVO(List<UniqueQuestionsVO> lstUniqueQuestionsVO) {
 		this.lstUniqueQuestionsVO = lstUniqueQuestionsVO;
+	}
+
+	public Boolean isRequireOnlineProctoring() {
+		return requireOnlineProctoring;
+	}
+
+	public void setRequireOnlineProctoring(Boolean requireOnlineProctoring) {
+		this.requireOnlineProctoring = requireOnlineProctoring;
 	}
 	
 	

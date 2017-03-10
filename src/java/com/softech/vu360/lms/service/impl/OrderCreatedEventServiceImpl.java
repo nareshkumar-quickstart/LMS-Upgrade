@@ -271,7 +271,7 @@ public class OrderCreatedEventServiceImpl implements OrderCreatedEventService {
 			log.info("SIZE of LINEITEM: " + order.getLineItem().size());
 			BigInteger qty = orderLineItem.getQuantity();
 			String strCourseGUID = orderLineItem.getGuid();
-			Course course = courseAndCourseGroupService.getCourseByGUID(strCourseGUID);
+			Course course = courseAndCourseGroupService.getCourseByGUIDRefreshCourse(strCourseGUID);
 			CourseGroup courseGroup = courseAndCourseGroupService.getCourseGroupByguid(orderLineItem.getGroupguid());
 			String courseGroupGuid = courseGroup.getGuid();
 			if(course == null)

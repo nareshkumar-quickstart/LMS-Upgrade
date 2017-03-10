@@ -307,6 +307,16 @@ public class CustomerPermissionsController extends MultiActionController
 				customerfeature = Boolean.TRUE;
 			}
 			
+			if(customerLMSFeature.getLmsFeature().getFeatureCode().equals("LMS-MGR-0033"))
+			{
+				if(customerLMSFeature.getLmsFeature().getFeatureCode().equals("LMS-MGR-0033")){
+					if(customerLMSFeature.getEnabled())
+			           customerfeature = Boolean.TRUE;
+				    else if (!customerLMSFeature.getEnabled())
+				       customerfeature = Boolean.FALSE;
+				}
+			}
+			
 			log.info("\t\t distributor - defined = " + matched + " and enabled = " + enabled);
 			if(!(matched && enabled))
 			{

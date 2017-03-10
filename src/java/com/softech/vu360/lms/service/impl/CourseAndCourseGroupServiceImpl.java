@@ -1311,4 +1311,9 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	public List<Course> getCourseByBusinessKey(String businessKey) {
 		return this.courseRepository.findByBussinesskeyEquals(businessKey);
 	}
+
+	@Override
+	public Course getCourseByGUIDRefreshCourse(String guid) {
+		return this.courseRepository.findByCourseGUID(guid);
+	}
 }
