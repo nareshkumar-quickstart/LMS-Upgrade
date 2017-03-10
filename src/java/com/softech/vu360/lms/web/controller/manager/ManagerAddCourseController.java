@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,7 @@ import com.softech.vu360.lms.service.CourseAndCourseGroupService;
 import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LMSProductPurchaseService;
+import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.CustomerUtil;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
@@ -86,6 +88,8 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 	private VU360UserService vu360UserService = null;
 	private EntitlementService entitlementService = null;
 	private CustomerService customerService = null;
+	@Inject
+	private LearnerService learnerService;
 	private LMSProductPurchaseService lmsProductPurchaseService;
 	public ManagerAddCourseController() {
 		super();
@@ -975,8 +979,7 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 			customer = details.getCurrentCustomer();
 		}
 		if(customer == null){
-			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
-			customer = loggedInUser.getLearner().getCustomer();
+			customer = learnerService.findCustomerByLearnerId(((com.softech.vu360.lms.vo.VU360User) auth.getPrincipal()).getLearner().getId());
 		}
 		return customer;	
 	}

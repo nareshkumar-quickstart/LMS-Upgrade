@@ -6,11 +6,12 @@ package com.softech.vu360.lms.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.Learner;
 
@@ -59,4 +60,10 @@ public interface LearnerRepository extends CrudRepository<Learner, Long>, Learne
 	List<Learner> findByLearnerGroupId(@Param("id") Long learnerGroupId);
 	
 	Learner findByVu360UserId(Long vu360UserId);
+	
+	@Query("SELECT L.customer.id from Learner L where L.id= ?1")
+	Long findCustomerIdByLearnerId(Long id);
+	
+	@Query("SELECT L.customer from Learner L where L.id= ?1")
+	Customer findCustomerByLearnerId(Long id);
 }

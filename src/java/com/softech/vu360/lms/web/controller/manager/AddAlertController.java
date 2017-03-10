@@ -3,6 +3,7 @@ package com.softech.vu360.lms.web.controller.manager;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,11 +14,11 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Language;
-import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.SurveyService;
+import com.softech.vu360.lms.service.VU360UserNewService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.AddAlertForm;
@@ -35,6 +36,9 @@ public class AddAlertController extends AbstractWizardFormController{
 	private String redirectTemplate=null;
 	private SurveyService surveyService = null;
 	private LearnerService learnerService = null;
+	
+	@Inject
+	VU360UserNewService vu360UserNewService;
 	
 	@Autowired
 	VU360UserService vu360UserService;
@@ -65,7 +69,7 @@ public class AddAlertController extends AbstractWizardFormController{
 	throws Exception {
 		
 		AddAlertForm form = (AddAlertForm) command;
-		VU360User vu360UserModel = null;
+		VU360UserNew vu360UserModel = null;
 
 		VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) (SecurityContextHolder.getContext()
 				.getAuthentication()).getDetails();
@@ -80,21 +84,21 @@ public class AddAlertController extends AbstractWizardFormController{
 
 			if (customer != null) {
 				Long learnerId = learnerService.getLearnerForSelectedCustomer(customer.getId());
-				vu360UserModel = learnerService.getLearnerByID(learnerId.longValue()).getVu360User();
+				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId.longValue());
 
 			} else if (distributorvo != null) {
 
 				Long learnerId = learnerService.getLearnerForSelectDistributor(distributorvo.getMyCustomer().getId());
-				vu360UserModel = learnerService.getLearnerByID(learnerId).getVu360User();
+				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId.longValue());
 
 			} else {
 
-				vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
+				vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
 
 			}
 		} else if (details.getCurrentMode().equals(VU360UserMode.ROLE_TRAININGADMINISTRATOR)) {
 
-			vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
+			vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
 
 		}
 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,14 +23,13 @@ import com.softech.vu360.lms.model.InstructorApproval;
 import com.softech.vu360.lms.model.Provider;
 import com.softech.vu360.lms.model.ProviderApproval;
 import com.softech.vu360.lms.model.Regulator;
-import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
+import com.softech.vu360.lms.service.RegulatoryAnalystService;
 import com.softech.vu360.lms.util.UserPermissionChecker;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.Menu;
 import com.softech.vu360.lms.web.controller.model.accreditation.SearchMemberForm;
 import com.softech.vu360.lms.web.controller.model.accreditation.SearchMemberItem;
-import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.HtmlEncoder;
 import com.softech.vu360.util.RecordSort;
 
@@ -41,7 +41,10 @@ import com.softech.vu360.util.RecordSort;
 public class SearchMemberController extends VU360BaseMultiActionController {
 
 	//private static final Logger log = Logger.getLogger(SearchMemberController.class.getName());
+	@Inject
 	private AccreditationService accreditationService = null;
+	@Inject
+	private RegulatoryAnalystService regulatoryAnalystService;
 	private String searchMemberTemplate = null;
 	private String redirectTemplate = null;
 	private String redirectToOtherPageIfPermisionRevokedTemplate = null;
@@ -92,7 +95,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		boolean isSearch=false;
 		SearchMemberForm form = (SearchMemberForm)command;
 		// @MariumSaud
-		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser(); //PRINCIPAL: 07-09-2016
+//		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser(); //PRINCIPAL: 07-09-2016
 		
 		// parameter type of findCredential() is changed so creating second user object of type VO.
 		// first user object is also necessary for further operation
@@ -141,7 +144,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 			} else {
 				regName = allName;
 			}
-			List<Regulator> regs = accreditationService.searchRegulator(regName, loggedInUser.getRegulatoryAnalyst());
+			List<Regulator> regs = accreditationService.searchRegulator(regName, regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
 			for( Regulator reg : regs ) {
 				SearchMemberItem newItem = new SearchMemberItem();
 				newItem.setName(reg.getName());
@@ -161,7 +164,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 			} else {
 				provName = allName;
 			}
-			List<Provider> provs = accreditationService.searchProviders(provName, loggedInUser.getRegulatoryAnalyst());
+			List<Provider> provs = accreditationService.searchProviders(provName, regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
 			for( Provider prov : provs ) {
 				SearchMemberItem newItem = new SearchMemberItem();
 				newItem.setName(prov.getName());
@@ -320,6 +323,14 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 
 	public AccreditationService getAccreditationService() {
 		return accreditationService;
+	}
+
+	public RegulatoryAnalystService getRegulatoryAnalystService() {
+		return regulatoryAnalystService;
+	}
+
+	public void setRegulatoryAnalystService(RegulatoryAnalystService regulatoryAnalystService) {
+		this.regulatoryAnalystService = regulatoryAnalystService;
 	}
 
 	public void setAccreditationService(AccreditationService accreditationService) {

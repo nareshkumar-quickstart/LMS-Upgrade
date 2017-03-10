@@ -66,6 +66,7 @@ public interface AccreditationService {
 	public Credential saveCredential(Credential credential);
 	public List<Credential> findCredential(String offLicName,String shortLicName,com.softech.vu360.lms.vo.RegulatoryAnalyst regulatoryAnalyst);
 	public ContentOwner findContentOwnerByRegulatoryAnalyst(com.softech.vu360.lms.vo.RegulatoryAnalyst regulatoryAnalyst);
+	public ContentOwner findContentOwnerById(Long id);
 	public List<Credential> findCredentialInRegulator( String credentialName, String credentialShortName,Long[] CredentialId);
 	public  List<Contact> findContactByRegulator(String firstName,String lastName, String emailAddress, String phone,long regulatorId);
 	//public List<Provider> findProvidersByRegulator(long regulatorId);

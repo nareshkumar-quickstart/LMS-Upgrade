@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,10 +28,12 @@ import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.CourseConfigurationTemplate;
-import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.Language;
+import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
+import com.softech.vu360.lms.service.LanguageService;
 import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.accreditation.CourseConfigForm;
@@ -52,6 +55,8 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
 	private final String PROCTOR_VALIDATOR_TREC = "TREC";
 	private AccreditationService accreditationService;
+	@Inject
+	private LanguageService languageService;
 	private CourseAndCourseGroupService courseAndCourseGroupService;
 //	HttpSession session = null;
 
@@ -653,7 +658,8 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
-		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
+		VU360UserNew VU360User =  VU360UserAuthenticationDetails.getCurrentSimpleUser();
+		Language userLanguage = languageService.getUserLanguageById(loggedInUser.getLanguage().getId());
 		
 		final int MAX_PRE_POST_QUIZ_ATTEMPT = 9999999; 
 		
@@ -1196,7 +1202,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 					validationQuestion.setModifiedDate(new Date());
 					
 					if(StringUtils.isEmpty(uniqueQuestionsVO.getId())){
-						validationQuestion.setLanguage(VU360User.getLanguage());
+						validationQuestion.setLanguage(userLanguage);
 						validationQuestion.setIsActive(true);
 						validationQuestion.setCourseConfiguration(mycourseConfiguration);
 						validationQuestion.setCreatedBy(VU360User);

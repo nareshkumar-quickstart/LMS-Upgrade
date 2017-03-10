@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.softech.vu360.lms.model.Alert;
 import com.softech.vu360.lms.model.AlertTrigger;
 import com.softech.vu360.lms.model.AvailableAlertEvent;
-import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.SurveyService;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.AddMyAlertForm;
@@ -51,7 +50,7 @@ public class AddMyAlertController extends AbstractWizardFormController{
 		long lAlertId=0;
 		
 		AddMyAlertForm form = (AddMyAlertForm)command;
-		VU360User logInUser = VU360UserAuthenticationDetails.getCurrentUser();
+		VU360UserNew logInUser = VU360UserAuthenticationDetails.getCurrentSimpleUser();
 		form.getAlert().setCreatedBy(logInUser);		
 		form.setAlert(surveyService.addAlert(form.getAlert()));
         form.setAlertTrigger(new AlertTrigger());
