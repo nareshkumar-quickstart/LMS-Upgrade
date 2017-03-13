@@ -83,11 +83,11 @@ public interface EnrollmentService {
 	
 	public Map displayMyCourses(VU360User user, Brander brand,List<CourseGroupView> courseGroups,List<MyCoursesItem> filteredMyCourses, List sortedCourseGroups, String viewType, String search, Boolean isFirstTimeView);
 	public HashMap displayMyAvailableCourses(Learner learner, List<CourseGroupView> courseGroups, String courseGroupId, String trainingPlanId,  HashMap<Object,Object> catalogMap, String search);
-	public Map displayCourseDetailsPage(String learnerEnrollmentID, String crntEnrollmentId, VU360User user, String activeTab, String viewType, String selEnrollmentPeriod, Brander brand  );
-	public Map displayCourseSampleCompletionReport(VU360User user, String courseId, String viewType);
-	public Map displayCourseSampleDetails(VU360User user, String courseId, String viewType);
-	public Map displayScheduleToEnroll(VU360User user, Brander brand, Long courseId, String viewType);
-	public Map displayViewSchedule(VU360User user, Brander brand, String courseId, String learnerEnrollmentID);
+	public Map displayCourseDetailsPage(String learnerEnrollmentID, String crntEnrollmentId, com.softech.vu360.lms.vo.VU360User user, String activeTab, String viewType, String selEnrollmentPeriod, Brander brand  );
+	public Map<Object, Object> displayCourseSampleCompletionReport(VU360User user, String courseId, String viewType);
+	public Map<Object, Object> displayCourseSampleDetails(VU360User user, String courseId, String viewType);
+	public Map<Object, Object> displayScheduleToEnroll(VU360User user, Brander brand, Long courseId, String viewType);
+	public Map<Object, Object> displayViewSchedule(VU360User user, Brander brand, String courseId, String learnerEnrollmentID);
 	
 	// [1/27/2011] LMS-7183 :: Retired Course Functionality II (to enroll learner in Learner Group from Self Registration Invitations
 	public void enrollLearnerToLearnerGroupItems (VU360User vu360User, LearnerGroup learnerGroup);

@@ -762,6 +762,10 @@ public class DistributorServiceImpl implements DistributorService {
 						.equalsIgnoreCase(defaultFeature.getFeatureCode()))
 					isEnable = false;
 			}
+			
+			if(defaultFeature.getFeatureCode().equals("LMS-MGR-0033")){
+				 isEnable = false;
+			}
 
 			defalutPermisson.setEnabled(isEnable);
 			defalutPermisson.setDistributor(distributor);
@@ -853,6 +857,7 @@ public class DistributorServiceImpl implements DistributorService {
 			objRestrictedFeatureName.add("LMS-LRN-0010");
 			objRestrictedFeatureName.add("LMS-MGR-0030");
 			objRestrictedFeatureName.add("LMS-ADM-0032");
+			
 		}
 		return objRestrictedFeatureName;
 

@@ -131,7 +131,10 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				}else
 					form.setTimeZoneId(0);
 				
-				form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
+				form.setHasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerService.hasAnyInProgressEnrollmentOfStandardValidationQuestions(form.getVu360User().getLearner().getId()));
+				if(form.isHasAnyInProgressEnrollmentOfStandardValidationQuestions()) {
+				  form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
+				}
 				Map<Object,Object> mpValidationQuestion = learnerService.getLearnerUniqueQuestions(form.getVu360User().getLearner().getId());
 				
 				if(mpValidationQuestion!=null  && !mpValidationQuestion.isEmpty()){

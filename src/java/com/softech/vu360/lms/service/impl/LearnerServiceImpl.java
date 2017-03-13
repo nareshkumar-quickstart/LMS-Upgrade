@@ -2543,6 +2543,8 @@ public class LearnerServiceImpl implements LearnerService {
 		List<LearnerValidationAnswers> lstAnswers = null;
 		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = null;
 		LinkedHashMap<Object,Object> mpUniqueQuestions = new LinkedHashMap<Object,Object>();
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 0);
 		if(learner != null){
 			List<LearnerEnrollment>  lstLearnerEnrollment = enrollmentService.getAllLearnerEnrollmentsByLearner(learner);
 			for(LearnerEnrollment le :lstLearnerEnrollment){
@@ -3019,6 +3021,10 @@ public class LearnerServiceImpl implements LearnerService {
 	@Override
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGrpRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
+	}
+	
+	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(long learnerId) {
+		 return learnerRepository.hasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerId);
 	}
 
 	public EnrollmentService getEnrollmentService() {

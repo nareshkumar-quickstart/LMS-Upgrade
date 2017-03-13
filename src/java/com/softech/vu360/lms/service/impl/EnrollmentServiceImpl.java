@@ -84,6 +84,7 @@ import com.softech.vu360.lms.repositories.LearnerEnrollmentRepository;
 import com.softech.vu360.lms.repositories.LearnerGroupItemRepository;
 import com.softech.vu360.lms.repositories.LearningSessionRepository;
 import com.softech.vu360.lms.repositories.LockedCourseRepository;
+import com.softech.vu360.lms.repositories.TimeZoneRepository;
 import com.softech.vu360.lms.repositories.VU360UserRepository;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
@@ -100,6 +101,7 @@ import com.softech.vu360.lms.util.ORMUtils;
 import com.softech.vu360.lms.vo.EnrollmentVO;
 import com.softech.vu360.lms.vo.MarketoPacketSerialized;
 import com.softech.vu360.lms.vo.SaveEnrollmentParam;
+import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.web.controller.model.AvailableCoursesTree;
 import com.softech.vu360.lms.web.controller.model.CourseGroupView;
 import com.softech.vu360.lms.web.controller.model.CourseView;
@@ -127,31 +129,28 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public static final String EXPIRED_MYCOURSES_VIEW = "expiredCourses";
     public static final String COURSES_ABOUT_TO_EXPIRED_MYCOURSES_VIEW = "coursesAboutToExpire";
     public static final String MISSING_REPORTING_FIELDS_MESSAGE = "Reporting field missing";
-    
     public static final String COURSE_STARTED = "Course_Started";
     public static final String COURSE_ENROLLED = "Course_Enrolled";
     public static final String COURSE_COMPLETED = "Course_Completed";
 
     private static final Logger log = Logger.getLogger(EnrollmentServiceImpl.class.getName());
+
     @Inject
     private LearnerEnrollmentRepository learnerEnrollmentRepository;
-
 	@Inject
     private LearningSessionRepository learningSessionRepository;
-    
     @Inject
     private LearnerCourseStatisticsRepository learnerCourseStatisticsRepository;
-    
     @Inject
 	private LockedCourseRepository lockedCourseRepository;
 	@Inject
 	private VU360UserRepository vu360UserRepository;
-	
 	@Inject
 	private CourseConfigurationTemplateRepository courseConfigurationTemplateRepository;
-	
 	@Inject
 	private LearnerGroupItemRepository learnerGroupItemRepository;
+	@Inject
+	private TimeZoneRepository timeZoneRepository;
 
     private EntitlementService entitlementService;
     private LearnerService learnerService;
@@ -1639,7 +1638,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	return catalogMap;
     }
 
-    public Map displayCourseDetailsPage(String learnerEnrollmentID, String crntEnrollmentId, VU360User user, String activeTab, String viewType,
+    public Map displayCourseDetailsPage(String learnerEnrollmentID, String crntEnrollmentId, com.softech.vu360.lms.vo.VU360User user, String activeTab, String viewType,
 	    String selEnrollmentPeriod, Brander brand) {
 
 	LearnerEnrollment learnerEnrollment = null;
@@ -1664,7 +1663,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	Map<Object, Object> context = new HashMap<Object, Object>();
 	String instructorCoursetype = null;
 
-	if (learnerEnrollmentID != null && !learnerEnrollmentID.trim().equalsIgnoreCase("")) {
+	if (StringUtils.isNotEmpty(learnerEnrollmentID)) {
 
 	    // Save current enrollment Id to context before proceeding further
 	    // to exclude and preserver enrollment listed under CURRENT tab.
@@ -1677,313 +1676,257 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	     */
 	    if (user.getLearner().getId().longValue() == learnerEnrollment.getLearner().getId().longValue()) {
 
-		List<LearnerEnrollment> similarEnrollments = this.getEnrollmentsByCourse(learnerEnrollment);
-
-		if (activeTab.equalsIgnoreCase("prev")) {
-		    // If PREVIOUS tab is selected, fetch the data for selected
-		    // enrollment period or last enrollment by default
-		    if (similarEnrollments != null && similarEnrollments.size() > 0) {
-			learnerEnrollmentID = StringUtils.isNotBlank(selEnrollmentPeriod) ? selEnrollmentPeriod : similarEnrollments
-				.get(similarEnrollments.size() - 1).getId().toString();
-		    }
-		} else {
-		    // For CURRENT tab, fetch the data for current enrollment
-		    learnerEnrollmentID = crntEnrollmentId;
-		}
-		// Finally fetch the data to display enrollment details
-		learnerEnrollment = entitlementService.getLearnerEnrollmentById(Long.valueOf(learnerEnrollmentID));
-
-		course = learnerEnrollment.getCourse();
-		if(course instanceof InstructorConnectCourse)
-		{
-			if (((InstructorConnectCourse) course).getInstructorType().equals("Email Online"))
-			{
-				instructorCoursetype = "Email Online";
+			List<LearnerEnrollment> similarEnrollments = this.getEnrollmentsByCourse(learnerEnrollment);
+	
+			if (activeTab.equalsIgnoreCase("prev")) {
+			    // If PREVIOUS tab is selected, fetch the data for selected
+			    // enrollment period or last enrollment by default
+			    if (CollectionUtils.isNotEmpty(similarEnrollments)) {
+			    	learnerEnrollmentID = StringUtils.isNotBlank(selEnrollmentPeriod) ? selEnrollmentPeriod : similarEnrollments
+			    			.get(similarEnrollments.size() - 1).getId().toString();
+			    }
+			} else {
+			    // For CURRENT tab, fetch the data for current enrollment
+			    learnerEnrollmentID = crntEnrollmentId;
 			}
-		}
-		
-		context.put("similarEnrollments", similarEnrollments);
-		context.put("formatter", new SimpleDateFormat("MMM yy"));
-		context.put("activeTab", activeTab);
-		context.put("crntEnrollmentId", crntEnrollmentId);
-		context.put("viewType", viewType);
-		context.put("instructorCoursetype", instructorCoursetype);
-		/*Reset Learner Course Statistics object for Learner Enrollment as it was coming from cache.*/
-		learnerEnrollment.setCourseStatistics(statsService.getLearnerCourseStatisticsById(learnerEnrollment.getCourseStatistics().getId()));
-		context.put("courseCompleted", learnerEnrollment.getCourseStatistics().isCourseCompleted());
-
-		course = learnerEnrollment.getCourse();
-
-		// Code by OWS for Stats regarding synchronous courses
-		if (course.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || course.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
-			/*
-			 * Not required to update any status at this stage for a synchronous type course
-		    LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
-		    newCourseStats.setPercentComplete(this.getPercentCompleteForSyncCourse(learnerEnrollment));
-		    boolean sendCompletionMail = false;
-		    if (newCourseStats.getPercentComplete() == 100 && !newCourseStats.getStatus().equals(LearnerCourseStatistics.EXPIRED) 
-			    && *//*(!newCourseStats.isCompleted() || !newCourseStats.getStatus().equalsIgnoreCase(LearnerCourseStatistics.COMPLETED))*/ /*!newCourseStats.isCourseCompleted()) {
-			newCourseStats.setCompleted(true);
-			newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
-			sendCompletionMail = true;
-		    }
-		    statsService.saveLearnerCourseStatistics(newCourseStats);
-		    if (sendCompletionMail) {
-			learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
-		    }*/
-		} 
-		else if (course.getCourseType().equalsIgnoreCase(HomeworkAssignmentCourse.COURSE_TYPE)) {
-		    if(course instanceof HomeworkAssignmentCourse )
-		    {
-		    	HomeworkAssignmentCourse hw = ((HomeworkAssignmentCourse) course);
-		    	hwcourseassignmentscoringtype = hw.getGradingMethod();
-		    	LearnerHomeworkAssignmentSubmission learnerhomeworksubmission =  learnerHomeworkAssignmentSubmissionService.getLearnerHomeworkAssignmentSubmission(learnerEnrollment);
-		    	lstLearnerHomeworkAssignmentSubmission =  learnerHomeworkAssignmentSubmissionService.getLearnerHomeworkAssignmentSubmissionMastery(learnerEnrollment);
-		    	
-		    	if(learnerhomeworksubmission != null)
-		    	{
-		    		if(lstLearnerHomeworkAssignmentSubmission != null)
-		    		{
-			    	if(hw.getGradingMethod().equals("Simple"))
-			    	  {
-			    		for (LearnerHomeworkAssignmentSubmission lhwAS : lstLearnerHomeworkAssignmentSubmission)
-			    		{
-			    			if(lhwAS.getPercentScore() != null)
-			    			{
-			    				if(lhwAS.getPercentScore().equals("Fail"))
-			    				{
-					    			hwFail = true;
-					    			hwfailid = lhwAS.getId();
-			    				}
-			    				if(lhwAS.getPercentScore().equals("Pass"))
-					    		{
-					    			hwPass = true;
+			// Finally fetch the data to display enrollment details
+			learnerEnrollment = entitlementService.getLearnerEnrollmentById(Long.valueOf(learnerEnrollmentID));
+	
+			course = learnerEnrollment.getCourse();
+			if(course instanceof InstructorConnectCourse){
+				if (((InstructorConnectCourse) course).getInstructorType().equals("Email Online")){
+					instructorCoursetype = "Email Online";
+				}
+			}
+			
+			context.put("similarEnrollments", similarEnrollments);
+			context.put("formatter", new SimpleDateFormat("MMM yy"));
+			context.put("activeTab", activeTab);
+			context.put("crntEnrollmentId", crntEnrollmentId);
+			context.put("viewType", viewType);
+			context.put("instructorCoursetype", instructorCoursetype);
+			/*Reset Learner Course Statistics object for Learner Enrollment as it was coming from cache.*/
+			learnerEnrollment.setCourseStatistics(statsService.getLearnerCourseStatisticsById(learnerEnrollment.getCourseStatistics().getId()));
+			context.put("courseCompleted", learnerEnrollment.getCourseStatistics().isCourseCompleted());
+	
+			course = learnerEnrollment.getCourse();
+	
+			// Code by OWS for Stats regarding synchronous courses
+			if (course.getCourseType().equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) || course.getCourseType().equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
+				//Not required to update any status at this stage for a synchronous type course
+			}else if (course.getCourseType().equalsIgnoreCase(HomeworkAssignmentCourse.COURSE_TYPE)) {
+			    if(course instanceof HomeworkAssignmentCourse ){
+			    	HomeworkAssignmentCourse hw = (HomeworkAssignmentCourse) course;
+			    	hwcourseassignmentscoringtype = hw.getGradingMethod();
+			    	LearnerHomeworkAssignmentSubmission learnerhomeworksubmission =  learnerHomeworkAssignmentSubmissionService.getLearnerHomeworkAssignmentSubmission(learnerEnrollment);
+			    	lstLearnerHomeworkAssignmentSubmission =  learnerHomeworkAssignmentSubmissionService.getLearnerHomeworkAssignmentSubmissionMastery(learnerEnrollment);
+			    	
+			    	if(learnerhomeworksubmission != null){
+			    		if(lstLearnerHomeworkAssignmentSubmission != null){
+					    	if(hw.getGradingMethod().equals("Simple")){
+					    		for (LearnerHomeworkAssignmentSubmission lhwAS : lstLearnerHomeworkAssignmentSubmission){
+					    			if(lhwAS.getPercentScore() != null){
+					    				if(lhwAS.getPercentScore().equals("Fail")){
+							    			hwFail = true;
+							    			hwfailid = lhwAS.getId();
+					    				}
+					    				if(lhwAS.getPercentScore().equals("Pass")){
+							    			hwPass = true;
+							    		}
+					    				if(lhwAS.getPercentScore().equals("Incomplete")){
+							    			hwIncomplete = true;
+							    			hwincompleteid = lhwAS.getId();
+							    		}
+					    			}
 					    		}
-			    				if(lhwAS.getPercentScore().equals("Incomplete"))
-					    		{
-					    			hwIncomplete = true;
-					    			hwincompleteid = lhwAS.getId();
-					    		}
-			    			}
-			    		}
-			    		
-			    		if(hwPass)
-			    		{
-			    			hwcourseassignmentcoursestatus = "Passed";
-			    			hwcourseassignmentcoursestatuscmpleted = true;
-			    		}
-			    		else if(!hwPass)
-			    		{
-			    			if(hwFail && !hwIncomplete)
-			    			{
-		    					hwcourseassignmentcoursestatus = "Failed";
-				    			hwcourseassignmentcoursestatuscmpleted = true;
-			    			}
-			    			else if(!hwFail && hwIncomplete)
-			    			{
-			    				hwcourseassignmentcoursestatus = "Incomplete";
-				    			hwcourseassignmentcoursestatuscmpleted = false;
-			    			}
-			    			else if(hwFail && hwIncomplete)
-			    			{
-			    				if(hwfailid > hwincompleteid)
-			    				{
-			    					hwcourseassignmentcoursestatus = "Failed";
+					    		
+					    		if(hwPass){
+					    			hwcourseassignmentcoursestatus = "Passed";
 					    			hwcourseassignmentcoursestatuscmpleted = true;
-			    				}
-			    				else if(hwfailid < hwincompleteid)
-			    				{
-					    			hwcourseassignmentcoursestatus = "Incomplete";
-					    			hwcourseassignmentcoursestatuscmpleted = false;
-			    				}
-			    			}
-			    		}
-			    		
-			    	  }
-			    	else if(hw.getGradingMethod().equals("Scored"))
-			    	{
-			    		for (LearnerHomeworkAssignmentSubmission lhwAS : lstLearnerHomeworkAssignmentSubmission)
-			    		{
-				    		hwassignmentcourseHighestMasteryScore = highestPostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
-				    		hwassignmentcourseLowestMasteryScore = lowestPostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
-				    		hwassignmentcourseAverageMasteryScore = averagePostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
-
-			    			if(lhwAS.getPercentScore() != null)
-			    			{
-			    				courseMasterScore = hw.getMasteryScore();
-			    				if(!lhwAS.getPercentScore().equals("Incomplete"))
-				    		    {
-						    		learnerScore = Integer.parseInt(lhwAS.getPercentScore());
-						    		if(courseMasterScore == learnerScore || learnerScore > courseMasterScore)
-						    		{
-						    			hwPass = true;
-						    		}
-						    		else if(learnerScore < courseMasterScore)
-						    		{
-						    			hwFail = true;
-						    		}
+					    		}else if(!hwPass){
+					    			if(hwFail && !hwIncomplete){
+				    					hwcourseassignmentcoursestatus = "Failed";
+						    			hwcourseassignmentcoursestatuscmpleted = true;
+					    			}else if(!hwFail && hwIncomplete){
+					    				hwcourseassignmentcoursestatus = "Incomplete";
+						    			hwcourseassignmentcoursestatuscmpleted = false;
+					    			}else if(hwFail && hwIncomplete){
+					    				if(hwfailid > hwincompleteid){
+					    					hwcourseassignmentcoursestatus = "Failed";
+							    			hwcourseassignmentcoursestatuscmpleted = true;
+					    				}else if(hwfailid < hwincompleteid){
+							    			hwcourseassignmentcoursestatus = "Incomplete";
+							    			hwcourseassignmentcoursestatuscmpleted = false;
+					    				}
+					    			}
 					    		}
-				    		  else
-				    		  {
-				    			  hwIncomplete = true;
-				    		  }
-			    			}
-			    		}
-			    		
-			    		if(hwPass)
-			    		{
-			    			hwcourseassignmentcoursestatus = "Passed";
-			    			hwcourseassignmentcoursestatuscmpleted = true;
-			    		}
-			    		else if(!hwPass)
-			    		{
-			    			if(hwFail && !hwIncomplete)
-			    			{
-		    					hwcourseassignmentcoursestatus = "Failed";
-				    			hwcourseassignmentcoursestatuscmpleted = true;
-			    			}
-			    			else if(!hwFail && hwIncomplete)
-			    			{
-			    				hwcourseassignmentcoursestatus = "Incomplete";
-				    			hwcourseassignmentcoursestatuscmpleted = false;
-			    			}
+					    		
+					    	  }else if(hw.getGradingMethod().equals("Scored")){
+					    		for (LearnerHomeworkAssignmentSubmission lhwAS : lstLearnerHomeworkAssignmentSubmission){
+						    		hwassignmentcourseHighestMasteryScore = highestPostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
+						    		hwassignmentcourseLowestMasteryScore = lowestPostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
+						    		hwassignmentcourseAverageMasteryScore = averagePostMasteryScore(lstLearnerHomeworkAssignmentSubmission);
+		
+					    			if(lhwAS.getPercentScore() != null){
+					    				courseMasterScore = hw.getMasteryScore();
+					    				if(!lhwAS.getPercentScore().equals("Incomplete")){
+								    		learnerScore = Integer.parseInt(lhwAS.getPercentScore());
+								    		if(courseMasterScore == learnerScore || learnerScore > courseMasterScore){
+								    			hwPass = true;
+								    		}else if(learnerScore < courseMasterScore){
+								    			hwFail = true;
+								    		}
+							    		}else{
+						    			  hwIncomplete = true;
+						    		  }
+					    			}
+					    		}
+					    		
+					    		if(hwPass){
+					    			hwcourseassignmentcoursestatus = "Passed";
+					    			hwcourseassignmentcoursestatuscmpleted = true;
+					    		}else if(!hwPass){
+					    			if(hwFail && !hwIncomplete){
+				    					hwcourseassignmentcoursestatus = "Failed";
+						    			hwcourseassignmentcoursestatuscmpleted = true;
+					    			}else if(!hwFail && hwIncomplete){
+					    				hwcourseassignmentcoursestatus = "Incomplete";
+						    			hwcourseassignmentcoursestatuscmpleted = false;
+					    			}
+					    		}
+					    	}
 			    		}
 			    	}
-		    	 }
-		    	}
-		    }
-		}
-		else if (course.getCourseType().equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
-		    LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
-		    newCourseStats.setPercentComplete(this.getPercentCompleteForSyncCourse(learnerEnrollment));
-		    boolean sendCompletionMail = false;
-		    if (newCourseStats.getPercentComplete() == 100
-			    && /*(!newCourseStats.isCompleted() || !newCourseStats.getStatus().equalsIgnoreCase(LearnerCourseStatistics.COMPLETED))*/!newCourseStats.isCourseCompleted()) {
-			newCourseStats.setCompleted(true);
-			newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
-			sendCompletionMail = true;
-		    }
-		    statsService.saveLearnerCourseStatistics(newCourseStats);
-		    if (sendCompletionMail) {
-			learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
-		    }
-		} else if(course.getCourseType().equalsIgnoreCase(AICCCourse.COURSE_TYPE)) {
-			log.info("AICC Course stats setting for more details");
-			LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
-			boolean sendCompletionMail = false;
-			if(newCourseStats.getPercentComplete() == 100 && !newCourseStats.isCourseCompleted()) {
-				newCourseStats.setCompleted(true);
-				newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
-				sendCompletionMail = true;
+			    }
+			}else if (course.getCourseType().equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
+			    LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
+			    newCourseStats.setPercentComplete(this.getPercentCompleteForSyncCourse(learnerEnrollment));
+			    boolean sendCompletionMail = false;
+			    if (newCourseStats.getPercentComplete() == 100 && !newCourseStats.isCourseCompleted()) {
+					newCourseStats.setCompleted(true);
+					newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
+					sendCompletionMail = true;
+			    }
+			    statsService.saveLearnerCourseStatistics(newCourseStats);
+			    if (sendCompletionMail) {
+			    	learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
+			    }
+			} else if(course.getCourseType().equalsIgnoreCase(AICCCourse.COURSE_TYPE)) {
+				log.info("AICC Course stats setting for more details");
+				LearnerCourseStatistics newCourseStats = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
+				boolean sendCompletionMail = false;
+				if(newCourseStats.getPercentComplete() == 100 && !newCourseStats.isCourseCompleted()) {
+					newCourseStats.setCompleted(true);
+					newCourseStats.setStatus(LearnerCourseStatistics.COMPLETED);
+					sendCompletionMail = true;
+				}
+				if(sendCompletionMail) {
+					learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
+				}
 			}
-			if(sendCompletionMail) {
-				learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
+			courseStatistics = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
+			// end by OWS
+	
+			/*
+			 * Added by Dyutiman :: getting activity details for the
+			 * particular learner.
+			 */
+			courseActivities = statsService.getCourseActivitiesFromCourseStatistics(courseStatistics.getId());
+			for (LearnerCourseActivity lca : courseActivities) {
+			    Map<String, Object> result = new HashMap<>();
+			    if (lca.getCourseActivity() != null) {
+			    	result.put("actName", lca.getCourseActivity().getActivityName());
+			    }
+			    if (lca instanceof LearnerLectureCourseActivity) {
+					if (((LearnerLectureCourseActivity) lca).isAttended()){
+					    result.put("actScore", "Attented");
+					}else{
+					    result.put("actScore", "Not-Attented");
+					}
+			    } else if (lca instanceof LearnerSelfStudyCourseActivity) {
+			    	result.put("actScore", ((LearnerSelfStudyCourseActivity) lca).getOverrideScore());
+			    } else if (lca instanceof LearnerAssignmentActivity) {
+			    	result.put("actScore", ((LearnerAssignmentActivity) lca).getPercentScore());
+			    } else if (lca instanceof LearnerFinalCourseActivity) {
+			    	result.put("actScore", ((LearnerFinalCourseActivity) lca).getFinalPercentScore());
+			    }
+			    	activitiyResults.add(result);
+				}
+	
+			/*
+			 * checking for weblink course implementing LMS-3056
+			 */
+			Course c = learnerEnrollment.getCourse();
+			log.debug("courseType=>" + c.getCourseType());
+			log.debug("course class=>" + learnerEnrollment.getCourse().getClass().getName());
+			context.put("hwcourseassignmentcoursestatus", hwcourseassignmentcoursestatus);
+			context.put("hwcourseassignmentcoursestatuscmpleted", hwcourseassignmentcoursestatuscmpleted);
+			context.put("hwcourseassignmenthighestscore", hwassignmentcourseHighestMasteryScore);
+			context.put("hwcourseassignmentlowestscore", hwassignmentcourseLowestMasteryScore);
+			context.put("hwcourseassignmentscoringtype", hwcourseassignmentscoringtype);
+			context.put("hwassignmentcourseAverageMasteryScore", hwassignmentcourseAverageMasteryScore);
+			context.put("courseType", c.getCourseType());
+			context.put("courseIconToShow", this.getCourseIconToShow(null, false, c.getId().toString(), c.getCourseType()));
+	
+			context.put("learnerEnrollment", learnerEnrollment);
+			context.put("course", course);
+			context.put("courseStatistics", courseStatistics);
+			context.put("userName", user.getFirstName() + " " + user.getLastName());
+			context.put("activities", activitiyResults);
+	
+			// By OWS on 11/09/2009 for Schedule of Course in case its a
+			// synchronous course
+			try {
+			    SynchronousClass synchronousClass = learnerEnrollment.getSynchronousClass();
+			    if(synchronousClass != null){
+			    	List<SynchronousSession> synchronousSessions = synchronousClassService.getSynchronousSessionsByClassId(synchronousClass.getId());
+				    TimeZone learnerTimeZone=null;
+				    com.softech.vu360.lms.vo.TimeZone timeZoneVO= user.getLearner().getLearnerProfile().getTimeZone();
+		
+				    if(timeZoneVO!=null){
+				    	learnerTimeZone=timeZoneRepository.findOne(timeZoneVO.getId());
+				    }
+				    synchronousClass.setCurrentlyInSession(synchronousClassService.checkIfSessionInProgress(synchronousSessions,synchronousClass.getTimeZone(), learnerTimeZone, brand));
+		
+				    context.put("syncSessions", synchronousSessions);
+				    context.put("syncClass", synchronousClass);
+			    }
+	
+			}catch (Exception e) {
+			    log.error("Exception while getting Schedule for Sync Course", e);
 			}
-		}
-		courseStatistics = statsService.getLearnerCourseStatisticsForLearnerEnrollment(learnerEnrollment);
-		// end by OWS
-
-		/*
-		 * Added by Dyutiman :: getting activity details for the
-		 * particular learner.
-		 */
-		courseActivities = statsService.getCourseActivitiesFromCourseStatistics(courseStatistics.getId());
-		for (LearnerCourseActivity lca : courseActivities) {
-		    Map<String, Object> result = new HashMap<String, Object>();
-		    if (lca.getCourseActivity() != null) {
-			result.put("actName", lca.getCourseActivity().getActivityName());
-		    }
-		    if (lca instanceof LearnerLectureCourseActivity) {
-			if (((LearnerLectureCourseActivity) lca).isAttended())
-			    result.put("actScore", "Attented");
-			else
-			    result.put("actScore", "Not-Attented");
-		    } else if (lca instanceof LearnerSelfStudyCourseActivity) {
-			result.put("actScore", ((LearnerSelfStudyCourseActivity) lca).getOverrideScore());
-		    } else if (lca instanceof LearnerAssignmentActivity) {
-			result.put("actScore", ((LearnerAssignmentActivity) lca).getPercentScore());
-		    } else if (lca instanceof LearnerFinalCourseActivity) {
-			result.put("actScore", ((LearnerFinalCourseActivity) lca).getFinalPercentScore());
-		    }
-		    activitiyResults.add(result);
-		}
-
-		/*
-		 * checking for weblink course implementing LMS-3056
-		 */
-		Course c = learnerEnrollment.getCourse();
-		log.debug("courseType=>" + c.getCourseType());
-		log.debug("course class=>" + learnerEnrollment.getCourse().getClass().getName());
-		context.put("hwcourseassignmentcoursestatus", hwcourseassignmentcoursestatus);
-		context.put("hwcourseassignmentcoursestatuscmpleted", hwcourseassignmentcoursestatuscmpleted);
-		context.put("hwcourseassignmenthighestscore", hwassignmentcourseHighestMasteryScore);
-		context.put("hwcourseassignmentlowestscore", hwassignmentcourseLowestMasteryScore);
-		context.put("hwcourseassignmentscoringtype", hwcourseassignmentscoringtype);
-		context.put("hwassignmentcourseAverageMasteryScore", hwassignmentcourseAverageMasteryScore);
-		context.put("courseType", c.getCourseType());
-		context.put("courseIconToShow", this.getCourseIconToShow(null, false, c.getId().toString(), c.getCourseType()));
-
-		context.put("learnerEnrollment", learnerEnrollment);
-		context.put("course", course);
-		context.put("courseStatistics", courseStatistics);
-		context.put("userName", user.getFirstName() + " " + user.getLastName());
-		context.put("activities", activitiyResults);
-
-		// By OWS on 11/09/2009 for Schedule of Course in case its a
-		// synchronous course
-		try {
-		    SynchronousClass synchronousClass = null;
-		    List<SynchronousSession> synchronousSessions = null;
-		    synchronousClass = learnerEnrollment.getSynchronousClass();
-		    if(synchronousClass != null)
-		    {
-		    synchronousSessions = synchronousClassService.getSynchronousSessionsByClassId(synchronousClass.getId());
-		    synchronousClass.setCurrentlyInSession(synchronousClassService.checkIfSessionInProgress(synchronousSessions,
-			    synchronousClass.getTimeZone(), user.getLearner().getLearnerProfile().getTimeZone(), brand));
-
-		    context.put("syncSessions", synchronousSessions);
-		    context.put("syncClass", synchronousClass);
-		    }
-
-		} catch (Exception e) {
-		    log.error("Exception while getting Schedule for Sync Course", e);
-		}
 	    }
 	}
 
 	return context;
     }
 
-    public Map displayCourseSampleCompletionReport(VU360User user, String courseId, String viewType) {
-
-	Map<Object, Object> context = new HashMap<Object, Object>();
-
-	LearnerEnrollment learnerEnrollment = null;
-	Course course = null;
-	LearnerCourseStatistics courseStatistics = null;
-	CourseConfiguration courseCompletionCriteria = null;
-
-	// no enrollment yet - just look up the course
-	course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
-	courseStatistics = null;
-	learnerEnrollment = null;
-	//courseCompletionCriteria = new CourseConfiguration(); //courseAndCourseGroupService.findCourseCompletionCriteriaForCourse(user.getLearner(), course);
-
-	// figure out if they have any surveys left to take for this course
-
-	context.put("surveysRemaining", Boolean.TRUE);
-	context.put("learnerEnrollment", learnerEnrollment);
-	context.put("course", course);
-	context.put("viewType", viewType);
-	context.put("courseStatistics", courseStatistics);
-	context.put("courseCompletionCriteria", courseCompletionCriteria);
-	context.put("userName", user.getFirstName() + " " + user.getLastName());
-
-	return context;
+    @Override
+    public Map<Object, Object> displayCourseSampleCompletionReport(VU360User user, String courseId, String viewType) {
+		Map<Object, Object> context = new HashMap<>();
+	
+		LearnerEnrollment learnerEnrollment = null;
+		LearnerCourseStatistics courseStatistics = null;
+		CourseConfiguration courseCompletionCriteria = null;
+	
+		// no enrollment yet - just look up the course
+		Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
+		courseStatistics = null;
+		learnerEnrollment = null;
+		// figure out if they have any surveys left to take for this course
+	
+		context.put("surveysRemaining", Boolean.TRUE);
+		context.put("learnerEnrollment", learnerEnrollment);
+		context.put("course", course);
+		context.put("viewType", viewType);
+		context.put("courseStatistics", courseStatistics);
+		context.put("courseCompletionCriteria", courseCompletionCriteria);
+		context.put("userName", user.getFirstName() + " " + user.getLastName());
+	
+		return context;
     }
 
-    public Integer averagePostMasteryScore (List<LearnerHomeworkAssignmentSubmission> lsthomeworkAssignmentSubmission)
-    {
+    public Integer averagePostMasteryScore (List<LearnerHomeworkAssignmentSubmission> lsthomeworkAssignmentSubmission){
     	int learnerScore;
     	int scorecounter = 0;
     	int learneraveragescore = 0;
@@ -2011,47 +1954,34 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     		 }
     	  }
     		
-    	if(lsthomeworkAssignmentSubmission.size() > 0)
-    	{
+    	if(!lsthomeworkAssignmentSubmission.isEmpty()){
     		if(scorecounter != 0)
-    		learneraveragescore = tmplearneraveragescore/scorecounter;
+    			learneraveragescore = tmplearneraveragescore/scorecounter;
     	}
     	return learneraveragescore;
     }
     
-    public Integer highestPostMasteryScore (List<LearnerHomeworkAssignmentSubmission> lsthomeworkAssignmentSubmission)
-    {
+    private Integer highestPostMasteryScore (List<LearnerHomeworkAssignmentSubmission> lsthomeworkAssignmentSubmission){
     	int learnerScore;
     	int scorecounter = 0;
     	int tmplearnerhigestscore = 0;
     	for (LearnerHomeworkAssignmentSubmission lhas : lsthomeworkAssignmentSubmission) {
-    	
-    		if(lhas.getPercentScore() != null)
-    		{
-    		  if(!lhas.getPercentScore().equals("Incomplete"))
-    		     {
-		    		  learnerScore = Integer.parseInt(lhas.getPercentScore());
-		    		  if(scorecounter == 0)
-		    		  {
-		    			  tmplearnerhigestscore = learnerScore;
-		    			  scorecounter = scorecounter + 1;
-		    		  }
-		    		  else if(scorecounter > 0)
-		    		  {
-		    			  if(tmplearnerhigestscore > learnerScore)
-		    			  {
-		    				  scorecounter = scorecounter + 1;
-		    			  }
-		    			  else if(tmplearnerhigestscore < learnerScore)
-		    			  {
-		    				  tmplearnerhigestscore = learnerScore;
-		    				  scorecounter = scorecounter + 1;
-		    			  }
-    		          }
-    		    }
+    		if(lhas.getPercentScore() != null && !lhas.getPercentScore().equals("Incomplete")){
+			  learnerScore = Integer.parseInt(lhas.getPercentScore());
+			  if(scorecounter == 0){
+				  tmplearnerhigestscore = learnerScore;
+				  scorecounter = scorecounter + 1;
+			  }else if(scorecounter > 0){
+				  if(tmplearnerhigestscore > learnerScore){
+					  scorecounter = scorecounter + 1;
+				  }else if(tmplearnerhigestscore < learnerScore){
+					  tmplearnerhigestscore = learnerScore;
+					  scorecounter = scorecounter + 1;
+				  }
+			  }
     		}
     	}
-    		return tmplearnerhigestscore;
+    	return tmplearnerhigestscore;
     }
     
     public Integer lowestPostMasteryScore (List<LearnerHomeworkAssignmentSubmission> lsthomeworkAssignmentSubmission)
@@ -2060,97 +1990,89 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     	int scorecounter = 0;
     	int tmplearnerlowestscore = 0;
     	for (LearnerHomeworkAssignmentSubmission lhas : lsthomeworkAssignmentSubmission) {
-    	
-    		if(lhas.getPercentScore() != null)
-    		{
-    			 if(!lhas.getPercentScore().equals("Incomplete"))
-    		     {
-		    		  learnerScore = Integer.parseInt(lhas.getPercentScore());
-		    		  if(scorecounter == 0)
-		    		  {
-		    			  tmplearnerlowestscore = learnerScore;
-		    			  scorecounter = scorecounter + 1;
-		    		  }
-		    		  else if(scorecounter > 0)
-		    		  {
-		    			  if(tmplearnerlowestscore < learnerScore)
-		    			  {
-		    				  scorecounter = scorecounter + 1;
-		    			  }
-		    			  else if(tmplearnerlowestscore > learnerScore)
-		    			  {
-		    				  tmplearnerlowestscore = learnerScore;
-		    				  scorecounter = scorecounter + 1;
-		    			  }
-		    		  }
-    		     }	  
+    		if(lhas.getPercentScore() != null && !lhas.getPercentScore().equals("Incomplete")){
+    		  learnerScore = Integer.parseInt(lhas.getPercentScore());
+    		  if(scorecounter == 0){
+    			  tmplearnerlowestscore = learnerScore;
+    			  scorecounter = scorecounter + 1;
+    		  }else if(scorecounter > 0){
+    			  if(tmplearnerlowestscore < learnerScore){
+    				  scorecounter = scorecounter + 1;
+    			  }else if(tmplearnerlowestscore > learnerScore){
+    				  tmplearnerlowestscore = learnerScore;
+    				  scorecounter = scorecounter + 1;
+    			  }
+    		  }
+    		     	  
     		}
     	}
-    		return tmplearnerlowestscore;
+    	return tmplearnerlowestscore;
     }
     
-    public Map displayCourseSampleDetails(VU360User user, String courseId, String viewType) {
+    @Override
+    public Map<Object, Object> displayCourseSampleDetails(VU360User user, String courseId, String viewType) {
 
-	Map<Object, Object> context = new HashMap<Object, Object>();
-	Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
-	/*
-	 * checking for weblink course implementing LMS-3056
-	 */
-	log.debug("courseType=>" + course.getCourseType());
-	log.debug("course class=>" + course.getClass().getName());
-	context.put("courseType", course.getCourseType());
-	context.put("courseIconToShow", this.getCourseIconToShow(null, false, course.getId().toString(), course.getCourseType()));
-	context.put("viewType", viewType);
-	context.put("course", course);
-	context.put("userName", user.getFirstName() + " " + user.getLastName());
-
-	return context;
+		Map<Object, Object> context = new HashMap<>();
+		Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
+		/*
+		 * checking for weblink course implementing LMS-3056
+		 */
+		log.debug("courseType=>" + course.getCourseType());
+		log.debug("course class=>" + course.getClass().getName());
+		context.put("courseType", course.getCourseType());
+		context.put("courseIconToShow", this.getCourseIconToShow(null, false, course.getId().toString(), course.getCourseType()));
+		context.put("viewType", viewType);
+		context.put("course", course);
+		context.put("userName", user.getFirstName() + " " + user.getLastName());
+	
+		return context;
     }
 
-    public Map displayScheduleToEnroll(VU360User user, Brander brand, Long courseId, String viewType) {
-
-	// [09/07/2010] LMS-6858 :: Get Valid Classes for Learner Enrollment by
-	// Synchronous Course Id.
-	List<SynchronousClass> synchronousClasses = null;
-	synchronousClasses = synchronousClassService.getSynchronousClassesForEnrollment(courseId, 1);
-
-	if (synchronousClasses != null) {
-	    for (SynchronousClass synchronousClass : synchronousClasses) {
-
-		synchronousClass.setSynchronousSessions(synchronousClassService.getSynchronousSessionsByClassId(synchronousClass.getId()));
-		synchronousClassService.checkIfSessionInProgress(synchronousClass.getSynchronousSessions(), synchronousClass.getTimeZone(), user
-			.getLearner().getLearnerProfile().getTimeZone(), brand);
-	    }
-	}
-
-	Map<Object, Object> context = new HashMap<Object, Object>();
-	Course course = courseAndCourseGroupService.getCourseById(courseId);
-	boolean alreadyEnrolled = false;
-
-	LearnerEnrollment existingEnrollment = entitlementService.getLearnerEnrollmentsForLearner(user.getLearner(), course);
-	if (existingEnrollment != null && existingEnrollment.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.ACTIVE)) {
-	    alreadyEnrolled = true;
-	}
-
-	context.put("course", course);
-	context.put("courseIconToShow", this.getCourseIconToShow(null, false, course.getId().toString(), course.getCourseType()));
-	context.put("syncClasses", synchronousClasses);
-	context.put("viewType", viewType);
-	context.put("alreadyEnrolled", alreadyEnrolled);
-	context.put("userName", user.getFirstName() + " " + user.getLastName());
-
-	return context;
+    @Override
+    public Map<Object, Object> displayScheduleToEnroll(VU360User user, Brander brand, Long courseId, String viewType) {
+		// [09/07/2010] LMS-6858 :: Get Valid Classes for Learner Enrollment by
+		// Synchronous Course Id.
+		List<SynchronousClass> synchronousClasses = null;
+		synchronousClasses = synchronousClassService.getSynchronousClassesForEnrollment(courseId, 1);
+	
+		if (synchronousClasses != null) {
+		    for (SynchronousClass synchronousClass : synchronousClasses) {
+	
+			synchronousClass.setSynchronousSessions(synchronousClassService.getSynchronousSessionsByClassId(synchronousClass.getId()));
+			synchronousClassService.checkIfSessionInProgress(synchronousClass.getSynchronousSessions(), synchronousClass.getTimeZone(), user
+				.getLearner().getLearnerProfile().getTimeZone(), brand);
+		    }
+		}
+	
+		Map<Object, Object> context = new HashMap<>();
+		Course course = courseAndCourseGroupService.getCourseById(courseId);
+		boolean alreadyEnrolled = false;
+	
+		LearnerEnrollment existingEnrollment = entitlementService.getLearnerEnrollmentsForLearner(user.getLearner(), course);
+		if (existingEnrollment != null && existingEnrollment.getEnrollmentStatus().equalsIgnoreCase(LearnerEnrollment.ACTIVE)) {
+		    alreadyEnrolled = true;
+		}
+	
+		context.put("course", course);
+		context.put("courseIconToShow", this.getCourseIconToShow(null, false, course.getId().toString(), course.getCourseType()));
+		context.put("syncClasses", synchronousClasses);
+		context.put("viewType", viewType);
+		context.put("alreadyEnrolled", alreadyEnrolled);
+		context.put("userName", user.getFirstName() + " " + user.getLastName());
+	
+		return context;
     }
 
-	public Map displayViewSchedule(VU360User user, Brander brand, String courseId, String learnerEnrollmentID) {
+    @Override
+	public Map<Object, Object> displayViewSchedule(VU360User user, Brander brand, String courseId, String strLearnerEnrollmentId) {
         List<SynchronousClass> syncClasses = synchronousClassService.getAllSynchClassesOfCourse(Long.valueOf(courseId));        
-        List<SynchronousSession> syncSchedules = new  ArrayList<SynchronousSession>();
-        LearnerEnrollment learnerEnrollment = entitlementService.getLearnerEnrollmentById(Long.valueOf(learnerEnrollmentID));
+        List<SynchronousSession> syncSchedules = new  ArrayList<>();
+        long learnerEnrollmentId= strLearnerEnrollmentId==null?0L:Long.parseLong(strLearnerEnrollmentId);
+        LearnerEnrollment learnerEnrollment = entitlementService.getLearnerEnrollmentById(learnerEnrollmentId);
         Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(courseId));
-        //user = VU360UserAuthenticationDetails.getProxyUser(); //PRINICPAL: 03-09-2016
         
         if((course instanceof SynchronousCourse || course instanceof WebinarCourse) && 
-        		(learnerEnrollmentID==null || (learnerEnrollmentID!=null && Long.valueOf(learnerEnrollmentID)<=0))){//RWA: If Learner is not yet enrolled in the course, show all schedules
+        		(learnerEnrollmentId<=0)){//RWA: If Learner is not yet enrolled in the course, show all schedules
             for (SynchronousClass syncClass : syncClasses) {
                 List<SynchronousSession> syncSessions = synchronousClassService.getSynchronousSessionsByClassId(syncClass.getId());
                 boolean sessionInProgress = synchronousClassService.checkIfSessionInProgress(syncSessions,
@@ -2164,14 +2086,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 }
             }
         }
-        if(course instanceof InstructorConnectCourse && 
-        		(learnerEnrollmentID==null || (learnerEnrollmentID!=null && Long.valueOf(learnerEnrollmentID)<=0))){//RWA: If Learner is not yet enrolled in the course, show all schedules
+        if(course instanceof InstructorConnectCourse && learnerEnrollmentId<=0){//RWA: If Learner is not yet enrolled in the course, show all schedules
             for (SynchronousClass syncClass : syncClasses) {
                 List<SynchronousSession> syncSessions = synchronousClassService.getSynchronousSessionsByClassId(syncClass.getId());
                 boolean sessionInProgress = synchronousClassService.checkIfSessionInProgress(syncSessions,
-                   syncClass.getTimeZone(), 
-                   user.getLearner().getLearnerProfile().getTimeZone(), 
-                   brand);
+                   syncClass.getTimeZone(),user.getLearner().getLearnerProfile().getTimeZone(),brand);
                 syncClass.setCurrentlyInSession(sessionInProgress);
                 
                 // Rehan Rana
@@ -2180,14 +2099,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 	syncSchedules.add(SyncSess);
                 }
             }
-        }
-        else{
+        }else{
             for (SynchronousClass syncClass : syncClasses) {
                 List<SynchronousSession> syncSessions = synchronousClassService.getSynchronousSessionsByClassId(syncClass.getId());
                 boolean sessionInProgress = synchronousClassService.checkIfSessionInProgress(syncSessions,
-                   syncClass.getTimeZone(), 
-                   user.getLearner().getLearnerProfile().getTimeZone(), 
-                   brand);
+                   syncClass.getTimeZone(),user.getLearner().getLearnerProfile().getTimeZone(),brand);
                 syncClass.setCurrentlyInSession(sessionInProgress);
             }
 
@@ -2203,7 +2119,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	    	    }
             }
         }
-		Map<Object, Object> context = new HashMap<Object, Object>();
+		Map<Object, Object> context = new HashMap<>();
 		context.put("syncSessions", syncSchedules);
 		context.put("course", course);
 		context.put("syncClasses", syncClasses);
@@ -2226,49 +2142,36 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private void checkCurrentlyInSession(VU360User user, Brander brand, List<MyCoursesItem> filteredMyCourses) {
 		if (filteredMyCourses != null) { // not null only for recent courses
 		    for (MyCoursesItem mci : filteredMyCourses) {
-			String courseStatus = (String) mci.get("courseStatus");
-			String courseCategoryType = (String) mci.get("courseCategoryType");
-			if (courseStatus.equals("completed")) { // if course is already completed
-			    if (courseCategoryType.equalsIgnoreCase("Weblink")) {
-				// if it is a weblink course
-				log.debug("Weblink course found - courseCategoryType --> " + courseCategoryType);
-				mci.put("courseCategoryType", "Weblink");
-			    }
-			    try {
-				if (courseCategoryType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) 
-						|| courseCategoryType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE)) {
-				    LearnerEnrollment le = (LearnerEnrollment) mci.get("enrollment");
-				    if (le != null) {
-					boolean currentlyInSession = false;
-					if (le.getSynchronousClass() != null)
-					    currentlyInSession = synchronousClassService.checkIfSessionInProgress(synchronousClassService
-						    .getSynchronousSessionsByClassId(le.getSynchronousClass().getId()), le.getSynchronousClass()
-						    .getTimeZone(), user.getLearner().getLearnerProfile().getTimeZone(), brand);
-	
-					mci.put("syncInProgress", currentlyInSession);
-					mci.put("courseIconToShow",
-						getCourseIconToShow(le, currentlyInSession, mci.get("courseIdKey").toString(), mci.get("courseCategoryType")
-							.toString()));
+				String courseStatus = (String) mci.get("courseStatus");
+				String courseCategoryType = (String) mci.get("courseCategoryType");
+				if (courseStatus.equals("completed")) { // if course is already completed
+				    if (courseCategoryType.equalsIgnoreCase("Weblink")) {
+					// if it is a weblink course
+					log.debug("Weblink course found - courseCategoryType --> " + courseCategoryType);
+					mci.put("courseCategoryType", "Weblink");
 				    }
-				} else if (courseCategoryType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
-				    LearnerEnrollment le = (LearnerEnrollment) mci.get("enrollment");
-				    if (le != null) {
-					boolean currentlyInSession = false;
-					if (le.getSynchronousClass() != null)
-					    currentlyInSession = synchronousClassService.checkIfSessionInProgress(synchronousClassService
-						    .getSynchronousSessionsByClassId(le.getSynchronousClass().getId()), le.getSynchronousClass()
-						    .getTimeZone(), user.getLearner().getLearnerProfile().getTimeZone(), brand);
-	
-					mci.put("syncInProgress", currentlyInSession);
-					mci.put("courseIconToShow",
-						getCourseIconToShow(le, currentlyInSession, mci.get("courseIdKey").toString(), mci.get("courseCategoryType")
-							.toString()));
+				    try {
+						if (courseCategoryType.equalsIgnoreCase(SynchronousCourse.COURSE_TYPE) 
+								|| courseCategoryType.equalsIgnoreCase(WebinarCourse.COURSE_TYPE)
+								|| courseCategoryType.equalsIgnoreCase(InstructorConnectCourse.COURSE_TYPE)) {
+						    LearnerEnrollment le = (LearnerEnrollment) mci.get("enrollment");
+						    if (le != null) {
+							boolean currentlyInSession = false;
+							if (le.getSynchronousClass() != null)
+							    currentlyInSession = synchronousClassService.checkIfSessionInProgress(synchronousClassService
+								    .getSynchronousSessionsByClassId(le.getSynchronousClass().getId()), le.getSynchronousClass()
+								    .getTimeZone(), user.getLearner().getLearnerProfile().getTimeZone(), brand);
+			
+							mci.put("syncInProgress", currentlyInSession);
+							mci.put("courseIconToShow",
+								getCourseIconToShow(le, currentlyInSession, mci.get("courseIdKey").toString(), mci.get("courseCategoryType")
+									.toString()));
+						    }
+						}
+				    } catch (Exception e) {
+				    	log.error("Exception checking in progress: " + e.getMessage(),e);
 				    }
 				}
-			    } catch (Exception e) {
-				log.error("Exception checking in progress: " + e.getMessage());
-			    }
-			}
 		    }
 		}
     }
@@ -2377,23 +2280,21 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     private double getPercentCompleteForSyncCourse(LearnerEnrollment learnerEnrollment) {
-
-	SynchronousClass syncClass = learnerEnrollment.getSynchronousClass();
-	List<SynchronousSession> sessions = null;
-	int totalSessions = 0;
-	int totalCompleted = 0;
-	if (syncClass != null) {
-	    sessions = synchronousClassService.getSynchronousSessionsByClassId(syncClass.getId());
-	    totalSessions = sessions.size();
-	    for (SynchronousSession session : sessions) {
-			if (session.getStatus().equalsIgnoreCase(SynchronousSession.COMPLETED)) {
-			    totalCompleted++;
-			}
-	    }
-
-	}
-
-	return (totalCompleted / (totalSessions == 0 ? 1 : totalSessions)) * 100;
+		SynchronousClass syncClass = learnerEnrollment.getSynchronousClass();
+		int totalSessions = 0;
+		int totalCompleted = 0;
+		if (syncClass != null) {
+			List<SynchronousSession> sessions = synchronousClassService.getSynchronousSessionsByClassId(syncClass.getId());
+		    totalSessions = sessions.size();
+		    for (SynchronousSession session : sessions) {
+				if (session.getStatus().equalsIgnoreCase(SynchronousSession.COMPLETED)) {
+				    totalCompleted++;
+				}
+		    }
+	
+		}
+	
+		return (totalCompleted / (totalSessions == 0 ? 1 : totalSessions)) * 100;
     }
 
     public StatisticsService getStatsService() {
@@ -2428,23 +2329,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
      */
     @Override
     public void enrollLearnerToLearnerGroupItems(VU360User vu360User, LearnerGroup learnerGroup) {
-		if (learnerGroup.getLearnerGroupItems() != null && learnerGroup.getLearnerGroupItems().size() > 0) {
+		if (CollectionUtils.isNotEmpty(learnerGroup.getLearnerGroupItems())) {
 		    for (LearnerGroupItem item : learnerGroup.getLearnerGroupItems()) {
 				Course course = item.getCourse();
 				if (course.isActive()) {
 				    String synClassId = null;
-				    Boolean doEnrollment = true;
-				    if (course instanceof SynchronousCourse || course instanceof WebinarCourse) {
+				    boolean doEnrollment = true;
+				    if (course instanceof SynchronousCourse || course instanceof WebinarCourse
+				    		|| course instanceof InstructorConnectCourse) {
 						List<SynchronousClass> synClasses = this.synchronousClassService.getSynchronousClassesForEnrollment(course.getId(), 1, false);
-						if (synClasses != null && synClasses.size() > 0) {
-						    synClassId = synClasses.get(0).getId().toString();
-						} else {
-						    doEnrollment = false;
-						}
-				    }
-				    if (course instanceof InstructorConnectCourse) {
-						List<SynchronousClass> synClasses = this.synchronousClassService.getSynchronousClassesForEnrollment(course.getId(), 1, false);
-						if (synClasses != null && synClasses.size() > 0) {
+						if (CollectionUtils.isNotEmpty(synClasses)) {
 						    synClassId = synClasses.get(0).getId().toString();
 						} else {
 						    doEnrollment = false;
@@ -2459,12 +2353,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     public Map<Long, CourseGroupView> transformListIntoMap(List<CourseGroupView> list) {
-		Map<Long, CourseGroupView> map = new HashMap<Long, CourseGroupView>(list.size());
-		Long id = null;
+		Map<Long, CourseGroupView> map = new HashMap<>(list.size());
+		Long id;
 		for (CourseGroupView view : list) {
-		    id = Long.valueOf(view.getId());
+		    id = view.getId();
 		    if (map.get(id) == null) {
-			map.put(id, view);
+		    	map.put(id, view);
 		    }
 		}
 		return map;
@@ -2487,36 +2381,36 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 						statsService.updateLearnerCourseStatistics(learnerStat.getId(),learnerStat);
 					}
 					if(enrolledClass.getTimeZone()!=null && currentDateTime.compareTo(DateUtil.getGMTDateForTimezoneHours(enrollmentEndDate,enrolledClass.getTimeZone().getHours()))>=0 && 
-						!learnerStat.getStatus().equals(LearnerCourseStatistics.COMPLETED)){//Set to Completed
+						!learnerStat.getStatus().equals(LearnerCourseStatistics.COMPLETED)
 						/**
 						 * added by muhammad akif for -- LMS-16163
 						 * for course completion automatic/manual
 						 */
-						if(enrolledClass.isAutomatic()){
-							learnerStat.setStatus(LearnerCourseStatistics.COMPLETED);
-							learnerStat.setCompleted(true);
-							learnerStat.setCompletionDate(enrolledClass.getClassEndDate());
-							learnerStat.setPercentComplete(100);
-							
-							statsService.updateLearnerCourseStatistics(learnerStat.getId(),learnerStat);
-							learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
-						}
+						&& enrolledClass.isAutomatic()){
+						learnerStat.setStatus(LearnerCourseStatistics.COMPLETED);
+						learnerStat.setCompleted(true);
+						learnerStat.setCompletionDate(enrolledClass.getClassEndDate());
+						learnerStat.setPercentComplete(100);
+						
+						statsService.updateLearnerCourseStatistics(learnerStat.getId(),learnerStat);
+						learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollment.getId());
 					}
 				}
 			}
-		}
-		catch(Exception e){
-			log.debug(e);
+		}catch(Exception e){
+			log.error(e.getMessage(),e);
 		}
 	}
     
+    @Override
 	public Subscription addPreEnrollmentsForSubscription(Learner learner, Subscription subscription){
-		Set<VU360User> lstvu360User = new HashSet<VU360User>();
+		Set<VU360User> lstvu360User = new HashSet<>();
 		lstvu360User.add(learner.getVu360User());
     	subscription.setVu360User(lstvu360User);
     	return subscriptionService.updateSubscription(subscription);
 	}
- 	
+    
+    @Override
 	public LearnerEnrollment addSelfEnrollmentsForSubscription(Learner learner, String subscriptionId, String courseId) {
 		LearnerEnrollment le = this.getActiveLearnerEnrollment(learner.getId(), Long.valueOf(courseId));
 		if (le == null) {
@@ -2528,34 +2422,23 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			le.setCourse(course);
 			le.setEnrollmentStartDate(today);
 			le.setEnrollmentStatus(LearnerEnrollment.ACTIVE);
-			le.setEnrollmentEndDate(getEndDateOffset(today, (99 * 365))); // As
-																			// per
-																			// story
-																			// ticket,
-																			// enrollment
-																			// should
-																			// be
-																			// valid
-																			// till
-																			// 99
-																			// years
+			le.setEnrollmentEndDate(getEndDateOffset(today, (99 * 365))); // As per story ticket, enrollment should be valid till 99 years
 			le.setCustomerEntitlement(ce);
 			le.setLearner(learner);
 			le.setSubscription(subscription);
 
-			if ((course.getCourseType().equals(SynchronousCourse.COURSE_TYPE)
-					|| course.getCourseType().equals(WebinarCourse.COURSE_TYPE))) {
+			if (course.getCourseType().equals(SynchronousCourse.COURSE_TYPE)
+					|| course.getCourseType().equals(WebinarCourse.COURSE_TYPE)) {
 				log.info("This is Synchronous Course");
-				SynchronousClass syncClass = null;
-				List<SynchronousClass> syncClasses = synchronousClassService
-						.getSynchronousClassByCourseId(course.getId());
-				if (syncClasses != null && syncClasses.size() > 0) {
-					syncClass = syncClasses.get(0);
-					log.info("enrolled into:" + syncClass.getSectionName() + "(" + syncClass.getId() + ")");
+				List<SynchronousClass> syncClasses = synchronousClassService.getSynchronousClassByCourseId(course.getId());
+				if (CollectionUtils.isNotEmpty(syncClasses)) {
+					SynchronousClass syncClass = syncClasses.get(0);
+					if (syncClass != null) {
+						le.setSynchronousClass(syncClass);
+						log.info("enrolled into:" + syncClass.getSectionName() + "(" + syncClass.getId() + ")");
+					}
 				}
-				if (syncClass != null) {
-					le.setSynchronousClass(syncClass);
-				}
+				
 			}
 			le = addSelfEnrollmentForSubscription(learner, ce, le);
 			return le;
@@ -2607,9 +2490,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				if (c.getCourseType().equals(InstructorConnectCourse.COURSE_TYPE) && !subItem.equals("")) {
 				    SynchronousClass syncClass = synchronousClassService.getSynchronousClassByGUID(subItem);
 				    if (syncClass != null) {
-					le.setSynchronousClass(syncClass);
+				    	le.setSynchronousClass(syncClass);
 				    }
-		
 				}
 
 				// add it to the db
@@ -2633,24 +2515,21 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		return learnerList;
 	}
     
-	    @Override
-	    public void marketoPacket(LearnerEnrollment le, String eventName){
-	     	try{
-	   		  
-	   		  final String firstName = le.getLearner().getVu360User().getFirstName();
-	   		  final String lastName = le.getLearner().getVu360User().getLastName();
-	   		  final String emailAddress = le.getLearner().getVu360User().getEmailAddress();
-	   		  final String company = le.getLearner().getCustomer().getName();
-	  		  final String courseName = le.getCourse().getCourseTitle();
-	   		  final String storeName = le.getLearner().getCustomer().getDistributor().getName();
-	   		  final String event = eventName;
-	   		  final String customerType = le.getLearner().getCustomer().getCustomerType();
-	   		String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-	   		  SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-	 
-	   		  final String eventDate = simpleDateFormat.format(new Date());
-	   		  
-	   		  
+    @Override
+    public void marketoPacket(LearnerEnrollment le, String eventName){
+    	try{
+			final String firstName = le.getLearner().getVu360User().getFirstName();
+			final String lastName = le.getLearner().getVu360User().getLastName();
+			final String emailAddress = le.getLearner().getVu360User().getEmailAddress();
+			final String company = le.getLearner().getCustomer().getName();
+			final String courseName = le.getCourse().getCourseTitle();
+			final String storeName = le.getLearner().getCustomer().getDistributor().getName();
+			final String event = eventName;
+			final String customerType = le.getLearner().getCustomer().getCustomerType();
+			String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+			final String eventDate = simpleDateFormat.format(new Date());
+			
 	   		if((emailAddress!=null) && (emailAddress.length() > 0) && (FieldsValidation.isEmailValid(emailAddress))){
 	   		  marketoJMSTemplate.send(new MessageCreator() {
 	                 public TextMessage createMessage(Session session) throws JMSException {
@@ -2664,16 +2543,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 	   		  
 	   		}
 	   		else if((emailAddress!=null) && (emailAddress.length() > 0)){
-   			
-   			  log.debug("Invalid Marketo Email address" + emailAddress);
-    		}
-	   	  }
-	   	  catch(Exception e)
-	   	  {
-	   		  log.error(e);
-	   	  }
-	     }
+			  log.debug("Invalid Marketo Email address" + emailAddress);
+			}
+		} catch (Exception e) {
+			log.error(e);
+		}
+     }
 	
+	@Override
 	public void enableCertificate(Long enrolmentIdArray[], boolean status){
     	List<LearnerEnrollment> le = learnerEnrollmentRepository.findByIdIn(enrolmentIdArray);
     	for (int i = 0; i < le.size(); i++)
@@ -2681,48 +2558,41 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		learnerEnrollmentRepository.save(le);	
     }
     
-    
 	@Override
 	public List<LearnerEnrollment> getLearnerEnrollmentByEnrollmentIds(List<Long> lstEnrollmentIds) {
-		//return enrollmentDAO.getLearnerEnrollmentByEnrollmentIds(lstEnrollmentIds);
 		return learnerEnrollmentRepository.findByIdInAndEnrollmentStatus(lstEnrollmentIds, LearnerEnrollment.ACTIVE);
 	}
 	
 	@Override
 	public List<LearnerEnrollment> getLearerEnrollmentsByCourses(List<Long> lstCourseIds) {
-		//return enrollmentDAO.getLearerEnrollmentsByCourses(lstCourseIds);
 		return learnerEnrollmentRepository.findByCourseIdInAndEnrollmentStatus(lstCourseIds, LearnerEnrollment.ACTIVE);
 	}
 	
+	@Override
 	public List<LearnerEnrollment> getLearerEnrollmentsByCourse(Long courseId) {
-		//return enrollmentDAO.getLearerEnrollmentsByCourse(courseId);
 		return learnerEnrollmentRepository.findByCourseIdAndEnrollmentStatus(courseId, LearnerEnrollment.ACTIVE);
 	}
 
 	private List<MyCoursesCourseGroup> generateMyCoursesViewForLearnerEnrollmentsForView(List<LearnerEnrollment> learnerEnrollments) {
 		long startTime=System.currentTimeMillis();
 		
-		List<MyCoursesCourseGroup> results = new ArrayList<MyCoursesCourseGroup>();
-		if( learnerEnrollments != null && learnerEnrollments.size() > 0 ) {
+		List<MyCoursesCourseGroup> results = new ArrayList<>();
+		if(CollectionUtils.isNotEmpty(learnerEnrollments)) {
 			List<TrainingPlanAssignment> trainingPlanAssignment = courseAndCourseGroupService.getTrainingPlanByEnrollments(learnerEnrollments);	
 							
-			HashMap<String,MyCoursesCourseGroup> cgMap= new HashMap<String,MyCoursesCourseGroup>();
+			HashMap<String,MyCoursesCourseGroup> cgMap= new HashMap<>();
 			for (LearnerEnrollment learnerEnrollment : learnerEnrollments) {
-						MyCoursesCourseGroup mcg = null;
-						//for(LearnerEnrollment le : learnerEnrollments){
-						// [07/22/2010] LMS-6388 :: Hide retired courses from CourseGroup Contracts only
-						CourseGroup leCourseGroup = getCourseGroupByEnrollment(learnerEnrollment, trainingPlanAssignment);
-						mcg = cgMap.get(leCourseGroup.getName()); 
-						if(mcg==null){
-							//MyCoursesCourseGroup newMCG=new MyCoursesCourseGroup(leCourseGroup);
-							mcg = new MyCoursesCourseGroup(leCourseGroup);
-						}
-						cgMap.put(leCourseGroup.getName(), mcg);
-						MyCoursesItem mci = new MyCoursesItem(learnerEnrollment); 
-						mcg.addCourse(mci);
-						results.add(mcg);
-						
-						//}
+				MyCoursesCourseGroup mcg;
+				// [07/22/2010] LMS-6388 :: Hide retired courses from CourseGroup Contracts only
+				CourseGroup leCourseGroup = getCourseGroupByEnrollment(learnerEnrollment, trainingPlanAssignment);
+				mcg = cgMap.get(leCourseGroup.getName()); 
+				if(mcg==null){
+					mcg = new MyCoursesCourseGroup(leCourseGroup);
+				}
+				cgMap.put(leCourseGroup.getName(), mcg);
+				MyCoursesItem mci = new MyCoursesItem(learnerEnrollment); 
+				mcg.addCourse(mci);
+				results.add(mcg);
 			}			
 		}
 		
@@ -2749,8 +2619,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		/*
 		 * Just to double check whether duplicate course is there for a learner enrollments
 		 */
-		if( learnerEnrollments != null && learnerEnrollments.size() > 0 ) {
-			ArrayList<Long> toIgnoreEnrollmentIds = new ArrayList<Long>();
+		if( CollectionUtils.isNotEmpty(learnerEnrollments)) {
+			ArrayList<Long> toIgnoreEnrollmentIds = new ArrayList<>();
 			
 			Iterator<LearnerEnrollment> learnerEnrollmentsIterator = learnerEnrollments.iterator();
 			while (learnerEnrollmentsIterator.hasNext()) {
@@ -2765,26 +2635,22 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 				}
 			}
 			List<TrainingPlanAssignment> trainingPlanAssignment = courseAndCourseGroupService.getTrainingPlanByEnrollments(learnerEnrollments);	
-			HashMap<String,MyCoursesCourseGroup> cgMap= new HashMap<String,MyCoursesCourseGroup>();
+			HashMap<String,MyCoursesCourseGroup> cgMap= new HashMap<>();
 
 			for (LearnerEnrollment learnerEnrollment : learnerEnrollments) {
 				if (!toIgnoreEnrollmentIds.contains(learnerEnrollment.getId())) {
-						MyCoursesCourseGroup mcg = null;
-						//for(LearnerEnrollment le : learnerEnrollments){
-						// [07/22/2010] LMS-6388 :: Hide retired courses from CourseGroup Contracts only
-						CourseGroup leCourseGroup = getCourseGroupByEnrollment(learnerEnrollment, trainingPlanAssignment);
-						mcg = cgMap.get(leCourseGroup.getName()); 
-						if(mcg==null){
-							//MyCoursesCourseGroup newMCG=new MyCoursesCourseGroup(leCourseGroup);
-							mcg = new MyCoursesCourseGroup(leCourseGroup);
-						}
-						cgMap.put(leCourseGroup.getName(), mcg);
-						MyCoursesItem mci = new MyCoursesItem(learnerEnrollment); 
-						
-						mcg.addCourse(mci);
-						results.add(mcg);
-						
-						//}
+					MyCoursesCourseGroup mcg;
+					// [07/22/2010] LMS-6388 :: Hide retired courses from CourseGroup Contracts only
+					CourseGroup leCourseGroup = getCourseGroupByEnrollment(learnerEnrollment, trainingPlanAssignment);
+					mcg = cgMap.get(leCourseGroup.getName()); 
+					if(mcg==null){
+						mcg = new MyCoursesCourseGroup(leCourseGroup);
+					}
+					cgMap.put(leCourseGroup.getName(), mcg);
+					MyCoursesItem mci = new MyCoursesItem(learnerEnrollment); 
+					
+					mcg.addCourse(mci);
+					results.add(mcg);
 				}
 			}			
 		}

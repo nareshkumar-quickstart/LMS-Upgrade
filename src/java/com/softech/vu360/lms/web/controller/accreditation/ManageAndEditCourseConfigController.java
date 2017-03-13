@@ -51,9 +51,9 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 	private final String PROCTOR_VALIDATOR_ANSI = "ansi";
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
 	private final String PROCTOR_VALIDATOR_TREC = "TREC";
+	private final String ONLINE_PROCTORING = "ONLINEPROCTORING";
 	private AccreditationService accreditationService;
 	private CourseAndCourseGroupService courseAndCourseGroupService;
-//	HttpSession session = null;
 
 	private String searchCourseConfigTemplate = null;
 	private String editCourseConfigTemplate = null;
@@ -1158,10 +1158,17 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 			    mycourseConfiguration.setRequireSelfRegistrationProctor(true);
 			else
 			    mycourseConfiguration.setRequireSelfRegistrationProctor(false);
+			
+			if(form.getProctorValidatorName().equalsIgnoreCase(ONLINE_PROCTORING))
+			    mycourseConfiguration.setRequireOnlineProctoring(true);
+			else
+			    mycourseConfiguration.setRequireOnlineProctoring(false);
 		}
 		else{
 			mycourseConfiguration.setRequiredNyInsurance(false);
 			mycourseConfiguration.setRequiredAnsi(false);
+			mycourseConfiguration.setRequireSelfRegistrationProctor(false);
+			mycourseConfiguration.setRequireOnlineProctoring(false);
 		}
 		
 		mycourseConfiguration.setRequireLearnerValidation(form.isRequireLearnerValidation());
