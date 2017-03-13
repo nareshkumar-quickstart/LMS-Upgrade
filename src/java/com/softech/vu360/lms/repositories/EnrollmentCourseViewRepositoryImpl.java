@@ -65,7 +65,7 @@ public class EnrollmentCourseViewRepositoryImpl implements EnrollmentCourseViewR
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<EnrollmentCourseView> getCoursesForEnrollment(Long customerId, String courseName, String courseCode, String contractName, Date expirationDate) {
+	public List<EnrollmentCourseView> getCoursesForEnrollment(Long customerId, String courseName, String courseCode, String contractName, Date expirationDate, Long[] customerEntitlementIds) {
 		
 		StringBuilder query = new StringBuilder();
 		query.append("select * ");
@@ -87,6 +87,10 @@ public class EnrollmentCourseViewRepositoryImpl implements EnrollmentCourseViewR
 			
 		if(expirationDate != null) {
 			criteria.add("EXPIRATION_DATE <= :expirationDate");
+		}
+		
+		if(customerEntitlementIds != null){
+			criteria.add("CUSTOMERENTITLEMENT_ID IN (:customerEntitlementIds)");
 		}
 		
 		if (criteria.size() == 0) {
@@ -117,6 +121,10 @@ public class EnrollmentCourseViewRepositoryImpl implements EnrollmentCourseViewR
 			
 		if(expirationDate != null) {
 			q.setParameter("expirationDate", FormUtil.getInstance().formatDate(expirationDate, "yyyy-MM-dd"));
+		}
+		
+		if(customerEntitlementIds != null){
+			q.setParameter("customerEntitlementIds", customerEntitlementIds);
 		}
 		
 		return (List<EnrollmentCourseView>)q.getResultList();

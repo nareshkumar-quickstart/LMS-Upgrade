@@ -288,6 +288,117 @@
 		showUploadBox(divId);
     }
     
+    function showReportingChangeStatusBox(){
+		document.getElementById('searchBox').className = "visible";
+		
+		if(document.getElementById('changeReportingStatusBox').className == "visible"){
+			
+			if($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length < 1)	{
+				$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+			}
+			
+			document.getElementById('changeReportingStatusBox').className = "search_box";
+			$('#changeStatusBox input[type="radio"]:first').focus();
+			////SetOptionsforCourseStatus  ();
+		}else{
+			document.getElementById('changeReportingStatusBox').className = "visible";
+						
+		}
+	    
+	}
+	
+	function showMailingChangeStatusBox(){
+		document.getElementById('searchBox').className = "visible";
+		
+		if(document.getElementById('changeMailingStatusBox').className == "visible"){
+			
+			if($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length < 1)	{
+				$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+			}
+			
+			document.getElementById('changeMailingStatusBox').className = "search_box";
+			$('#changeStatusBox input[type="radio"]:first').focus();
+			////SetOptionsforCourseStatus  ();
+		}else{
+			document.getElementById('changeMailingStatusBox').className = "visible";
+						
+		}
+	    
+	}
+	
+	function confirmReportingStatusChange() {    
+		if ( $("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length > 0) {
+			if ($("INPUT[type='radio'][name='update_reportingStatus']").filter(':checked').length > 0) {
+				confirm("Are you sure you want to change the reporting status for selected course(s)?", function () {
+					document.getElementById('actionmethod').value='changeReportingStatus';  
+					document.getElementById('showAll').value=false;                       
+					document.manageUserStatusForm.submit();
+				});
+			}	else	{
+				$('#selectUserStatusOption').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			}
+		}else {
+			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+		}
+    }
+	
+	function confirmMailingStatusChange() {    
+		if ( $("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length > 0) {
+			if ($("INPUT[type='radio'][name='update_mailingStatus']").filter(':checked').length > 0) {
+				confirm("Are you sure you want to change the mailing status for selected course(s)?", function () {
+					document.getElementById('actionmethod').value='changeMailingStatus';  
+					document.getElementById('showAll').value=false;                       
+					document.manageUserStatusForm.submit();
+				});
+			}	else	{
+				$('#selectUserStatusOption').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+			}
+		}else {
+			$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+		}
+    }
+	
+	function showChangeReportingStatusBox(){
+	    document.getElementById('searchBox').className = "visible";
+		
+		if(document.getElementById('changeReportingStatusBox').className == "visible"){
+			
+			if($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length < 1)	{
+				$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+			}
+			
+			document.getElementById('changeReportingStatusBox').className = "search_box";
+			$('#changeMailingStatusBox input[type="radio"]:first').focus();
+			////SetOptionsforCourseStatus  ();
+		}else{
+			document.getElementById('changeReportingStatusBox').className = "visible";
+						
+		}
+	}
+		
+	function showChangeMailingStatusBox(){
+		document.getElementById('searchBox').className = "visible";
+		
+		if(document.getElementById('changeMailingStatusBox').className == "visible"){
+			
+			if($("INPUT[type='checkbox'][name='userstatuses']").filter(':checked').length < 1)	{
+				$('#selectUserStatus').modal({overlayId:'confirmModalOverlay',containerId:'confirmModalContainer',close:false,position: ["40%",]});
+				return false;
+			}
+			
+			document.getElementById('changeMailingStatusBox').className = "search_box";
+			$('#changeMailingStatusBox input[type="radio"]:first').focus();
+			////SetOptionsforCourseStatus  ();
+		}else{
+			document.getElementById('changeMailingStatusBox').className = "visible";
+						
+		}
+	    
+	}
+	
 	function showChangeStatusBox(){
 		document.getElementById('searchBox').className = "visible";
 		
@@ -406,6 +517,8 @@
                 <!-- "Change Course Status" Div end here -->
             	#parse("accreditation/reportingTools/manageUserStatusSearchBox.vm")	<!-- Search Box-->
             	#parse("accreditation/reportingTools/manageUserStatusChangeStatusBox.vm") <!-- Change Status Box-->
+            	#parse("accreditation/reportingTools/manageMailingStatusChangeStatusBox.vm") <!-- Change Status Box-->
+             	#parse("accreditation/reportingTools/manageReportingStatusChangeStatusBox.vm") <!-- Change Status Box-->
                 <div class="result_left_side">
                     <!-- Result Description -->
 
@@ -497,6 +610,10 @@
                     <td style="min-width:130px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==3) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.phoneNumber")</td>
                     <td style="min-width:150px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==4) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseName")</td>
                     <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseId")</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>Reporting Status</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>Reporting Date</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>Card Mailing Status</td>
+                    <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==5) class="icon_up" #end ></div>Card Mailing Date</td>
                     <td style="min-width:50px"  class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==6) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitLink")</td>
                     <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==7) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseStatus")</td>
                     <td style="min-width:100px" class="box_subheader" style="border-right:none;"><div #if($context.sortColumnIndex==8) class="icon_up" #end ></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseType")</td>
@@ -534,6 +651,10 @@
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(3,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(3,0,$pageCurrIndex,$showAll);" #end ><div id="phoneNumberSort" #if($context.sortColumnIndex==3 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==3) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.phoneNumber")</div></td>
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(4,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(4,0,$pageCurrIndex,$showAll);" #end ><div id="courseNameSort" #if($context.sortColumnIndex==4 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==4) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseName")</div></td>
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseId")</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>Reporting Status</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>Reporting Date</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>Card Mailing Status</div></td>
+                        <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(5,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(5,0,$pageCurrIndex,$showAll);" #end ><div id="courseIdSort" #if($context.sortColumnIndex==5 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==5) class="icon_down" #end></div>Card Mailing Date</div></td>
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(6,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(6,0,$pageCurrIndex,$showAll);" #end ><div id="affidavitSort" #if($context.sortColumnIndex==6 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==6) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.affidavitLink")</div></td>
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(7,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(7,0,$pageCurrIndex,$showAll);" #end ><div id="courseStatusSort" #if($context.sortColumnIndex==7 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==7) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseStatus")</div></td>
                         <td class="box_subheader"><div #if($context.sortDirection == 0) onclick="sortUserStatus(8,1,$pageCurrIndex,$showAll);" #else onclick="sortUserStatus(8,0,$pageCurrIndex,$showAll);" #end ><div id="courseTypeSortSort" #if($context.sortColumnIndex==8 && $context.sortDirection == 0) class="icon_up" #elseif($context.sortColumnIndex==8) class="icon_down" #end></div>$brander.getBrandElement("lms.accraditation.ReportingTool.manageUserStatus.gridheader.courseType")</div></td>
@@ -580,7 +701,11 @@
                             <td style="min-width:100px" class="$alternate" style="border-bottom:none;">$!{userstatus.emailAddress}&nbsp;</td>
                             <td style="min-width:130px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.phoneNumber}&nbsp;</td>
 							<td style="min-width:150px" class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseName}&nbsp;</td>
-							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseId}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.courseId}&nbsp;&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.reportingStatus}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.reportingDate}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.cardMailingStatus}&nbsp;</td>
+							<td style="min-width:100px"class="$alternate" style="border-bottom:none; border-right:none;">$!{userstatus.cardMailingDate}&nbsp;</td>
 							<td style="min-width:100px" class="$alternate" style="border-bottom:none; border-right:none;">
 							#if($!{userstatus.courseTypeId} == "1" || $!{userstatus.courseTypeId} == "2")
 								<div style="min-width:50px" class="control-button-position">
@@ -631,6 +756,10 @@
                             <td class="$alternate">$!{userstatus.phoneNumber}&nbsp;</td>
 							<td style="min-width:50px" class="$alternate">$!{userstatus.courseName}&nbsp;</td>
 							<td style="min-width:101px" class="$alternate">$!{userstatus.courseId}&nbsp;</td>
+							<td style="min-width:101px" class="$alternate">$!{userstatus.reportingStatus}&nbsp;</td>
+ 							<td style="min-width:101px" class="$alternate">$!{userstatus.reportingDate}&nbsp;</td>
+ 							<td style="min-width:101px" class="$alternate">$!{userstatus.cardMailingStatus}&nbsp;</td>
+ 							<td style="min-width:101px" class="$alternate">$!{userstatus.cardMailingDate}&nbsp;</td>
 							<td style="min-width:50px" class="$alternate">
 							#if($!{userstatus.courseTypeId} == "1" || $!{userstatus.courseTypeId} == "2")
 								<div class="control-button-position">
@@ -696,7 +825,21 @@
 					  <div class="btn_normal">$brander.getBrandElement("lms.accraditation.manageUserStatus.caption.changeStatus")</div>
 					  <div class="btn_end"></div>
 				  </a>
-				</div>	
+				</div>
+ 				<div style="float:right; margin-top:15px;">
+ 				  <a onclick="showChangeMailingStatusBox();">
+ 					  <div class="btn_start"></div>
+ 					  <div class="btn_normal">CHANGE MAILING STATUS</div>
+ 					  <div class="btn_end"></div>
+ 				  </a>
+ 				</div>		
+ 				<div style="float:right; margin-top:15px;">
+ 				  <a onclick="showChangeReportingStatusBox();">
+ 					  <div class="btn_start"></div>
+ 					  <div class="btn_normal">CHANGE REPORTING STATUS</div>
+ 					  <div class="btn_end"></div>
+ 				  </a>	
+ 				</div>  
 				<div style="float:right; margin-top:15px;">
 				  <a onClick="window.location.href='acc_manageUserStatus.do?method=initializePage'">
 					  <div class="btn_start"></div>

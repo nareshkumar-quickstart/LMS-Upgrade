@@ -476,7 +476,9 @@ public class EditCustomerContractController extends VU360BaseMultiActionControll
 											errors.rejectValue("maximumEnrollmentsLimitedValue", "error.editCustEntitlement.invalidNumber");
 											return new ModelAndView(viewCustomerEntitlementTemplate, "context", context);
 										}
-										if (Integer.parseInt(request.getParameter(orgGroup.getName())) < oge.getNumberSeatsUsed()) {
+										// @MariumSaud : LMS-20646 -- Change if clause to return 'true' , to escape this condition everytime
+										//if (Integer.parseInt(request.getParameter(orgGroup.getName())) < oge.getNumberSeatsUsed()) {
+										if (Integer.parseInt(request.getParameter(orgGroup.getName())) + oge.getNumberSeatsUsed() < oge.getNumberSeatsUsed()) {
 											errors.rejectValue("maxEnrollments", "error.custEntitlement.organisationalGroupEntitlementItems.maxEnroll");
 											return new ModelAndView(viewCustomerEntitlementTemplate, "context", context);
 										} else {
@@ -498,9 +500,13 @@ public class EditCustomerContractController extends VU360BaseMultiActionControll
 				//for new OrganizationalGroupEntitlement 
 				if( flagOldOrgGroupEntitlement == 0 ) {
 					OrgGroupEntitlement newOrgGroupEntitlement = new OrgGroupEntitlement();
-					String maxNumberSeats=request.getParameter(orgGroup.getName());
+					// @MariumSaud : LMS-20646 : For new OrgGrp Entitlements MaxEnrollment will always be 0
+					String maxNumberSeats=request.getParameter(orgGroup.getName())==null?"0":request.getParameter(orgGroup.getName());
 						if( !StringUtils.isEmpty(maxNumberSeats) ) {
-							if( StringUtils.isNumeric(request.getParameter(orgGroup.getName())) ) {
+							if( StringUtils.isNumeric(maxNumberSeats) ) {
+								// @MariumSaud : LMS-20646 : For new OrgGrp Entitlements MaxEnrollment will always be 0
+							    //if( StringUtils.isNumeric(request.getParameter(orgGroup.getName())) ) {
+								//newOrgGroupEntitlement.setMaxNumberSeats(Integer.parseInt(request.getParameter(orgGroup.getName())));
 								newOrgGroupEntitlement.setMaxNumberSeats(Integer.parseInt(maxNumberSeats));
 								maximumEnroll.add(newOrgGroupEntitlement.getMaxNumberSeats());
 							} else {

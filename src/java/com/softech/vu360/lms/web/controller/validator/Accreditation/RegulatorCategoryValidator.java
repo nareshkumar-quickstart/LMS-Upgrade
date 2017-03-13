@@ -49,7 +49,17 @@ public class RegulatorCategoryValidator implements Validator {
         	errors.rejectValue("reportingTimeframeStr", "error.editRegulatorCategory.negative.reportingTimeframe");
         }
         
-
+        if(categoryForm.isCertificateOrCardRequired()){
+        	    if(StringUtils.isBlank(categoryForm.getShippableItemName())){
+        	         		errors.rejectValue("shippableItemName", "error.editRegulatorCategory.blank.shippableItemName");
+        	    }
+        	    if ((categoryForm.getShippableTimeframeStr().length() > 0 &&
+        	                     !NumberUtils.isDigits(categoryForm.getShippableTimeframeStr())) ||
+        	             		categoryForm.getShippableTimeframeStr().length() <= 0){
+        	         		errors.rejectValue("shippableTimeframeStr", "error.editRegulatorCategory.blank.shippableTimeframeStr");
+        	    }
+        }
+        
         if ((categoryForm.getValidationFrequencyStr().length() > 0 &&
                 !NumberUtils.isDigits(categoryForm.getValidationFrequencyStr())) ||
         		categoryForm.getValidationFrequencyStr().length() <= 0) {

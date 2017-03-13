@@ -34,6 +34,7 @@ public interface DistributorLMSFeatureRepository extends
 	@CacheEvict(value = "getAllByDistributorAndEnabledFalse", key = "#p0.distributor.id")
 	public <S extends DistributorLMSFeature> S save(S entity);
 	
+	public DistributorLMSFeature findByLmsFeatureFeatureCodeEqualsAndDistributorIdEquals(String featureCode, Long customerID);
 
 
 }

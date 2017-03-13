@@ -190,6 +190,7 @@ public class ViewEntitlementDetailsController extends VU360BaseMultiActionContro
 		Long customerId = details.getCurrentCustomerId();
 
 		OrganizationalGroup rootOrgGroup =  orgGroupLearnerGroupService.getRootOrgGroupForCustomer(customerId);
+		
 		TreeNode orgGroupRoot  = getOrgGroupTree(null, rootOrgGroup);
 		List<TreeNode> treeAsList = orgGroupRoot.bfs();
 		List<OrgGroupEntitlement> orgGroupEntitlements = entitlementService.
@@ -454,7 +455,25 @@ public class ViewEntitlementDetailsController extends VU360BaseMultiActionContro
 		return null;
 	}
 	
-	
+	private TreeNode getOrgGroupTree( TreeNode parentNode, OrganizationalGroup orgGroup, Set<OrganizationalGroup> sOG ) {
+
+		if( orgGroup != null && sOG.contains(orgGroup)) {
+
+			TreeNode node = new TreeNode(orgGroup);
+			List<OrganizationalGroup> childGroups = orgGroup.getChildrenOrgGroups();
+			for( int i=0; i<childGroups.size(); i++ ){
+				OrganizationalGroup childOrgGroup = childGroups.get(i);
+				if(sOG.contains(childOrgGroup))
+				node = getOrgGroupTree(node, childOrgGroup, sOG);
+			}
+			if( parentNode != null ) {
+				parentNode.addChild(node);
+				return parentNode;
+			} else
+				return node;
+		}
+		return null;
+	}
 	
 	public ModelAndView viewSubscriptionEntitlementDetails(HttpServletRequest request, HttpServletResponse response,
 			Object command, BindException errors) throws Exception {

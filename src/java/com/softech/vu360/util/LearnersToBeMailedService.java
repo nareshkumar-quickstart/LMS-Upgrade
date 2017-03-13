@@ -621,7 +621,6 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 				  custPref.isCourseCompletionCertificateEmailEnabled() &&  distPref.isCourseCompletionCertificateEmailEnabled()  ){					
 					
 					Language lang = new Language();lang.setLanguage(Language.DEFAULT_LANG);
-					//Brander brander = VU360Branding.getInstance().getBrander(customer.getBrandName(), lang);
 					Brander brander = VU360Branding.getInstance().getBranderByUser(null, ProxyVOHelper.setUserProxy(user));
 					Map<String, Object> model = new HashMap <String, Object>();			
 														
@@ -641,9 +640,8 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 					model.put("support", support);			
 					String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,certificateTemplatePath,model);
 					String managerEmailBody = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,certificateToManagerTemplatePath,model);
-					String certificateURL = null;//"http://sqa-icp/icourseplayer/player/print_notification.cfm?cn=55814001&assoc=2664&sid=990309&asv=85098&epoch=1&cId=2664";//le.getCourseStatistics().getCertificateURL();
 					String fileName= le.getCourse().getCourseTitle()+"_"+learnerEnrollmentId+".pdf";
-					certificateURL = (lcs.getCertificateURL()!=null && lcs.getCertificateURL().length()>0 ? lcs.getCertificateURL():null);
+					String certificateURL = lcs.getCertificateURL()!=null && lcs.getCertificateURL().length()>0 ? lcs.getCertificateURL():null;
 					
 					if (certificateURL==null)
 					{

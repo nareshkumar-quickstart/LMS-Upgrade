@@ -5,6 +5,7 @@ import java.util.List;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerEntitlement;
 import com.softech.vu360.lms.model.Learner;
+import com.softech.vu360.lms.model.VU360User;
 
 
 /**
@@ -22,7 +23,5 @@ public interface CustomerEntitlementRepositoryCustom {
 	public void removeEntitlementsWithEnrollments(Customer customer, CustomerEntitlement customerEntitlement) ;
 
 	public List<CustomerEntitlement> getCustomerEntitlementsByCutomer(Customer customer);
-
-
 
 }

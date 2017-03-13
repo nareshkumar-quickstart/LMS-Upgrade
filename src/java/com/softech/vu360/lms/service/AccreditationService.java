@@ -41,6 +41,7 @@ import com.softech.vu360.lms.model.Regulator;
 import com.softech.vu360.lms.model.RegulatorCategory;
 import com.softech.vu360.lms.model.RegulatoryAnalyst;
 import com.softech.vu360.lms.model.RegulatoryApproval;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.vo.CourseApprovalVO;
 import com.softech.vu360.lms.vo.VU360User;
 import com.softech.vu360.util.CustomFieldEntityType;
@@ -199,6 +200,7 @@ public interface AccreditationService {
    public RegulatorCategory loadForUpdateRegulatorCategory(long regulatorcategoryId);
    public void deleteRegulatorCategories(List<RegulatorCategory> categories);
    public RegulatorCategory saveRegulatorCategory(RegulatorCategory regulatorCategory);
+   public ValidationQuestion saveValidationQuestion(ValidationQuestion validationQuestion);
    public RegulatorCategory saveRegulatorCategoryCreditReporting(RegulatorCategory regulatorCategory) ;
    public RegulatorCategory dropRegulatorCategoryCreditReporting(RegulatorCategory regulatorCategory);
 
@@ -256,6 +258,9 @@ public interface AccreditationService {
    
    public List<CourseApproval> getCourseApprovalsByDateRange(Date date, Date after7DayDate) throws Exception;
    public void removeChoices(List<CreditReportingFieldValueChoice> options);
+   public ValidationQuestion loadForUpdateValidationQuestion(long id);
+   public List<ValidationQuestion> getUniqueValidationQuestionByCourseConfigurationId(long id);
+   public void deleteValidationQuestion(List<Long> lstUniqueQuestionIds);
    public Document loadDocumentByName(String documentName);
    
    //New optimized method to reduce the number of queries executing when performing search for Accreditation

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 import com.softech.vu360.lms.model.CustomerEntitlement;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
@@ -58,9 +59,9 @@ public class ViewAllEntitlementsController implements Controller {
 			Map<Object, Object> context = new HashMap<Object, Object>();
 
 			List<CustomerEntitlement> entitlements = entitlementService.getAllCustomerEntitlementsForGrid(
-					((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().
-							getDetails()).getCurrentCustomer());
-
+			((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().
+					getDetails()).getCurrentCustomer());
+			
 			context.put("showAll", showAll);
 			context.put("sortDirection", 0);
 			context.put("sortColumnIndex", 0);

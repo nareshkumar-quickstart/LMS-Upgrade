@@ -186,7 +186,7 @@ public class AddTrainingPlanCoursesWizardController extends AbstractWizardFormCo
 				entitlementDate = DateUtil.getDateObject(strEntDate);
 			
 			List<EnrollmentCourseView> trainingPlanCourseViewList = entitlementService.getCoursesForEnrollmentByCustomer(customer , form.getSearchCourseName() , form.getSearchCourseId() , form.getSearchEntitlementName() ,
-					entitlementDate, intLimit);
+					entitlementDate, null, intLimit);
 			
 			//for Sorting:
 			Map<Object, Object> context = new HashMap<Object, Object>();

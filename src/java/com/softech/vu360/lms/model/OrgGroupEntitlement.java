@@ -144,7 +144,7 @@ public class OrgGroupEntitlement implements SearchableKey {
 
 	public  Boolean hasAvailableSeats(Integer numSeatsRequesting) {
 		if(getCustomerEntitlement().hasAvailableSeats(numSeatsRequesting)){
-			if ( allowUnlimitedEnrollments ){
+			if ( allowUnlimitedEnrollments || getCustomerEntitlement().isAllowUnlimitedEnrollments()){
 				return true;
 			}else if((this.maxNumberSeats - this.numberSeatsUsed) >= numSeatsRequesting){
 				return true;

@@ -8,6 +8,7 @@ import com.softech.vu360.lms.model.Certificate;
 import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.CourseConfiguration;
 import com.softech.vu360.lms.model.CourseConfigurationTemplate;
+import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.ILMSBaseInterface;
 
 /**
@@ -57,14 +58,9 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	private String unitOfTimeToComplete=UNIT_MINUTES;
 	private boolean courseEvaluationSpecified = false;
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private boolean enableDefineUniqueQuestionValidation;
+	private boolean enableSelfRegistrationProctor;
+	private boolean enableSmartProfileValidation;
 	
 	// for pagination
 	private String pageIndex;
@@ -257,6 +253,9 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	private String proctorValidatorName;
 	private boolean requireLearnerValidation;
 	private boolean caRealEstateCE;
+	
+	//Learners Unique Questions
+	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
 
 	
 	public CourseConfigForm() {
@@ -1911,6 +1910,40 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	public void setPostEnableviewAssessmentResults(
 			boolean postEnableviewAssessmentResults) {
 		this.postEnableviewAssessmentResults = postEnableviewAssessmentResults;
+	}
+
+	public boolean isEnableDefineUniqueQuestionValidation() {
+		return enableDefineUniqueQuestionValidation;
+	}
+
+	public void setEnableDefineUniqueQuestionValidation(
+			boolean enableDefineUniqueQuestionValidation) {
+		this.enableDefineUniqueQuestionValidation = enableDefineUniqueQuestionValidation;
+	}
+
+	public boolean isEnableSelfRegistrationProctor() {
+		return enableSelfRegistrationProctor;
+	}
+
+	public void setEnableSelfRegistrationProctor(
+			boolean enableSelfRegistrationProctor) {
+		this.enableSelfRegistrationProctor = enableSelfRegistrationProctor;
+	}
+
+	public boolean isEnableSmartProfileValidation() {
+		return enableSmartProfileValidation;
+	}
+
+	public void setEnableSmartProfileValidation(boolean enableSmartProfileValidation) {
+		this.enableSmartProfileValidation = enableSmartProfileValidation;
+	}
+	
+	public List<UniqueQuestionsVO> getLstUniqueQuestionsVO() {
+		return lstUniqueQuestionsVO;
+	}
+
+	public void setLstUniqueQuestionsVO(List<UniqueQuestionsVO> lstUniqueQuestionsVO) {
+		this.lstUniqueQuestionsVO = lstUniqueQuestionsVO;
 	}
 
 }

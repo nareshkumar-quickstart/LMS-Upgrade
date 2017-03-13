@@ -633,6 +633,50 @@
             <div class="manager-bottom-space"></div>
             <!-- space -->
     
+    		#springBind("learnerProfileForm.mpValidationQuestion")
+			#if($status.value.size()>0)
+				#foreach($uniqueQuestions in $status.value.keySet())
+					#if($uniqueQuestions.contains("courseName_"))
+					<table border="0" width="100%" cellpadding="5" cellspacing="0" style="border-left:1px solid #ddd; border-right:1px solid #ddd; margin-bottom:20px;">
+						<tr><td colspan="3" style="background:#F9F9F9;font-weight:bold; border-top:1px solid #ddd; border-bottom:1px solid #ddd;">Validation Information for $status.value.get($uniqueQuestions)</td></tr>
+						<tr><td colspan="3">&nbsp;&nbsp;&nbsp;The course <strong>$status.value.get($uniqueQuestions)</strong> requires that you respond to all validation questions. Please enter your response to below questions.</td></tr>
+					#end
+					#if($uniqueQuestions.contains("questionanswerLst_"))  
+						<tr>
+							<td colspan="3" width="80%">
+								<table width="80%" border="0">
+									#foreach($uniqueQuestion in $status.value.get($uniqueQuestions))
+									<tr>
+										<td width="15%" align="center">
+											<div class="block_text_in-r-f">Question</div>
+										</td>
+										<td width="85%">
+											<div style="font-size:11px;">$uniqueQuestion.question</div>
+											<input type="hidden" name="questionId_$uniqueQuestion.questionId" value="$uniqueQuestion.questionId">
+											<input type="hidden" name="questionType_$uniqueQuestion.questionId" value="$uniqueQuestion.questionType">
+										</td>
+									</tr>
+									<tr>
+										<td>&nbsp;</td>
+										<td style="font-size:11px;">#if($uniqueQuestion.questionType == "True False")
+											<input id="answerTF_$uniqueQuestion.answerId" name="answerTF_$uniqueQuestion.questionId" type="radio" #if ($uniqueQuestion.answer == "true") checked #end value="true">True
+											<span>&nbsp;&nbsp;&nbsp;</span>
+											<input id="answerTF_$uniqueQuestion.answerId" name="answerTF_$uniqueQuestion.questionId" type="radio" #if ($uniqueQuestion.answer == "false") checked #end value="false">False							   
+											#else<input type="text" id="answerTxt_$uniqueQuestion.questionId" class="input_field" name="answerTxt_$uniqueQuestion.questionId" value="$uniqueQuestion.answer" width="100">#end
+										</td>
+									</tr>
+									#end
+								</table>
+							</td>
+						</tr>
+				
+						<tr>
+							<td colspan="3" style="border-bottom:1px solid #ddd;"></td>
+						</tr>
+    				</table>
+ 					#end
+ 				#end
+ 			#end	
     		#parse("learner/learnerProfileValidationQuestion.vm")
      		<!-- space -->
             <div class="manager-bottom-space"></div>
@@ -647,7 +691,7 @@
             <div class="manager-bottom-space"></div>
             <!-- space -->
 				
-			
+			<div class="manager-bottom-space"></div>
 			#springBind("learnerProfileForm.customFields")
             #if($status.value.size()>0)
 				<div class="content-Block">

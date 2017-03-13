@@ -1,13 +1,16 @@
 package com.softech.vu360.lms.web.controller.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.softech.vu360.lms.model.CustomField;
 import com.softech.vu360.lms.model.CustomFieldValue;
 import com.softech.vu360.lms.model.LicenseOfLearner;
 import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.web.controller.ILMSBaseInterface;
 
 /**
@@ -23,6 +26,8 @@ public class LearnerProfileForm  implements ILMSBaseInterface{
 	private String saved = "false";
 	private boolean notifyOnLicenseExpire;
 	
+	private List<ValidationQuestion> lstValidationQuestion = new ArrayList<>();
+	private Map<Object,Object> mpValidationQuestion = new HashMap<>();
 	
 	public static final String CUSTOMFIELD_SINGLE_LINE_OF_TEXT = "Single Line of Text";
 	public static final String CUSTOMFIELD_DATE = "Date";
@@ -145,7 +150,7 @@ public class LearnerProfileForm  implements ILMSBaseInterface{
 	public LearnerValidationQASetDTO getLearnerValidationQASet() {
 		return learnerValidationQASet;
 	}
-	public void setLearnerValidationQASet(
+	public void setLearnerValidationQuestions(
 			LearnerValidationQASetDTO learnerValidationQASet) {
 		this.learnerValidationQASet = learnerValidationQASet;
 	}
@@ -156,5 +161,17 @@ public class LearnerProfileForm  implements ILMSBaseInterface{
 	
 	public void setNotifyOnLicenseExpire(boolean notifyOnLicenseExpire) {
 		this.notifyOnLicenseExpire = notifyOnLicenseExpire;
+	}
+	public List<ValidationQuestion> getLstValidationQuestion() {
+		return lstValidationQuestion;
+	}
+	public void setLstValidationQuestion(List<ValidationQuestion> lstValidationQuestion) {
+	    this.lstValidationQuestion = lstValidationQuestion;
+	}
+	public Map<Object, Object> getMpValidationQuestion() {
+	    return mpValidationQuestion;
+	}
+	public void setMpValidationQuestion(Map<Object, Object> mpValidationQuestion) {
+	    this.mpValidationQuestion = mpValidationQuestion;
 	}
 }

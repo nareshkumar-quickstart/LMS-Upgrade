@@ -22,6 +22,7 @@ import com.softech.vu360.lms.model.LearnerGroup;
 import com.softech.vu360.lms.model.LearnerGroupItem;
 import com.softech.vu360.lms.model.LearnerPreferences;
 import com.softech.vu360.lms.model.LearnerProfile;
+import com.softech.vu360.lms.model.LearnerValidationAnswers;
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.RegistrationInvitation;
 import com.softech.vu360.lms.model.TimeZone;
@@ -273,7 +274,12 @@ public interface LearnerService {
 	public LearnerGroup loadForDisplayLearnerGroup(long id);
 	public LearnerValidationQASetDTO getLearnerValidationQuestions(long id);
 	public void saveLearnerValidationAnswers(LearnerValidationQASetDTO qaDTO, Learner learner);
-	public Learner addNewLearnerGivenCustomer(Customer customer, Hashtable<String, Object> leanerDetailInHashmap)  throws Exception; 
+	public Learner addNewLearnerGivenCustomer(Customer customer, Hashtable<String, Object> leanerDetailInHashmap)  throws Exception;
+	public Map<Object,Object> getLearnerUniqueQuestions(long learnerId);
+	public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId);
+	public void saveLearnerUniquesValidationQuestions(LearnerValidationAnswers answer);
+	public LearnerValidationAnswers loadForUpdateLearnerValidationAnswers(long answer);
+	public LearnerValidationAnswers updateLearnerValidationAnswers(LearnerValidationAnswers lva ); 
 	
 	public Address findAddressById(Long id);
 	public Address updateAddress(Address address);

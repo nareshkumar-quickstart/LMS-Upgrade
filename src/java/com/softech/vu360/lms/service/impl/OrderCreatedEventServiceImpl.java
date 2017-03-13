@@ -281,6 +281,13 @@ public class OrderCreatedEventServiceImpl implements OrderCreatedEventService {
 				lmsSfOrderResultBuilder.getOrderAuditList().add(new LmsSfOrderAuditLog(order.getOrderId(),strCourseGUID,courseGroupGuid,"Invalid","Invalid course guid","OrderEvent",false));
 				continue;
 			}
+			if(course.isRetired())
+			{
+				log.error("Course was retired against GUID: "+strCourseGUID);
+				//Adding audit line item here because of the the current code. Should have thrown exception and log audit from the calling code
+				lmsSfOrderResultBuilder.getOrderAuditList().add(new LmsSfOrderAuditLog(order.getOrderId(),strCourseGUID,courseGroupGuid,"Invalid","Invalid course status : retired","OrderEvent",false));
+				continue;
+			}
 			log.debug("Found Course against GUID:" + course.getCourseGUID() );
 			//Adding audit line item here because of the the current code. Should have thrown exception and log audit from the calling code
 			//lmsSfOrderResultBuilder.getOrderAuditList().add(new LmsSfOrderAuditLog(order.getOrderId(),strCourseGUID,courseGroupGuid,"Valid","Valid course guid","OrderEvent",true));

@@ -1260,28 +1260,27 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	}
 	
 	public Map<Long,CourseGroupView> getAllParentCourseGroups(List<CourseGroupView> cgViewList, Map<Long, CourseGroupView> cgViewMap) {
-		Map<Long,CourseGroupView> mapCourseGroupView = new HashMap<Long, CourseGroupView>();
+		Map<Long,CourseGroupView> mapCourseGroupView = new HashMap<>();
 		try {
-			
-			Set<Long> groupList = new HashSet<Long>();
+			Set<Long> groupList = new HashSet<>();
 			for (CourseGroupView cgView : cgViewList) {
-				if (cgViewMap.get(cgView.getParentCourseGroupId()) == null) {
-					if(cgView.getParentCourseGroupId()!=null)
-						groupList.add(cgView.getParentCourseGroupId());
+				if (cgViewMap.get(cgView.getParentCourseGroupId()) == null && cgView.getParentCourseGroupId()!=null) {
+					groupList.add(cgView.getParentCourseGroupId());
 			    }
 			}
 			
-			if(groupList.size()>0){
-//				List<Map<Object, Object>> rMap = courseAndCourseGroupDAO.getAllParentCourseGroups(groupList.toArray());
-				List<Object[]> rMap =  this.courseGroupRepository.getAllParentCourseGroups(groupList);// courseAndCourseGroupDAO.getAllParentCourseGroups(groupList.toArray());
+			if(!groupList.isEmpty()){
+				List<Object[]> rMap =  this.courseGroupRepository.getAllParentCourseGroups(groupList);
 				
 				for (Object[] objMap : rMap) {
-					Long courseGroupid =  new Long((Integer)objMap[0]); //new Long((Integer)objMap.get("CGID"));
-					String courseGroupName =  (String)objMap[2];  //(String)objMap.get("CGNAME");
+					// [0]=CGID
+					Long courseGroupid =  Long.valueOf((Integer)objMap[0]);
+					// [1]=CGNAME
+					String courseGroupName =  (String)objMap[2];
 					Long parentCourseGroupId = null;
-					//if(objMap.get("PARENTCGID")!=null){
+					// [1]=PARENTCGID
 					if(objMap[1]!=null){
-						parentCourseGroupId =  new Long((Integer)objMap[1]); //new Long((Integer)objMap.get("PARENTCGID"));
+						parentCourseGroupId = Long.valueOf((Integer)objMap[1]);
 					}
 					CourseGroupView cgView = new CourseGroupView();
 					cgView.setGroupName(courseGroupName);
@@ -1305,7 +1304,11 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	 * @return		List of Courses
 	 */
 	public List<Course> getActiveCourses(Long id) {
-		//return courseAndCourseGroupDAO.getActiveCourses(id);
 		return this.courseRepository.getActiveCoursOfCourseGroup(id);
+	}
+
+	@Override
+	public List<Course> getCourseByBusinessKey(String businessKey) {
+		return this.courseRepository.findByBussinesskeyEquals(businessKey);
 	}
 }

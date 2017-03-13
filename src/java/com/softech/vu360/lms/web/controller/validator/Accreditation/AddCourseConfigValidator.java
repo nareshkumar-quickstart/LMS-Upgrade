@@ -194,11 +194,11 @@ public class AddCourseConfigValidator implements Validator {
             }
         }
         
-	public void validateStep7(CourseConfigForm form, Errors errors) {
+	    public void validateStep7(CourseConfigForm form, Errors errors) {
             validateTimeBetweenQuestion(form, errors);
             validateSecondsToAnswerEachQuestion(form, errors);
             validateNumberOfMissedAllowed(form, errors);
-	}
+	    }
         
         public void validateStep9(CourseConfigForm form, Errors errors) {
             validateMaximumSeatTimeEnforcement(form, errors);
@@ -276,11 +276,12 @@ public class AddCourseConfigValidator implements Validator {
                     "error.courseConfiguration.secondsBetweenEachQuestion");
                 return;
             }
-            int validationTimeBetweenQuestion = NumberUtils.toInt(strValidationTimeBetweenQuestion, -1);
-            if( validationTimeBetweenQuestion < 0 || validationTimeBetweenQuestion > 7200){
-                errors.rejectValue("courseConfiguration.validationTimeBetweenQuestion", 
-                    "error.courseConfiguration.secondsBetweenEachQuestion.rangeViolation");
-            }
+            //            /* LMS-21692 */
+            //            int validationTimeBetweenQuestion = NumberUtils.toInt(strValidationTimeBetweenQuestion, -1);
+            //            if( validationTimeBetweenQuestion < 0 || validationTimeBetweenQuestion > 7200){
+            //                errors.rejectValue("courseConfiguration.validationTimeBetweenQuestion", 
+            //                    "error.courseConfiguration.secondsBetweenEachQuestion.rangeViolation");
+            //            }
         }
         
         private void validateNumberOfMissedAllowed(CourseConfigForm form, Errors errors) {

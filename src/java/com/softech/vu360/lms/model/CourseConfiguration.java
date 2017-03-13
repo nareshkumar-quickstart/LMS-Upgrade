@@ -27,6 +27,8 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
+import com.softech.vu360.lms.vo.UniqueQuestionsVO;
+
 /**
  * 
  * @author marium.saud
@@ -324,6 +326,21 @@ public class CourseConfiguration implements SearchableKey {
 	@Column(name = "CA_VALIDATION_TF")
 	private Boolean caRealEstateCE;
 	
+	@Column(name="RESTRICT_INCOMPLETE_JS_TEMPLATE")
+	private Boolean mustMasterAllLessonActivities;
+	
+	@Column(name="DEFINEUNIQUEQUESTION_VALIDATION_TF")
+	private Boolean requireDefineUniqueQuestionValidation;
+	
+	@Column(name="SELF_REGISTRATION_PROCTOR_TF")
+	private Boolean requireSelfRegistrationProctor;
+	
+	@Column(name="PROFILEBASED_VALIDATION_TF")
+	private Boolean requireSmartProfileValidation;
+	
+	//Learners Unique Questions
+	@Transient
+	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
 	
 	public AssessmentConfiguration getPreAssessmentConfiguration() {
 		for (AssessmentConfiguration asmntConfig : assessmentConfigurations) {
@@ -2643,5 +2660,50 @@ public class CourseConfiguration implements SearchableKey {
 	public Boolean getCaRealEstateCE() {
 		return caRealEstateCE;
 	}
+
+	public Boolean isMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities;
+	}
+
+	public void setMustMasterAllLessonActivities(
+			Boolean mustMasterAllLessonActivities) {
+		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities;
+	}
+
+	public Boolean isRequireDefineUniqueQuestionValidation() {
+		return requireDefineUniqueQuestionValidation;
+	}
+
+	public void setRequireDefineUniqueQuestionValidation(
+			Boolean requireDefineUniqueQuestionValidation) {
+		this.requireDefineUniqueQuestionValidation = requireDefineUniqueQuestionValidation;
+	}
+
+	public Boolean isRequireSelfRegistrationProctor() {
+		return requireSelfRegistrationProctor;
+	}
+
+	public void setRequireSelfRegistrationProctor(
+			Boolean requireSelfRegistrationProctor) {
+		this.requireSelfRegistrationProctor = requireSelfRegistrationProctor;
+	}
+
+	public Boolean isRequireSmartProfileValidation() {
+		return requireSmartProfileValidation;
+	}
+
+	public void setRequireSmartProfileValidation(
+			Boolean requireSmartProfileValidation) {
+		this.requireSmartProfileValidation = requireSmartProfileValidation;
+	}
+
+	public List<UniqueQuestionsVO> getLstUniqueQuestionsVO() {
+		return lstUniqueQuestionsVO;
+	}
+
+	public void setLstUniqueQuestionsVO(List<UniqueQuestionsVO> lstUniqueQuestionsVO) {
+		this.lstUniqueQuestionsVO = lstUniqueQuestionsVO;
+	}
+	
 	
 }

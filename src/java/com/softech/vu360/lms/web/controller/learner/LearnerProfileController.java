@@ -3,6 +3,7 @@ package com.softech.vu360.lms.web.controller.learner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.softech.vu360.lms.model.CustomFieldValueChoice;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerOrder;
 import com.softech.vu360.lms.model.Distributor;
+import com.softech.vu360.lms.model.LearnerValidationAnswers;
 import com.softech.vu360.lms.model.LicenseOfLearner;
 import com.softech.vu360.lms.model.MultiSelectCreditReportingField;
 import com.softech.vu360.lms.model.MultiSelectCustomField;
@@ -49,6 +51,7 @@ import com.softech.vu360.lms.service.impl.lmsapi.UpdateMySqlUser;
 import com.softech.vu360.lms.util.CustomerUtil;
 import com.softech.vu360.lms.util.UserPermissionChecker;
 import com.softech.vu360.lms.vo.Language;
+import com.softech.vu360.lms.vo.UniqueQuestionAnswerVO;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.LearnerProfileForm;
 import com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingFieldBuilder;
@@ -128,7 +131,14 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				}else
 					form.setTimeZoneId(0);
 				
-				form.setLearnerValidationQASet(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
+				form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
+				Map<Object,Object> mpValidationQuestion = learnerService.getLearnerUniqueQuestions(form.getVu360User().getLearner().getId());
+				
+				if(mpValidationQuestion!=null  && !mpValidationQuestion.isEmpty()){
+					form.setMpValidationQuestion(mpValidationQuestion);
+				}
+				
+				form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
 				
 				CreditReportingFieldBuilder fieldBuilder = new CreditReportingFieldBuilder();
 				List<CreditReportingField> customFieldList=this.getLearnerService().getCreditReportingFieldsByLearnerCourseApproval(loggedInUser.getLearner());
@@ -300,6 +310,18 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				}else if(!StringUtils.equals(ServletRequestUtils.getStringParameter(request, "password"), ServletRequestUtils.getStringParameter(request, "confirmpassword"))){
 					errors.rejectValue("vu360User.password", "error.password.matchPassword","");
 				}
+			}
+			if(form.getMpValidationQuestion()!=null && !form.getMpValidationQuestion().isEmpty()){
+				Enumeration enumeration = request.getParameterNames();
+			   	while (enumeration.hasMoreElements()) {
+			   		String parameterName = (String) enumeration.nextElement();
+			   		if(parameterName.contains("answerTxt_")){
+			   			String strAnswer = request.getParameter(parameterName);
+			   			if(StringUtils.isEmpty(strAnswer)){
+			   				errors.rejectValue("vu360User.password", "error.courseConfiguration.uniqueQuestions.blank","");
+			   			}
+			   		}
+			   	}
 			}
 		}
 		
@@ -739,6 +761,53 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		usr.getLearner().getLearnerProfile().setCustomFieldValues(myCustomFieldValues);
 		learnerService.updateLearnerProfile(usr.getLearner().getLearnerProfile());
 		learnerService.saveLearnerValidationAnswers(form.getLearnerValidationQASet(), usr.getLearner());
+		
+		if(form.getMpValidationQuestion() != null && !form.getMpValidationQuestion().isEmpty()){
+			for (Map.Entry<Object, Object> entry : form.getMpValidationQuestion().entrySet()) {
+			    Object value = entry.getValue();
+			    if(value instanceof List)
+			    {
+			    List<UniqueQuestionAnswerVO> lstUniqueQuestionAnswerVO = (List<UniqueQuestionAnswerVO>)value;
+			    
+			    if(lstUniqueQuestionAnswerVO!=null && !lstUniqueQuestionAnswerVO.isEmpty()){
+			    	for(UniqueQuestionAnswerVO uQAVO :lstUniqueQuestionAnswerVO){
+			    		LearnerValidationAnswers lrnValidationAnswers =learnerService.getLearnerUniqueQuestionsAnswersByQuestion(uQAVO.getQuestionId());
+                        if(lrnValidationAnswers!=null){
+                        	//LearnerValidationAnswers learnerValidationAnswers = new LearnerValidationAnswers();
+                        	LearnerValidationAnswers learnerValidationAnswers = learnerService.loadForUpdateLearnerValidationAnswers(lrnValidationAnswers.getId());
+			    			learnerValidationAnswers.setLearner(usr.getLearner());
+			    			learnerValidationAnswers.setQuestionId(uQAVO.getQuestionId());
+			    			if(uQAVO.getQuestionType().equals("True False")){
+			    				String chkAnwser = request.getParameter("answerTF_"+ uQAVO.getQuestionId());
+				    			learnerValidationAnswers.setAnswer(chkAnwser);
+				    			learnerService.updateLearnerValidationAnswers(learnerValidationAnswers);
+			    			}
+			    			else if(uQAVO.getQuestionType().equals("Text Entry")){
+			    				String txtAnwser = request.getParameter("answerTxt_"+ uQAVO.getQuestionId());
+				    			learnerValidationAnswers.setAnswer(txtAnwser);
+				    			learnerService.updateLearnerValidationAnswers(learnerValidationAnswers);
+			    			}
+			    		}else{
+			    			LearnerValidationAnswers learnerValidationAnswers = new LearnerValidationAnswers();
+			    			learnerValidationAnswers.setLearner(usr.getLearner());
+			    			learnerValidationAnswers.setQuestionId(uQAVO.getQuestionId());
+			    			if(uQAVO.getQuestionType().equals("True False")){
+			    				String chkAnwser = request.getParameter("answerTF_"+ uQAVO.getQuestionId());
+				    			learnerValidationAnswers.setAnswer(chkAnwser);
+				    			learnerService.saveLearnerUniquesValidationQuestions(learnerValidationAnswers);
+			    			}
+			    			else if(uQAVO.getQuestionType().equals("Text Entry")){
+			    				String txtAnwser = request.getParameter("answerTxt_"+ uQAVO.getQuestionId());
+				    			learnerValidationAnswers.setAnswer(txtAnwser);
+				    			learnerService.saveLearnerUniquesValidationQuestions(learnerValidationAnswers);
+			    			}
+			    			
+			    		}
+			    	}
+			    }
+			}
+		  }
+		}
 		
 		//End Save Custom Fields
 		// ***************************************************************************************

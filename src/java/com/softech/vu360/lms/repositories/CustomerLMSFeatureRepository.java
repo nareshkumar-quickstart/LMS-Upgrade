@@ -54,4 +54,6 @@ public interface CustomerLMSFeatureRepository extends
 	@CacheEvict(value = "getDisabledCustomerLMSFeatures", allEntries = true)
 	public <S extends CustomerLMSFeature> S save(S entity);
 	
+	public CustomerLMSFeature findByLmsFeatureFeatureCodeEqualsAndCustomerIdEquals(String featureCode, Long customerID);
+	
 }

@@ -120,6 +120,8 @@ public interface SecurityAndRolesService {
 	public List<LMSRoleLMSFeature> getPermissionByCustomer(Customer customer,String roleType);
 	LMSRoleLMSFeature loadForUpdateLMSRoleLMSFeature(long id);
 	public void saveCustomerLMSFeature (LMSRoleLMSFeature lmsRoleLMSFeature);
+	public CustomerLMSFeature getCustomerLMSFeatureByFeatureCode(Long customerID,String featureCode);
+	public DistributorLMSFeature getDistributorLMSFeatureByFeatureCode(Long distributorID,String featureCode);
 	
 	/*
 	 * This function will return all LMSRoleLMSFeature for a user, customer and role type 

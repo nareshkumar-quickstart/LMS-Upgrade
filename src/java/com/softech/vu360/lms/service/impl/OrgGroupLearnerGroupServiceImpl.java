@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -325,25 +325,6 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
         return learnerGroupRepository.findOne(id);
     }
     
-	public List<LearnerGroup>  getLearnerGroupsByLearnerGroupIDs(String learnerGroupId[]){
-		return learnerGroupRepository.findByIdIn(this.castStringArrayToLong(learnerGroupId));
-	}
-	
-	public Long[] castStringArrayToLong(String[] strings) {
-	    Long[] intarray=new Long[strings.length];
-	    int i=0;
-	    for(String str:strings){
-	        try {
-	            intarray[i]=Long.parseLong(str);
-	            i++;
-	        } catch (NumberFormatException e) {
-	            throw new IllegalArgumentException("Not a number: " + str + " at index " + i, e);
-	        }
-	    }
-	    
-	    return intarray;
-	}
-	
 	public OrganizationalGroup saveOrganizationalGroupFromBatchImport(OrganizationalGroup orgGroup){
 		return	organizationalGroupRepository.save(orgGroup);
 	}
@@ -606,5 +587,27 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	@Override
 	public List<Learner> getAllLearnersByLearnerGroupId(Long learnerGroupId) {
 		return learnerRepository.findLearnerByLearnerGroupID(learnerGroupId);
+	}
+
+	@Override
+	public List<OrganizationalGroup> getOrgGroupsByLearners(Long[] learnerIds) {
+		List<OrganizationalGroup> orgGroups = new ArrayList<OrganizationalGroup>();
+		List<OrganizationalGroupMember> memberships = new ArrayList<OrganizationalGroupMember>();
+		try {
+			memberships = organizationalGroupMemberRepository.findDistinctByLearnerIdIn(learnerIds);
+		}catch(ObjectNotFoundException e){
+			if (log.isDebugEnabled()) {
+				log.debug("Learners :"+learnerIds);
+			}
+		}
+		for(OrganizationalGroupMember membership:memberships){
+			orgGroups.add(membership.getOrganizationalGroup());
+		}
+		return orgGroups; 
+	}
+
+	@Override
+	public List<LearnerGroup> getLearnerGroupsByLearnerGroupIDs(Long[] learnerGroupId) {
+		return learnerGroupRepository.findByIdIn(learnerGroupId);
 	}
 }

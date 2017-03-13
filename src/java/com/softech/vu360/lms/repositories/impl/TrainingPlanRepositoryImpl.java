@@ -23,22 +23,23 @@ public class TrainingPlanRepositoryImpl implements TrainingPlanRepositoryCustom{
 	public List<Map<Object, Object>> getTrainingPlansForCourseCatalog(long id, String search) {
 		
 		
-		StringBuffer strBuffSQL= new StringBuffer();
+		StringBuilder strBuildSQL= new StringBuilder();
 		
-		strBuffSQL.append("EXEC [SP_COURSECATALOGWITHTRAININGPLANS] ");
-		strBuffSQL.append("[").append(id).append("]");
-		strBuffSQL.append(", ");
-		strBuffSQL.append("null");
+		strBuildSQL.append("EXEC [SP_COURSECATALOGWITHTRAININGPLANS] ");
+		strBuildSQL.append("[").append(id).append("]");
+		strBuildSQL.append(", ");
+		strBuildSQL.append("null");
 		if (StringUtils.isNotBlank(search) && !search.equals("Search")) { 
-			strBuffSQL.append(", ");
-			strBuffSQL.append("[").append(search).append("]");
+			strBuildSQL.append(", ");
+			strBuildSQL.append("[").append(search).append("]");
 		}
 		
-		Query qry=entityManager.createNativeQuery(strBuffSQL.toString());
+		Query qry=entityManager.createNativeQuery(strBuildSQL.toString());
 		List<Object[]> lst = qry.getResultList();
-		List<Map<Object,Object>> listMap = new ArrayList();
-		Map<Object,Object> map = new HashMap();
+		List<Map<Object,Object>> listMap = new ArrayList<>();
+		Map<Object,Object> map;
 		for(Object[] obj : lst){
+			map = new HashMap<>();
 			map.put("CUSTOMERENTITLEMENT_ID", obj[0]);
 			map.put("ENROLLMENT_ID", obj[1]);
 			map.put("TRAININGPLAN_ID", obj[2]);
@@ -50,17 +51,16 @@ public class TrainingPlanRepositoryImpl implements TrainingPlanRepositoryCustom{
 			map.put("COURSE_ID", obj[8]);
 			map.put("COURSETYPE", obj[9]);
 			listMap.add(map);
-			map = new HashMap();
 		}
 		
 		return listMap;
 	}
 	
+	@Override
 	public List<Object[]> countLearnerByTrainingPlan(Long [] trainingPlanIds){
-		StringBuffer strBuffSQL= new StringBuffer();
-		strBuffSQL.append("select tpa.TRAINIINGPLAN_ID, COUNT( DISTINCT le.LEARNER_ID) LearnerCount from TRAINIINGPLANASSIGNMENT tpa inner join TRAININGPLANASSIGNMENT_LEARNERENROLLMENT tpa_le on tpa_le.TRAININGPLANASSIGNMENT_ID = tpa.ID inner join LEARNERENROLLMENT le on le.id = tpa_le.LEARNERENROLLMENT_ID where tpa.TRAINIINGPLAN_ID in (:arrTrainId) group by tpa.TRAINIINGPLAN_ID  ");
+		String strSql="select tpa.TRAINIINGPLAN_ID, COUNT( DISTINCT le.LEARNER_ID) LearnerCount from TRAINIINGPLANASSIGNMENT tpa inner join TRAININGPLANASSIGNMENT_LEARNERENROLLMENT tpa_le on tpa_le.TRAININGPLANASSIGNMENT_ID = tpa.ID inner join LEARNERENROLLMENT le on le.id = tpa_le.LEARNERENROLLMENT_ID where tpa.TRAINIINGPLAN_ID in (:arrTrainId) group by tpa.TRAINIINGPLAN_ID";
 		
-		Query qry=entityManager.createNativeQuery(strBuffSQL.toString());
+		Query qry=entityManager.createNativeQuery(strSql);
 		qry.setParameter("arrTrainId", Arrays.asList(trainingPlanIds));
 		return qry.getResultList();
 	}

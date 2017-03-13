@@ -22,6 +22,7 @@ import com.softech.vu360.lms.model.LearnerEnrollment;
 import com.softech.vu360.lms.model.OrgGroupEntitlement;
 import com.softech.vu360.lms.model.TrainingPlanCourse;
 import com.softech.vu360.lms.model.TrainingPlanCourseView;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.util.TreeNode;
 
 /**
@@ -103,12 +104,12 @@ public interface EntitlementService {
 	@Deprecated
 	public List<CustomerEntitlement> searchCoursesForEnrollment(Customer customer, String courseName,String courseId , String entitlementName , String date, int resultSetLimit ) ;
 	public CustomerEntitlement readCustomerEntitlementById(Long id);
-	public List<EnrollmentCourseView> getCoursesForEnrollmentByCustomer(Customer customer , String courseName,String courseId , String entitlementName , Date date, int resultSetLimit) ;
+	public List<EnrollmentCourseView> getCoursesForEnrollmentByCustomer(Customer customer , String courseName,String courseId , String entitlementName , Date date, Long[] customerEntitlementIds, int resultSetLimit) ;
 	public List<TrainingPlanCourseView> getEntitledCoursesFromTrainingPlanCourses(List<TrainingPlanCourse> trainingPlanCourseList, int resultSetLimit);
 	public LearnerEnrollment getLearnerEnrollmentsForLearner(Learner learner,long courseId);
 	public List<CustomerEntitlement> getCustomerEntitlementsByCourseId(Customer customer, Long courseId);
     public List<CustomerEntitlement> getActiveCustomerContractByCourseId(Customer customer, Long courseId);
-	public List<EnrollmentCourseView> getCoursesForTrainingPlanByCustomer(Customer customer,String courseName, String courseId, String entitlementName,Date date, int resultSetLimit);
+    public List<EnrollmentCourseView> getCoursesForTrainingPlanByCustomer(Customer customer,String courseName, String courseId, String entitlementName,Date date, Long[] customerEntitlementIds, int resultSetLimit);
 	public CourseCustomerEntitlement addCourseCustomerEntitlementItemsIfNotExist(CourseCustomerEntitlement customerEntitlement, 
     		List<Course> courses);
 	public CustomerEntitlement addUnlimitedCustomerEntitlementIfNotExist(Customer customer, List<Course> courses);
@@ -158,9 +159,8 @@ public interface EntitlementService {
 	public CustomerEntitlement assignCourseIntoSystemManagedContract(Course dbCourse, Customer customer);
 	public List<CourseCustomerEntitlementItem> addCourseEntitlementItems(List<CourseCustomerEntitlementItem> courseGroupCustomerEntitlementItems);
  	public List<CourseGroupCustomerEntitlementItem> addCourseGroupEntitlementItem(List<CourseGroupCustomerEntitlementItem> items);
-	public List<CustomerEntitlement> getAllCustomerEntitlementsForGrid(Customer customer);
-	
-	// [12/27/2010] LMS-7021 :: Admin Mode > Swap Enrollment - Showing courses irrespective of contract and enrollments availability
+ 	public List<CustomerEntitlement> getAllCustomerEntitlementsForGrid(Customer customer);
+ 	// [12/27/2010] LMS-7021 :: Admin Mode > Swap Enrollment - Showing courses irrespective of contract and enrollments availability
 	public Map<Object, Object> getCoursesForEnrollment (Long customerId, String courseName, String courseCode, String contractName, int pageIndex, int pageSize);
 	
 //	 issue LMS 8256
@@ -216,4 +216,8 @@ public interface EntitlementService {
 
         public Long[] getCourseGroupIDArrayForDistributor(Distributor distributor);
         public String getCoursePathToCourseGroup(int nearestCourseGroupId) throws Exception;
+        public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByOrgGrpIds(List<Long> orgGrpIds);
+        public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerIds(Long learnerIds[]);
+        public List<Long> getCustomerEntitlementForOrgGroupEntitlementsByLearnerGroupIds(List<Long> learnerGrpIds);
+        public boolean isEnforceOrgGroupEnrollmentRestrictionEnable(Customer customer);
 }

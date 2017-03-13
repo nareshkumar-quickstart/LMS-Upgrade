@@ -13,7 +13,7 @@ public interface CourseRepositoryCustom  {
 	public List<Course> findCoursesByContentOwner(Collection<Long> coids, String courseTitle, String courseStatus, Boolean retired, String courseId);
 	public List<Map<Object, Object>> findCatalogSPById(Long learner_Id,Long Customer_id , String search,String sp_Name);
 	public List<Course> findBycourseTitle(List<Long> courseIdArray, String courseName, String courseGUID, String keywords,String searchCriteria);
-	public List<Map<Object, Object>> findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(Long customerId, String courseName,String courseId, String entitlementName, Date date);
+	public List<Map<Object, Object>> findByCustomerIdBycourseNameByCourseIdByEntitlementIdByExpiryDate(Long customerId, String courseName,String courseId, String entitlementName, Date date, Long[] customerEntitlementIds);
 	public List<Map<Object, Object>> findByCustomerEntitlementsByCourseIds(List<CustomerEntitlement> customerEntitlements,	Long[] trainingPlanCourseIds);
 	public List<Map<Object, Object>> getByCourseAndCourseGroupId(List<CustomerEntitlement> customerEntitlements, 
 			Long trainingPlanCourseId, Long courseGroupId);
