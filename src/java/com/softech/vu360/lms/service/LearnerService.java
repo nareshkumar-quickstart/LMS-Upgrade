@@ -273,6 +273,7 @@ public interface LearnerService {
 	public Object[] addRegistrationInvitation(RegistrationInvitation regInvitation);
 	public RegistrationInvitation loadForPreviewRegistrationInvitation(long id);
 	public LearnerGroup loadForDisplayLearnerGroup(long id);
+	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(long learnerId);
 	public LearnerValidationQASetDTO getLearnerValidationQuestions(long id);
 	public void saveLearnerValidationAnswers(LearnerValidationQASetDTO qaDTO, Learner learner);
 	public Learner addNewLearnerGivenCustomer(Customer customer, Hashtable<String, Object> leanerDetailInHashmap)  throws Exception;

@@ -648,7 +648,14 @@ class CustomerServiceImpl implements CustomerService {
 				{
 					customerLMSFeature = new CustomerLMSFeature();
 					customerLMSFeature.setCustomer(customer);
-					customerLMSFeature.setEnabled(true);
+					if(distributorLMSFeature.getLmsFeature().getFeatureCode().equals("LMS-MGR-0033")){
+						 if(distributorLMSFeature.getEnabled() || !distributorLMSFeature.getEnabled()){
+						 	customerLMSFeature.setEnabled(false);
+						 }
+					}
+					else{
+						customerLMSFeature.setEnabled(distributorLMSFeature.getEnabled());	
+					}
 					customerLMSFeature.setLmsFeature(distributorLMSFeature.getLmsFeature());
 					customerLMSFeatures.add(customerLMSFeature);
 				}
@@ -685,7 +692,15 @@ class CustomerServiceImpl implements CustomerService {
 			for (DistributorLMSFeature permission: defaultEnabledPermissions){
 				LMSRoleLMSFeature lmspermission=new LMSRoleLMSFeature();
 				lmspermission.setLmsFeature(permission.getLmsFeature());
-				lmspermission.setEnabled(permission.getEnabled());
+				if(permission.getLmsFeature().getFeatureCode().equals("LMS-MGR-0033")){
+					 if(permission.getEnabled()){
+					 	lmspermission.setEnabled(false);
+					 }
+				}
+				else{
+				     lmspermission.setEnabled(permission.getEnabled());
+				}
+				//lmspermission.setEnabled(permission.getEnabled());
 				lmspermission.setLmsRole(lmsRole);
 				lmsPermissions.add(lmspermission);
 			}

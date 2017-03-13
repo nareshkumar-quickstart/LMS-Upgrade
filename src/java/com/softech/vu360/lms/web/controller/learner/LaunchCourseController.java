@@ -1398,36 +1398,21 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 	    			enrollmentService.updateEnrollment(le);
 	    	} 
     		else {
-				if(courseId.equalsIgnoreCase(VU360Properties.getVU360Property("lcms.POCMyWebinarCourseGuid"))){
-					Map<Object, Object> context = new HashMap<Object, Object>();
-					
-					 context.put("POCMyWebinarURL", VU360Properties.getVU360Property("lcms.POCMyWebinarURL"));
-					 context.put("learningSessionId", learningSessionId);
-					 context.put("username", user.getUsername());
-					 context.put("firstName", user.getFirstName());
-					 context.put("middleName", (user.getMiddleName() != null && !user.getMiddleName().isEmpty()) ? user.getMiddleName() : "0");
-					 context.put("lastName", user.getLastName());
-					 
-					 request.getSession().setAttribute("learningSessionId", learningSessionId);
-					return new ModelAndView("learner/POCMyWebinarRedirect", VIEW_CONTEXT, context);
-				}
-				else{
-		    			String brandLaunchURL = brand.getBrandElement("lcms.launchURL");
-						if (StringUtils.isBlank(brandLaunchURL)) {
-						    // use the system default
-						    launchURL.append(VU360Properties.getVU360Property("lcms.launchURL"));
-						} else {
-						    // use the one from the brand properties
-						    launchURL.append(brandLaunchURL);
-						}
-						launchURL.append(learningSessionId);
-						launchURL.append("&ts=");
-						launchURL.append(System.currentTimeMillis());
-						log.debug("launchURL:" + launchURL.toString());
-					}
-		    	}
-	    }
-    
+    			String brandLaunchURL = brand.getBrandElement("lcms.launchURL");
+    			if (StringUtils.isBlank(brandLaunchURL)) {
+    			   // use the system default
+    			   launchURL.append(VU360Properties.getVU360Property("lcms.launchURL"));
+    		    } else {
+    			  // use the one from the brand properties
+    			  launchURL.append(brandLaunchURL);
+    			}
+    			launchURL.append(learningSessionId);
+    			launchURL.append("&ts=");
+    			launchURL.append(System.currentTimeMillis());
+    			log.debug("launchURL:" + launchURL.toString());
+			}
+		}
+	  
 	    // leave this for all requests so that we may do server-side
 	    // validation
 	    request.getSession().setAttribute("learningSessionId", learningSessionId);
