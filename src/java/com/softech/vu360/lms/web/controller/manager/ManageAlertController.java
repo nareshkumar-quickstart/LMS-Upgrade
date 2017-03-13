@@ -258,7 +258,7 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 		request.getSession(true).setAttribute("feature", "LMS-ADM-0005");
 		
 		ManageAlertForm form=(ManageAlertForm)command;
-		VU360UserNew logInUser = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+		VU360User logInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		form.getAlert().setCreatedBy(logInUser);
 		ManageAlertValidator validator = (ManageAlertValidator)this.getValidator();
 		

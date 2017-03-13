@@ -9,8 +9,6 @@ import java.util.Map;
 // Async I/O
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
 import com.softech.vu360.lms.autoAlertGenerator.MailConfigProperties;
 import com.softech.vu360.lms.autoAlertGenerator.MessageTemplateGeneratorClass;
 import com.softech.vu360.lms.autoAlertGenerator.enums.DateDrivenEnum;
@@ -27,10 +25,9 @@ import com.softech.vu360.lms.model.Course;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerCourseStatistics;
 import com.softech.vu360.lms.model.LearnerEnrollment;
-import com.softech.vu360.lms.model.VU360UserNew;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
-import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.SurveyService;
 import com.softech.vu360.lms.service.VU360UserService;
 
@@ -179,7 +176,7 @@ public class Queue extends Executor<AlertTrigger> {
 
             // Then, the default Learner
             // will be the Alert creator
-            learnerList.add(vu360userService.getLearnerByVU360UserId(alert.getCreatedBy().getId()));
+            learnerList.add(alert.getCreatedBy().getLearner());
 
         } else {
 
@@ -356,7 +353,7 @@ public class Queue extends Executor<AlertTrigger> {
         List<Learner> learnerList = learners;
 
         long alertId;
-        VU360UserNew vu360User;
+        VU360User vu360User;
         LearnerCourseStatistics learnerCourseStatistics;
         List<LearnerEnrollment> learnerEnrollment;
         Course enrolledCourse;
@@ -368,7 +365,7 @@ public class Queue extends Executor<AlertTrigger> {
         for (Learner learner : learnerList) {
 
             learnerEnrollment = entitlementService.getLearnerEnrollmentsForLearner(learner);
-            vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+            vu360User = vu360userService.getUpdatedUserById(learner.getVu360User().getId());
 
             for (int enrollments = 0; enrollments < learnerEnrollment.size(); enrollments++) {
 
@@ -488,7 +485,7 @@ public class Queue extends Executor<AlertTrigger> {
         List<Learner> learnerList = learners;
 
         long alertId;
-        VU360UserNew vu360User;
+        VU360User vu360User;
         List<LearnerEnrollment> learnerEnrollment;
         LearnerCourseStatistics learnerCourseStatistics;
         Course enrolledCourse;
@@ -499,7 +496,7 @@ public class Queue extends Executor<AlertTrigger> {
 
         for (Learner learner : learnerList) {
 
-            vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+            vu360User = vu360userService.getUpdatedUserById(learner.getVu360User().getId());
 
             learnerEnrollment = entitlementService.getLearnerEnrollmentsForLearner(learner);
 
@@ -614,7 +611,7 @@ public class Queue extends Executor<AlertTrigger> {
 
         for (Learner learner : learnerList) {
 
-            VU360UserNew vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+            VU360User vu360User = vu360userService.getUpdatedUserById(learner.getVu360User().getId());
             
            if(vu360User.getCreatedDate() !=null && trigger.getCreatedDate() !=null && 
         		   vu360User.getCreatedDate().after(trigger.getCreatedDate())){
@@ -699,13 +696,13 @@ public class Queue extends Executor<AlertTrigger> {
          List<Learner> learnerList = learners;
 
          long alertId;
-         VU360UserNew vu360User;
+         VU360User vu360User;
 
          alertId = trigger.getAlert().getId();
 
          for (Learner learner : learnerList) {
         	 
-             vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+             vu360User = vu360userService.getUpdatedUserById(learner.getVu360User().getId());
 
              // Only those learners which were happened after alert creation
              if(!vu360User.getCreatedDate().after(trigger.getAlert().getCreatedDate())) {
@@ -810,7 +807,7 @@ public class Queue extends Executor<AlertTrigger> {
 
 
             // Get Learner details
-            VU360UserNew vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+            VU360User vu360User = learner.getVu360User();
 
             if(trigger.getAlert().getIsDefault()) {
             	
@@ -875,7 +872,7 @@ public class Queue extends Executor<AlertTrigger> {
 
         for (Learner learner : learnerList) {
 
-            VU360UserNew vu360User = vu360userService.getVU360UserNewById(learner.getVu360User().getId());
+            VU360User vu360User = learner.getVu360User();
 
             if(trigger.getAlert().getIsDefault()) {
             	

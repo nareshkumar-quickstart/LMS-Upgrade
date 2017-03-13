@@ -64,7 +64,13 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 			String colValue, String domain) {
 		List<VU360User> userList = null;
 		StringBuilder jpq = new StringBuilder(
-				"SELECT p FROM VU360User p WHERE p.username = :colValue AND p.learner.customer.active = true AND p.learner.customer.distributor.active = true");
+				"SELECT p FROM VU360User p " +
+				"join Learner l on l.id = p.learner.id " +
+				"join Customer c on c.id = l.customer.id " +
+				"join Distributor d on d.id = c.distributor.id " +
+				"where p.username = :colValue " + 
+				"AND c.active = true " +
+				"AND d.active = true");
 		boolean isDomainBlank = StringUtils.isBlank(domain);
 		if (isDomainBlank) {
 			jpq.append(" AND p.domain IS NULL");
