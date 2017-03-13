@@ -141,7 +141,7 @@ public class ManageCommissionsController extends VU360BaseMultiActionController 
 						commissionAudit.setCommission(commission);
 						commissionAudit.setNewValue(this.getValueForCommissionAudit(commission));
 						commissionAudit.setOldValue("N/A");
-						commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
+						commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentSimpleUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
 						log.info("commissionAudit = " + commissionAudit);
 						commissionService.logCommissionChangeForAudit(commissionAudit);
 						return new ModelAndView("redirect:/adm_manageCommission.do?method=showCommissions&entity=reseller");
@@ -185,7 +185,7 @@ public class ManageCommissionsController extends VU360BaseMultiActionController 
 							commissionAudit.setCommission(commission);
 							commissionAudit.setNewValue("N/A");
 							commissionAudit.setOldValue("N/A");
-							commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
+							commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentSimpleUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
 							log.info("commissionAudit = " + commissionAudit);
 							commissionService.logCommissionChangeForAudit(commissionAudit);
 						}
@@ -333,7 +333,7 @@ public class ManageCommissionsController extends VU360BaseMultiActionController 
 					commissionAudit.setCommission(formDB);
 					commissionAudit.setNewValue(this.getValueForCommissionAudit(formDB));
 					commissionAudit.setOldValue(oldValue);
-					commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
+					commissionAudit.setVu360User(VU360UserAuthenticationDetails.getCurrentSimpleUser());//TO DO: NEED TO CALL FIND BY ID FOR VU360USER 2016-09-04
 					log.info("commissionAudit = " + commissionAudit);
 					commissionService.logCommissionChangeForAudit(commissionAudit);
 				}

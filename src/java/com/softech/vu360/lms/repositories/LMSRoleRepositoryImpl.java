@@ -57,7 +57,7 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 
 	}
 	
-	public List<LMSRole> getAllRoles(Customer customer, VU360User loggedInUser) {
+	public List<LMSRole> getAllRoles(Customer customer, com.softech.vu360.lms.vo.VU360User loggedInUser) {
 
 		List<LMSRole> userList = null;
 		StringBuilder builder = new StringBuilder();

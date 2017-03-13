@@ -6,11 +6,12 @@ package com.softech.vu360.lms.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerCourseStatistics;
@@ -62,6 +63,12 @@ public interface LearnerRepository extends CrudRepository<Learner, Long>, Learne
 	
 	Learner findByVu360UserId(Long vu360UserId);
 	
+	@Query("SELECT L.customer.id from Learner L where L.id= ?1")
+	Long findCustomerIdByLearnerId(Long id);
+	
+	@Query("SELECT L.customer from Learner L where L.id= ?1")
+	Customer findCustomerByLearnerId(Long id);
+
 	@Query(value = "if exists(select le.course_id from LEARNERENROLLMENT le, learnercoursestatistics lcs, courseapproval ca, courseconfigurationtemplate cct, courseconfiguration cc where (le.learner_id = :learnerId and (le.enrollmentstatus = '"+ LearnerEnrollment.ACTIVE +"') and cast(le.enddate as date) >= cast(getdate() as date)) and lcs.learnerenrollment_id = le.ID and lcs.status in ('"+ LearnerCourseStatistics.IN_PROGRESS +"', '"+ LearnerCourseStatistics.IN_COMPLETE +"', '"+ LearnerCourseStatistics.LOCKED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.AFFIDAVIT_RECEIVED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_DISPUTED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT +"', '"+ LearnerCourseStatistics.REPORTED +"') and ca.course_id = le.course_id and cct.ID = ca.courseconfigurationtemplate_id and cc.courseconfigurationtemplate_id = cct.id and (cc.VALIDATION_REQUIREIDENTITYVALIDATION = 1 and cc.PROFILEBASED_VALIDATION_TF = 0 and cc.DEFINEUNIQUEQUESTION_VALIDATION_TF = 0)) select cast(1 as bit) else select cast(0 as bit) " , nativeQuery=true)
 	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(@Param("learnerId") long learnerId);
 }

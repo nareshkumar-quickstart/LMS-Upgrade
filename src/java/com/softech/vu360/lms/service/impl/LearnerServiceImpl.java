@@ -66,6 +66,7 @@ import com.softech.vu360.lms.model.SSNCreditReportingFiled;
 import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.model.Widget;
 import com.softech.vu360.lms.repositories.AddressRepository;
@@ -3002,6 +3003,21 @@ public class LearnerServiceImpl implements LearnerService {
 	@Override
 	public Learner getLearnerByVU360UserId(VU360User user) {
 		return learnerRepository.findByVu360UserId(user.getId());
+	}
+	
+	@Override
+	public Learner getLearnerByVU360UserId(VU360UserNew user) {
+		return learnerRepository.findByVu360UserId(user.getId());
+	}
+	
+	@Override
+	public Long findCustomerIdByLearnerId(Long id) {
+		return learnerRepository.findCustomerIdByLearnerId(id);
+	}
+
+	@Override
+	public Customer findCustomerByLearnerId(Long id) {
+		return learnerRepository.findCustomerByLearnerId(id);
 	}
 
 	@Override

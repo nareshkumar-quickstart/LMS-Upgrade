@@ -1,98 +1,157 @@
 package com.softech.vu360.lms.model;
 
 import java.io.Serializable;
-import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.persistence.Transient;
 
-/**
- *
- * @author kaunain.wajeeh
- */
+import org.apache.log4j.Logger;
+
 @Entity
 @Table(name = "VU360USER")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type",discriminatorType=DiscriminatorType.STRING)  
+@DiscriminatorValue(value="VU360UserNew")
 public class VU360UserNew implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 52260678146352049L;
+	private static Logger log = Logger.getLogger(VU360UserNew.class);
+
 	@Id
-	@Basic(optional = false)
-	@Column(name = "ID")
-	private Long id;
-	@Column(name = "VU360AUTHPROVIDER_ID")
-	private Long vu360authproviderId;
-	@Column(name = "USERNAME")
-	private String username;
-	@Column(name = "PASSWORD")
-	private String password;
+	@javax.persistence.TableGenerator(name = "VU360USER_ID", table = "VU360_SEQ", pkColumnName = "TABLE_NAME", valueColumnName = "NEXT_ID", pkColumnValue = "vu360user", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "VU360USER_ID")
+	@Column(name = "ID", unique = true, nullable = false)
+	protected Long id;
+	
+	@Column(name = "USERGUID", unique = true, nullable = false)
+	protected String userGUID = null;
+
+	@Column(name = "USERNAME", unique = true, nullable = false)
+	protected String username = null;
+
 	@Column(name = "DOMAIN")
-	private String domain;
-	@Column(name = "FIRSTNAME")
-	private String firstname;
-	@Column(name = "LASTNAME")
-	private String lastname;
-	@Column(name = "EMAILADDRESS")
-	private String emailaddress;
-	@Column(name = "USERGUID")
-	private String userguid;
-	@Column(name = "ACCEPTEDEULATF")
-	private Integer acceptedeulatf;
-	@Column(name = "ACCOUNTNONEXPIREDTF")
-	private Integer accountnonexpiredtf;
-	@Column(name = "ACCOUNTNONLOCKEDTF")
-	private Integer accountnonlockedtf;
-	@Column(name = "CHANGEPASSWORDONLOGINTF")
-	private Integer changepasswordonlogintf;
-	@Column(name = "CREATEDDATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createddate;
-	@Column(name = "CREDENTIALSNONEXPIREDTF")
-	private Integer credentialsnonexpiredtf;
-	@Column(name = "ENABLEDTF")
-	private Integer enabledtf;
-	@Column(name = "LASTLOGONDATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastlogondate;
-	@Column(name = "LASTUPDATEDDATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastupdateddate;
-	@Column(name = "NEWUSERTF")
-	private Integer newusertf;
-	@Column(name = "NUMLOGONS")
-	private Integer numlogons;
+	protected String domain = null;
+
+	@Column(name = "EMAILADDRESS", unique = false, nullable = false)
+	protected String emailAddress = null;
+
+	@Column(name = "FIRSTNAME", unique = false, nullable = false)
+	protected String firstName = null;
+
+	@Column(name = "LASTNAME", unique = false, nullable = false)
+	protected String lastName = null;
+
 	@Column(name = "MIDDLENAME")
-	private String middlename;
-	@Column(name = "EXPIRATIONDATE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date expirationdate;
+	protected String middleName = null;
+
+	@Column(name = "CREATEDDATE", nullable = false)
+	protected Date createdDate = new Date();
+
+	@Column(name = "LASTUPDATEDDATE", nullable = false)
+	protected Date lastUpdatedDate = new Date();
+
+	@Column(name = "ACCOUNTNONEXPIREDTF")
+	protected Boolean  accountNonExpired = Boolean.TRUE;
+
+	@Column(name = "ACCOUNTNONLOCKEDTF")
+	protected Boolean  accountNonLocked = Boolean.TRUE;
+
+	@Column(name = "CREDENTIALSNONEXPIREDTF")
+	protected Boolean  credentialsNonExpired = Boolean.TRUE;
+
+	@Column(name = "PASSWORD", unique = false, nullable = false)
+	protected String password = null;
+
+	@Column(name = "ENABLEDTF")
+	protected Boolean  enabled = Boolean.TRUE;
+
+	@Column(name = "NUMLOGONS")
+	protected Integer numLogons = 0;
+
+	@Column(name = "LASTLOGONDATE")
+	protected Date lastLogonDate;
+
+	@Column(name = "NEWUSERTF")
+	protected Boolean  newUser = true;
+
+	@Column(name = "ACCEPTEDEULATF")
+	protected Boolean  acceptedEULA = false;
+
+	@Column(name = "CHANGEPASSWORDONLOGINTF")
+	protected Boolean  changePasswordOnLogin = false;
+
 	@Column(name = "VISIBLEONREPORTTF")
-	private Integer visibleonreporttf;
-	@Column(name = "CreateUserId")
-	private BigInteger createUserId;
-	@Column(name = "LastUpdateUser")
-	private BigInteger lastUpdateUser;
-	@Column(name = "CUSTOMERREPRESENTATIVE")
-	private Boolean customerrepresentative;
-	@Column(name = "SHOWGUIDEDTOURSCREENONLOGIN")
-	private Integer showguidedtourscreenonlogin;
+	protected Boolean  vissibleOnReport = true;
+
+	public Boolean getVissibleOnReport() {
+		return vissibleOnReport;
+	}
+
+	public void setVissibleOnReport(Boolean vissibleOnReport) {
+		this.vissibleOnReport = vissibleOnReport;
+	}
+
+	@Column(name = "EXPIRATIONDATE")
+	protected Date expirationDate = null;
+	
 	@Column(name = "NotifyOnLicenseExpire")
-	private Integer notifyOnLicenseExpire;
-	@Column(name = "PROFILEIMAGEASSETID")
-	private Integer profileimageassetid;
+	protected Boolean  notifyOnLicenseExpire = Boolean.TRUE;
+	
+	@Transient
+	protected  Boolean passWordChanged = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isAdminMode = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isProctorMode = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isManagerMode = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isLearnerMode = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isInstructorMode = Boolean.FALSE;
+
+	@Transient
+	protected  Boolean isAccreditationMode = Boolean.FALSE;
+
+	@Column(name = "SHOWGUIDEDTOURSCREENONLOGIN")
+	protected Boolean showGuidedTourScreenOnLogin = Boolean.TRUE;
+	
+	@Transient
+	protected Long roleID;
+	
+	@Transient
+	protected String roleName;
+	
+	@Transient
+	protected Long learnerID;
+	
+	@Transient
+	protected Integer accountNonLockedInt;
 
 	public VU360UserNew() {
 	}
-
-	public VU360UserNew(Long id) {
-		this.id = id;
+	
+	public String getName() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(firstName);
+		sb.append(" ");
+		sb.append(lastName);
+		return sb.toString();
 	}
 
 	public Long getId() {
@@ -103,12 +162,12 @@ public class VU360UserNew implements Serializable {
 		this.id = id;
 	}
 
-	public Long getVu360authproviderId() {
-		return vu360authproviderId;
+	public String getUserGUID() {
+		return userGUID;
 	}
 
-	public void setVu360authproviderId(Long vu360authproviderId) {
-		this.vu360authproviderId = vu360authproviderId;
+	public void setUserGUID(String userGUID) {
+		this.userGUID = userGUID;
 	}
 
 	public String getUsername() {
@@ -119,14 +178,6 @@ public class VU360UserNew implements Serializable {
 		this.username = username;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getDomain() {
 		return domain;
 	}
@@ -135,245 +186,290 @@ public class VU360UserNew implements Serializable {
 		this.domain = domain;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public String getEmailAddress() {
+		return emailAddress;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setEmailAddress(String emailAddress) {
+		this.emailAddress = emailAddress;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getEmailaddress() {
-		return emailaddress;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setEmailaddress(String emailaddress) {
-		this.emailaddress = emailaddress;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getUserguid() {
-		return userguid;
+	public String getMiddleName() {
+		return middleName;
 	}
 
-	public void setUserguid(String userguid) {
-		this.userguid = userguid;
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
 
-	public Integer getAcceptedeulatf() {
-		return acceptedeulatf;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setAcceptedeulatf(Integer acceptedeulatf) {
-		this.acceptedeulatf = acceptedeulatf;
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
-	public Integer getAccountnonexpiredtf() {
-		return accountnonexpiredtf;
+	public Date getLastUpdatedDate() {
+		return lastUpdatedDate;
 	}
 
-	public void setAccountnonexpiredtf(Integer accountnonexpiredtf) {
-		this.accountnonexpiredtf = accountnonexpiredtf;
+	public void setLastUpdatedDate(Date lastUpdatedDate) {
+		this.lastUpdatedDate = lastUpdatedDate;
 	}
 
-	public Integer getAccountnonlockedtf() {
-		return accountnonlockedtf;
+	public Boolean getAccountNonExpired() {
+		if(accountNonExpired==null){
+			accountNonExpired=Boolean.TRUE;
+		}
+		if (accountNonExpired) {
+			if (expirationDate != null && expirationDate.before(new Date())) {
+				log.debug("User Account[" + getName() + "] is expired.");
+				accountNonExpired = Boolean.FALSE;
+			} else {
+				log.debug(" No Issue....:)");
+			}
+
+		}
+
+		return accountNonExpired;
 	}
 
-	public void setAccountnonlockedtf(Integer accountnonlockedtf) {
-		this.accountnonlockedtf = accountnonlockedtf;
+	public void setAccountNonExpired(Boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
 	}
 
-	public Integer getChangepasswordonlogintf() {
-		return changepasswordonlogintf;
+	public Boolean getAccountNonLocked() {
+		if(accountNonLocked==null){
+			accountNonLocked=Boolean.TRUE;
+		}
+		return accountNonLocked;
 	}
 
-	public void setChangepasswordonlogintf(Integer changepasswordonlogintf) {
-		this.changepasswordonlogintf = changepasswordonlogintf;
+	public void setAccountNonLocked(Boolean accountNonLocked) {
+		if(accountNonLocked==null){
+			this.accountNonLocked = Boolean.TRUE;
+		}else{
+			this.accountNonLocked = accountNonLocked;
+		}
 	}
 
-	public Date getCreateddate() {
-		return createddate;
+	public Boolean isCredentialsNonExpired() {
+		if(credentialsNonExpired==null){
+			credentialsNonExpired=Boolean.TRUE;
+		}
+		return credentialsNonExpired;
 	}
 
-	public void setCreateddate(Date createddate) {
-		this.createddate = createddate;
+	public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
 	}
 
-	public Integer getCredentialsnonexpiredtf() {
-		return credentialsnonexpiredtf;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setCredentialsnonexpiredtf(Integer credentialsnonexpiredtf) {
-		this.credentialsnonexpiredtf = credentialsnonexpiredtf;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public Integer getEnabledtf() {
-		return enabledtf;
+	public Boolean getEnabled() {
+		if(enabled==null){
+			enabled=Boolean.TRUE;
+		}
+		return enabled;
 	}
 
-	public void setEnabledtf(Integer enabledtf) {
-		this.enabledtf = enabledtf;
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 
-	public Date getLastlogondate() {
-		return lastlogondate;
+	public Integer getNumLogons() {
+		return numLogons;
 	}
 
-	public void setLastlogondate(Date lastlogondate) {
-		this.lastlogondate = lastlogondate;
+	public void setNumLogons(Integer numLogons) {
+		this.numLogons = numLogons;
 	}
 
-	public Date getLastupdateddate() {
-		return lastupdateddate;
+	public Date getLastLogonDate() {
+		return lastLogonDate;
 	}
 
-	public void setLastupdateddate(Date lastupdateddate) {
-		this.lastupdateddate = lastupdateddate;
+	public void setLastLogonDate(Date lastLogonDate) {
+		this.lastLogonDate = lastLogonDate;
 	}
 
-	public Integer getNewusertf() {
-		return newusertf;
+	public Boolean isNewUser() {
+		return newUser;
 	}
 
-	public void setNewusertf(Integer newusertf) {
-		this.newusertf = newusertf;
+	public void setNewUser(Boolean newUser) {
+		this.newUser = newUser;
 	}
 
-	public Integer getNumlogons() {
-		return numlogons;
+	public Boolean isAcceptedEULA() {
+		return acceptedEULA;
 	}
 
-	public void setNumlogons(Integer numlogons) {
-		this.numlogons = numlogons;
+	public void setAcceptedEULA(Boolean acceptedEULA) {
+		this.acceptedEULA = acceptedEULA;
 	}
 
-	public String getMiddlename() {
-		return middlename;
+	public Boolean getChangePasswordOnLogin() {
+		return changePasswordOnLogin;
 	}
 
-	public void setMiddlename(String middlename) {
-		this.middlename = middlename;
+	public void setChangePasswordOnLogin(Boolean changePasswordOnLogin) {
+		this.changePasswordOnLogin = changePasswordOnLogin;
 	}
 
-	public Date getExpirationdate() {
-		return expirationdate;
+	public Date getExpirationDate() {
+		return expirationDate;
 	}
 
-	public void setExpirationdate(Date expirationdate) {
-		this.expirationdate = expirationdate;
+	public void setExpirationDate(Date expirationDate) {
+		this.expirationDate = expirationDate;
 	}
 
-	public Integer getVisibleonreporttf() {
-		return visibleonreporttf;
-	}
-
-	public void setVisibleonreporttf(Integer visibleonreporttf) {
-		this.visibleonreporttf = visibleonreporttf;
-	}
-
-	public BigInteger getCreateUserId() {
-		return createUserId;
-	}
-
-	public void setCreateUserId(BigInteger createUserId) {
-		this.createUserId = createUserId;
-	}
-
-	public BigInteger getLastUpdateUser() {
-		return lastUpdateUser;
-	}
-
-	public void setLastUpdateUser(BigInteger lastUpdateUser) {
-		this.lastUpdateUser = lastUpdateUser;
-	}
-
-	public Boolean getCustomerrepresentative() {
-		return customerrepresentative;
-	}
-
-	public void setCustomerrepresentative(Boolean customerrepresentative) {
-		this.customerrepresentative = customerrepresentative;
-	}
-
-	public Integer getShowguidedtourscreenonlogin() {
-		return showguidedtourscreenonlogin;
-	}
-
-	public void setShowguidedtourscreenonlogin(
-			Integer showguidedtourscreenonlogin) {
-		this.showguidedtourscreenonlogin = showguidedtourscreenonlogin;
-	}
-
-	public Integer getNotifyOnLicenseExpire() {
+	public  Boolean getNotifyOnLicenseExpire() {
+		if(notifyOnLicenseExpire == null)
+			notifyOnLicenseExpire = Boolean.TRUE;
+		
 		return notifyOnLicenseExpire;
 	}
 
-	public void setNotifyOnLicenseExpire(Integer notifyOnLicenseExpire) {
-		this.notifyOnLicenseExpire = notifyOnLicenseExpire;
+	public void setNotifyOnLicenseExpire(Boolean notifyOnLicenseExpire) {
+		if(notifyOnLicenseExpire==null)
+			notifyOnLicenseExpire = Boolean.TRUE;
+		else
+			this.notifyOnLicenseExpire = notifyOnLicenseExpire;
 	}
 
-	public Integer getProfileimageassetid() {
-		return profileimageassetid;
+	public  Boolean isPassWordChanged() {
+		return passWordChanged;
 	}
 
-	public void setProfileimageassetid(Integer profileimageassetid) {
-		this.profileimageassetid = profileimageassetid;
+	public void setPassWordChanged(Boolean passWordChanged) {
+		this.passWordChanged = passWordChanged;
 	}
 
-	@Override
-	public int hashCode() {
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
-		return hash;
+	public  Boolean isAdminMode() {
+		return isAdminMode;
 	}
 
-	@Override
-	public  boolean equals(Object object) {
-		// TODO: Warning - this method won't work in the case the id fields are
-		// not set
-		if (!(object instanceof VU360UserNew)) {
-			return false;
+	public void setAdminMode(Boolean isAdminMode) {
+		this.isAdminMode = isAdminMode;
+	}
+
+	public  Boolean isProctorMode() {
+		return isProctorMode;
+	}
+
+	public void setProctorMode(Boolean isProctorMode) {
+		this.isProctorMode = isProctorMode;
+	}
+
+	public  Boolean isManagerMode() {
+		return isManagerMode;
+	}
+
+	public  Boolean isInstructorMode() {
+		return isInstructorMode;
+	}
+
+	public void setManagerMode(Boolean isManagerMode) {
+		this.isManagerMode = isManagerMode;
+	}
+
+	public  Boolean isLearnerMode() {
+		return this.isLearnerMode;
+	}
+
+	public void setLearnerMode(Boolean isLearnerMode) {
+		this.isLearnerMode = isLearnerMode;
+	}
+
+	public void setInstructorMode(Boolean isInstructorMode) {
+		this.isInstructorMode = isInstructorMode;
+	}
+
+	public  Boolean isAccreditationMode() {
+		return isAccreditationMode;
+	}
+
+	public void setAccreditationMode(Boolean isAccreditationMode) {
+		this.isAccreditationMode = isAccreditationMode;
+	}
+
+	public  Boolean getShowGuidedTourScreenOnLogin() {
+		if(showGuidedTourScreenOnLogin==null){
+			showGuidedTourScreenOnLogin = Boolean.TRUE;
 		}
-		VU360UserNew other = (VU360UserNew) object;
-		if ((this.id == null && other.id != null)
-				|| (this.id != null && !this.id.equals(other.id))) {
-			return false;
-		}
-		return true;
+		
+		return showGuidedTourScreenOnLogin;
 	}
 
-	@Override
-	public String toString() {
-		return "VU360UserNew [id=" + id + ", vu360authproviderId="
-				+ vu360authproviderId + ", username=" + username
-				+ ", password=" + password + ", domain=" + domain
-				+ ", firstname=" + firstname + ", lastname=" + lastname
-				+ ", emailaddress=" + emailaddress + ", userguid=" + userguid
-				+ ", acceptedeulatf=" + acceptedeulatf
-				+ ", accountnonexpiredtf=" + accountnonexpiredtf
-				+ ", accountnonlockedtf=" + accountnonlockedtf
-				+ ", changepasswordonlogintf=" + changepasswordonlogintf
-				+ ", createddate=" + createddate + ", credentialsnonexpiredtf="
-				+ credentialsnonexpiredtf + ", enabledtf=" + enabledtf
-				+ ", lastlogondate=" + lastlogondate + ", lastupdateddate="
-				+ lastupdateddate + ", newusertf=" + newusertf + ", numlogons="
-				+ numlogons + ", middlename=" + middlename
-				+ ", expirationdate=" + expirationdate + ", visibleonreporttf="
-				+ visibleonreporttf + ", createUserId=" + createUserId
-				+ ", lastUpdateUser=" + lastUpdateUser
-				+ ", customerrepresentative=" + customerrepresentative
-				+ ", showguidedtourscreenonlogin="
-				+ showguidedtourscreenonlogin + ", notifyOnLicenseExpire="
-				+ notifyOnLicenseExpire + ", profileimageassetid="
-				+ profileimageassetid + "]";
+	public void setShowGuidedTourScreenOnLogin(
+			 Boolean showGuidedTourScreenOnLogin) {
+		
+		if(showGuidedTourScreenOnLogin==null){
+			this.showGuidedTourScreenOnLogin = Boolean.TRUE;
+		}
+		else{
+			this.showGuidedTourScreenOnLogin = showGuidedTourScreenOnLogin;
+		}
 	}
+
+	public Long getRoleID() {
+		return roleID;
+	}
+
+	public void setRoleID(Long roleID) {
+		this.roleID = roleID;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public Long getLearnerID() {
+		return learnerID;
+	}
+
+	public void setLearnerID(Long learnerID) {
+		this.learnerID = learnerID;
+	}
+
+	public Integer getAccountNonLockedInt() {
+		return accountNonLockedInt;
+	}
+
+	public void setAccountNonLockedInt(Integer accountNonLockedInt) {
+		this.accountNonLockedInt = accountNonLockedInt;
+	}
+
+	
+
 
 }

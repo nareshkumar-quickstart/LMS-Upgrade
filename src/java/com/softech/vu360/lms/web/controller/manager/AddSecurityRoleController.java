@@ -148,10 +148,11 @@ public class AddSecurityRoleController extends MultiActionController implements 
 				selectedType=roleType_p;
 				return new ModelAndView(manageSecurityRoleRedirectTemplate);
 			}else if(action.equalsIgnoreCase(MANAGE_ROLE_CANCEL_ACTION)){
+				com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 				// Start - following code is not being called from any where from the application
 				// Mention it that following lines of code generates lot of extra/irrelevant queries as well
-				List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,loggedInUser);
+				List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,user);
 				for(LMSRole userRole :allUserRoles){
 					int Count = (learnerService.getMembersByRole(userRole) == null) ? 0:learnerService.getMembersByRole(userRole).size();
 					roles.put(userRole,userRole);
@@ -593,10 +594,11 @@ public class AddSecurityRoleController extends MultiActionController implements 
 
 			}//End Save
 			else if(action.equalsIgnoreCase(MANAGE_ROLE_CANCEL_ACTION)){
-				
+				com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
 				// Start - following code is not being called from any where from the application
 				// Mention it that following lines of code generates lot of extra/irrelevant queries as well
-				List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,loggedInUser);
+				List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,user);
 				for(LMSRole userRole :allUserRoles){
 					int Count = (learnerService.getMembersByRole(userRole) == null) ? 0:learnerService.getMembersByRole(userRole).size();
 					roles.put(userRole,userRole);
