@@ -20,7 +20,7 @@ import com.softech.vu360.lms.model.IndustryCredential;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LicenseIndustry;
 import com.softech.vu360.lms.model.LicenseOfLearner;
-import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.LearnerLicenseService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
@@ -108,7 +108,7 @@ public class AddMyLicenseController extends AbstractWizardFormController{
 		licenseOfLearner.setState(form.getState());
 		licenseOfLearner.setIndustryCredential(learnerLicenseServices.getLicenseIndustryCredential(form.getSelectedCredentialId()));
 		licenseOfLearner.setActive(Boolean.TRUE);
-		VU360User vU360User= new VU360User();
+		VU360UserNew vU360User= new VU360UserNew();
 		vU360User.setId(loggedInUserVO.getId());
 		licenseOfLearner.setUpdatedBy(vU360User);
 		licenseOfLearner.setUpdateOn( new Timestamp(System.currentTimeMillis()));

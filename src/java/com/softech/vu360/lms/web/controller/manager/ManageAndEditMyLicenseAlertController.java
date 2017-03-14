@@ -9,11 +9,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerLicenseAlert;
 import com.softech.vu360.lms.model.LicenseOfLearner;
 import com.softech.vu360.lms.model.VU360User;
@@ -22,6 +22,7 @@ import com.softech.vu360.lms.service.LearnerLicenseService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.LearnerLicenseAlertForm;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 
 public class ManageAndEditMyLicenseAlertController  extends VU360BaseMultiActionController{
 
@@ -98,7 +99,8 @@ public ModelAndView saveAlert( HttpServletRequest request, HttpServletResponse r
     	learnerlicensealert.setLearnerlicense(frm.getLicenseoflearner());
     }
 	*/
-	VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
+	com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	Learner learner = vu360UserService.getLearnerByVU360UserId(loggedInUserVO.getId());
 	
 	
 	if(frm.isAfter())
@@ -130,7 +132,7 @@ public ModelAndView saveAlert( HttpServletRequest request, HttpServletResponse r
 			  }
 		 }
 	}
-	learnerlicensealert.setLearner(user.getLearner());
+	learnerlicensealert.setLearner(learner);
 	learnerlicensealert.setCreatedDate(new Date());
 	learnerlicensealert.setLearnerlicense(learnerLicenseService.getLicenseOfLearner(frm.getLicenseoflearnerId()));
 	learnerlicensealert.setAlertName(learnerLicenseService.getLicenseOfLearner(frm.getLicenseoflearnerId()).getIndustryCredential().getCredential().getOfficialLicenseName());

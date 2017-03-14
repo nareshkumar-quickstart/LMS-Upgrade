@@ -13,7 +13,7 @@ public interface LMSRoleRepositoryCustom {
 	/*@kaunain - moved from VU360User - in a separate Interface*/
 	public LMSRole  getDefaultRole(Customer customer);
 	public LMSRole  getOptimizedBatchImportLearnerDefaultRole(Customer customer);
-	public List<LMSRole>  getAllRoles(Customer customer,VU360User loggedInUser);
+	public List<LMSRole>  getAllRoles(Customer customer,com.softech.vu360.lms.vo.VU360User loggedInUser);
 	public List<LMSRole> getLMSRolesByUserById(long id);
 	public List<LMSRole> getSystemRolesByCustomer(Customer customer);
 	public List<LMSRole> findRolesByName( String name, Customer customer, VU360User loggedInUser);

@@ -62,22 +62,22 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 
 	}
 	
-	public List<LMSRole> getAllRoles(Customer customer, VU360User loggedInUser) {
+	public List<LMSRole> getAllRoles(Customer customer, com.softech.vu360.lms.vo.VU360User loggedInUser) {
 
 		List<LMSRole> userList = null;
 		StringBuilder builder = new StringBuilder();
 
-		if (vu360UserService.hasAdministratorRole(loggedInUser)) {// get all roles for this
+		if (loggedInUser.isLMSAdministrator()) {// get all roles for this
 												// customer
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId");
-		} else if (vu360UserService.hasAdministratorRole(loggedInUser)) {
+		} else if (loggedInUser.isTrainingAdministrator()) {
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId AND p.roleType != :role1 AND p.roleType  != :role2");
 		}
 
 		TypedQuery<LMSRole> query = entityManager.createQuery(builder.toString(), LMSRole.class);
-		if (vu360UserService.hasAdministratorRole(loggedInUser)) {// get all roles for this customer
+		if (loggedInUser.isLMSAdministrator()) {// get all roles for this customer
 			query.setParameter("customerId", customer.getId());
-		} else if (vu360UserService.hasTrainingAdministratorRole(loggedInUser)) {
+		} else if (loggedInUser.isTrainingAdministrator()) {
 			query.setParameter("customerId", customer.getId());
 			query.setParameter("role1", LMSRole.ROLE_LMSADMINISTRATOR);
 			query.setParameter("role2", LMSRole.ROLE_REGULATORYANALYST);

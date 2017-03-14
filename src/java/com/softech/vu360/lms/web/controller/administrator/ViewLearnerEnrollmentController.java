@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,6 +39,7 @@ import com.softech.vu360.lms.model.SynchronousSession;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.WebinarCourse;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
+import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LearnerService;
@@ -93,6 +95,8 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 	private CourseAndCourseGroupService courseAndCourseGroupService ;
 	private SynchronousClassService synchronousClassService ;
 	private StatisticsService statService ;
+	@Inject
+	private CustomerService customerService;
 	
 	HttpSession session = null;
 	
@@ -124,13 +128,13 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 		 */
         Map<Object, Object> context = new HashMap<Object, Object>();
 		boolean isBlankSearch = false;
-		VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
+		com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Customer customer = null;
-        if (vu360UserService.hasAdministratorRole(user)) {
+        if (user.isLMSAdministrator()) {
             customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
         } else {
-            customer = user.getLearner().getCustomer();
+            customer = customerService.getCustomerById(user.getLearner().getCustomer().getId());
         }
         if(customer == null)
         {

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -41,9 +42,9 @@ import com.softech.vu360.lms.model.Provider;
 import com.softech.vu360.lms.model.ProviderApproval;
 import com.softech.vu360.lms.model.RegulatorCategory;
 import com.softech.vu360.lms.model.SingleSelectCustomField;
-import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
+import com.softech.vu360.lms.service.RegulatoryAnalystService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.helper.InstructorSearchEnum;
@@ -62,7 +63,6 @@ import com.softech.vu360.util.CustomFieldEntityType;
 import com.softech.vu360.util.DateUtil;
 import com.softech.vu360.util.DocumentSort;
 import com.softech.vu360.util.HtmlEncoder;
-import com.softech.vu360.util.InstructorSort;
 import com.softech.vu360.util.ProviderSort;
 import com.softech.vu360.util.TemplateSort;
 import com.softech.vu360.util.TreeNode;
@@ -80,6 +80,8 @@ public class AddApprovalWizardController extends AbstractWizardFormController {
 
 	private AccreditationService accreditationService;
 	private CourseAndCourseGroupService courseCourseGroupService;
+	@Inject
+	private RegulatoryAnalystService regulatoryAnalystService;
 
 	private String cancelTemplate = null;
 	private String finishTemplate = null;
@@ -456,7 +458,6 @@ public class AddApprovalWizardController extends AbstractWizardFormController {
 	protected void postProcessPage(HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
 
 		AddapprovalForm form = (AddapprovalForm)command;
-		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser(); //PRINCIPAL: 03-09-2016
 		
 		// parameter type of findContentOwnerByRegulatoryAnalyst() is changed so creating second user object of type VO.
 		// first user object is also necessary for further operation
@@ -704,7 +705,7 @@ public class AddApprovalWizardController extends AbstractWizardFormController {
 			String provNumber = (request.getParameter("provNumber") == null) ? "" : request.getParameter("provNumber");
 
 
-			List<Provider> providers = accreditationService.findProviders(provName, loggedInUser.getRegulatoryAnalyst());
+			List<Provider> providers = accreditationService.findProviders(provName, regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
 
 			provName = HtmlEncoder.escapeHtmlFull(provName).toString();
 			provNumber = HtmlEncoder.escapeHtmlFull(provNumber).toString();

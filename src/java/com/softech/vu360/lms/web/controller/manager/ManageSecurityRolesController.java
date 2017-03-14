@@ -84,9 +84,10 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 		if( command instanceof ManageSecurityRoleForm ) {
 
 			ManageSecurityRoleForm form = (ManageSecurityRoleForm)command;
-			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
-			Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
-			List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,loggedInUser);
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			Customer customer = ((VU360UserAuthenticationDetails) auth.getDetails()).getCurrentCustomer();
+			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) auth.getPrincipal();
+			List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,user);
 
 			form.setAllUserRoles(allUserRoles);
 		}
