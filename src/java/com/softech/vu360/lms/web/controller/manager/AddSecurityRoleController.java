@@ -217,7 +217,7 @@ public class AddSecurityRoleController extends MultiActionController implements 
 			com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			for(LMSRole userRole :availableRoles){
-				if(loggedInUserVO.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+				if(loggedInUserVO.isAdminMode() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 					if (userRole.getRoleType().equalsIgnoreCase(LMSRole.ROLE_INSTRUCTOR)) {
 						roleTypeForCombo.put(userRole.getKey(), userRole.getRoleType());
 					}

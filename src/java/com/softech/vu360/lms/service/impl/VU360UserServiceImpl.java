@@ -564,6 +564,16 @@ public class VU360UserServiceImpl implements VU360UserService {
 	}
 	
 	@Override
+	public boolean hasRegulatoryAnalystRole(VU360User user) {
+		return vu360UserRepository.hasRegulatoryAnalystRole(user.getId());
+	}
+	
+	@Override
+	public boolean hasInstructorRole(VU360User user) {
+		return vu360UserRepository.hasInstructorRole(user.getId());
+	}
+	
+	@Override
 	public boolean hasAccessToFeatureGroup(Long userId, String featureGroup) {
 		return lmsFeatureRepository.hasAccessToFeatureGroup(userId, featureGroup);
 	}

@@ -205,7 +205,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				session.setAttribute("pageNo", pageNo);
 				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 				results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(), 
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
@@ -235,14 +235,14 @@ public class ManageLearnerController extends MultiActionController implements In
 				}
 				session.setAttribute("pageNo", pageNo);
 				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
-				if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+				if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 					if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 						return new ModelAndView(redirectToSearchPageTemplate, "context", context);
 					}
 				}
 				results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
@@ -264,7 +264,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				
 				results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						sortBy, Integer.parseInt(prevSortDirection));
@@ -290,7 +290,7 @@ public class ManageLearnerController extends MultiActionController implements In
 
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -300,7 +300,7 @@ public class ManageLearnerController extends MultiActionController implements In
 
 					results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							sortBy, Integer.parseInt(sortDirection));
@@ -309,7 +309,7 @@ public class ManageLearnerController extends MultiActionController implements In
 					
 				}else{
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -336,27 +336,27 @@ public class ManageLearnerController extends MultiActionController implements In
 				}
 
 				if( session.getAttribute("searchType").toString().equalsIgnoreCase(MANAGE_USER_ADVANCED_SEARCH_ACTION) ) {
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 							return new ModelAndView(redirectToSearchPageTemplate, "context", context);
 						}
 					}
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList = (List<VU360User>)results.get("list");
 
 				}else if( session.getAttribute("searchType").toString().equalsIgnoreCase(MANAGE_USER_ALL_SEARCH_ACTION) ) {
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 							return new ModelAndView(redirectToSearchPageTemplate, "context", context);
 						}
 					}
 					results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							sortBy, Integer.parseInt(prevSortDirection));
@@ -364,13 +364,13 @@ public class ManageLearnerController extends MultiActionController implements In
 					userList = (List<VU360User>)results.get("list");
 					
 				}else{
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 							return new ModelAndView(redirectToSearchPageTemplate, "context", context);
 						}
 					}
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -393,7 +393,7 @@ public class ManageLearnerController extends MultiActionController implements In
 					VU360UserAuthenticationDetails det = (VU360UserAuthenticationDetails)auth.getDetails();
 					if(det.getCurrentCustomer().getCustomerType().equalsIgnoreCase("b2c")){
 						results =learnerService.findAllLearners("", 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								"firstName",5);

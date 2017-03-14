@@ -68,7 +68,7 @@ public class AddTriggerWizardController extends AbstractWizardFormController{
 			List<Credential> credentials = new ArrayList<Credential>();
 			com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Long customerId = null;
-			if (loggedInUser.isLMSAdministrator()) {
+			if (loggedInUser.isAdminMode()) {
 				customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			} else {
 				if (loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {

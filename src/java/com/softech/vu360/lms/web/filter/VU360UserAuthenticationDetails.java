@@ -52,45 +52,27 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 		originalPrincipal.setLogInAsManagerRole(null);// LMS-5867
 		availableModes = new ArrayList<VU360UserMode>();
 
+		if (originalPrincipal.isLearnerMode()) {
+			availableModes.add(VU360UserMode.ROLE_LEARNER);
+			currentMode = VU360UserMode.ROLE_LEARNER;
+		}
 		if (originalPrincipal.isManagerMode()) {
 			availableModes.add(VU360UserMode.ROLE_TRAININGADMINISTRATOR);
+			if (currentMode != null)
+				currentMode = VU360UserMode.ROLE_TRAININGADMINISTRATOR;
 		}
 
 		if (originalPrincipal.isAdminMode()) {
 			availableModes.add(VU360UserMode.ROLE_LMSADMINISTRATOR);
-		}
-		if (originalPrincipal.isInstructorMode()) {
-			availableModes.add(VU360UserMode.ROLE_INSTRUCTOR);
-		}
-		if (originalPrincipal.isRegulatoryAnalyst()) {
-			availableModes.add(VU360UserMode.ROLE_REGULATORYANALYST);
-		}
-
-		if (originalPrincipal.isProctor()) {
-			availableModes.add(VU360UserMode.ROLE_PROCTOR);
-		}
-
-		if (originalPrincipal.isInLearnerRole()) {
-			availableModes.add(VU360UserMode.ROLE_LEARNER);
-			currentMode = VU360UserMode.ROLE_LEARNER;
-		}
-		if (originalPrincipal.isTrainingAdministrator()) {
-			availableModes.add(VU360UserMode.ROLE_TRAININGADMINISTRATOR);
-			if (currentMode != null)
-				currentMode = VU360UserMode.ROLE_TRAININGADMINISTRATOR;
-		}
-
-		if (originalPrincipal.isLMSAdministrator()) {
-			availableModes.add(VU360UserMode.ROLE_LMSADMINISTRATOR);
 			if (currentMode != null)
 				currentMode = VU360UserMode.ROLE_LMSADMINISTRATOR;
 		}
-		if (originalPrincipal.isRegulatoryAnalyst()) {
+		if (originalPrincipal.isAccreditationMode()) {
 			availableModes.add(VU360UserMode.ROLE_REGULATORYANALYST);
 			if (currentMode != null)
 				currentMode = VU360UserMode.ROLE_TRAININGADMINISTRATOR;
 		}
-		if (originalPrincipal.isProctor()) {
+		if (originalPrincipal.isProctorMode()) {
 			availableModes.add(VU360UserMode.ROLE_PROCTOR);
 			if (currentMode != null)
 				currentMode = VU360UserMode.ROLE_PROCTOR;
@@ -284,7 +266,7 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 		Customer objCustomer = null;
 		
 		if(getOriginalPrincipal()!=null){
-			if(originalPrincipal.isLMSAdministrator()){
+			if(originalPrincipal.isAdminMode()){
 				//If the admin did not have a chance to select a customer 
 				//then return the selected customer as his own learner's customer
 				//NOT SURE ABOUT THIS LOGIC!!!
@@ -327,7 +309,7 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 	 */
 	public Customer getCurrentCustomer() {
 		if(getOriginalPrincipal()!=null){
-			if(originalPrincipal.isLMSAdministrator()){
+			if(originalPrincipal.isAdminMode()){
 				//If the admin did not have a chance to select a customer 
 				//then return the selected customer as his own learner's customer
 				//NOT SURE ABOUT THIS LOGIC!!!
@@ -355,7 +337,7 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 	
 	public com.softech.vu360.lms.vo.Customer getCurrentVOCustomer() {
 		if(getOriginalPrincipal()!=null){
-			if(originalPrincipal.isLMSAdministrator()){
+			if(originalPrincipal.isAdminMode()){
 				if(currentCustomerVO == null){
 					return originalPrincipal.getLearner().getCustomer();
 				}else{
@@ -370,7 +352,7 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 	
 	public Long getCurrentCustomerId() {
 		if(getOriginalPrincipal()!=null){
-			if(originalPrincipal.isLMSAdministrator()){
+			if(originalPrincipal.isAdminMode()){
 				if(currentCustomerVO == null){
 					return originalPrincipal.getLearner().getCustomer().getId();
 				}else{

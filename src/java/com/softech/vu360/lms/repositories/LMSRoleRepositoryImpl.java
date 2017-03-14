@@ -67,17 +67,17 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		List<LMSRole> userList = null;
 		StringBuilder builder = new StringBuilder();
 
-		if (loggedInUser.isLMSAdministrator()) {// get all roles for this
+		if (loggedInUser.isAdminMode()) {// get all roles for this
 												// customer
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId");
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (loggedInUser.isManagerMode()) {
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId AND p.roleType != :role1 AND p.roleType  != :role2");
 		}
 
 		TypedQuery<LMSRole> query = entityManager.createQuery(builder.toString(), LMSRole.class);
-		if (loggedInUser.isLMSAdministrator()) {// get all roles for this customer
+		if (loggedInUser.isAdminMode()) {// get all roles for this customer
 			query.setParameter("customerId", customer.getId());
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (loggedInUser.isManagerMode()) {
 			query.setParameter("customerId", customer.getId());
 			query.setParameter("role1", LMSRole.ROLE_LMSADMINISTRATOR);
 			query.setParameter("role2", LMSRole.ROLE_REGULATORYANALYST);

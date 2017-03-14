@@ -53,6 +53,7 @@
 		base-package="com.softech.vu360.lms.web.restful.request.**.responsible" />
 	<context:component-scan base-package="com.softech.vu360.lms.rest" />
 	<context:component-scan base-package="com.softech.vu360.lms.util" />
+	<context:component-scan base-package="com.softech.vu360.lms.helpers" />
 	<mvc:annotation-driven />
 	<context:property-placeholder location="/WEB-INF/classes/vu360-lms.properties" />
 
@@ -607,11 +608,19 @@
  		<property name="enrollmentService" ref="enrollmentService" />
  	</bean>
  
-	<jee:jndi-lookup 
+	<!-- <jee:jndi-lookup 
 		id="dataSource"
 	   	jndi-name="jdbc/lcms"
 	   	expected-type="javax.sql.DataSource" 
-	   	resource-ref="true" />
+	   	resource-ref="true" /> -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+		<property name="url"
+			value="jdbcperflogger:jdbc:sqlserver://kar-db-2\lms;databaseName=vu360_dev_5_2;SendStringParametersAsUnicode=false;" />
+		<property name="username" value="lms-rwe" />
+		<property name="password" value="lms!@#$" />
+	</bean>
 	   	
    	<mvc:resources mapping="/avatars/**" location="/avatars/" />
 	<mvc:resources mapping="/bandwidth/**" location="/bandwidth/" />

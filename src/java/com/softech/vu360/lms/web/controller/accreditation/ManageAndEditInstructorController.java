@@ -339,7 +339,7 @@ public class ManageAndEditInstructorController extends VU360BaseMultiActionContr
 			}
 	        com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			Customer customer = null;
-			if(loggedInUserVO.isLMSAdministrator()) {
+			if(loggedInUserVO.isAdminMode()) {
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().
 						getAuthentication().getDetails()).getCurrentCustomer();
 			} else {

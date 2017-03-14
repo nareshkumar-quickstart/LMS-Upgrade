@@ -98,6 +98,8 @@ public interface VU360UserService extends UserDetailsService {
 	boolean hasProctorRole(VU360User user);
 	boolean hasAdministratorRole(VU360User user);
 	boolean hasTrainingAdministratorRole(VU360User user);
+	boolean hasRegulatoryAnalystRole(VU360User user);
+	boolean hasInstructorRole(VU360User user);
 	boolean hasAccessToFeatureGroup(Long userId, String featureGroup);
 	boolean hasAccessToFeatureCode(Long userId, String featureCode);
 	boolean hasAccessToFeatureGroup(Long userId, Long roleId, String featureGroup);
@@ -105,5 +107,4 @@ public interface VU360UserService extends UserDetailsService {
 	List<String> getEnabledFeatureGroups(Long userId, Long roleId);
 	List<String> getEnabledFeatureGroups(Long userId);
 	public Learner getLearnerByVU360UserId(Long id);
-
 }

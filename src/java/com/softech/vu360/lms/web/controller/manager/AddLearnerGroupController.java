@@ -177,10 +177,10 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 				 */
 				if( form.getSearchType().equalsIgnoreCase("simplesearch") ) {
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 							results = learnerService.findLearner1(form.getSearchKey(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, 0);
@@ -189,7 +189,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 						}
 					} else {
 						results = learnerService.findLearner1(form.getSearchKey(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, 0);
@@ -206,11 +206,11 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 				else if( form.getSearchType().equalsIgnoreCase("advancesearch") ) {
 					
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if( tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
 							
 							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -220,7 +220,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 					} else {
 
 						results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -235,7 +235,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 					
 				}else if( form.getSearchType().equalsIgnoreCase("allsearch") ) {
 					
-					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
+					if( !loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
 							
 							/*
@@ -243,7 +243,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 							 * all learners without pagination, & with search criteria.
 							 */
 							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									sortBy, sortDirection);
@@ -252,7 +252,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 					} else {
 
 						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								sortBy, sortDirection);

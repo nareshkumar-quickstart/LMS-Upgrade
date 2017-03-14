@@ -302,7 +302,7 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 
 			OrganizationalGroup rootOrgGroup = null;
 			Long customerId= null;
-			if (loggedInUser.isLMSAdministrator()){
+			if (loggedInUser.isAdminMode()){
 				customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			}
 			else{
@@ -434,7 +434,7 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 			HttpSession session = request.getSession();
 			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			regInvitation = (RegistrationInvitation)session.getAttribute("regInvitationSession");
-			if (user.isLMSAdministrator()) {
+			if (user.isAdminMode()) {
 				regInvitation.setCustomer(((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer());
 			} else {
 				regInvitation.setCustomer(learnerService.findCustomerByLearnerId(user.getLearner().getId()));
