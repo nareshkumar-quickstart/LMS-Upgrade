@@ -240,11 +240,6 @@ public class AccreditationServiceImpl implements AccreditationService {
 		return regulatorRepository.findByActiveOrderByNameAsc(true);
 
 	}
-	
-	public ContentOwner findContentOwnerById(Long id) {
-		return contentOwnerRepository.findOne(id);
-	}
-	
 
 	public ContentOwner findContentOwnerByRegulatoryAnalyst(
 			com.softech.vu360.lms.vo.RegulatoryAnalyst regulatoryAnalyst) {

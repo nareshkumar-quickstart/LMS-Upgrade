@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,13 +17,13 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
+import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Alert;
+import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Language;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.SurveyService;
-import com.softech.vu360.lms.service.VU360UserNewService;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.ManageAlertForm;
 import com.softech.vu360.lms.web.controller.model.MngAlert;
@@ -43,8 +42,6 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 	private String editAlertTemplate;
 	private SurveyService surveyService;
 	private LearnerService learnerService;
-	@Inject
-	private VU360UserNewService vu360UserNewService;
 	
 	public String getEditAlertTemplate() {
 		return editAlertTemplate;
@@ -120,7 +117,7 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 		 */
 		session = request.getSession(true);
 		session.setAttribute("feature", "LMS-ADM-0005");
-		VU360UserNew vu360UserModel = null;
+		VU360User vu360UserModel = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) auth.getDetails();
 		ManageAlertForm form = (ManageAlertForm)command;
@@ -131,15 +128,15 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 
 			if(cust != null) {
 				Long learnerId = learnerService.getLearnerForSelectedCustomer(cust.getId());
-				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId).getVu360User();
 			} else if(distributorvo != null) {
 				Long learnerId = learnerService.getLearnerForSelectDistributor(distributorvo.getMyCustomer().getId());
-				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId).getVu360User();
 			} else {
-				vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+				vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 			}
 		} else if(details.getCurrentMode().equals(VU360UserMode.ROLE_TRAININGADMINISTRATOR)) {
-			vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+			vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 		}
 		if(vu360UserModel!=null)
 			alerts = surveyService.findAlert(vu360UserModel.getId() , form.getAlertName());
@@ -374,7 +371,7 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 		
 		ManageAlertForm form = (ManageAlertForm)command;
 		List<Alert> alerts = new ArrayList<Alert>();
-		VU360UserNew vu360UserModel = null;
+		VU360User vu360UserModel = null;
 		
 		//LMS-15637 - Start
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -386,15 +383,15 @@ public class ManageAlertController extends VU360BaseMultiActionController{
 
 			if(cust != null) {
 				Long learnerId = learnerService.getLearnerForSelectedCustomer(cust.getId());
-				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId.longValue()).getVu360User();
 			} else if(distributorvo != null) {
 				Long learnerId = learnerService.getLearnerForSelectDistributor(distributorvo.getMyCustomer().getId());
-				vu360UserModel = vu360UserNewService.getVU360UserByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId).getVu360User();
 			} else {
-				vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+				vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 			}
 		} else if(details.getCurrentMode().equals(VU360UserMode.ROLE_TRAININGADMINISTRATOR)) {
-			vu360UserModel = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+			vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 		}
 		//LMS-15637 - End
 		if(vu360UserModel != null)

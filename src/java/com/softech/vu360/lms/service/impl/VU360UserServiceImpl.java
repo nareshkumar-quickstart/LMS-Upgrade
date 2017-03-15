@@ -19,18 +19,14 @@ import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.LMSFeature;
 import com.softech.vu360.lms.model.LMSRole;
-import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerProfileStaticField;
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.repositories.LMSFeatureRepository;
 import com.softech.vu360.lms.repositories.LMSRoleRepository;
-import com.softech.vu360.lms.repositories.LearnerRepository;
 import com.softech.vu360.lms.repositories.OrganizationalGroupRepository;
 import com.softech.vu360.lms.repositories.TrainingAdministratorRepository;
-import com.softech.vu360.lms.repositories.VU360UserNewRepository;
 import com.softech.vu360.lms.repositories.VU360UserRepository;
 import com.softech.vu360.lms.service.ActiveDirectoryService;
 import com.softech.vu360.lms.service.VU360UserService;
@@ -47,8 +43,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 	@Inject
 	private VU360UserRepository vu360UserRepository;
 	@Inject
-	private VU360UserNewRepository vu360UserRepositoryNew;
-	@Inject
 	private LMSRoleRepository lmsRoleRepository;
 	@Inject
 	private LMSFeatureRepository lmsFeatureRepository;
@@ -56,8 +50,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 	private TrainingAdministratorRepository trainingAdminstratorRepository;
 	@Inject
 	private OrganizationalGroupRepository organizationalGroupRepository;
-	@Inject
-	private LearnerRepository learnerRepository;
 	
 	private PasswordEncoder passwordEncoder = null;
 	private SaltSource saltSource = null;
@@ -173,10 +165,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return vu360UserRepository.findOne(id);
 	}
 
-	public  VU360UserNew  loadForUpdateVU360UserNew(Long id){
-		return vu360UserRepositoryNew.findOne(id);
-	}
-
 	public List<VU360User> getUserByFirstNameAndLastName(Customer cust, String firstName, String lastName) {
 		return vu360UserRepository.getUserByFirstNameAndLastName(cust, firstName, lastName);
 	}
@@ -188,11 +176,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public VU360User getUserById(Long id) {
 		return vu360UserRepository.getUserById(id);
 	}
-
-	public VU360UserNew getSimpleUserById(Long id) {
-		return vu360UserRepositoryNew.findOne(id);
-	}
-
+	
 	public List<VU360User> getUsersByEmailAddress(String emailAddress) {
 		List<VU360User> results = vu360UserRepository.findUserByEmailAddress(emailAddress);
 		return results;
@@ -235,20 +219,12 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return vu360UserRepository.saveUser(updatedUser);
 	}
 	
-	public VU360UserNew updateUser(VU360UserNew updatedUser) {
-		return vu360UserRepositoryNew.save(updatedUser);
-	}
-	
 	public VU360User updateUser(VU360User updatedUser) {
 		return vu360UserRepository.updateUser(updatedUser);
 	}
 	
 	public VU360User updateNumLogons(VU360User updatedUser){
 		return vu360UserRepository.updateUser(updatedUser);
-	}
-
-	public VU360UserNew updateNumLogons(VU360UserNew updatedUser){
-		return updateUser(updatedUser);
 	}
 	
 	public void deleteUserRole(Long roleIdArray[]){
@@ -291,7 +267,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return lmsRoleRepository.findByRoleTypeAndOwnerId(roleType,customerId);
 	}
 	
-	public List<LMSRole>  getAllRoles(Customer customer,com.softech.vu360.lms.vo.VU360User loggedInUser){
+	public List<LMSRole>  getAllRoles(Customer customer,VU360User loggedInUser){
 		return lmsRoleRepository.getAllRoles(customer,loggedInUser);
 	}
 	
@@ -362,11 +338,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public VU360User getUpdatedUserById(Long id) {
 		return vu360UserRepository.getUpdatedUserById(id);
 	}
-
-	public VU360UserNew getVU360UserNewById(Long id) {
-		return vu360UserRepositoryNew.findOne(id);
-	}
-
+	
 	public List<VU360User> searchCustomerUsers(Customer customer, String firstName, String lastName,
 			String email, String sortBy, int sortDirection) {
 		return vu360UserRepository.searchCustomerUsers(customer, firstName, lastName, email, sortBy, sortDirection);
@@ -522,11 +494,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 	@Override
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGroupRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
-	}
-	
-	@Override
-	public Learner getLearnerByVU360UserId(Long id) {
-		return learnerRepository.findByVu360UserId(id);
 	}
 	
 }

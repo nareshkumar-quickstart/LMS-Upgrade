@@ -39,7 +39,7 @@ public class AffidavitTemplate implements SearchableKey {
 	
 	@OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="CREATEDVU360USER_ID")
-	private VU360UserNew createdVU360User = null;
+	private VU360User createdVU360User = null;
 	
 	@Column(name = "CREATEDATE")
 	private Date createdDate = new Date();
@@ -75,12 +75,12 @@ public class AffidavitTemplate implements SearchableKey {
 	}
 
 
-	public VU360UserNew getCreatedVU360User() {
+	public VU360User getCreatedVU360User() {
 		return createdVU360User;
 	}
 
 
-	public void setCreatedVU360User(VU360UserNew createdVU360User) {
+	public void setCreatedVU360User(VU360User createdVU360User) {
 		this.createdVU360User = createdVU360User;
 	}
 
