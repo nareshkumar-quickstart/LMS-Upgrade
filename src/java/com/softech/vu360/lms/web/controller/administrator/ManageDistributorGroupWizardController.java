@@ -6,13 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -23,7 +21,6 @@ import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.DistributorGroup;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.DistributorService;
-import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.util.ResultSet;
 import com.softech.vu360.lms.util.VelocityPagerTool;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
@@ -42,8 +39,6 @@ public class ManageDistributorGroupWizardController extends AbstractWizardFormCo
 	private String manageDistributorGroupTemplate = null;
 	private String distributorGroupAddConfirmTemplate = null;
 	DistributorService distributorService = null;
-	@Inject
-	LearnerService learnerService;
 
 	public String getManageDistributorGroupTemplate() {
 		return manageDistributorGroupTemplate;
@@ -320,19 +315,18 @@ public class ManageDistributorGroupWizardController extends AbstractWizardFormCo
 	protected ModelAndView processFinish(HttpServletRequest request, HttpServletResponse response, Object command, BindException error) throws Exception {
 		log.debug("IN processFinish");
 		ManagerDistributorGroupForm managerDistributorGroupForm= (ManagerDistributorGroupForm)command;
+		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 
 		int Page=getCurrentPage(request);
-		com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		saveDistributorGroup(managerDistributorGroupForm, learnerService.findCustomerByLearnerId(loggedInUserVO.getLearner().getId()));
+		saveDistributorGroup(managerDistributorGroupForm,loggedInUser);
 		return new ModelAndView(distributorGroupAddConfirmTemplate);
 	}
 
-	private void saveDistributorGroup(ManagerDistributorGroupForm managerDistributorGroupForm,Customer customer)throws Exception{
+	private void saveDistributorGroup(ManagerDistributorGroupForm managerDistributorGroupForm,VU360User loggedInUser)throws Exception{
 		DistributorGroup distributorGroup =  new DistributorGroup();
 
 		//need to mofify after brand is fixed
-//		Customer customer = loggedInUser.getLearner().getCustomer();
+		Customer customer = loggedInUser.getLearner().getCustomer();
 
 		distributorGroup.setBrand(customer.getBrand());
 		distributorGroup.setName(managerDistributorGroupForm.getDistributorGroupName());

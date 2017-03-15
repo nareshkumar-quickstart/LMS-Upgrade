@@ -551,6 +551,8 @@ public class ProxyVOHelper {
 		usrVO.setInstructorMode(vu360UserService.hasInstructorRole(vu360UserModel));
 		usrVO.setProctorMode(vu360UserService.hasProctorRole(vu360UserModel));
 		
+		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
+		
 		return usrVO;
 	}
 
@@ -583,7 +585,7 @@ public class ProxyVOHelper {
 		//usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
 		usrVO.setLearnerMode(vu360UserModel.isLearnerMode());
 		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
-		//usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
+		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
 		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
 		usrVO.setManagerMode(vu360UserModel.isManagerMode());
 		usrVO.setMiddleName(vu360UserModel.getMiddleName());

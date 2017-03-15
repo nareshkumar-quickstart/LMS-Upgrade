@@ -12,7 +12,6 @@ import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.DistributorService;
 import com.softech.vu360.lms.service.VU360UserService;
@@ -369,13 +368,6 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 		VU360User loggedInUser = vu360UserService.getUserById(loggedInUserVO.getId());
 		return loggedInUser;
 	}
-	
-	public static VU360UserNew getCurrentSimpleUser() {
-		com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		VU360UserNew loggedInUser = vu360UserService.getSimpleUserById(loggedInUserVO.getId());
-		return loggedInUser;
-	}
-
 
 	public Distributor getCurrentDistributor() {
 		 if(currentDistributorVO!=null)

@@ -27,7 +27,6 @@ import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.RegistrationInvitation;
 import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.web.controller.model.LearnerValidationQASetDTO;
 import com.softech.vu360.util.Brander;
 
@@ -287,10 +286,5 @@ public interface LearnerService {
 	public Address updateAddress(Address address);
 	
 	public Learner getLearnerByVU360UserId(VU360User user);
-	public Learner getLearnerByVU360UserId(VU360UserNew user);
-	
-	public Long findCustomerIdByLearnerId(Long id);
-	public Customer findCustomerByLearnerId(Long id);
-
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
 }

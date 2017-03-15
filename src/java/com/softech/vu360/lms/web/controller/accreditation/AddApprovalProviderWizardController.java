@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -20,11 +19,12 @@ import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.InstructorApproval;
 import com.softech.vu360.lms.model.Provider;
 import com.softech.vu360.lms.model.ProviderApproval;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
-import com.softech.vu360.lms.service.RegulatoryAnalystService;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.accreditation.ProviderForm;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.AddProviderValidator;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.HtmlEncoder;
 import com.softech.vu360.util.ProviderSort;
 
@@ -37,8 +37,6 @@ public class AddApprovalProviderWizardController extends AbstractWizardFormContr
 	public static final String SEARCH_PROVIDER = "search";
 
 	private AccreditationService accreditationService;
-	@Inject
-	private RegulatoryAnalystService regulatoryAnalystService;
 	private String closeApprovalTemplate = null;
 
 	public AddApprovalProviderWizardController() {
@@ -102,8 +100,8 @@ public class AddApprovalProviderWizardController extends AbstractWizardFormContr
 			if (request.getParameter("action") != null) {
 				if (request.getParameter("action").equalsIgnoreCase(SEARCH_PROVIDER) 
 						&& this.getTargetPage(request, page) != 1) {
-					com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-					List<Provider> providers = accreditationService.findProviders(form.getName(), regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
+					VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
+					List<Provider> providers = accreditationService.findProviders(form.getName(), loggedInUser.getRegulatoryAnalyst());
 					form.setName(HtmlEncoder.escapeHtmlFull(form.getName()).toString());
 					String sortColumnIndex = form.getSortColumnIndex();
 					if( sortColumnIndex == null && session.getAttribute("sortColumnIndex") != null )

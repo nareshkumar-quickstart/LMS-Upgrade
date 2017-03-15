@@ -364,6 +364,10 @@ public class VU360User implements UserDetails, Serializable{
 		lmsRoles.add(lmsRole);
 	}
 
+	public void setLmsRoles(Set<LMSRole> lmsRoles) {
+		this.lmsRoles = lmsRoles;
+	}
+	
 	/*public void setLmsRoles(Set<LMSRole> lmsRoles) {
 		this.lmsRoles = lmsRoles;
 

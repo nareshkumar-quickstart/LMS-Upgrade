@@ -94,9 +94,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 
 		case 0:
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) auth.getPrincipal();
-
-			List<LMSRole> tempRoles = vu360UserService.getAllRoles(customer,user);
+			List<LMSRole> tempRoles = vu360UserService.getAllRoles(customer,loggedInUser);
 			//by OWS for LMS-4297 on 26th Jan 2010
 			List<LMSRole> allUserRoles = new ArrayList<LMSRole>();//vu360UserService.getAllRoles(customer,loggedInUser);
 			if(vu360UserService.hasAdministratorRole(loggedInUser) && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){

@@ -149,7 +149,7 @@ public class AddFilterCourseWizardController extends AbstractWizardFormControlle
 		com.softech.vu360.lms.vo.Customer customerVO = null;
 		com.softech.vu360.lms.vo.Distributor distributorVO = null;
 
-		Long customerId = null;
+		VU360User vu360UserModel = null;
 
 		VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) (SecurityContextHolder.getContext()
 				.getAuthentication()).getDetails();
@@ -161,20 +161,20 @@ public class AddFilterCourseWizardController extends AbstractWizardFormControlle
 					.getAttribute("adminSelectedDistributor");
 			if (customerVO != null) {
 				Long learnerId = learnerService.getLearnerForSelectedCustomer(customerVO.getId());
-				customerId = learnerService.findCustomerIdByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId.longValue()).getVu360User();
 			} else if (distributorVO != null) {
 				Long learnerId = learnerService.getLearnerForSelectDistributor(distributorVO.getMyCustomer().getId());
-				customerId = learnerService.findCustomerIdByLearnerId(learnerId);
+				vu360UserModel = learnerService.getLearnerByID(learnerId).getVu360User();
 			} else {
-				customerId = ((com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLearner().getCustomer().getId();
+				vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 			}
 		} else if (details.getCurrentMode().equals(VU360UserMode.ROLE_TRAININGADMINISTRATOR)) {
-			customerId = ((com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getLearner().getCustomer().getId();
+			vu360UserModel = VU360UserAuthenticationDetails.getCurrentUser();
 		}
 
 		if (form.getFilterType().equals(COURSES)) {
 			if (form.getAction().equalsIgnoreCase("search")) {
-				List<Course> courseList = getSearchCriteriaCourses(customerId, form.getCourseName(),
+				List<Course> courseList = getSearchCriteriaCourses(vu360UserModel.getLearner().getCustomer().getId(), form.getCourseName(),
 						form.getCourseType());
 				form.setCourseListFromDB(courseList);
 			}

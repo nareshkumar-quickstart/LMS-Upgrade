@@ -39,7 +39,7 @@ public class CommissionAudit implements SearchableKey {
 	
 	@OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="VU360USER_ID")
-	private VU360UserNew vu360User ;
+	private VU360User vu360User ;
 	
 	@Column(name = "OLDVALUE")
     private String oldValue;
@@ -72,10 +72,10 @@ public class CommissionAudit implements SearchableKey {
 	public void setChangedOn(Date changedOn) {
 		this.changedOn = changedOn;
 	}
-	public VU360UserNew getVu360User() {
+	public VU360User getVu360User() {
 		return this.vu360User;
 	}
-	public void setVu360User(VU360UserNew vu360User) {
+	public void setVu360User(VU360User vu360User) {
 		this.vu360User = vu360User;
 	}
 	public String getOldValue() {

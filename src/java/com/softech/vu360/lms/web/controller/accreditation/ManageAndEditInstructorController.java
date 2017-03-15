@@ -4,10 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,9 +35,9 @@ import com.softech.vu360.lms.model.SingleLineTextCustomFiled;
 import com.softech.vu360.lms.model.SingleSelectCustomField;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
-import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.VU360UserService;
+import com.softech.vu360.lms.util.ORMUtils;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.helper.InstructorSearchEnum;
@@ -46,9 +47,11 @@ import com.softech.vu360.lms.web.controller.model.accreditation.ManageCustomFiel
 import com.softech.vu360.lms.web.controller.model.customfield.CustomFieldBuilder;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.EditInstructorValidator;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
+import com.softech.vu360.util.Brander;
 import com.softech.vu360.util.CustomFieldEntityType;
 import com.softech.vu360.util.CustomFieldSort;
 import com.softech.vu360.util.HtmlEncoder;
+import com.softech.vu360.util.InstructorSort;
 import com.softech.vu360.util.VU360Branding;
 
 /**
@@ -63,8 +66,6 @@ public class ManageAndEditInstructorController extends VU360BaseMultiActionContr
 	private VU360UserService vu360UserService;
 	private LearnerService learnerService;
 	private AccreditationService accreditationService;
-	@Inject
-	private CustomerService customerService;
 //	HttpSession session = null;
 
 	private String searchInstructorTemplate = null;
@@ -337,13 +338,13 @@ public class ManageAndEditInstructorController extends VU360BaseMultiActionContr
 
 				return new ModelAndView(editInstructorSummaryTemplate);
 			}
-	        com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			Customer customer = null;
-			if(loggedInUserVO.isAdminMode()) {
+			if(loggedInUser.isAdminMode()) {
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().
 						getAuthentication().getDetails()).getCurrentCustomer();
 			} else {
-				customer = customerService.getCustomerById(loggedInUserVO.getLearner().getCustomer().getId());
+				customer = loggedInUser.getLearner().getCustomer();
 			}
 
 			Instructor instructor = form.getInstructor();
