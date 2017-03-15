@@ -53,7 +53,7 @@ public class OrganizationalGroup implements SearchableKey,Comparable<Organizatio
 	
 	
 //	@OneToMany(mappedBy="parentOrgGroup" , cascade =  {CascadeType.ALL} )
-    @OneToMany(fetch=FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.REMOVE})// BatchImport IS THE Impact Area IF changing FetchType.EAGER
+    @OneToMany(cascade={CascadeType.MERGE, CascadeType.REMOVE})// BatchImport IS THE Impact Area IF changing FetchType.EAGER
     @JoinColumn(name="PARENTORGGROUP_ID")
     //@LazyCollection(LazyCollectionOption.FALSE)
 	private List<OrganizationalGroup> childrenOrgGroups = new ArrayList<OrganizationalGroup>();

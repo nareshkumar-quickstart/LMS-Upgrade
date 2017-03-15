@@ -135,5 +135,18 @@ public class OrganizationalGroupRepositoryTest {// extends
 		System.out.println(organizationalGroups);
 		
 	}
+	
+	@Test
+    public void getOrgGroupsById() {
+			String arr[] = { "65306", "106" };
+			List<OrganizationalGroup> og = orgGroupRepository.findOrganizationGroupById(arr);
+			System.out.println(og.get(0).getName());
+	}
+    
+    //@Test
+    public void findAllManagedGroupsByTrainingAdministratorId() {
+			List<OrganizationalGroup> og = orgGroupRepository.findAllManagedGroupsByTrainingAdministratorId(12L);
+			System.out.println(og.get(0).getName());
+	}
 
 }
