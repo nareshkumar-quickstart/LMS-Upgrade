@@ -44,7 +44,6 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 
 	public void doInitializeUser(com.softech.vu360.lms.vo.VU360User originalPrincipal) {
 		setAvailableModes(originalPrincipal);
-		//vu360UserService.getEnabledFeatureGroups(originalPrincipal.getId());
 	}
 
 	private void setAvailableModes(com.softech.vu360.lms.vo.VU360User originalPrincipal) {
