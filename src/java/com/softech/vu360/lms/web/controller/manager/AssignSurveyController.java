@@ -138,7 +138,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
  */
 			List<OrganizationalGroup> LearnerOrgGroups = null;
 
-			if( logInUser.isLMSAdministrator() ) {
+			if( vu360UserService.hasAdministratorRole(logInUser) ) {
 				LearnerOrgGroups = orgGroupLearnerGroupService.getAllOrganizationalGroups(customerId);
 			} else {
 				if(logInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()){
@@ -593,12 +593,12 @@ public class AssignSurveyController extends AbstractWizardFormController{
 				if(form.getSearchType().equalsIgnoreCase("simplesearch")) {
 					//userList=learnerService.findLearner(form.getSearchKey(), loggedInUser);
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
 
 
 							results=learnerService.findLearner1(form.getSearchKey().trim(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -609,7 +609,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
 					}else {
 
 						results=learnerService.findLearner1(form.getSearchKey().trim(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -632,7 +632,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
 						
 						if (form.getEnrollmentMethod().equals(SURVEY_METHOD_LEARNER))
 						{
-							if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+							if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 								if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 		
 		
@@ -659,12 +659,12 @@ public class AssignSurveyController extends AbstractWizardFormController{
 						}
 					}
 					else {
-						if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+						if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 							if (tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
 	
 	
 								results = learnerService.findLearner1(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-										loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+										loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 										loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 										loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 										pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -675,7 +675,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
 						}else {
 	
 							results = learnerService.findLearner1(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -693,12 +693,12 @@ public class AssignSurveyController extends AbstractWizardFormController{
 				else if(form.getSearchType().equalsIgnoreCase("allsearch")) {
 					//userList = learnerService.findLearner("", loggedInUser);
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 
 
 							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									sortBy, sortDirection);
@@ -708,7 +708,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
 					}else {
 
 						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								sortBy, sortDirection);

@@ -2990,7 +2990,7 @@ public ModelAndView moveInShowall(HttpServletRequest request, HttpServletRespons
 		int pageNo = form.getPageIndex()<0 ? 0 : form.getPageIndex()/VelocityPagerTool.DEFAULT_PAGE_SIZE;
 		if(form.getSearchType().equalsIgnoreCase("allsearch")) {
 			results = learnerService.findAllLearners("", 
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					"firstName", 0);
@@ -2998,7 +2998,7 @@ public ModelAndView moveInShowall(HttpServletRequest request, HttpServletRespons
 		} else {
 			results = learnerService.findLearner1(form.getFirstName()
 					,form.getLastName(), form.getMailAddress(), 
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					pageNo

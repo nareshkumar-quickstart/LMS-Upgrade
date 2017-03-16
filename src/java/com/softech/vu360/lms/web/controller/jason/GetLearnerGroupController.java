@@ -59,7 +59,7 @@ public class GetLearnerGroupController extends MultiActionController{
 				//set.addAll(orgGroup.getLearnerGroups());
 				ogLearnerGroups = orgGroupLearnerGroupService.getLearnerGroupsByOrgGroup(orgGroup.getId());
 				set.addAll(ogLearnerGroups);
-				if(loggedInUser.isLMSAdministrator() || loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+				if(loggedInUser.isAdminMode() || loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 					while (orgGroup.getParentOrgGroup() != null) {
 			               
 						orgGroup=orgGroup.getParentOrgGroup();

@@ -193,7 +193,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 			//VU360User loggedInUserObj = (VU360User) vu360UserService.loadForUpdateVU360User(loggedInUser.getId());
 			List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 			
-			if( !loggedInUser.isLMSAdministrator() ) {
+			if( !loggedInUser.isAdminMode() ) {
 				if(!UserPermissionChecker.hasAccessToFeature("LMS-MGR-0001", loggedInUser, request.getSession(true))){
 					Menu menu = new Menu(loggedInUser,request);
 					context.put("menu", menu);
@@ -263,7 +263,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 				}
 				session.setAttribute("pageNo",pageNo);
 				results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
@@ -294,7 +294,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 				session.setAttribute("pageNo",pageNo);	
 				results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
@@ -311,7 +311,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 
 				results = learnerService.findAllLearnersByCustomer(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						sortBy,Integer.parseInt(sortDirection) , intShowAllLimit);
@@ -330,7 +330,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -339,7 +339,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 				}else if(session.getAttribute("searchType").toString().equalsIgnoreCase(MANAGE_USER_ALL_SEARCH_ACTION)){
 
 					results = learnerService.findAllLearners("",
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							sortBy,Integer.parseInt(sortDirection));
@@ -347,7 +347,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 
 				}else{
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -373,7 +373,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 				if (session.getAttribute("searchType").toString().equalsIgnoreCase(MANAGE_USER_ADVANCED_SEARCH_ACTION)){
 
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -382,7 +382,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 				}else if (session.getAttribute("searchType").toString().equalsIgnoreCase(MANAGE_USER_ALL_SEARCH_ACTION)){
 
 					results = learnerService.findAllLearners("",
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							sortBy,Integer.parseInt(sortDirection));
@@ -390,7 +390,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 
 				}else{
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
@@ -412,7 +412,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 					VU360UserAuthenticationDetails det = (VU360UserAuthenticationDetails)auth.getDetails();
 					if(det.getCurrentCustomer().getCustomerType().equalsIgnoreCase("b2c")){
 						results =learnerService.findAllLearners("", 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								"firstName",5);
@@ -1323,7 +1323,7 @@ public class ManageUserController extends VU360BaseMultiActionController impleme
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 
 			Customer customer = null;
-			if (loggedInUser.isLMSAdministrator())
+			if (vu360UserService.hasAdministratorRole(loggedInUser))
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			else
 				customer = loggedInUser.getLearner().getCustomer();

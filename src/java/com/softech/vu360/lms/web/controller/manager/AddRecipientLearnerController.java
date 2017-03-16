@@ -78,7 +78,7 @@ public class AddRecipientLearnerController extends AbstractWizardFormController{
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 		List<VU360User> users = learnerService.findLearner(firstName, lastName, email, 
-				loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+				loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 				loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 				loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId());
 		form.setLearnerListFromDB(users);
@@ -191,7 +191,7 @@ public class AddRecipientLearnerController extends AbstractWizardFormController{
 						 }else{
 							 List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 						     users = learnerService.findLearner(firstName, lastName, email, 
-						    		 loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						    		 loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 										loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 										loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId());
 						 }

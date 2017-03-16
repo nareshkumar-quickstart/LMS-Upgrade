@@ -84,7 +84,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		//com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Customer customer = null;
-		if( loggedInUser.isLMSAdministrator() ) {
+		if( vu360UserService.hasAdministratorRole(loggedInUser) ) {
 			customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().
 					getAuthentication().getDetails()).getCurrentCustomer();
 		} else {
@@ -97,7 +97,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 			List<LMSRole> tempRoles = vu360UserService.getAllRoles(customer,loggedInUser);
 			//by OWS for LMS-4297 on 26th Jan 2010
 			List<LMSRole> allUserRoles = new ArrayList<LMSRole>();//vu360UserService.getAllRoles(customer,loggedInUser);
-			if(loggedInUser.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+			if(vu360UserService.hasAdministratorRole(loggedInUser) && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 				allUserRoles=tempRoles;
 				model.put("roles", allUserRoles);
 			}
@@ -147,7 +147,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 			model.put("orgGroupTreeAsList", treeAsList);
 			selectedOrgGroups = loggedInUser.getTrainingAdministrator().getManagedGroups();
 			form.setSelectedLearnersOrgGroups(selectedOrgGroups);
-			if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+			if( !vu360UserService.hasAdministratorRole(loggedInUser) &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 				form.setManageAll("false");
 			}else
 				form.setManageAll("true");
@@ -274,10 +274,10 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 				if(form.getSearchType().equalsIgnoreCase("simplesearch")) {
 					//userList=learnerService.findLearner(form.getSearchKey(), loggedInUser);
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
 							results=learnerService.findLearner1(form.getSearchKey(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, 
@@ -288,7 +288,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 
 					} else {
 						results=learnerService.findLearner1(form.getSearchKey(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -304,10 +304,10 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 				}
 				else if(form.getSearchType().equalsIgnoreCase("advancesearch")) {
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -317,10 +317,10 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 
 					} else {
 						//	Integer totalResults = 0;
-						if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+						if( !loggedInUser.isAdminMode() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 							if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 								results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-										loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+										loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 										loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 										loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 										pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -330,7 +330,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 
 						} else {
 							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -347,7 +347,7 @@ public class AddSecurityRoleWizardController extends AbstractWizardFormControlle
 				else if(form.getSearchType().equalsIgnoreCase("allsearch")) {
 					//results = learnerService.findAllLearners("", loggedInUser, sortBy, sortDirection);
 					results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									sortBy, sortDirection);

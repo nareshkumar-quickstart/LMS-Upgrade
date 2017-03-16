@@ -112,13 +112,13 @@ public class AddLearnerController extends AbstractWizardFormController{
 		List<LMSRole> roleList = new ArrayList<LMSRole>();
 		List<String> roleListNames = new ArrayList<String>();
 		
-		if (loggedInUserVO.isLMSAdministrator()){
+		if (loggedInUserVO.isAdminMode()){
 			Long customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext()
 					.getAuthentication().getDetails()).getCurrentCustomerId();
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LMSADMINISTRATOR,customerId));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER,customerId));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER,customerId));
-		}else if (loggedInUserVO.isTrainingAdministrator()){
+		}else if (loggedInUserVO.isManagerMode()){
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER,loggedInUserVO.getLearner().getCustomer().getId()));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER,loggedInUserVO.getLearner().getCustomer().getId()));
 		}
@@ -513,7 +513,7 @@ public class AddLearnerController extends AbstractWizardFormController{
 		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		Customer customer = null;
 		String learnerPassWord=null;
-		if( loggedInUser.isLMSAdministrator() ) {
+		if(vu360UserService.hasAdministratorRole(loggedInUser) ) {
 			customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 		} else {
 			customer = loggedInUser.getLearner().getCustomer();

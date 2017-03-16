@@ -5,10 +5,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.service.VU360UserService;
 
 public class ArrangeOrgGroupTree {
+	
+	@Inject
+	private static VU360UserService vu360UserService;
 	
 	public static TreeNode getOrgGroupTree(TreeNode parentNode, OrganizationalGroup orgGroup, List<Long> selectedOrgGroups,VU360User loggedInUser){
 		boolean isEnabled=true;
@@ -21,7 +27,7 @@ public class ArrangeOrgGroupTree {
 					break;
 				}
 			}
-			if(!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+			if(!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 				if( loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0) {
 					for(OrganizationalGroup og : loggedInUser.getTrainingAdministrator().getManagedGroups()) {
 						if(	og.getId().longValue() == orgGroup.getId().longValue()) {

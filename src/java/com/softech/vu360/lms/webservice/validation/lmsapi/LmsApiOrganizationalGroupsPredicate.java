@@ -7,16 +7,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.OrganizationalGroups;
 
 public class LmsApiOrganizationalGroupsPredicate {
 
+	@Autowired
+	static VU360UserService vu360UserService;
+	
 	public static boolean isValidOrganizationalGroups(OrganizationalGroups organizationalGroups) {
 		return organizationalGroups != null;
 	}
@@ -94,7 +99,7 @@ public class LmsApiOrganizationalGroupsPredicate {
 	public static boolean isManagerHasPermissionToCreateOrgGroup(VU360User manager) {
 		boolean permission = false;
 		if (manager != null) {
-			permission = manager.isLMSAdministrator() || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+			permission = vu360UserService.hasAdministratorRole(manager) || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups();
 		}
 		return permission;
 	}

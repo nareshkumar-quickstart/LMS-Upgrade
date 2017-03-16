@@ -397,7 +397,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 				VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) auth
 						.getDetails();
-				if (loggedInUser.isLMSAdministrator()
+				if (loggedInUser.isAdminMode()
 						&& details.getCurrentCustomer() == null) {
 					response.sendRedirect("/lms/adm_searchMember.do");
 					return false;
@@ -407,7 +407,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 				VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) auth
 						.getDetails();
-				if (loggedInUser.isLMSAdministrator()
+				if (loggedInUser.isAdminMode()
 						&& details.getCurrentCustomer() == null) {
 					response.sendRedirect("/lms/adm_searchMember.do");
 					return false;
@@ -417,7 +417,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			} else if (handler instanceof AddSecurityRoleController) {
 				VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) auth
 						.getDetails();
-				if (loggedInUser.isLMSAdministrator()
+				if (loggedInUser.isAdminMode()
 						&& details.getCurrentCustomer() == null) {
 					response.sendRedirect("/lms/adm_searchMember.do");
 					return false;
@@ -472,8 +472,8 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			}
 
 			if (UserPermissionChecker.hasAccessToFeature("LMS-LRN-0003", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isTrainingAdministrator() == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isManagerMode() == false
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -485,7 +485,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("featureGroup", "Users & Groups");
 			session.setAttribute("feature", "LMS-MGR-0001");
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0001", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -496,7 +496,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("feature", "LMS-MGR-0002");
 
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0002", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -508,7 +508,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("feature", "LMS-MGR-0003");
 
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0003", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -519,7 +519,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("featureGroup", "Users & Groups");
 			session.setAttribute("feature", "LMS-MGR-0004");
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0004", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -530,7 +530,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("featureGroup", "Users & Groups");
 			session.setAttribute("feature", "LMS-MGR-0005");
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0005", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -550,7 +550,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 			if (UserPermissionChecker.hasAccessToFeature("LMS-ADM-0011", loggedInUser, request.getSession(true)) == false 
 					&& UserPermissionChecker.hasAccessToFeature("LMS-MGR-0006", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -574,7 +574,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("featureGroup", "Plan & Enroll");
 			session.setAttribute("feature", "ManageEnrollments");
 			if (UserPermissionChecker.hasAccessToFeature("ManageEnrollments", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -584,7 +584,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("featureGroup", "Plan & Enroll");
 			session.setAttribute("feature", "LMS-MGR-0008");
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0008", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -596,7 +596,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("feature", "LMS-MGR-0010");
 
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0010", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -609,7 +609,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("feature", "LMS-MGR-0009");
 */			
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0009", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -646,7 +646,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 				}
 			
 			}
-			if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true))== false && loggedInUser.isLMSAdministrator()==false){
+			if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true))== false && loggedInUser.isAdminMode()==false){
 				
 				return false;
 
@@ -657,7 +657,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			session.setAttribute("feature", "Reports");
 
 			if (UserPermissionChecker.hasAccessToFeature("Reports", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -670,7 +670,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			if (methodname.equalsIgnoreCase("editCustomerProfile")) {
 				session.setAttribute("feature", "LMS-MGR-0023");
 				if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0023", loggedInUser, request.getSession(true)) == false
-						&& loggedInUser.isLMSAdministrator() == false) {
+						&& loggedInUser.isAdminMode() == false) {
 
 					return false;
 
@@ -678,7 +678,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			} else {
 				session.setAttribute("feature", "LMS-MGR-0024");
 				if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0024", loggedInUser, request.getSession(true)) == false
-						&& loggedInUser.isLMSAdministrator() == false) {
+						&& loggedInUser.isAdminMode() == false) {
 
 					return false;
 
@@ -760,7 +760,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 */
 			// loggedInUser.
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -773,7 +773,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 			// loggedInUser.
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -786,7 +786,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 			// loggedInUser.
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -799,7 +799,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 */
 			// loggedInUser.
 			if (UserPermissionChecker.hasAccessToFeature("LMS-MGR-0020", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 
@@ -831,7 +831,7 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 
 			// loggedInUser.
 			if (UserPermissionChecker.hasAccessToFeature("LMS-ADM-0029", loggedInUser, request.getSession(true)) == false
-					&& loggedInUser.isLMSAdministrator() == false) {
+					&& loggedInUser.isAdminMode() == false) {
 
 				return false;
 

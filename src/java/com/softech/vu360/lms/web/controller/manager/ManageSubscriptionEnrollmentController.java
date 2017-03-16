@@ -193,11 +193,11 @@ public class ManageSubscriptionEnrollmentController extends AbstractWizardFormCo
     				 Integer totalResults = 0;
     				 int pageNo = form.getPageIndex() < 0 ? 0 : form.getPageIndex() / VelocityPagerTool.DEFAULT_PAGE_SIZE;
     				
-    				    if (!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+    				    if (!loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
     					    if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 
     					         results = learnerService.findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-    								    loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+    								    loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
     									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
     									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
     									ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -210,7 +210,7 @@ public class ManageSubscriptionEnrollmentController extends AbstractWizardFormCo
     				    else {
 
     					    results = learnerService.findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-    								    loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+    								    loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
     									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
     									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
     									ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -223,11 +223,11 @@ public class ManageSubscriptionEnrollmentController extends AbstractWizardFormCo
 					    request.setAttribute("PagerAttributeMap", pagerAttributeMap);
     			 } else if (form.getSearchType().equalsIgnoreCase("allsearch")) {
     				    // userList = learnerService.findLearner("", loggedInUser);
-    				    if (!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+    				    if (!loggedInUser.isAdminMode() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
     					if (tempManagedGroups!=null && tempManagedGroups.size() > 0) {
 
     						results = learnerService.findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-								    loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								    loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, -1, -1, sortBy, sortDirection);
@@ -238,7 +238,7 @@ public class ManageSubscriptionEnrollmentController extends AbstractWizardFormCo
     				    } else {
 
     				    	results = learnerService.findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-								    loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								    loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, -1, -1, sortBy, sortDirection);

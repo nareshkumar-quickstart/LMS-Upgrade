@@ -103,7 +103,7 @@ public class EditCustomerController extends VU360BaseMultiActionController {
 //						LMS:3462, If customer has more than one learner then it cannot be changed into B2C type.
 						Map<Object,Object> results = new HashMap<Object,Object>();
 						results =learnerService.findAllLearners("", 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								1, 1, "firstName",5);

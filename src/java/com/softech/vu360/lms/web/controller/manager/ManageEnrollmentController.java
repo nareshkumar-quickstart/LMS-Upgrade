@@ -651,10 +651,10 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		    // userList=learnerService.findLearner(form.getSearchKey(),
 		    // loggedInUser);
 		    Integer totalResults = 0;
-		    if (!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+		    if (!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 				if (loggedInUser.getTrainingAdministrator().getManagedGroups().size() > 0) {
 				    results = learnerService.findLearner1(form.getSearchKey().trim(), 
-				    		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+				    		vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -663,7 +663,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 				}
 		    } else {
 				results = learnerService.findLearner1(form.getSearchKey().trim(), 
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE,
@@ -681,13 +681,13 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		    // userList=learnerService.findLearner(form.getSearchFirstName(),form.getSearchLastName(),
 		    // form.getSearchEmailAddress(), loggedInUser);
 		    Integer totalResults = 0;
-		    if (!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+		    if (!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 		    	TrainingAdministrator tadmin = vu360UserService.findTrainingAdminstratorById(loggedInUser.getTrainingAdministrator().getId());
 		    	//if (loggedInUser.getTrainingAdministrator().getManagedGroups().size() > 0) {
 			    if (tadmin.getManagedGroups()!=null && tadmin.getManagedGroups().size() > 0) {
 				    results = learnerService
 						    .findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-						    		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+						    		vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -697,7 +697,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		    } else {
 			    results = learnerService
 					    .findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-					    		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					    		vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -713,11 +713,11 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 
 		else if (form.getSearchType().equalsIgnoreCase("allsearch")) {
 		    // userList = learnerService.findLearner("", loggedInUser);
-		    if (!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+		    if (!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 				if (loggedInUser.getTrainingAdministrator().getManagedGroups().size() > 0) {
 				    results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(), form.getSearchLastName().trim(),
 					    form.getSearchEmailAddress().trim(), 
-					    loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					    vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						sortBy, sortDirection);
@@ -726,7 +726,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		    } else {
 				results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form
 					.getSearchEmailAddress().trim(), 
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					sortBy, sortDirection);
@@ -936,7 +936,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
     private void saveEnrollment(EnrollmentDetailsForm form, Brander brander) throws Exception {
 		VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 		Customer customer = null;
-		if (user.isLMSAdministrator()) {
+		if (vu360UserService.hasAdministratorRole(user)) {
 		    customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 		} else {
 		    customer = user.getLearner().getCustomer();

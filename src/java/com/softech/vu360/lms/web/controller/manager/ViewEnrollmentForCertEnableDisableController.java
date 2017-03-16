@@ -196,7 +196,7 @@ public class ViewEnrollmentForCertEnableDisableController extends VU360BaseMulti
 					int intShowAllLimit = Integer.parseInt(showAllLimit.trim());
 					List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					searchedUsers = learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0 , intShowAllLimit );

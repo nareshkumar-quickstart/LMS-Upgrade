@@ -225,7 +225,7 @@ public class VU360User implements UserDetails, Serializable{
 		this.proctor = proctor;
 	}
 
-	public  Boolean isTrainingAdministrator() {
+	/*public  Boolean isTrainingAdministrator() {
 		if (this.getTrainingAdministrator() == null) {
 			return false;
 		} else {
@@ -306,7 +306,7 @@ public class VU360User implements UserDetails, Serializable{
 		}
 		return result;
 
-	}
+	}*/
 
 	public String getPassword() {
 		return password;
@@ -366,6 +366,10 @@ public class VU360User implements UserDetails, Serializable{
 
 	public void setLmsRoles(Set<LMSRole> lmsRoles) {
 		this.lmsRoles = lmsRoles;
+	}
+	
+	/*public void setLmsRoles(Set<LMSRole> lmsRoles) {
+		this.lmsRoles = lmsRoles;
 
 		this.isAdminMode = false;
 		this.isProctorMode = false;
@@ -393,7 +397,7 @@ public class VU360User implements UserDetails, Serializable{
 			else if (LMSRole.ROLE_PROCTOR.equalsIgnoreCase(roleType))
 				setProctorMode(true);
 		}
-	}
+	}*/
 
 	public String getMiddleName() {
 		return middleName;
@@ -435,7 +439,7 @@ public class VU360User implements UserDetails, Serializable{
 		this.regulatoryAnalyst = regulatoryAnalyst;// .setValue(regulatoryAnalyst);
 	}
 
-	public  Boolean isRegulatoryAnalyst() {
+	/*public  Boolean isRegulatoryAnalyst() {
 		if (this.regulatoryAnalyst == null) {
 			return false;
 		} else {
@@ -450,7 +454,7 @@ public class VU360User implements UserDetails, Serializable{
 			}
 			return isRegulator;
 		}
-	}
+	}*/
 
 	public Instructor getInstructor() {
 		return this.instructor;

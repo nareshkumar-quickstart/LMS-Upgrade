@@ -127,7 +127,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 		VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 
         Customer customer = null;
-        if (user.isLMSAdministrator()) {
+        if (user.isAdminMode()) {
             customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
         } else {
             customer = user.getLearner().getCustomer();
@@ -219,7 +219,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 			//VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             com.softech.vu360.lms.vo.Customer customer = null;
-            if (loggedInUser.isLMSAdministrator()) {
+            if (loggedInUser.isAdminMode()) {
                 customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getProxyCustomer();
             } else {
                 customer = loggedInUser.getLearner().getCustomer();
@@ -268,7 +268,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 					String showAllLimit = brander.getBrandElement("lms.resultSet.showAll.Limit") ;
 					int intShowAllLimit = Integer.parseInt(showAllLimit.trim());
 					searchedUsers = learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0 , intShowAllLimit );
@@ -280,7 +280,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
                 String showAllLimit = brander.getBrandElement("lms.resultSet.showAll.Limit") ;
                 int intShowAllLimit = Integer.parseInt(showAllLimit.trim());
                 searchedUsers = learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,
-                		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+                		loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0 , intShowAllLimit );
@@ -439,7 +439,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 			String sortBy = StringUtils.isBlank(enrollForm.getSortField())? "firstName":enrollForm.getSortField();
 
 			results = learnerService.findAllLearners("",
-					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					sortBy,sortDirection);
