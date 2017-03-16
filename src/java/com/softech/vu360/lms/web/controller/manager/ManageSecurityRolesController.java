@@ -438,7 +438,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 			
 			int userCount= learnerDataMap.get("rolesWithUsers").size() + managerDataMap.get("rolesWithUsers").size();
 			
-			if(loggedInUserVO.isAdminMode() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+			if(loggedInUserVO.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 				Map<String,Set<LMSRole>> instructorDataMap= this.getDataForRoleType(roleIdArray, LMSRole.ROLE_INSTRUCTOR, customer);
 				Map<String,Set<LMSRole>> adminDataMap= this.getDataForRoleType(roleIdArray, LMSRole.ROLE_LMSADMINISTRATOR, customer);
 				Map<String,Set<LMSRole>> regulatoryDataMap= this.getDataForRoleType(roleIdArray, LMSRole.ROLE_REGULATORYANALYST, customer);
@@ -469,7 +469,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 				List<LMSRole> allRoles = vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER, customer.getId());
 				allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER, customer.getId()));
 				
-				if(loggedInUserVO.isAdminMode() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+				if(loggedInUserVO.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 					allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_INSTRUCTOR, customer.getId()));
 					allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LMSADMINISTRATOR, customer.getId()));
 					allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_REGULATORYANALYST, customer.getId()));
@@ -591,7 +591,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 			this.transferUsersAndDeleteRole(LMSRole.ROLE_LEARNER,learnerRolesToDeleteValues,learnersAlternativeRoleId,customer);
 			this.transferUsersAndDeleteRole(LMSRole.ROLE_TRAININGMANAGER,managerRolesToDeleteValues,managerAlternativeRoleId,customer);
 			
-			if(loggedInUserVO.isAdminMode() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+			if(loggedInUserVO.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 				int dropAllInstructors= 1;
 				String[] instructorRolesToDeleteValues = new String[1];
 				int instructorAlternativeRoleId= -1;
@@ -622,7 +622,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 					List<LMSRole> allRoles = vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER, customer.getId());
 					allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER, customer.getId()));
 					
-					if(loggedInUserVO.isAdminMode() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+					if(loggedInUserVO.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 						allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_INSTRUCTOR, customer.getId()));
 						allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LMSADMINISTRATOR, customer.getId()));
 						allRoles.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_REGULATORYANALYST, customer.getId()));

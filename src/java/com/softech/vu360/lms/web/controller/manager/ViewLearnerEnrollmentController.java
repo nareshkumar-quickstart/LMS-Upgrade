@@ -116,7 +116,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 				List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 				
 				results = learnerService.findLearner1(enrollForm.getSimpleSearchKey(),
-						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -132,7 +132,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 				List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 				
 				results = learnerService.findLearner1(enrollForm.getFirstName(), enrollForm.getLastName(), enrollForm.getEmailAddress(),
-						loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -190,7 +190,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 			int sortDirection = enrollForm.getSortDirection()<0 ? 0:enrollForm.getSortDirection(); 
 			String sortBy = StringUtils.isBlank(enrollForm.getSortField())? "firstName":enrollForm.getSortField();
 			results = learnerService.findAllLearners("",
-					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 					sortBy,sortDirection);

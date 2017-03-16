@@ -182,7 +182,7 @@ public class AddFilterOrgGroupController extends AbstractWizardFormController{
 			com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder
 					.getContext().getAuthentication().getPrincipal();
 			Long customerId = 0L;
-			if (loggedInUser.isAdminMode())
+			if (loggedInUser.isLMSAdministrator())
 				customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication()
 						.getDetails()).getCurrentCustomerId();
 			else {

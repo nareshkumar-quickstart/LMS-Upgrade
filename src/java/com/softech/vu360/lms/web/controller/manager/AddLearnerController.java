@@ -118,13 +118,13 @@ public class AddLearnerController extends AbstractWizardFormController{
 		List<LMSRole> roleList = new ArrayList<LMSRole>();
 		List<String> roleListNames = new ArrayList<String>();
 
-		if (loggedInUserVO.isAdminMode()){
+		if (loggedInUserVO.isLMSAdministrator()){
 			Long customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext()
 					.getAuthentication().getDetails()).getCurrentCustomerId();
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LMSADMINISTRATOR,customerId));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER,customerId));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER,customerId));
-		}else if (loggedInUserVO.isManagerMode()){
+		}else if (loggedInUserVO.isTrainingAdministrator()){
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_TRAININGMANAGER,loggedInUserVO.getLearner().getCustomer().getId()));
 			roleList.addAll(vu360UserService.getRolesByRoleType(LMSRole.ROLE_LEARNER,loggedInUserVO.getLearner().getCustomer().getId()));
 		}

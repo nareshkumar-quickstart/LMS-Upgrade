@@ -210,7 +210,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 					List<OrganizationalGroup> tempManagedGroups = learnerService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 
 					results = learnerService.getAllUsersInLmsRole(lmsRole,
-							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							sortBy, Integer.parseInt(sortDirection));
@@ -253,7 +253,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 					List<OrganizationalGroup> tempManagedGroups = learnerService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 
 					results = learnerService.getAllUsersInLmsRole(lmsRole,
-							loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							pageNo, CHANGE_MEMBER_PAGE_SIZE, sortBy, Integer.parseInt(sortDirection));

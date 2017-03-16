@@ -248,7 +248,7 @@ public class ManageOraganizationGroupsController extends MultiActionController i
 			String orgGroupName=request.getParameter("orgGroupName");
 			String action = request.getParameter("action");
 			Long customerId = null;
-			if (loggedInUser.isAdminMode())
+			if (loggedInUser.isLMSAdministrator())
 				customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			else
 				customerId = loggedInUser.getLearner().getCustomer().getId();

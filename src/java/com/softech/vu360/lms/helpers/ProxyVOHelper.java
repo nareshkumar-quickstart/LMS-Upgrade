@@ -504,7 +504,7 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
-		usrVO.setInstructorMode(vu360UserModel.isInstructor());
+		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
@@ -521,7 +521,7 @@ public class ProxyVOHelper {
 		usrVO.setPassword(vu360UserModel.getPassword());
 		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
 		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
-		usrVO.setProctorMode(vu360UserModel.isProctor());
+		usrVO.setProctorMode(vu360UserModel.isProctorMode());
 		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
 		usrVO.setRoleID(vu360UserModel.getRoleID());
 		usrVO.setRoleName(vu360UserModel.getRoleName());
@@ -558,7 +558,7 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
-		usrVO.setInstructorMode(vu360UserModel.isInstructor());
+		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
@@ -575,7 +575,7 @@ public class ProxyVOHelper {
 		usrVO.setPassword(vu360UserModel.getPassword());
 		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
 		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
-		usrVO.setProctorMode(vu360UserModel.isProctor());
+		usrVO.setProctorMode(vu360UserModel.isProctorMode());
 		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
 		usrVO.setRoleID(vu360UserModel.getRoleID());
 		usrVO.setRoleName(vu360UserModel.getRoleName());

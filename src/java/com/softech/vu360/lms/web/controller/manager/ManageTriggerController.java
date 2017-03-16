@@ -174,7 +174,7 @@ public class ManageTriggerController extends VU360BaseMultiActionController {
 				.getAuthentication().getPrincipal();
 		Long customerId = null;
 		
-		if (loggedInUser.isAdminMode()) {
+		if (loggedInUser.isLMSAdministrator()) {
 			customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 		} else {
 			if (loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {

@@ -235,7 +235,7 @@ public class AddInstructorWizardController extends AbstractWizardFormController 
 		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		Customer customer = null;
-		if( loggedInUser.isAdminMode() ) {
+		if( vu360UserService.hasAdministratorRole(loggedInUser) ) {
 			customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().
 					getAuthentication().getDetails()).getCurrentCustomer();
 		} else {

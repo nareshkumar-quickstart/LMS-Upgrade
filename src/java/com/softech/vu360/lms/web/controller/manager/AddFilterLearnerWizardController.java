@@ -221,7 +221,7 @@ public class AddFilterLearnerWizardController  extends AbstractWizardFormControl
 						 //VU360User vu360UserModel = vu360UserService.getUserById(loggedInUser.getId());
 						List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 						 users = learnerService.findLearner(firstName, lastName, email, 
-								 loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+								 loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId());
 						form.setLearnerListFromDB(users);

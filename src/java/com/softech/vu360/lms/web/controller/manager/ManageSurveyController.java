@@ -2642,14 +2642,14 @@ public class ManageSurveyController extends VU360BaseMultiActionController{
 		int pageNo = form.getPageIndex()<0 ? 0 : form.getPageIndex()/VelocityPagerTool.DEFAULT_PAGE_SIZE;
 		if(form.getSearchType().equalsIgnoreCase("allsearch")) {
 			results = learnerService.findAllLearners("", 
-					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					"firstName", 0);
 			userList = (List<VU360User>)results.get("list");
 		} else {
 			results = learnerService.findLearner1(form.getFirstName(),form.getLastName(), form.getMailAddress(), 
-					loggedInUser.isAdminMode(), loggedInUser.isManagerMode(), loggedInUser.getTrainingAdministrator().getId(), 
+					loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
 					loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					pageNo

@@ -371,7 +371,7 @@ public class ManageSurveyWizardController extends AbstractWizardFormController {
 					if( distributor == null ) {
 						Long customerId = null;
 
-						if (user.isAdminMode()){
+						if (user.isLMSAdministrator()){
 							customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 						}
 						else{
