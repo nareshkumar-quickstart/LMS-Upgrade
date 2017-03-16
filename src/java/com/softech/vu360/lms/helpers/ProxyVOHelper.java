@@ -5,12 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.hibernate.LazyInitializationException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.softech.vu360.lms.model.Address;
 import com.softech.vu360.lms.model.ContentOwner;
@@ -33,24 +29,11 @@ import com.softech.vu360.lms.model.RegulatoryAnalyst;
 import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.MyCustomer;
 
-@Component
 public class ProxyVOHelper {
 	
 	private static final Logger log = Logger.getLogger(ProxyVOHelper.class.getName());
-	
-	private static 
-	VU360UserService vu360UserService;
-
-	@Autowired
-	VU360UserService _vu360UserService;
-	
-	@PostConstruct     
-	public void initServices () {
-		vu360UserService = this._vu360UserService;
-	}
 	
 	public static com.softech.vu360.lms.vo.Learner setLearnerProxy(Learner learnerModel) {
 
@@ -182,9 +165,9 @@ public class ProxyVOHelper {
 		
 		try {
 			customerModel.getId();
-		} catch (LazyInitializationException ex) {
+		} catch (LazyInitializationException lazyExc) {
 			// could not initialize proxy - no Session
-			log.error("LazyInitializationException ::: ignore this ----> CustomerModel could not initialize");
+			log.info("LazyInitializationException ::: ignore this ----> CustomerModel could not initialize");
 			return null;
 		}
 
@@ -521,12 +504,16 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
+		usrVO.setInstructorMode(vu360UserModel.isInstructor());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
 		usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
+		usrVO.setLearnerMode(vu360UserModel.isLearnerMode());
 		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
+		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
 		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
+		usrVO.setManagerMode(vu360UserModel.isManagerMode());
 		usrVO.setMiddleName(vu360UserModel.getMiddleName());
 		usrVO.setNewUser(vu360UserModel.isNewUser());
 		usrVO.setNotifyOnLicenseExpire(vu360UserModel.getNotifyOnLicenseExpire());
@@ -534,6 +521,7 @@ public class ProxyVOHelper {
 		usrVO.setPassword(vu360UserModel.getPassword());
 		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
 		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
+		usrVO.setProctorMode(vu360UserModel.isProctor());
 		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
 		usrVO.setRoleID(vu360UserModel.getRoleID());
 		usrVO.setRoleName(vu360UserModel.getRoleName());
@@ -543,15 +531,6 @@ public class ProxyVOHelper {
 		usrVO.setUsername(vu360UserModel.getUsername());
 		usrVO.setVissibleOnReport(vu360UserModel.getVissibleOnReport());
 		usrVO.setLanguage(createLanguageVO(vu360UserModel.getLanguage()));
-		
-		usrVO.setLearnerMode(vu360UserService.hasLearnerRole(vu360UserModel));
-		usrVO.setManagerMode(vu360UserService.hasTrainingAdministratorRole(vu360UserModel));
-		usrVO.setAccreditationMode(vu360UserService.hasRegulatoryAnalystRole(vu360UserModel));
-		usrVO.setAdminMode(vu360UserService.hasAdministratorRole(vu360UserModel));
-		usrVO.setInstructorMode(vu360UserService.hasInstructorRole(vu360UserModel));
-		usrVO.setProctorMode(vu360UserService.hasProctorRole(vu360UserModel));
-		
-		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
 		
 		return usrVO;
 	}
@@ -579,6 +558,7 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
+		usrVO.setInstructorMode(vu360UserModel.isInstructor());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
@@ -595,6 +575,7 @@ public class ProxyVOHelper {
 		usrVO.setPassword(vu360UserModel.getPassword());
 		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
 		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
+		usrVO.setProctorMode(vu360UserModel.isProctor());
 		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
 		usrVO.setRoleID(vu360UserModel.getRoleID());
 		usrVO.setRoleName(vu360UserModel.getRoleName());
