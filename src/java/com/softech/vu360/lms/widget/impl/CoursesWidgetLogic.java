@@ -51,66 +51,26 @@ public class CoursesWidgetLogic implements WidgetLogic {
 		String filter = (String) ((params.get("filter")!=null) ? params.get("filter") : "all");
 		
 		//TODO: needs refactoring since there is already a mess in LMS so i dont have time right now
-		Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());	
-		
-		
-		if(filter.compareTo("recent")==0 || filter.compareTo("all")==0) {
-			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
-			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
-			List<CourseGroupView> sortedCourseGroups = new ArrayList<CourseGroupView>();
-			String search = "Search";
-			Map map = enrollmentService.displayMyCourses(vu360User, brand, courseGroups, filteredMyCourses, sortedCourseGroups, filter, search, true);
-			List myCourseItems = (List) map.get("myCourseItems");
-			
-			DateUtil dateUtil = new DateUtil();
-			for (Object item : myCourseItems) {
-				MyCoursesItem myCoursesItem = (MyCoursesItem) item;
-				
-				if( (myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_ACTIVE) || myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_EXPIRED)) &&
-				  	 dateUtil.dateDifference(new Date(), myCoursesItem.getEnrollment().getEnrollmentEndDate()) > 0){
-					continue;
-				}
+		Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());
 
-				WidgetData widgetData = new WidgetData();
-				Map<String, Object> data = widgetData.getDataMap();
-				widgetData.setId((long)datas.size());
-				data.put("courseName", myCoursesItem.getCourseTitle());
-				data.put("percentComplete", myCoursesItem.getCompletionPercent()+"");
-				data.put("courseCompleted", myCoursesItem.getCourseCompleted()+"");
-				data.put("courseID", myCoursesItem.getCourseID());
-				data.put("courseCategoryType", myCoursesItem.getCourseCategoryType());
-				data.put("courseIdKey", myCoursesItem.getCourseIdKey().toString());
-				data.put("learnerEnrollmentID", myCoursesItem.getLearnerEnrollmentID());
-                data.put("courseStatus", myCoursesItem.getCourseStatusDisplayText());
-				datas.add(widgetData);
-			}
-		}
-		
-		if(filter.compareTo("enrolled")==0 || filter.compareTo("all")==0) {
+		if(filter.compareTo("recent")==0 || filter.compareTo("enrolled")==0 || filter.compareTo("all")==0) {
 			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
 			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
 			List<CourseGroupView> sortedCourseGroups = new ArrayList<CourseGroupView>();
 			String search = "Search";
 			Map map = enrollmentService.displayMyCourses(vu360User, brand, courseGroups, filteredMyCourses, sortedCourseGroups, filter, search, true);
-			List myCourseGroups = (List) map.get("myCoursesCourseGroups");
-			for (Object item : myCourseGroups) {
-				MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
-				Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
-				while(iterator.hasNext()) {
-					MyCoursesItem myCoursesItem = iterator.next();
+			if(filter.compareTo("recent")==0 || filter.compareTo("all")==0) {
+				List myCourseItems = (List) map.get("myCourseItems");
+				DateUtil dateUtil = new DateUtil();
+				for (Object item : myCourseItems) {
+					MyCoursesItem myCoursesItem = (MyCoursesItem) item;
+
+					if( (myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_ACTIVE) || myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_EXPIRED)) &&
+							dateUtil.dateDifference(new Date(), myCoursesItem.getEnrollment().getEnrollmentEndDate()) > 0){
+						continue;
+					}
+
 					WidgetData widgetData = new WidgetData();
-					
-					
-					 //skip all expired courses.
-					 if("enrolled".equals(filter)){
-						 Date enrolEndDate = myCoursesItem.getEnrollment().getEnrollmentEndDate();
-						 Date currentDate = new Date();
-						 if( enrolEndDate.before(currentDate) &&
-								 (myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_ACTIVE) 
-									|| myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_EXPIRED)))
-					 			continue;
-					 	}
-					 
 					Map<String, Object> data = widgetData.getDataMap();
 					widgetData.setId((long)datas.size());
 					data.put("courseName", myCoursesItem.getCourseTitle());
@@ -120,12 +80,48 @@ public class CoursesWidgetLogic implements WidgetLogic {
 					data.put("courseCategoryType", myCoursesItem.getCourseCategoryType());
 					data.put("courseIdKey", myCoursesItem.getCourseIdKey().toString());
 					data.put("learnerEnrollmentID", myCoursesItem.getLearnerEnrollmentID());
-                    data.put("courseStatus", myCoursesItem.getCourseStatusDisplayText());
+					data.put("courseStatus", myCoursesItem.getCourseStatusDisplayText());
 					datas.add(widgetData);
 				}
-				
+			}
+
+			if(filter.compareTo("enrolled")==0 || filter.compareTo("all")==0) {
+				List myCourseGroups = (List) map.get("myCoursesCourseGroups");
+				for (Object item : myCourseGroups) {
+					MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
+					Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
+					while(iterator.hasNext()) {
+						MyCoursesItem myCoursesItem = iterator.next();
+						WidgetData widgetData = new WidgetData();
+
+
+						//skip all expired courses.
+						if("enrolled".equals(filter)){
+							Date enrolEndDate = myCoursesItem.getEnrollment().getEnrollmentEndDate();
+							Date currentDate = new Date();
+							if( enrolEndDate.before(currentDate) &&
+									(myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_ACTIVE)
+											|| myCoursesItem.getEnrollmentStatus().equalsIgnoreCase(IApplicationConstants.ENROLLMENT_STATUS_EXPIRED)))
+								continue;
+						}
+
+						Map<String, Object> data = widgetData.getDataMap();
+						widgetData.setId((long)datas.size());
+						data.put("courseName", myCoursesItem.getCourseTitle());
+						data.put("percentComplete", myCoursesItem.getCompletionPercent()+"");
+						data.put("courseCompleted", myCoursesItem.getCourseCompleted()+"");
+						data.put("courseID", myCoursesItem.getCourseID());
+						data.put("courseCategoryType", myCoursesItem.getCourseCategoryType());
+						data.put("courseIdKey", myCoursesItem.getCourseIdKey().toString());
+						data.put("learnerEnrollmentID", myCoursesItem.getLearnerEnrollmentID());
+						data.put("courseStatus", myCoursesItem.getCourseStatusDisplayText());
+						datas.add(widgetData);
+					}
+
+				}
 			}
 		}
+
 		
 		if(filter.compareTo("completedCourses")==0 || filter.compareTo("all")==0) {
 			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
