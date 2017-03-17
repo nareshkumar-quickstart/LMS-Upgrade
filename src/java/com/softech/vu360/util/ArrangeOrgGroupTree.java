@@ -5,16 +5,27 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.VU360UserService;
 
+@Component
 public class ArrangeOrgGroupTree {
 	
-	@Inject
+	@Autowired
+	private VU360UserService _vu360UserService;
+	
 	private static VU360UserService vu360UserService;
+	
+	@PostConstruct
+	private void init() {
+		ArrangeOrgGroupTree.vu360UserService = this._vu360UserService;
+	}
 	
 	public static TreeNode getOrgGroupTree(TreeNode parentNode, OrganizationalGroup orgGroup, List<Long> selectedOrgGroups,VU360User loggedInUser){
 		boolean isEnabled=true;
