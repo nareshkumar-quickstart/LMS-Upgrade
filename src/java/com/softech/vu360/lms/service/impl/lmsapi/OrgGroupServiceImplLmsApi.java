@@ -19,7 +19,6 @@ import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
-import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.service.lmsapi.OrgGroupServiceLmsApi;
 import com.softech.vu360.lms.service.lmsapi.VU360UserServiceLmsApi;
 import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.AddOrgGroupByParentIdOrganizationalGroup;
@@ -29,6 +28,7 @@ import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.InvalidOrg
 import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.NewOrganizationalGroups;
 import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.OrganizationalGroups;
 import com.softech.vu360.lms.webservice.message.lmsapi.types.orggroup.ResponseOrganizationalGroup;
+import com.softech.vu360.lms.webservice.message.lmsapi.types.securityroles.UserSecurityRole;
 
 public class OrgGroupServiceImplLmsApi implements OrgGroupServiceLmsApi {
 	
@@ -40,7 +40,22 @@ public class OrgGroupServiceImplLmsApi implements OrgGroupServiceLmsApi {
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 	private LearnerService learnerService;
 	private EntitlementService entitlementService;
-	private VU360UserService vu360UserService;
+	
+	public void setVu360UserServiceLmsApi(VU360UserServiceLmsApi vu360UserServiceLmsApi) {
+		this.vu360UserServiceLmsApi = vu360UserServiceLmsApi;
+	}
+	
+	public void setOrgGroupLearnerGroupService(OrgGroupLearnerGroupService orgGroupLearnerGroupService) {
+		this.orgGroupLearnerGroupService = orgGroupLearnerGroupService;
+	}
+	
+	public void setLearnerService(LearnerService learnerService) {
+		this.learnerService = learnerService;
+	}
+	
+	public void setEntitlementService(EntitlementService entitlementService) {
+		this.entitlementService = entitlementService;
+	}
 
 	public boolean isOrganizationalGroupExist(Customer customer, String orgGroupHierarchy) throws Exception {
 		
@@ -251,12 +266,12 @@ public class OrgGroupServiceImplLmsApi implements OrgGroupServiceLmsApi {
 		}
 	
 		log.info("orgGroupName = " + orgGroupName);
-        log.info("loggedInUser.isLMSAdministrator() = " + vu360UserService.hasAdministratorRole(manager));
+        log.info("loggedInUser.isLMSAdministrator() = " + manager.isLMSAdministrator());
         log.info("manager.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " + manager.getTrainingAdministrator().isManagesAllOrganizationalGroups());
         
         OrganizationalGroup newOrgGroup = null;
         
-        if(vu360UserService.hasAdministratorRole(manager) || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+        if(manager.isLMSAdministrator() || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
         	log.info("creating org group '" + orgGroupName + "'...");
         	newOrgGroup = createNewOrganizationalGroup(customer, orgGroupName, organizationalGroup);
         } else {
@@ -284,7 +299,7 @@ public class OrgGroupServiceImplLmsApi implements OrgGroupServiceLmsApi {
 		}
 		
 		log.info("orgGroupName = " + orgGroupName);
-        log.info("loggedInUser.isLMSAdministrator() = " + vu360UserService.hasAdministratorRole(manager));
+        log.info("loggedInUser.isLMSAdministrator() = " + manager.isLMSAdministrator());
         log.info("manager.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " + manager.getTrainingAdministrator().isManagesAllOrganizationalGroups());
         
         OrganizationalGroup organizationalGroup = getOrganizationalGroupFromAllOrganizationalGroups(customer, orgGroupHierarchy);
@@ -1222,30 +1237,6 @@ Long orgGroupId = organizationalGroup.getId();
 		
 		return responseOrganizationalGroup;
 		
-	}
-
-	public VU360UserService getVu360UserService() {
-		return vu360UserService;
-	}
-
-	public void setVu360UserService(VU360UserService vu360UserService) {
-		this.vu360UserService = vu360UserService;
-	}
-
-	public void setVu360UserServiceLmsApi(VU360UserServiceLmsApi vu360UserServiceLmsApi) {
-		this.vu360UserServiceLmsApi = vu360UserServiceLmsApi;
-	}
-	
-	public void setOrgGroupLearnerGroupService(OrgGroupLearnerGroupService orgGroupLearnerGroupService) {
-		this.orgGroupLearnerGroupService = orgGroupLearnerGroupService;
-	}
-	
-	public void setLearnerService(LearnerService learnerService) {
-		this.learnerService = learnerService;
-	}
-	
-	public void setEntitlementService(EntitlementService entitlementService) {
-		this.entitlementService = entitlementService;
 	}
 	
 }

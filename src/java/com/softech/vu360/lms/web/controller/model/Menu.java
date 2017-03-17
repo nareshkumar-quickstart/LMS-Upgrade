@@ -25,7 +25,7 @@ public class Menu implements ILMSBaseInterface {
 	{	
 		boolean setup=false;
 		
-		if(user.isLearnerMode())
+		if(user.isInLearnerRole())
 		{
 			HttpSession session = request.getSession();
 			//log.debug("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + session.getAttribute("isAdminSwitch"));
@@ -36,17 +36,17 @@ public class Menu implements ILMSBaseInterface {
 			}
 			redirectingToLearner=true;
 		}
-		if(!setup && user.isManagerMode())
+		if(!setup && user.isTrainingAdministrator())
 		{
 			setup=setupManager(user,request);
 			redirectingToManager=true;
 		}
-		if(!setup && user.isAdminMode())
+		if(!setup && user.isLMSAdministrator())
 		{
 			setup=setupAdmin(user,request);
 			redirectingToAdmin=true;;
 		}
-		if(!setup && user.isAccreditationMode())
+		if(!setup && user.isRegulatoryAnalyst())
 		{
 			setup=setupRegulatory(user,request);
 			redirectingToRegulatory=true;
@@ -262,35 +262,35 @@ public class Menu implements ILMSBaseInterface {
 			}
 		}
 		
-		if((UserPermissionChecker.hasAccessToFeatureGroup("Users & Groups", user, request.getSession(true))&&((clickedFeatureGroup.equals("Users & Groups"))||(StringUtils.isEmpty(clickedFeatureGroup)))) || user.isAdminMode()) 
+		if((UserPermissionChecker.hasAccessToFeatureGroup("Users & Groups", user, request.getSession(true))&&((clickedFeatureGroup.equals("Users & Groups"))||(StringUtils.isEmpty(clickedFeatureGroup)))) || user.isLMSAdministrator()) 
 		{
 			this.featureGroup = "Users & Groups";
-			if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0001", user, request.getSession(true)) || user.isAdminMode()) 
+			if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0001", user, request.getSession(true)) || user.isLMSAdministrator()) 
 			{
 				setupResult=true;
 				this.feature="LMS-MGR-0001";
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-ADM-0001&actionUrl=mgr_manageLearners.do";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0002", user, request.getSession(true)) || user.isAdminMode()){
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0002", user, request.getSession(true)) || user.isLMSAdministrator()){
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0002&actionUrl=mgr_batchImportLearners.do";
 				this.feature = "LMS-MGR-0002";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0003", user, request.getSession(true)) || user.isAdminMode()) {
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0003", user, request.getSession(true)) || user.isLMSAdministrator()) {
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0003&actionUrl=mgr_regInvitation-1.do";
 				this.feature = "LMS-MGR-0003";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0004", user, request.getSession(true)) || user.isAdminMode()) {
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0004", user, request.getSession(true)) || user.isLMSAdministrator()) {
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0004&actionUrl=mgr_manageOrganizationGroup.do";
 				this.feature = "LMS-MGR-0004";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0005", user, request.getSession(true)) || user.isAdminMode()) {
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0005", user, request.getSession(true)) || user.isLMSAdministrator()) {
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0005&actionUrl=mgr_manageLearnerGroups.do";
 				this.feature = "LMS-MGR-0005";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0006", user, request.getSession(true)) || user.isAdminMode()) {
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0006", user, request.getSession(true)) || user.isLMSAdministrator()) {
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0006&actionUrl=mgr_manageSecurityRoles.do?method=showSecurityRoles";
 				this.feature = "LMS-MGR-0006";
-			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0007", user, request.getSession(true)) || user.isAdminMode()) {
+			}else if(UserPermissionChecker.hasAccessToFeature("LMS-MGR-0007", user, request.getSession(true)) || user.isLMSAdministrator()) {
 				setupResult=true;
 				this.url = "lms_handleMenu.do?featureGroup=Users%20%26%20Groups&feature=LMS-MGR-0007&actionUrl=mgr_addNewSecurityRole.do";
 				this.feature = "LMS-MGR-0007";

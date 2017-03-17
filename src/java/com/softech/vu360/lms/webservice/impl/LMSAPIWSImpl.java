@@ -2347,12 +2347,12 @@ public class LMSAPIWSImpl implements LMSAPIWS {
 		}
 	
 		log.info("orgGroupName = " + orgGroupName);
-        log.info("loggedInUser.isLMSAdministrator() = " + vu360UserService.hasAdministratorRole(manager));
+        log.info("loggedInUser.isLMSAdministrator() = " + manager.isLMSAdministrator());
         log.info("manager.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " + manager.getTrainingAdministrator().isManagesAllOrganizationalGroups());
         
         OrganizationalGroup newOrgGroup = null;
         
-        if(vu360UserService.hasAdministratorRole(manager) || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+        if(manager.isLMSAdministrator() || manager.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
         	log.info("creating org group '" + orgGroupName + "'...");
         	newOrgGroup = createNewOrganizationalGroup(customer, orgGroupName, organizationalGroup);
         } else {

@@ -17,7 +17,6 @@ import com.softech.vu360.lms.model.RegistrationInvitation;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
-import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.SelfRegistrationInvitationForm;
 import com.softech.vu360.lms.web.controller.validator.SelfRegistrationInvitationValidator;
@@ -33,10 +32,9 @@ import com.softech.vu360.util.TreeNode;
 public class EditSelfRegistrationInvitationController extends VU360BaseMultiActionController{
 
 	private LearnerService learnerService = null;
-	private VU360UserService vu360UserService = null;
-	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 
 	private String editRegistrationInvitationTemplate;
+	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 	private String editMessageTemplate;
 	private String redirectTemplate;
 
@@ -58,7 +56,7 @@ public class EditSelfRegistrationInvitationController extends VU360BaseMultiActi
 		VU360User loggedInUser =  VU360UserAuthenticationDetails.getCurrentUser();
 
 		Long customerId = null;
-		if (vu360UserService.hasAdministratorRole(loggedInUser))
+		if (loggedInUser.isLMSAdministrator())
 			customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 		else
 			customerId = loggedInUser.getLearner().getCustomer().getId();
@@ -348,13 +346,5 @@ public class EditSelfRegistrationInvitationController extends VU360BaseMultiActi
 	public void setOrgGroupLearnerGroupService(
 			OrgGroupLearnerGroupService orgGroupLearnerGroupService) {
 		this.orgGroupLearnerGroupService = orgGroupLearnerGroupService;
-	}
-	
-	public VU360UserService getVu360UserService() {
-		return vu360UserService;
-	}
-
-	public void setVu360UserService(VU360UserService vu360UserService) {
-		this.vu360UserService = vu360UserService;
 	}
 }

@@ -134,7 +134,6 @@ public interface SecurityAndRolesService {
 	
 	List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType);
 	
-	String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId, String roleType,
-			List<String> disabledFeatureCode);
+	
 	
 }

@@ -1971,11 +1971,11 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 {
                     log.info("orgGroupName = " + orgGroupName);
                     log.info("loggedInUser.isLMSAdministrator() = " +
-                    		vu360UserService.hasAdministratorRole(sharedContext.getLoggedInUser()));
+                            sharedContext.getLoggedInUser().isLMSAdministrator());
                     log.info("loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " +
                             sharedContext.getLoggedInUser().getTrainingAdministrator().
                                     isManagesAllOrganizationalGroups());
-                    if(vu360UserService.hasAdministratorRole(sharedContext.getLoggedInUser()) ||
+                    if(sharedContext.getLoggedInUser().isLMSAdministrator() ||
                             sharedContext.getLoggedInUser().getTrainingAdministrator().
                                     isManagesAllOrganizationalGroups())
                     {

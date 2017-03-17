@@ -138,7 +138,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
  */
 			List<OrganizationalGroup> LearnerOrgGroups = null;
 
-			if( vu360UserService.hasAdministratorRole(logInUser) ) {
+			if( logInUser.isLMSAdministrator() ) {
 				LearnerOrgGroups = orgGroupLearnerGroupService.getAllOrganizationalGroups(customerId);
 			} else {
 				if(logInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()){
