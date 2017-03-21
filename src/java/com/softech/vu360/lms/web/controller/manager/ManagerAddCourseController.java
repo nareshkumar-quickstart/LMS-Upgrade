@@ -253,6 +253,11 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 		case 4:
 			log.debug("inside CASE # 4");
 			model.put("businessUnits", BUSINESS_UNITS);
+			if(request.getParameter("courseType").equals(WEBINAR_COURSE)) {
+				model.put("page_heading", "lms.instructor.addWebinarCourses.caption.pageHead");
+			} else {
+				model.put("page_heading", "lms.instructor.addSynchrounousCourses.caption.pageHead");
+			}
 
 			model.put("languages", LANGUAGES);
 			return model;
