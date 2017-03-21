@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.softech.vu360.lms.model.OrganizationalGroup;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.repositories.OrganizationalGroupRepositoryCustom;
@@ -36,8 +38,8 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 			
 		}
 		String jpaQuery = " select p from OrganizationalGroup p "
-				+ "LEFT JOIN p.parentOrgGroup pg "
-				+ "LEFT JOIN p.childrenOrgGroups cg "
+				+ "LEFT JOIN FETCH p.parentOrgGroup pg "
+				+ "LEFT JOIN FETCH p.childrenOrgGroups cg "
 				+ "WHERE p.id in (:orgGroupId)";
 		Query query = entityManager.createQuery(jpaQuery);
 		query.setParameter("orgGroupId", orgGroupIdList);
@@ -64,4 +66,24 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 		return orgGrps;
 	}
 	
+	// Method that will eagerly fetch parent and children Org Grp and used at Batch Import.
+	@Override
+	@Transactional
+	public OrganizationalGroup findOrganizationGroupById(Long orgGroupId) {
+		
+		OrganizationalGroup orgGrp = new OrganizationalGroup();
+		String jpaQuery = " select p from OrganizationalGroup p "
+				+ "LEFT JOIN FETCH p.parentOrgGroup pg "
+				+ "LEFT JOIN FETCH p.childrenOrgGroups cg "
+				+ "LEFT JOIN Customer c on p.customer.id=c.id "
+				+ "LEFT JOIN Distributor d on c.distributor.id=d.id "
+				+ "WHERE p.id in (:orgGroupId)";
+		Query query = entityManager.createQuery(jpaQuery, OrganizationalGroup.class);
+		query.setParameter("orgGroupId", orgGroupId);
+		List<OrganizationalGroup> orgGroups = (List<OrganizationalGroup>) query.getResultList();
+		if(orgGroups!=null){
+			orgGrp = orgGroups.get(0);
+		}
+		return orgGrp;
+	}
 }

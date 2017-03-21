@@ -15,4 +15,5 @@ public interface OrganizationalGroupRepositoryCustom {
 	List<OrganizationalGroup> findByLearnerIdOrderByOrgGrpNameAsc(Long learnerId);
 	List<OrganizationalGroup> findOrganizationGroupById(String[] orgGroupId);
 	List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
+	OrganizationalGroup findOrganizationGroupById(Long orgGroupId);
 }

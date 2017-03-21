@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 
 
 
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -614,5 +615,11 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	@Override
 	public List<LearnerGroup> getLearnerGroupsByLearnerGroupIDs(Long[] learnerGroupId) {
 		return learnerGroupRepository.findByIdIn(learnerGroupId);
+	}
+
+	@Override
+	@Transactional
+	public OrganizationalGroup getOrgGroupById(Long orgGroupId) {
+		return organizationalGroupRepository.findOrganizationGroupById(orgGroupId);
 	}
 }

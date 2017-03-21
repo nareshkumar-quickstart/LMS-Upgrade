@@ -61,4 +61,5 @@ public interface OrganizationalGroupRepository extends CrudRepository<Organizati
 			+ "     WHERE ALERTTRIGGERFILTER_ID = :alertTriggerFilterId"
 			+ "    )", nativeQuery=true)
 	List<OrganizationalGroup> getOrganisationGroupsUnderAlertTriggerFilter(@Param("alertTriggerFilterId")Long alertTriggerFilterId , @Param("groupName")String groupName );
+	
 }
