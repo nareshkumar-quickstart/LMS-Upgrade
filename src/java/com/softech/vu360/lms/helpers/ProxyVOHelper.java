@@ -492,8 +492,6 @@ public class ProxyVOHelper {
 		usrVO.setAccountNonExpired(vu360UserModel.getAccountNonExpired());
 		usrVO.setAccountNonLocked(vu360UserModel.getAccountNonLocked());
 		usrVO.setAccountNonLockedInt(vu360UserModel.getAccountNonLockedInt());
-		usrVO.setAccreditationMode(vu360UserModel.isAccreditationMode());
-		usrVO.setAdminMode(vu360UserModel.isAdminMode());
 		usrVO.setChangePasswordOnLogin(vu360UserModel.getChangePasswordOnLogin());
 		usrVO.setCreatedDate(vu360UserModel.getCreatedDate());
 		usrVO.setCredentialsNonExpired(vu360UserModel.isCredentialsNonExpired());
@@ -508,10 +506,8 @@ public class ProxyVOHelper {
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
 		usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
-		usrVO.setLearnerMode(vu360UserModel.isLearnerMode());
 		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
 		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
-		usrVO.setManagerMode(vu360UserModel.isManagerMode());
 		usrVO.setMiddleName(vu360UserModel.getMiddleName());
 		usrVO.setNewUser(vu360UserModel.isNewUser());
 		usrVO.setNotifyOnLicenseExpire(vu360UserModel.getNotifyOnLicenseExpire());
@@ -555,7 +551,6 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
-		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
@@ -569,7 +564,6 @@ public class ProxyVOHelper {
 		usrVO.setPassword(vu360UserModel.getPassword());
 		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
 		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
-		usrVO.setProctorMode(vu360UserModel.isProctorMode());
 		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
 		usrVO.setRoleID(vu360UserModel.getRoleID());
 		usrVO.setRoleName(vu360UserModel.getRoleName());

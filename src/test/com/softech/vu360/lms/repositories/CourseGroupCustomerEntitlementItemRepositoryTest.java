@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.softech.vu360.lms.LmsTestConfig;
 import com.softech.vu360.lms.model.CourseGroupCustomerEntitlementItem;
