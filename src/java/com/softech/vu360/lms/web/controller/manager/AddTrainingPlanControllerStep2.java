@@ -41,6 +41,7 @@ import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
 import com.softech.vu360.lms.service.SynchronousClassService;
 import com.softech.vu360.lms.service.TrainingPlanService;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.VelocityPagerTool;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.vo.SaveEnrollmentParam;
@@ -78,6 +79,8 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 	private CourseAndCourseGroupService courseCourseGrpService;
 	private EnrollmentService enrollmentService;
 	private SynchronousClassService synchronousClassService=null;
+	private VU360UserService vu360UserService = null;
+
 	private VelocityEngine velocityEngine;
 	private LearnersToBeMailedService learnersToBeMailedService;
 	private String summaryTemplate = null;
@@ -192,7 +195,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 			break;
 		case 4:
 			OrganizationalGroup rootOrgGroup = null;
-			if( loggedInUser.isLMSAdministrator() ) {
+			if( vu360UserService.hasAdministratorRole(loggedInUser) ) {
 				rootOrgGroup = orgGroupLearnerGroupService.getRootOrgGroupForCustomer(customer.getId());
 			} else {
 				rootOrgGroup = orgGroupLearnerGroupService.getRootOrgGroupForCustomer(loggedInUser.getLearner().getCustomer().getId());
@@ -510,12 +513,14 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 				String sortBy = (sortColumnIndex>=0 && sortColumnIndex<SORTABLE_COLUMNS.length) ? SORTABLE_COLUMNS[sortColumnIndex]: MANAGE_USER_SORT_FIRSTNAME ;
 				int sortDirection = form.getSortDirection()<0 ? 0:(form.getSortDirection()>1?1:form.getSortDirection());
 				List<VU360User> userList=null;
+				boolean hasAdministratorRole = vu360UserService.hasAdministratorRole(loggedInUser);
+				boolean hasTrainingAdministratorRole = vu360UserService.hasTrainingAdministratorRole(loggedInUser);
 				if(form.getSearchType().equalsIgnoreCase("simplesearch")) {
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 							results=learnerService.findLearner1(form.getSearchKey(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
 							totalResults = (Integer)results.get("recordSize");
@@ -524,7 +529,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 
 					}else {
 						results=learnerService.findLearner1(form.getSearchKey(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -539,7 +544,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 				}
 				else if(form.getSearchType().equalsIgnoreCase("advancesearch")) {
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 							
 							/**
@@ -552,7 +557,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 
 						    results = learnerService
 								    .findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-								    		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								    		hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 											loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 											loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 											ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -566,7 +571,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 						
 					    results = learnerService
 							    .findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress(), 
-							    		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							    		hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 										loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 										loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 										ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -583,10 +588,10 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 				}
 				else if(form.getSearchType().equalsIgnoreCase("allsearch")) {
 					
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									sortBy, sortDirection);
@@ -594,7 +599,7 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 						}
 					} else {
 						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(),form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								sortBy, sortDirection);
@@ -953,5 +958,12 @@ public class AddTrainingPlanControllerStep2 extends AbstractWizardFormController
 			AsyncTaskExecutorWrapper asyncTaskExecutorWrapper) {
 		this.asyncTaskExecutorWrapper = asyncTaskExecutorWrapper;
 	}
-	
+
+	public VU360UserService getVu360UserService() {
+		return vu360UserService;
+	}
+
+	public void setVu360UserService(VU360UserService vu360UserService) {
+		this.vu360UserService = vu360UserService;
+	}
 }

@@ -554,7 +554,6 @@ public class ProxyVOHelper {
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
-		//usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
 		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
 		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
 		usrVO.setMiddleName(vu360UserModel.getMiddleName());

@@ -127,7 +127,7 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 		VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 
         Customer customer = null;
-        if (user.isLMSAdministrator()) {
+        if (vu360UserService.hasAdministratorRole(user)) {
             customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
         } else {
             customer = user.getLearner().getCustomer();
