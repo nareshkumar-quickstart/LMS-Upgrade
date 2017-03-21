@@ -724,12 +724,13 @@ public class LearnerServiceImpl implements LearnerService {
 
 	// used to update the profile
 	@Transactional
+	@Override
 	public VU360User saveUser(VU360User userToSave) {
 		String newPassword = "";
 		String encodedPassword = "";
 		boolean isNameChanged = false;
 		boolean isEmailChanged = false;
-		VU360User dbUser = vu360UserRepository.getUserById(userToSave.getId());
+		VU360User dbUser = vu360UserRepository.findOne(userToSave.getId());
 		dbUser.shallowCopy(userToSave);
 
 		LearnerProfile profile=dbUser.getLearner().getLearnerProfile();

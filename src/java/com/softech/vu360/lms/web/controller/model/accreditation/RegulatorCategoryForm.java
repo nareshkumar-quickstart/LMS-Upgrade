@@ -132,8 +132,14 @@ public class RegulatorCategoryForm  implements ILMSBaseInterface{
         this.courseApprovalPeriodUnit = regulatorCategory.getCourseApprovalPeriodUnit();
         this.reportingRequired = regulatorCategory.getReportingRequired();
         this.reportingTimeframe = regulatorCategory.getReportingTimeframe();
-        this.certificateOrCardRequired = regulatorCategory.getCertificateOrCardRequired();
-        this.shippableItemProcessingTime = regulatorCategory.getShippableItemProcessingTime();
+        if(regulatorCategory.getCertificateOrCardRequired() == null)
+        	this.certificateOrCardRequired = false;
+        else
+        	this.certificateOrCardRequired = regulatorCategory.getCertificateOrCardRequired();
+        if(regulatorCategory.getShippableItemProcessingTime() == null) 
+        	this.shippableItemProcessingTime = 0;
+        else	
+        	this.shippableItemProcessingTime = regulatorCategory.getShippableItemProcessingTime();
         this.shippableItemName = regulatorCategory.getShippableItemName();
         this.reportingFields.clear();
         this.reportingFields.addAll(regulatorCategory.getReportingFields());
