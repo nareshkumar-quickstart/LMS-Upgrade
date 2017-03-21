@@ -68,7 +68,6 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 	
 	// Method that will eagerly fetch parent and children Org Grp and used at Batch Import.
 	@Override
-	@Transactional
 	public OrganizationalGroup findOrganizationGroupById(Long orgGroupId) {
 		
 		OrganizationalGroup orgGrp = new OrganizationalGroup();
