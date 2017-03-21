@@ -504,16 +504,64 @@ public class ProxyVOHelper {
 		usrVO.setFirstName(vu360UserModel.getFirstName());
 		usrVO.setId(vu360UserModel.getId());
 		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
-		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
 		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
 		usrVO.setLastName(vu360UserModel.getLastName());
 		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
 		usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
 		usrVO.setLearnerMode(vu360UserModel.isLearnerMode());
 		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
-		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
 		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
 		usrVO.setManagerMode(vu360UserModel.isManagerMode());
+		usrVO.setMiddleName(vu360UserModel.getMiddleName());
+		usrVO.setNewUser(vu360UserModel.isNewUser());
+		usrVO.setNotifyOnLicenseExpire(vu360UserModel.getNotifyOnLicenseExpire());
+		usrVO.setNumLogons(vu360UserModel.getNumLogons());
+		usrVO.setPassword(vu360UserModel.getPassword());
+		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
+		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
+		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
+		usrVO.setRoleID(vu360UserModel.getRoleID());
+		usrVO.setRoleName(vu360UserModel.getRoleName());
+		usrVO.setShowGuidedTourScreenOnLogin(vu360UserModel.getShowGuidedTourScreenOnLogin());
+		usrVO.setTrainingAdministrator(createTrainingAdministratorVO(vu360UserModel.getTrainingAdministrator()));
+		usrVO.setUserGUID(vu360UserModel.getUserGUID());
+		usrVO.setUsername(vu360UserModel.getUsername());
+		usrVO.setVissibleOnReport(vu360UserModel.getVissibleOnReport());
+		usrVO.setLanguage(createLanguageVO(vu360UserModel.getLanguage()));
+		
+		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
+		
+		return usrVO;
+	}
+
+	private static com.softech.vu360.lms.vo.VU360User createVU360UserVOForLearner(VU360User vu360UserModel) {
+
+		if (vu360UserModel == null)
+			return null;
+
+		com.softech.vu360.lms.vo.VU360User usrVO = new com.softech.vu360.lms.vo.VU360User();
+
+		usrVO.setAcceptedEULA(vu360UserModel.isAcceptedEULA());
+		usrVO.setAccountNonExpired(vu360UserModel.getAccountNonExpired());
+		usrVO.setAccountNonLocked(vu360UserModel.getAccountNonLocked());
+		usrVO.setAccountNonLockedInt(vu360UserModel.getAccountNonLockedInt());
+		usrVO.setChangePasswordOnLogin(vu360UserModel.getChangePasswordOnLogin());
+		usrVO.setCreatedDate(vu360UserModel.getCreatedDate());
+		usrVO.setCredentialsNonExpired(vu360UserModel.isCredentialsNonExpired());
+		usrVO.setDomain(vu360UserModel.getDomain());
+		usrVO.setEmailAddress(vu360UserModel.getEmailAddress());
+		usrVO.setEnabled(vu360UserModel.getEnabled());
+		usrVO.setExpirationDate(vu360UserModel.getExpirationDate());
+		usrVO.setFirstName(vu360UserModel.getFirstName());
+		usrVO.setId(vu360UserModel.getId());
+		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
+		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
+		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
+		usrVO.setLastName(vu360UserModel.getLastName());
+		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
+		//usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
+		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
+		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
 		usrVO.setMiddleName(vu360UserModel.getMiddleName());
 		usrVO.setNewUser(vu360UserModel.isNewUser());
 		usrVO.setNotifyOnLicenseExpire(vu360UserModel.getNotifyOnLicenseExpire());
@@ -532,59 +580,7 @@ public class ProxyVOHelper {
 		usrVO.setVissibleOnReport(vu360UserModel.getVissibleOnReport());
 		usrVO.setLanguage(createLanguageVO(vu360UserModel.getLanguage()));
 		
-		return usrVO;
-	}
-
-	private static com.softech.vu360.lms.vo.VU360User createVU360UserVOForLearner(VU360User vu360UserModel) {
-
-		if (vu360UserModel == null)
-			return null;
-
-		com.softech.vu360.lms.vo.VU360User usrVO = new com.softech.vu360.lms.vo.VU360User();
-
-		usrVO.setAcceptedEULA(vu360UserModel.isAcceptedEULA());
-		usrVO.setAccountNonExpired(vu360UserModel.getAccountNonExpired());
-		usrVO.setAccountNonLocked(vu360UserModel.getAccountNonLocked());
-		usrVO.setAccountNonLockedInt(vu360UserModel.getAccountNonLockedInt());
-		usrVO.setAccreditationMode(vu360UserModel.isAccreditationMode());
-		usrVO.setAdminMode(vu360UserModel.isAdminMode());
-		usrVO.setChangePasswordOnLogin(vu360UserModel.getChangePasswordOnLogin());
-		usrVO.setCreatedDate(vu360UserModel.getCreatedDate());
-		usrVO.setCredentialsNonExpired(vu360UserModel.isCredentialsNonExpired());
-		usrVO.setDomain(vu360UserModel.getDomain());
-		usrVO.setEmailAddress(vu360UserModel.getEmailAddress());
-		usrVO.setEnabled(vu360UserModel.getEnabled());
-		usrVO.setExpirationDate(vu360UserModel.getExpirationDate());
-		usrVO.setFirstName(vu360UserModel.getFirstName());
-		usrVO.setId(vu360UserModel.getId());
-		usrVO.setInstructor(createInstructorVO(vu360UserModel.getInstructor()));
-		usrVO.setInstructorMode(vu360UserModel.isInstructorMode());
-		usrVO.setLastLogonDate(vu360UserModel.getLastLogonDate());
-		usrVO.setLastName(vu360UserModel.getLastName());
-		usrVO.setLastUpdatedDate(vu360UserModel.getLastUpdatedDate());
-		//usrVO.setLearner(setLearnerProxy(vu360UserModel.getLearner()));
-		usrVO.setLearnerMode(vu360UserModel.isLearnerMode());
-		usrVO.setLmsAdministrator(createLMSAdministratorVO(vu360UserModel.getLmsAdministrator()));
 		usrVO.setLmsRoles(createLMSRoleVOList(vu360UserModel.getLmsRoles()));
-		usrVO.setLogInAsManagerRole(createLMSRoleVO(vu360UserModel.getLogInAsManagerRole()));
-		usrVO.setManagerMode(vu360UserModel.isManagerMode());
-		usrVO.setMiddleName(vu360UserModel.getMiddleName());
-		usrVO.setNewUser(vu360UserModel.isNewUser());
-		usrVO.setNotifyOnLicenseExpire(vu360UserModel.getNotifyOnLicenseExpire());
-		usrVO.setNumLogons(vu360UserModel.getNumLogons());
-		usrVO.setPassword(vu360UserModel.getPassword());
-		usrVO.setPassWordChanged(vu360UserModel.isPassWordChanged());
-		usrVO.setProctor(createProctorVO(vu360UserModel.getProctor()));
-		usrVO.setProctorMode(vu360UserModel.isProctorMode());
-		usrVO.setRegulatoryAnalyst(createRegulatoryAnalystVO(vu360UserModel.getRegulatoryAnalyst()));
-		usrVO.setRoleID(vu360UserModel.getRoleID());
-		usrVO.setRoleName(vu360UserModel.getRoleName());
-		usrVO.setShowGuidedTourScreenOnLogin(vu360UserModel.getShowGuidedTourScreenOnLogin());
-		usrVO.setTrainingAdministrator(createTrainingAdministratorVO(vu360UserModel.getTrainingAdministrator()));
-		usrVO.setUserGUID(vu360UserModel.getUserGUID());
-		usrVO.setUsername(vu360UserModel.getUsername());
-		usrVO.setVissibleOnReport(vu360UserModel.getVissibleOnReport());
-		usrVO.setLanguage(createLanguageVO(vu360UserModel.getLanguage()));
 		
 		return usrVO;
 	}
