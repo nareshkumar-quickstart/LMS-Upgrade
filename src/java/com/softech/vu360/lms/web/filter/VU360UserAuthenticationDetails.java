@@ -395,6 +395,7 @@ public class VU360UserAuthenticationDetails extends WebAuthenticationDetails{
 	public static VU360User getCurrentUser() {
 		com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		VU360User loggedInUser = vu360UserService.getUserById(loggedInUserVO.getId());
+		loggedInUser.setLmsRoles(loggedInUser.getLmsRoles());
 		return loggedInUser;
 	}
 
