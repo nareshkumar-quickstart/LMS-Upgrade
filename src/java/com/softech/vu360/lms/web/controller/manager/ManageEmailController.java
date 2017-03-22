@@ -132,13 +132,13 @@ public class ManageEmailController extends AbstractWizardFormController {
 			@SuppressWarnings("unused")
 			List <OrganizationalGroup> learnerOrgGroups = null;
 			Long customerId = null;
-
-			if (loggedInUser.isLMSAdministrator())
+			boolean hasAdministratorRole = vu360UserService.hasAdministratorRole(loggedInUser);
+			if (hasAdministratorRole)
 				customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			else
 				customerId = loggedInUser.getLearner().getCustomer().getId();
 
-			if( loggedInUser.isLMSAdministrator() ) {
+			if(hasAdministratorRole) {
 				learnerOrgGroups = orgGroupLearnerGroupService.getAllOrganizationalGroups(customerId);
 			} else {
 				if( loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
@@ -188,7 +188,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 				break;
 			case 2:
 				Long customerId = null;
-				if (loggedInUser.isLMSAdministrator())
+				if (vu360UserService.hasAdministratorRole(loggedInUser))
 					customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 				else
 					customerId = loggedInUser.getLearner().getCustomer().getId();
@@ -372,13 +372,15 @@ public class ManageEmailController extends AbstractWizardFormController {
 				String sortBy = (StringUtils.isBlank(form.getSortColumn())) ? MANAGE_USER_SORT_FIRSTNAME : form.getSortColumn();
 				int sortDirection = form.getSortDirection();
 				List<VU360User> userList = null;
+				boolean hasAdministratorRole = vu360UserService.hasAdministratorRole(loggedInUser);
+				boolean hasTrainingAdministratorRole = vu360UserService.hasTrainingAdministratorRole(loggedInUser);
 				if( form.getSearchType().equalsIgnoreCase("simplesearch") ) {
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 
 							results = learnerService.findLearner1(form.getSearchKey(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -387,7 +389,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 						}
 					} else {
 						results = learnerService.findLearner1(form.getSearchKey(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -400,7 +402,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 					request.setAttribute("PagerAttributeMap", pagerAttributeMap);
 				}
 				else if( form.getSearchType().equalsIgnoreCase("allsearch") ) {
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 							
 							/*
@@ -410,7 +412,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 							 */
 							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),
 									form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									sortBy, sortDirection);
@@ -419,7 +421,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 						}
 					} else {
 						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(), form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								sortBy, sortDirection);
@@ -429,11 +431,11 @@ public class ManageEmailController extends AbstractWizardFormController {
 				}
 				else if(form.getSearchType().equalsIgnoreCase("advancesearch")){
 					Integer totalResults = 0;
-					if( !loggedInUser.isLMSAdministrator() &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
 
 							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+									hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
@@ -442,7 +444,7 @@ public class ManageEmailController extends AbstractWizardFormController {
 						}
 					} else {
 						results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
 								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);

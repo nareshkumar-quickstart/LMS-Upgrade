@@ -355,89 +355,6 @@ public class VU360User implements Serializable {
 		this.proctor = proctor;
 	}
 
-	public  Boolean isTrainingAdministrator() {
-		if (this.getTrainingAdministrator() == null) {
-			return false;
-		} else {
-			 Boolean isManager = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType().equalsIgnoreCase(
-						LMSRole.ROLE_TRAININGMANAGER)
-						&& atLeastOnePermssionEnable(role)) {
-					isManager = true;
-					break;
-				}
-			}
-			return isManager;
-		}
-
-	}
-
-	public  Boolean isLMSAdministrator() {
-		if (this.getLmsAdministrator() == null) {
-			return false;
-		} else {
-			 Boolean isAdmin = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType().equalsIgnoreCase(
-						LMSRole.ROLE_LMSADMINISTRATOR)
-						&& atLeastOnePermssionEnable(role)) {
-					isAdmin = true;
-					break;
-				}
-			}
-			return isAdmin;
-		}
-	}
-
-	public  Boolean isProctor() {
-		if (this.getProctor() == null) {
-			return false;
-		} else {
-			 Boolean isProctor = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType().equalsIgnoreCase(LMSRole.ROLE_PROCTOR)
-						&& atLeastOnePermssionEnable(role)
-						&& !(this.getProctor().getStatus()
-								.equals(ProctorStatusEnum.Expired.toString()))) {
-					isProctor = true;
-					break;
-				}
-			}
-			return isProctor;
-		}
-	}
-
-	public  Boolean isInLearnerRole() {
-		if (this.getLearner() == null) {
-			return false;
-		} else {
-
-			 Boolean isLearner = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType().equalsIgnoreCase(LMSRole.ROLE_LEARNER)
-						&& atLeastOnePermssionEnable(role)) {
-					isLearner = true;
-					break;
-				}
-			}
-			return isLearner;
-
-		}
-	}
-
-	public  Boolean atLeastOnePermssionEnable(LMSRole role) {
-		 Boolean result = false;
-		for (LMSRoleLMSFeature permission : role.getLmsPermissions()) {
-			if (permission.getEnabled()) {
-				result = true;
-				break;
-			}
-		}
-		return result;
-
-	}
-
 	public String getPassword() {
 		return password;
 	}
@@ -587,46 +504,12 @@ public class VU360User implements Serializable {
 		this.regulatoryAnalyst = regulatoryAnalyst;
 	}
 
-	public  Boolean isRegulatoryAnalyst() {
-		if (this.regulatoryAnalyst == null) {
-			return false;
-		} else {
-			 Boolean isRegulator = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType().equalsIgnoreCase(
-						LMSRole.ROLE_REGULATORYANALYST)
-						&& atLeastOnePermssionEnable(role)) {
-					isRegulator = true;
-					break;
-				}
-			}
-			return isRegulator;
-		}
-	}
-
 	public Instructor getInstructor() {
 		return this.instructor;
 	}
 
 	public void setInstructor(Instructor instructor) {
 		this.instructor = instructor;
-	}
-
-	public  Boolean isInstructor() {
-		if (this.instructor == null) {
-			return false;
-		} else {
-			 Boolean isInstructor = false;
-			for (LMSRole role : lmsRoles) {
-				if (role.getRoleType()
-						.equalsIgnoreCase(LMSRole.ROLE_INSTRUCTOR)
-						&& atLeastOnePermssionEnable(role)) {
-					isInstructor = true;
-					break;
-				}
-			}
-			return isInstructor;
-		}
 	}
 
 	public void updateDeepValues(VU360User user)
@@ -803,30 +686,6 @@ public class VU360User implements Serializable {
 		}
 
 		return contentOwner;
-	}
-
-	public void checkForPermission() {
-		/*
-		 * if the user has no roles, it will show the error message
-		 * "Invalid username or password" as if user had typed in the wrong
-		 * password.
-		 */
-		if (this.getLmsRoles().size() == 0) {
-			throw new UsernameNotFoundException(
-					"FOUND NO ROLES ASSIGNED TO USER");
-		} else {
-			 Boolean hasPermission = false;
-			for (LMSRole role : this.getLmsRoles()) {
-				if (this.atLeastOnePermssionEnable(role)) {
-					hasPermission = true;
-					break;
-				}
-			}
-			if (!hasPermission) {
-				throw new UsernameNotFoundException(
-						"FOUND NO PERMISSIONS ASSIGNED TO USER");
-			}
-		}
 	}
 
 	public  Boolean isAdminMode() {

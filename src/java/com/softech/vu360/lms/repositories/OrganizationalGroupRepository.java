@@ -20,7 +20,6 @@ public interface OrganizationalGroupRepository extends CrudRepository<Organizati
 	//public List<OrganizationalGroup>  getOrgGroupByNames(String orgGroupNames[],Customer customer);
 	@Query("select og from OrganizationalGroup og JOIN Customer c on og.customer.id = c.id WHERE c.id=:customerId AND og.name IN (:orgGroupNames)")
 	public List<OrganizationalGroup>  findByCustomerIdAndNameIn(@Param("customerId") Long customerId, @Param("orgGroupNames") String orgGroupNames[]);
-
 	
 	//public List<OrganizationalGroup>  getOrgGroupsById(String orgGroupId[]);//legacy function, implemented below according to Spring data
 	/** reason behind nativeQuery because this function is taking String array but it should be of type Long

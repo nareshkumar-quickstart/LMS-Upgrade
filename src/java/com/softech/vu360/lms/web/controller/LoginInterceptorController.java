@@ -268,8 +268,6 @@ public class LoginInterceptorController implements Controller {
 				 
 			} 	
 			
-			//user = (VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();			
-			
 			if(user.isAdminMode()){				    
 					request.setAttribute("AdminSwitchMode",VU360UserMode.ROLE_LMSADMINISTRATOR);
 					details.doAdminSwitchMode(request);
@@ -444,7 +442,7 @@ public class LoginInterceptorController implements Controller {
 					details.doInstructorSwitchMode(request);
 					return new ModelAndView("redirect:/ins_synchronousClasses.do");//Jump right to Instructor mode if thats the highest mode			
 			}
-			if(user.isInLearnerRole()){
+			if(user.isLearnerMode()){
 				return new ModelAndView(defaultTemplate);
 			}
 			/*redirect to login page if user dosen't have any rights*/
@@ -538,7 +536,7 @@ public class LoginInterceptorController implements Controller {
 				return mv; 
 			} 
 			List<Survey> surveyList = surveyService.getDueSurveysByUser(user);
-			if(surveyList!=null && surveyList.size() > 0 && user.isInLearnerRole()){ 				
+			if(surveyList!=null && surveyList.size() > 0 && user.isLearnerMode()){ 				
 				if( surveyList.size() > 0 ){		// IF DUE SURVEY EXISTS
 					mv = new ModelAndView(loginOrSurveyRequestFormTemplate);
 					mv.addObject("dueSurvey" , surveyList.size());					
