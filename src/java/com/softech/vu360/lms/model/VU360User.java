@@ -45,73 +45,8 @@ import com.softech.vu360.util.ProctorStatusEnum;
 @NamedStoredProcedureQuery(name = "VU360User.getOrganizational_Group_Members", procedureName = "LMS_GETORGANIZATIONALGROUP_MEMBERS", parameters = {
 		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "VU360USER_ID", type = Long.class),
 		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "CUSTOMER_ID", type = Long.class) })
+
 @Table(name = "VU360USER")
-@NamedEntityGraphs({
-	@NamedEntityGraph(name = "VU360User.allJoins", 
-			attributeNodes = {
-				@NamedAttributeNode(value = "learner", subgraph = "learnerGraph"),
-				@NamedAttributeNode(value = "trainingAdministrator"/*, subgraph = "trainingAdministratorGraph"*/),
-				@NamedAttributeNode("lmsAdministrator"),
-				@NamedAttributeNode("proctor"),
-				@NamedAttributeNode("regulatoryAnalyst"),
-				@NamedAttributeNode("instructor"),
-				@NamedAttributeNode(value = "lmsRoles", subgraph = "lmsRolesGraph")
-			},
-			subgraphs = {
-					@NamedSubgraph(
-							name = "learnerGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "customer", subgraph = "customerGraph"),
-									@NamedAttributeNode(value = "learnerProfile", subgraph = "learnerProfileGraph"),
-									@NamedAttributeNode(value = "preference")
-							}
-					),
-					@NamedSubgraph(
-							name = "customerGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "distributor", subgraph = "distributorGraph"),
-									@NamedAttributeNode(value = "customerPreferences"),
-									@NamedAttributeNode(value = "billingAddress"),
-									@NamedAttributeNode(value = "shippingAddress")
-							}
-					),
-					@NamedSubgraph(
-							name = "learnerProfileGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "learnerAddress"),
-									@NamedAttributeNode(value = "learnerAddress2")
-							}
-					),
-					@NamedSubgraph(
-							name = "distributorGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "distributorPreferences"),
-									@NamedAttributeNode(value = "distributorAddress"),
-									@NamedAttributeNode(value = "distributorAddress2")
-							}
-					),
-					@NamedSubgraph(
-							name = "lmsRolesGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "lmsPermissions", subgraph = "lmsfeatureGraph")
-							}
-					),
-					@NamedSubgraph(
-							name = "lmsfeatureGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "lmsFeature")
-							}
-					)
-					/*,
-					@NamedSubgraph(
-							name = "trainingAdministratorGraph",
-							attributeNodes = {
-									@NamedAttributeNode(value = "managedGroups")
-							}
-					)*/
-			}
-	)
-})
 public class VU360User implements Serializable {
 
 	private static final long serialVersionUID = 52260678146352048L;
