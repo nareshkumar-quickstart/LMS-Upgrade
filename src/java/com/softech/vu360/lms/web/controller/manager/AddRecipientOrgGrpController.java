@@ -132,7 +132,7 @@ public class AddRecipientOrgGrpController  extends AbstractWizardFormController 
 		case 0:
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			Long customerId = null;
-			if (vu360UserService.hasAdministratorRole(loggedInUser))
+			if (loggedInUser.isLMSAdministrator())
 				customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			else
 				customerId = loggedInUser.getLearner().getCustomer().getId();

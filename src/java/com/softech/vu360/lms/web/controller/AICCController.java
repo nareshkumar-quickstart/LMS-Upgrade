@@ -549,9 +549,10 @@ public class AICCController implements Controller {
 	}
 
 	private void checkUserAuthentication(VU360User user){
-		if (user != null) {
-			userService.checkForPermission(user);
-		}
+		if(user!=null){
+			   user.checkForPermission();
+			}
+		
 	}
 	private VU360User updateUserGUID(VU360User user,String GUID) {
 		user= userService.loadForUpdateVU360User(user.getId());

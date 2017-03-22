@@ -8,6 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+
+
+
+
+
+
+
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +40,6 @@ import com.softech.vu360.lms.repositories.OrganizationalGroupMemberRepository;
 import com.softech.vu360.lms.repositories.OrganizationalGroupRepository;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
-import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.ORMUtils;
 import com.softech.vu360.util.FormUtil;
 
@@ -61,9 +69,6 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	
 	@Autowired
 	LearnerRepository learnerRepository;
-	
-	@Autowired
-	VU360UserService vu360UserService;
 	
 	public List<Learner> getLearnersByOrgGroupIds(Long orgGroupIdArray[]){
 		
@@ -199,7 +204,7 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	
 	public List<LearnerGroup> getAllLearnerGroups(Long customerId,VU360User loggedInUser){
 		List<LearnerGroup> objlg = null;
-		 if(!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()){ 
+		 if(!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()){ 
 
 			//LMS-19020 
          	List<OrganizationalGroup> ls = loggedInUser.getTrainingAdministrator().getManagedGroups();
@@ -341,7 +346,7 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 		Object[] orgGroupIdArray=FormUtil.getPropertyArrayFromList(loggedInUser.getTrainingAdministrator().getManagedGroups());
 		Long[] longArr = Arrays.copyOf(orgGroupIdArray, orgGroupIdArray.length, Long[].class);
 
-		if(!vu360UserService.hasAdministratorRole(loggedInUser) && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups())
+		if(!loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups())
 			return learnerGroupRepository.findByCustomerIdAndOrganizationalGroupIdInAndNameLike(customer.getId(), longArr , name);
 		else
 			return learnerGroupRepository.findByCustomerIdAndNameLike(customer.getId(), name);
@@ -407,10 +412,10 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	                    }
 	                    else
 	                    {
-	                        log.info("loggedInUser.isLMSAdministrator() = " + vu360UserService.hasAdministratorRole(loggedInUser));
+	                        log.info("loggedInUser.isLMSAdministrator() = " + loggedInUser.isLMSAdministrator());
 	                        log.info("loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " +
 	                                loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups());
-	                        if( vu360UserService.hasAdministratorRole(loggedInUser) || loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() )
+	                        if( loggedInUser.isLMSAdministrator() || loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() )
 	                        {
 	                            OrganizationalGroup newOrgGroup = this.createOrgGroup(customer,orgGroupName,rootOrgGroup,lastOrgGroup);
 	                            if( i == spliterCount )

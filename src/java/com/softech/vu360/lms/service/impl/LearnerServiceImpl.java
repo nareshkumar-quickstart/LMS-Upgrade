@@ -724,12 +724,13 @@ public class LearnerServiceImpl implements LearnerService {
 
 	// used to update the profile
 	@Transactional
+	@Override
 	public VU360User saveUser(VU360User userToSave) {
 		String newPassword = "";
 		String encodedPassword = "";
 		boolean isNameChanged = false;
 		boolean isEmailChanged = false;
-		VU360User dbUser = vu360UserRepository.getUserById(userToSave.getId());
+		VU360User dbUser = vu360UserRepository.findOne(userToSave.getId());
 		dbUser.shallowCopy(userToSave);
 
 		LearnerProfile profile=dbUser.getLearner().getLearnerProfile();
@@ -1160,7 +1161,7 @@ public class LearnerServiceImpl implements LearnerService {
 			user.addLmsRole(lmsRole);
 		else if (lmsRole.getRoleType().equalsIgnoreCase(
 				LMSRole.ROLE_TRAININGMANAGER)) {
-			if (!vu360UserService.hasTrainingAdministratorRole(user)) {
+			if (!user.isTrainingAdministrator()) {
 				TrainingAdministrator trainingAdministrator = new TrainingAdministrator();
 				trainingAdministrator.setCustomer(user.getLearner()
 						.getCustomer());
@@ -1170,7 +1171,7 @@ public class LearnerServiceImpl implements LearnerService {
 			user.addLmsRole(lmsRole);
 		} else if (lmsRole.getRoleType().equalsIgnoreCase(
 				LMSRole.ROLE_LMSADMINISTRATOR)) {
-			if (!vu360UserService.hasAdministratorRole(user)) {
+			if (!user.isLMSAdministrator()) {
 				LMSAdministrator lmsAdministrator = new LMSAdministrator();
 				lmsAdministrator.setVu360User(user);
 				user.setLmsAdministrator(lmsAdministrator);
@@ -1221,7 +1222,7 @@ public class LearnerServiceImpl implements LearnerService {
 				 * TODO should be fixed in future.
 				 */
 				user = vu360UserRepository.saveUser(user);
-				if (!vu360UserService.hasTrainingAdministratorRole(user)) {
+				if (!user.isTrainingAdministrator()) {
 
 					TrainingAdministrator trainingAdministrator = new TrainingAdministrator();
 					trainingAdministrator.setCustomer(user.getLearner()
@@ -1248,7 +1249,7 @@ public class LearnerServiceImpl implements LearnerService {
 			} else if (lmsRole.getRoleType().equalsIgnoreCase(
 					LMSRole.ROLE_LMSADMINISTRATOR)) {
 
-				if (!vu360UserService.hasAdministratorRole(user)) {
+				if (!user.isLMSAdministrator()) {
 					// No need to create manager in time of create administrator
 					LMSAdministrator lmsAdministrator = new LMSAdministrator();
 					lmsAdministrator.setVu360User(user);
@@ -1300,7 +1301,7 @@ public class LearnerServiceImpl implements LearnerService {
 			} else if (lmsRole.getRoleType().equalsIgnoreCase(
 					LMSRole.ROLE_TRAININGMANAGER)) {
 
-				if (!vu360UserService.hasTrainingAdministratorRole(user)) {
+				if (!user.isTrainingAdministrator()) {
 
 					TrainingAdministrator trainingAdministrator = new TrainingAdministrator();
 					trainingAdministrator.setCustomer(user.getLearner()
@@ -1313,7 +1314,7 @@ public class LearnerServiceImpl implements LearnerService {
 			} else if (lmsRole.getRoleType().equalsIgnoreCase(
 					LMSRole.ROLE_LMSADMINISTRATOR)) {
 
-				if (!vu360UserService.hasAdministratorRole(user)) {
+				if (!user.isLMSAdministrator()) {
 
 					/*
 					 * LMS-4266,LMS-4469 manager role is not supposed to be
@@ -1766,7 +1767,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 		List<RegistrationInvitation> registrationInvitations = null;
 
-		if (vu360UserService.hasAdministratorRole(loggedinUser)) {
+		if (loggedinUser.isLMSAdministrator()) {
 			Long customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			registrationInvitations = registrationInvitationRepository.findByCustomerIdAndInvitationNameContainingIgnoreCase(customerId, invitationName);
 		} else {

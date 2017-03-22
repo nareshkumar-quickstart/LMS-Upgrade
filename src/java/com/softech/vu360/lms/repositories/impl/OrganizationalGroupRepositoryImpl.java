@@ -36,8 +36,8 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 			
 		}
 		String jpaQuery = " select p from OrganizationalGroup p "
-				+ "LEFT JOIN FETCH p.parentOrgGroup pg "
-				+ "LEFT JOIN FETCH p.childrenOrgGroups cg "
+				+ "LEFT JOIN p.parentOrgGroup pg "
+				+ "LEFT JOIN p.childrenOrgGroups cg "
 				+ "WHERE p.id in (:orgGroupId)";
 		Query query = entityManager.createQuery(jpaQuery);
 		query.setParameter("orgGroupId", orgGroupIdList);

@@ -18,7 +18,8 @@ import com.softech.vu360.lms.model.OrganizationalGroup;
 public interface OrganizationalGroupRepository extends CrudRepository<OrganizationalGroup, Long>,OrganizationalGroupRepositoryCustom {
 	
 	//public List<OrganizationalGroup>  getOrgGroupByNames(String orgGroupNames[],Customer customer);
-	public List<OrganizationalGroup>  findByCustomerIdAndNameIn(Long customerId, String orgGroupNames[]);
+	@Query("select og from OrganizationalGroup og JOIN Customer c on og.customer.id = c.id WHERE c.id=:customerId AND og.name IN (:orgGroupNames)")
+	public List<OrganizationalGroup>  findByCustomerIdAndNameIn(@Param("customerId") Long customerId, @Param("orgGroupNames") String orgGroupNames[]);
 
 	
 	//public List<OrganizationalGroup>  getOrgGroupsById(String orgGroupId[]);//legacy function, implemented below according to Spring data
@@ -31,11 +32,13 @@ public interface OrganizationalGroupRepository extends CrudRepository<Organizati
 	
 	//public List<OrganizationalGroup> getAllOrganizationalGroups(Customer customer);//legacy function, implemented below according to Spring data
 	//public List<OrganizationalGroup>  getOrgGroupsByCustomer(Customer customer, VU360User loggedInUser);//legacy function, implemented below according to Spring data
-	public List<OrganizationalGroup>  findByCustomerId(Long customerId);
+	@Query("select og from OrganizationalGroup og JOIN Customer c on og.customer.id = c.id WHERE c.id=:customerId")
+	public List<OrganizationalGroup>  findByCustomerId(@Param("customerId") Long customerId);
 	
 	
 	//public OrganizationalGroup getRootOrgGroupForCustomer(Customer customer)
-	public List<OrganizationalGroup>  findByCustomerIdAndRootOrgGroupIsNull(Long customerId);
+	@Query("select og from OrganizationalGroup og JOIN Customer c on og.customer.id = c.id WHERE c.id=:customerId AND og.rootOrgGroup IS NULL")
+	public List<OrganizationalGroup>  findByCustomerIdAndRootOrgGroupIsNull(@Param("customerId") Long customerId);
 
 	public void deleteById(Long Id);
 	

@@ -91,9 +91,13 @@ public class VU360UserServiceImpl implements VU360UserService {
 		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(user);
 		return voUser;
 	}
+	
+	@Override
 	public void deleteLMSTrainingAdministrator(TrainingAdministrator trainingAdministrator){
 		vu360UserRepository.deleteLMSTrainingAdministrator(trainingAdministrator);
 	}
+	
+	@Override
 	public VU360User getUserByUsernameAndDomain(String username,String domain) {
 		List<VU360User> results = vu360UserRepository.findUserByUsernameAndDomain(username , domain);
 		log.debug("total number of matching users found:"+results.size());
@@ -101,12 +105,13 @@ public class VU360UserServiceImpl implements VU360UserService {
 		if ( results.size() > 0 ) {
 			VU360User user = (VU360User)results.get(0);
 			
-			checkForPermission(user);
+			user.checkForPermission();
 			return user;
 		}
 		throw new UsernameNotFoundException("FOUND NO SUCH USER NAME");
 	}
 	
+	@Override
 	public List<VU360User> getUserByEmailFirstNameLastName(String email,String firstName, String lastName){
 		List<VU360User> results = vu360UserRepository.getUserByEmailFirstNameLastName(email, firstName , lastName);
 		List<VU360User> vU360UserList = new ArrayList<VU360User>();
@@ -119,7 +124,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 			
 			boolean hasPermission = false;
 			for( LMSRole role : vU360User.getLmsRoles() ) {
-				if(vu360UserRepository.hasAtLeastOnePermssionOfRoleEnabled(vU360User.getId(), role.getId()) ) {
+				if( vU360User.atLeastOnePermssionEnable(role) ) {
 					hasPermission = true;
 					break;
 				}
@@ -132,6 +137,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return vU360UserList;
 	}
 	
+	@Override
 	public List<VU360User> getActiveUserByUsername(String username){
 		List<VU360User> results = vu360UserRepository.getActiveUserByUsername(username);
 		List<VU360User> vU360UserList = new ArrayList<VU360User>();
@@ -144,7 +150,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 			
 			boolean hasPermission = false;
 			for( LMSRole role : vU360User.getLmsRoles() ) {
-				if(vu360UserRepository.hasAtLeastOnePermssionOfRoleEnabled(vU360User.getId(), role.getId())) {
+				if( vU360User.atLeastOnePermssionEnable(role) ) {
 					hasPermission = true;
 					break;
 				}
@@ -157,31 +163,37 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return vU360UserList;
 	}
 	
+	@Override
 	public  LMSRole  loadForUpdateLMSRole(long id){
 		return lmsRoleRepository.findOne(id);
 	}
 	
+	@Override
 	public  VU360User  loadForUpdateVU360User(Long id){
 		return vu360UserRepository.findOne(id);
 	}
 
+	@Override
 	public List<VU360User> getUserByFirstNameAndLastName(Customer cust, String firstName, String lastName) {
 		return vu360UserRepository.getUserByFirstNameAndLastName(cust, firstName, lastName);
 	}
 	
+	@Override
 	public VU360User findUserByUserName(String username){
 		return vu360UserRepository.findUserByUserName(username);
 	}
 	
+	@Override
 	public VU360User getUserById(Long id) {
 		return vu360UserRepository.getUserById(id);
 	}
 	
+	@Override
 	public List<VU360User> getUsersByEmailAddress(String emailAddress) {
-		List<VU360User> results = vu360UserRepository.findUserByEmailAddress(emailAddress);
-		return results;
+		return vu360UserRepository.findUserByEmailAddress(emailAddress);
 	}
 	
+	@Override
 	public boolean isEmailAddressInUse(String emailAddress) {
 		List<VU360User> results = vu360UserRepository.findUserByEmailAddress(emailAddress);
 		if ( results != null && results.size() > 0 ) {
@@ -491,88 +503,9 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public int countUserByEmailAddress(String emailAddress) {
 		return vu360UserRepository.countByEmailAddress(emailAddress);
 	}
-	
 	@Override
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGroupRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
 	}
-
-	@Override
-	public void checkForPermission(VU360User user) {
-		/*
-		 * if the user has no roles, it will show the error message
-		 * "Invalid username or password" as if user had typed in the wrong
-		 * password.
-		 */
-		if (!vu360UserRepository.hasAnyRoleAssigned(user.getId())) {
-			throw new UsernameNotFoundException(
-					"FOUND NO ROLES ASSIGNED TO USER");
-		} else {
-			if (!vu360UserRepository.hasAtLeastOnePermssionOfAnyRoleEnabled(user.getId())) {
-				throw new UsernameNotFoundException(
-						"FOUND NO PERMISSIONS ASSIGNED TO USER");
-			}
-		}
-	}
 	
-	@Override
-	public boolean hasLearnerRole(VU360User user) {
-		return vu360UserRepository.hasLearnerRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasProctorRole(VU360User user) {
-		return vu360UserRepository.hasProctorRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasAdministratorRole(VU360User user) {
-		return vu360UserRepository.hasAdministratorRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasTrainingAdministratorRole(VU360User user) {
-		return vu360UserRepository.hasTrainingAdministratorRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasRegulatoryAnalystRole(VU360User user) {
-		return vu360UserRepository.hasRegulatoryAnalystRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasInstructorRole(VU360User user) {
-		return vu360UserRepository.hasInstructorRole(user.getId());
-	}
-	
-	@Override
-	public boolean hasAccessToFeatureGroup(Long userId, String featureGroup) {
-		return lmsFeatureRepository.hasAccessToFeatureGroup(userId, featureGroup);
-	}
-	
-	@Override
-	public boolean hasAccessToFeatureCode(Long userId, String featureCode) {
-		return lmsFeatureRepository.hasAccessToFeatureCode(userId, featureCode);
-	}
-	
-	@Override
-	public boolean hasAccessToFeatureGroup(Long userId, Long roleId, String featureGroup) {
-		return lmsFeatureRepository.hasAccessToFeatureGroup(userId, featureGroup);
-	}
-	
-	@Override
-	public List<String> getEnabledFeatureGroups(Long userId, Long roleId) {
-		return lmsFeatureRepository.getEnabledFeatureGroups(userId, roleId);
-	}
-	
-	@Override
-	public List<String> getEnabledFeatureGroups(Long userId) {
-		return lmsFeatureRepository.getEnabledFeatureGroups(userId);
-	}
-	
-	@Override
-	public boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode) {
-		return lmsFeatureRepository.hasAccessToFeatureCode(userId, featureCode);
-	}
-
 }
