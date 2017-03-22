@@ -360,8 +360,8 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		// due to no of queries execution while displaying Learner > MyCourses. Entity Graph can not be used with JPA IN clause (Hibernate Bug)
 		List<TrainingPlanAssignment> trainingPlanAssignmentsWithEntityGraph = new ArrayList<TrainingPlanAssignment>();
 		for (TrainingPlanAssignment trainingPlanAssignment : trainingPlanAssignments) {
-			TrainingPlanAssignment tpa = this.trainingPlanAssignmentRepository.findById(trainingPlanAssignment.getId());
-			trainingPlanAssignmentsWithEntityGraph.add(tpa);
+//			TrainingPlanAssignment tpa = this.trainingPlanAssignmentRepository.findById(trainingPlanAssignment.getId());
+			trainingPlanAssignmentsWithEntityGraph.add(trainingPlanAssignment);
 		}
 
 		return trainingPlanAssignmentsWithEntityGraph;

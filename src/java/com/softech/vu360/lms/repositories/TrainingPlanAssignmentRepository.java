@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softech.vu360.lms.model.LearnerEnrollment;
@@ -19,10 +20,13 @@ import com.softech.vu360.lms.model.TrainingPlanCourse;
 public interface TrainingPlanAssignmentRepository  extends CrudRepository<TrainingPlanAssignment, Long> {
 
 	//public TrainingPlan getTrainingPlanByEnrollment(LearnerEnrollment enrollment)
-	
+
 	TrainingPlanAssignment findBylearnerEnrollments(LearnerEnrollment enrollment);
-	
-	List<TrainingPlanAssignment> findDistinctByLearnerEnrollmentsIn(List<LearnerEnrollment> enrollments);
+
+	@Query("SELECT TPA FROM TrainingPlanAssignment TPA " +
+			"LEFT JOIN FETCH TPA.trainingPlan " +
+			"LEFT JOIN FETCH TPA.learnerEnrollments LE WHERE LE IN :enrollments")
+	List<TrainingPlanAssignment> findDistinctByLearnerEnrollmentsIn(@Param("enrollments") List<LearnerEnrollment> enrollments);
 	
 	@EntityGraph(value = "TrainingPlanAssignment.GraphLearnerEnrollmentWithTrainingPlan" , type = EntityGraphType.FETCH)
 	List<TrainingPlanAssignment> findByTrainingPlanId(long trainingPlanId);
