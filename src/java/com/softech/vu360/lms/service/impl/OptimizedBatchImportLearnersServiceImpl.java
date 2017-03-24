@@ -1972,13 +1972,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 OrganizationalGroup newOrgGroup;
                 for(String orgGroupName : orgGroupNames)
                 {
-                    log.info("orgGroupName = " + orgGroupName);
-                    log.info("loggedInUser.isLMSAdministrator() = " +
-                            sharedContext.getLoggedInUser().isLMSAdministrator());
-                    log.info("loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " +
-                            sharedContext.getLoggedInUser().getTrainingAdministrator().
-                                    isManagesAllOrganizationalGroups());
-                    if(sharedContext.getLoggedInUser().isLMSAdministrator() ||
+                    if(vu360UserService.hasAdministratorRole(sharedContext.getLoggedInUser()) ||
                             sharedContext.getLoggedInUser().getTrainingAdministrator().
                                     isManagesAllOrganizationalGroups())
                     {

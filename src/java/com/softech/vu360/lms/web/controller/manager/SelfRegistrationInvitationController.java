@@ -30,6 +30,7 @@ import com.softech.vu360.lms.model.RegistrationInvitation;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.model.ManageOrganizationalGroups;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
@@ -49,6 +50,8 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 	private static final Logger log = Logger.getLogger(SelfRegistrationInvitationController.class.getName());
 	private LearnerService learnerService = null;
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService = null;
+	private VU360UserService vu360UserService;
+	
 	private JavaMailSenderImpl mailSender;
 	private SimpleMailMessage templateMessage;
 
@@ -100,7 +103,7 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 			request.setAttribute("PagerAttributeMap", PagerAttributeMap);
 			if ( StringUtils.isNotBlank(action) ) {
 				if( action.equalsIgnoreCase(MANAGE_USER_SEARCH_ACTION) ) {
-					if( !user.isLMSAdministrator() &&  !user.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
+					if( !vu360UserService.hasAdministratorRole(user) &&  !user.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if (user.getTrainingAdministrator().getManagedGroups().size()==0 ) {
 							return new ModelAndView(redirectTemplate);
 						}
@@ -429,14 +432,13 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 		try {
 			RegistrationInvitation regInvitation = null;
 			HttpSession session = request.getSession();
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 			regInvitation = (RegistrationInvitation)session.getAttribute("regInvitationSession");
 
-			if (user.isLMSAdministrator()) {
+			if (vu360UserService.hasAdministratorRole(user))
 				regInvitation.setCustomer(((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer());
-			} else {
-				regInvitation.setCustomer(learnerService.findCustomerByLearnerId(user.getLearner().getId()));
-			}
+			else
+				regInvitation.setCustomer(user.getLearner().getCustomer());
 
 			learnerService.saveRegistrationInvitation(regInvitation);
 
@@ -690,5 +692,13 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 
 	public void setRedirectTemplate(String redirectTemplate) {
 		this.redirectTemplate = redirectTemplate;
+	}
+	
+	public VU360UserService getVu360UserService() {
+		return vu360UserService;
+	}
+
+	public void setVu360UserService(VU360UserService vu360UserService) {
+		this.vu360UserService = vu360UserService;
 	}
 }

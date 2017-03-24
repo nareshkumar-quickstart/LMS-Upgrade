@@ -284,8 +284,9 @@ public class AddFilterWizardController extends AbstractWizardFormController{
 			}
 			
 		} else  if(form.getFilterType().equals(LEARNERS)) {
+			boolean hasAdmninistratorRole = vu360UserService.hasAdministratorRole(vu360UserModel);
 			List<VU360User> users = learnerService.findLearner(firstName, lastName, email, 
-					vu360UserModel.isLMSAdministrator(), vu360UserModel.isTrainingAdministrator(), vu360UserModel.getTrainingAdministrator().getId(), 
+					hasAdmninistratorRole, vu360UserService.hasTrainingAdministratorRole(vu360UserModel), vu360UserModel.getTrainingAdministrator().getId(), 
 					vu360UserModel.getTrainingAdministrator().isManagesAllOrganizationalGroups(), vu360UserModel.getTrainingAdministrator().getManagedGroups(), 
 					vu360UserModel.getLearner().getCustomer().getId(), vu360UserModel.getId());
 			List<VU360User> licensedusers = new ArrayList<VU360User>();
@@ -295,7 +296,7 @@ public class AddFilterWizardController extends AbstractWizardFormController{
 			{
 				Long customerId = null;
 				
-				if (vu360UserModel.isLMSAdministrator()) {
+				if (hasAdmninistratorRole) {
 					customerId = ((VU360UserAuthenticationDetails) SecurityContextHolder
 							.getContext().getAuthentication().getDetails())
 							.getCurrentCustomerId();
@@ -600,7 +601,7 @@ public class AddFilterWizardController extends AbstractWizardFormController{
 				if(request.getParameter("search") != null){
 					if(request.getParameter("search").equalsIgnoreCase("doSearch")){
 						users = learnerService.findLearner(firstName, lastName, email, 
-								vu360UserModel.isLMSAdministrator(), vu360UserModel.isTrainingAdministrator(), vu360UserModel.getTrainingAdministrator().getId(), 
+								vu360UserService.hasAdministratorRole(vu360UserModel), vu360UserService.hasTrainingAdministratorRole(vu360UserModel), vu360UserModel.getTrainingAdministrator().getId(), 
 								vu360UserModel.getTrainingAdministrator().isManagesAllOrganizationalGroups(), vu360UserModel.getTrainingAdministrator().getManagedGroups(), 
 								vu360UserModel.getLearner().getCustomer().getId(), vu360UserModel.getId());
 						form.setLearnerListFromDB(users);

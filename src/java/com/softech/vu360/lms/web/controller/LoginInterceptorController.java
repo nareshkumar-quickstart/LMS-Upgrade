@@ -30,7 +30,6 @@ import com.softech.vu360.lms.model.DistributorLMSFeature;
 import com.softech.vu360.lms.model.LMSFeature;
 import com.softech.vu360.lms.model.Survey;
 import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserNew;
 import com.softech.vu360.lms.service.SecurityAndRolesService;
 import com.softech.vu360.lms.service.SurveyService;
 import com.softech.vu360.lms.service.VU360UserService;
@@ -101,8 +100,7 @@ public class LoginInterceptorController implements Controller {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) auth.getPrincipal();
 			//VU360User userObj = vu360UserService.loadForUpdateVU360User(user.getId());
-//			VU360User userObj = null;
-			VU360UserNew userObj = null;
+			VU360User userObj = null;
 			VU360UserAuthenticationDetails details = (VU360UserAuthenticationDetails) auth.getDetails();
 			
 			if(isPredictUser())
@@ -150,7 +148,7 @@ public class LoginInterceptorController implements Controller {
 				//Changes made by Marium Saud inorder to by pass all delete queries executed while user login
 				user.setNumLogons(user.getNumLogons()+1);
 				user.setLastLogonDate(new Date());
-				userObj = vu360UserService.loadForUpdateVU360UserNew(user.getId());
+				userObj = vu360UserService.loadForUpdateVU360User(user.getId());
 				userObj.setNumLogons(user.getNumLogons());
 				userObj.setLastLogonDate(user.getLastLogonDate());
 				userObj = vu360UserService.updateNumLogons(userObj);
@@ -160,8 +158,6 @@ public class LoginInterceptorController implements Controller {
 				 */
 				this.setDisabledLmsFeatureCodesAndGroupsForUser(user, request.getSession());
 			}
-			
-
 			
 			// TODO:  use this as an opportunity to check for things like
 			// if the user has accepted the EULA, must change their password etc.
@@ -215,10 +211,10 @@ public class LoginInterceptorController implements Controller {
 				if(userInput != null && userInput.equalsIgnoreCase("browserCheckScreenShown")){
 					userInput= "gotoGuidedTourPage";
 					if(userObj == null)
-						userObj = vu360UserService.loadForUpdateVU360UserNew(user.getId());				 	
+						userObj = vu360UserService.loadForUpdateVU360User(user.getId());				 	
 					user.setNewUser(false);
 					userObj.setNewUser(false);
-					userObj = vu360UserService.updateUser(userObj);	
+					userObj = vu360UserService.updateUser(user.getId(), userObj);	
 				 } 
 			}
 			
@@ -232,10 +228,10 @@ public class LoginInterceptorController implements Controller {
 				
 				 if(userInput != null && userInput.equalsIgnoreCase("guidedTourScreenShown") && request.getParameter("cbDontShowAgain") != null){
 					 if(userObj == null)
-						 userObj = vu360UserService.loadForUpdateVU360UserNew(user.getId());
+						 userObj = vu360UserService.loadForUpdateVU360User(user.getId());
 					 user.setShowGuidedTourScreenOnLogin(Boolean.FALSE);
 					 userObj.setShowGuidedTourScreenOnLogin(Boolean.FALSE);
-					 userObj= vu360UserService.updateUser(userObj);	
+					 userObj= vu360UserService.updateUser(user.getId(), userObj);	
 				 }
 				
 				 if(userInput != null && (userInput.equalsIgnoreCase("gotoGuidedTourPage") || userInput.equalsIgnoreCase("guidedTourScreenShown"))){
@@ -256,10 +252,10 @@ public class LoginInterceptorController implements Controller {
 			if((brand.getBrandElement("lms.login.settings.eula")!= null) && (brand.getBrandElement("lms.login.settings.eula").equalsIgnoreCase("true"))){
 				 if(userInput != null && userInput.equalsIgnoreCase("licenseAgreementAccepted")){
 					 if(userObj == null)
-						 userObj = vu360UserService.loadForUpdateVU360UserNew(user.getId());				 	
+						 userObj = vu360UserService.loadForUpdateVU360User(user.getId());				 	
 					 userObj.setAcceptedEULA(Boolean.TRUE);
 					 user.setAcceptedEULA(Boolean.TRUE);
-					 vu360UserService.updateUser( userObj);
+					 vu360UserService.updateUser(user.getId(), userObj);
 				 } 
 				 
 				 if(!user.isAcceptedEULA() && userInput != null && (userInput.equalsIgnoreCase("gotoGuidedTourPage") || userInput.equalsIgnoreCase("guidedTourScreenShown") || userInput.equalsIgnoreCase("remindMeLaterforSurvey") || userInput.equalsIgnoreCase("continueFromAlertRequestPage"))){																 
@@ -271,11 +267,6 @@ public class LoginInterceptorController implements Controller {
 				return new  ModelAndView(surveyTemplate);
 				 
 			} 	
-			
-			//user = (VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();	
-			
-			
-
 			
 			if(user.isAdminMode()){				    
 					request.setAttribute("AdminSwitchMode",VU360UserMode.ROLE_LMSADMINISTRATOR);
@@ -451,7 +442,7 @@ public class LoginInterceptorController implements Controller {
 					details.doInstructorSwitchMode(request);
 					return new ModelAndView("redirect:/ins_synchronousClasses.do");//Jump right to Instructor mode if thats the highest mode			
 			}
-			if(user.isInLearnerRole()){
+			if(user.isLearnerMode()){
 				return new ModelAndView(defaultTemplate);
 			}
 			/*redirect to login page if user dosen't have any rights*/
@@ -545,7 +536,7 @@ public class LoginInterceptorController implements Controller {
 				return mv; 
 			} 
 			List<Survey> surveyList = surveyService.getDueSurveysByUser(user);
-			if(surveyList!=null && surveyList.size() > 0 && user.isInLearnerRole()){ 				
+			if(surveyList!=null && surveyList.size() > 0 && user.isLearnerMode()){ 				
 				if( surveyList.size() > 0 ){		// IF DUE SURVEY EXISTS
 					mv = new ModelAndView(loginOrSurveyRequestFormTemplate);
 					mv.addObject("dueSurvey" , surveyList.size());					

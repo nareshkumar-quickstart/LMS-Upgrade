@@ -254,14 +254,14 @@ public class AddCustomFieldWizardController extends AbstractWizardFormController
        // to Avoid LazyLoading exception for all type of entity in Form. 
         form = initializeFormEntity(form);
         
-//        /*Fixed to solve lazy initialization exception --*/
-//        VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();//(VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        /*Fixed to solve lazy initialization exception --*/
+        VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();//(VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         // parameter type of findContentOwnerByRegulatoryAnalyst() is changed so creating second user object of type VO.
         // first user object is also necessary for further operation
         com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        ContentOwner contentOwner = loggedInUserVO.getContentOwner()!=null ? accreditationService.findContentOwnerById(loggedInUserVO.getContentOwner().getId()) : accreditationService.findContentOwnerByRegulatoryAnalyst(loggedInUserVO.getRegulatoryAnalyst()) ;
+        ContentOwner contentOwner = loggedInUser.getContentOwner()!=null ? loggedInUser.getContentOwner() : accreditationService.findContentOwnerByRegulatoryAnalyst(loggedInUserVO.getRegulatoryAnalyst()) ;
         CustomFieldContext customFieldContext = new CustomFieldContext();
         customFieldContext.setContentOwner(contentOwner);
         if (form.getFieldType().equalsIgnoreCase(CUSTOMFIELD_SINGLE_LINE_OF_TEXT)) {

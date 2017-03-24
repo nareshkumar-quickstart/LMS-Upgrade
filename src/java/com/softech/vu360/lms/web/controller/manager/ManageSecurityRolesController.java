@@ -84,10 +84,9 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 		if( command instanceof ManageSecurityRoleForm ) {
 
 			ManageSecurityRoleForm form = (ManageSecurityRoleForm)command;
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			Customer customer = ((VU360UserAuthenticationDetails) auth.getDetails()).getCurrentCustomer();
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) auth.getPrincipal();
-			List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,user);
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
+			Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
+			List<LMSRole> allUserRoles = vu360UserService.getAllRoles(customer,loggedInUser);
 
 			form.setAllUserRoles(allUserRoles);
 		}
@@ -176,7 +175,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 			
 			for(LMSRole userRole : listOfRolls){
 				//adding this check, by OWS for LMS-4297 on 26th Jan 2010
-				if(loggedInUser.isLMSAdministrator() && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
+				if(vu360UserService.hasAdministratorRole(loggedInUser) && ((VU360UserAuthenticationDetails)auth.getDetails()).getCurrentMode().toString().equalsIgnoreCase(LMSRole.ROLE_LMSADMINISTRATOR)){
 				
 					String count = "0";
 					if(lstLearnerCounted.containsKey(userRole.getId().toString())){
@@ -193,7 +192,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 					String totalRecord = "0";
 					
 					Map<Object, Object> results = learnerService.getAllUsersInLmsRole(userRole,
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
+							vu360UserService.hasAdministratorRole(loggedInUser), vu360UserService.hasTrainingAdministratorRole(loggedInUser), loggedInUser.getTrainingAdministrator().getId(), 
 							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							-1, -1, "firstName", 0);
