@@ -359,10 +359,13 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		//Modified By MariumSAud : Code added to reload TrainPlanAssignment with LearenrEnrollment and TrainingPlan Entity Graph in order to avoid Proxy Error 
 		// due to no of queries execution while displaying Learner > MyCourses. Entity Graph can not be used with JPA IN clause (Hibernate Bug)
 		List<TrainingPlanAssignment> trainingPlanAssignmentsWithEntityGraph = new ArrayList<TrainingPlanAssignment>();
-		for (TrainingPlanAssignment trainingPlanAssignment : trainingPlanAssignments) {
+
+		//http://jira.360training.com/browse/LMS-22136
+		//I am commenting out this code in the ticket above. Not needed.//Muhammad Sajjad
+		/*for (TrainingPlanAssignment trainingPlanAssignment : trainingPlanAssignments) {
 //			TrainingPlanAssignment tpa = this.trainingPlanAssignmentRepository.findById(trainingPlanAssignment.getId());
 			trainingPlanAssignmentsWithEntityGraph.add(trainingPlanAssignment);
-		}
+		}*/
 
 		return trainingPlanAssignmentsWithEntityGraph;
 	}
