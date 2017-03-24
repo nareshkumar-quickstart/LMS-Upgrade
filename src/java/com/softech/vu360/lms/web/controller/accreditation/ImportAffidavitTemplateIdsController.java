@@ -9,19 +9,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 import com.softech.vu360.lms.model.AffidavitTemplate;
-import com.softech.vu360.lms.model.VU360UserNew;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AffidavitTemplateService;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.ImportAffidavitTemplateIdsForm;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 /**
  * 
@@ -73,7 +74,7 @@ public class ImportAffidavitTemplateIdsController extends VU360BaseMultiActionCo
 		
 		ModelAndView modelAndView = null;
 		ImportAffidavitTemplateIdsForm form = (ImportAffidavitTemplateIdsForm) command;
-		VU360UserNew loggedInUser = VU360UserAuthenticationDetails.getCurrentSimpleUser();
+		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		
 		if(!errors.hasErrors())	{
 

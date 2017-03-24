@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -37,8 +36,8 @@ import com.softech.vu360.lms.model.RegulatorCategory;
 import com.softech.vu360.lms.model.SSNCustomFiled;
 import com.softech.vu360.lms.model.SingleLineTextCustomFiled;
 import com.softech.vu360.lms.model.SingleSelectCustomField;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
-import com.softech.vu360.lms.service.RegulatoryAnalystService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.accreditation.DocumentForm;
@@ -48,6 +47,8 @@ import com.softech.vu360.lms.web.controller.model.accreditation.RegulatorCredent
 import com.softech.vu360.lms.web.controller.model.accreditation.RegulatorForm;
 import com.softech.vu360.lms.web.controller.model.customfield.CustomFieldBuilder;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.EditRegulatorValidator;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
+import com.softech.vu360.util.Brander;
 import com.softech.vu360.util.ContactSort;
 import com.softech.vu360.util.CredentialSort;
 import com.softech.vu360.util.CustomFieldEntityType;
@@ -71,8 +72,6 @@ public class ManageAndEditRegulatorController extends VU360BaseMultiActionContro
 	public static final String CUSTOMFIELD_ENTITY_REGULATOR = "CUSTOMFIELD_REGULATOR";
 
 	private AccreditationService accreditationService;
-	@Inject
-	private RegulatoryAnalystService regulatoryAnalystService;
 
 	private String searchRegulatorTemplate = null;
 	private String editRegulatorSummaryTemplate = null;
@@ -241,7 +240,7 @@ public class ManageAndEditRegulatorController extends VU360BaseMultiActionContro
 		try {
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			Map<String, String> PagerAttributeMap = new HashMap <String, String>();
-			com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			String name = (request.getParameter("regName") == null) ? "" : request.getParameter("regName");
 			String alias = (request.getParameter("regAlias") == null) ? "" : request.getParameter("regAlias");
 			String email = (request.getParameter("regEmailAdd") == null) ? "" : request.getParameter("regEmailAdd");
@@ -254,7 +253,7 @@ public class ManageAndEditRegulatorController extends VU360BaseMultiActionContro
 			context.put("email", email);
 
 			List<Regulator> regulators = accreditationService.findRegulator(name, alias, email, 
-					regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
+					loggedInUser.getRegulatoryAnalyst());
 
 			String pageIndex = request.getParameter("pageIndex");
 			if( pageIndex == null ) pageIndex = "0";
@@ -474,7 +473,7 @@ public class ManageAndEditRegulatorController extends VU360BaseMultiActionContro
 			Object command, BindException errors ) throws Exception {
 		try {
 			Map<Object, Object> context = new HashMap<Object, Object>();
-			com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 
 			if  ( request.getParameterValues("regulators") != null ) {
 				long[] id = new long[request.getParameterValues("regulators").length];
@@ -488,7 +487,7 @@ public class ManageAndEditRegulatorController extends VU360BaseMultiActionContro
 				log.debug("TO BE DELETED ::- "+id.length);
 			}
 			List<Regulator> regulators = accreditationService.findRegulator("", "", "", 
-					regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
+					loggedInUser.getRegulatoryAnalyst());
 			context.put("regulators", regulators);
 			List<Contact> allContacts = new ArrayList <Contact>();
 			for( Regulator reg : regulators) {

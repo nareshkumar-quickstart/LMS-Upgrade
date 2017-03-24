@@ -59,7 +59,7 @@ public class LicenseOfLearner  implements SearchableKey {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="UPDATEBY")
-	private VU360UserNew updatedBy ;
+	private VU360User updatedBy ;
 	
 	@Column(name="UPDATEON")
 	private Timestamp updateOn; 
@@ -132,10 +132,10 @@ public class LicenseOfLearner  implements SearchableKey {
 	public void setLearner(Learner learner) {
 		this.learner = learner;
 	}
-	public VU360UserNew getUpdatedBy() {
+	public VU360User getUpdatedBy() {
 		return updatedBy;
 	}
-	public void setUpdatedBy(VU360UserNew updatedBy) {
+	public void setUpdatedBy(VU360User updatedBy) {
 		this.updatedBy = updatedBy;
 	}
 	@Override

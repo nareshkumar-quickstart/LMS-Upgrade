@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +44,6 @@ import com.softech.vu360.lms.service.CourseAndCourseGroupService;
 import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.LMSProductPurchaseService;
-import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.CustomerUtil;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
@@ -88,8 +86,6 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 	private VU360UserService vu360UserService = null;
 	private EntitlementService entitlementService = null;
 	private CustomerService customerService = null;
-	@Inject
-	private LearnerService learnerService;
 	private LMSProductPurchaseService lmsProductPurchaseService;
 	public ManagerAddCourseController() {
 		super();
@@ -257,6 +253,11 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 		case 4:
 			log.debug("inside CASE # 4");
 			model.put("businessUnits", BUSINESS_UNITS);
+			if(request.getParameter("courseType").equals(WEBINAR_COURSE)) {
+				model.put("page_heading", "lms.instructor.addWebinarCourses.caption.pageHead");
+			} else {
+				model.put("page_heading", "lms.instructor.addSynchrounousCourses.caption.pageHead");
+			}
 
 			model.put("languages", LANGUAGES);
 			return model;
@@ -979,7 +980,8 @@ public class ManagerAddCourseController extends AbstractWizardFormController{
 			customer = details.getCurrentCustomer();
 		}
 		if(customer == null){
-			customer = learnerService.findCustomerByLearnerId(((com.softech.vu360.lms.vo.VU360User) auth.getPrincipal()).getLearner().getId());
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
+			customer = loggedInUser.getLearner().getCustomer();
 		}
 		return customer;	
 	}

@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
 import com.softech.vu360.lms.model.IndustryCredential;
 import com.softech.vu360.lms.model.LicenseIndustry;
 import com.softech.vu360.lms.model.LicenseOfLearner;
-import com.softech.vu360.lms.model.VU360UserNew;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
 import com.softech.vu360.lms.service.LearnerLicenseService;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
@@ -91,7 +91,7 @@ public class EditMyLicenseController extends VU360BaseMultiActionController {
 		
 		licenseOfLearner.setSupportingInformation(form.getSupportingInformation());
 		licenseOfLearner.setActive(Boolean.TRUE);
-		VU360UserNew vu360UserModel = new VU360UserNew();
+		VU360User vu360UserModel = new VU360User();
 		vu360UserModel.setId(user.getId());
 		licenseOfLearner.setUpdatedBy(vu360UserModel);
 		licenseOfLearner.setUpdateOn( new Timestamp(System.currentTimeMillis()));

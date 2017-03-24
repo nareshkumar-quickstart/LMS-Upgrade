@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,7 +30,6 @@ import com.softech.vu360.lms.model.SynchronousCourse;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.WebinarCourse;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
-import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.util.CustomerUtil;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.lms.webservice.client.impl.StorefrontClientWSImpl;
@@ -62,8 +60,6 @@ InitializingBean {
 	private String loginTemplate = null;
 	private String closeTemplate = null;
 	private CourseAndCourseGroupService courseAndCourseGroupService = null;
-	@Inject
-	private LearnerService learnerService;
 	
 	private static final int SEARCH_RESULT_PAGE_SIZE = 10;
 	private static final String ACTION_SEARCH_NONE = "showNone";
@@ -468,7 +464,8 @@ InitializingBean {
 			customer = details.getCurrentCustomer();
 		}
 		if(customer == null){
-			customer = learnerService.findCustomerByLearnerId(((com.softech.vu360.lms.vo.VU360User)auth.getPrincipal()).getLearner().getId());
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
+			customer = loggedInUser.getLearner().getCustomer();
 		}
 		return customer;	
 	}
