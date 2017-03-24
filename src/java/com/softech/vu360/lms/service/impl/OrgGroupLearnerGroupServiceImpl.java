@@ -607,4 +607,10 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	public List<LearnerGroup> getLearnerGroupsByLearnerGroupIDs(Long[] learnerGroupId) {
 		return learnerGroupRepository.findByIdIn(learnerGroupId);
 	}
+
+	@Override
+	@Transactional
+	public OrganizationalGroup getOrgGroupById(Long orgGroupId) {
+		return organizationalGroupRepository.findOrganizationGroupById(orgGroupId);
+	}
 }
