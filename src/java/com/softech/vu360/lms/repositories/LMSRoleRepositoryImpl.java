@@ -159,7 +159,6 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		return count;
 	}
 
-	@Override
 	public LMSRole getOptimizedBatchImportLearnerDefaultRole(Customer customer) {
 		LMSRole role = null;
 
@@ -188,26 +187,43 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		}
 	}
 
-
-	@Override
-	public List<String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		
-		StringBuilder builder = new StringBuilder("SELECT featuregroup FROM (");
-		builder.append("(select distinct featuregroup from DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE	"
-				+ "left outer join LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id "
-				+ "where DISTRIBUTORLMSFEATURE.distributor_id= "+distributorId+" and DISTRIBUTORLMSFEATURE.ENABLEDTF=1)"); 
-		builder.append(" UNION ");
-		builder.append("(select distinct featuregroup from CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE "
-				+ "left outer join LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id	"
-				+ "where CUSTOMERLMSFEATURE.CUSTOMER_id= "+customerId+" and CUSTOMERLMSFEATURE.ENABLEDTF=1) ");
+		Map<String, String> disabledFeature = new HashMap<String, String>();
 
-		builder.append(") AS TEMPTABLE");
+		StringBuilder builder = new StringBuilder("SELECT featuregroup, featurecode\n" + 
+				"FROM (\n" + 
+				"        (\n" + 
+				"          select distinct featuregroup, featurecode\n" + 
+				"          from DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
+				"          left outer join LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"          where DISTRIBUTORLMSFEATURE.distributor_id= :distributorId\n" + 
+				"          and DISTRIBUTORLMSFEATURE.ENABLEDTF=0\n" + 
+				"        ) \n" + 
+				"        UNION \n" + 
+				"        (\n" + 
+				"          select distinct featuregroup, featurecode\n" + 
+				"          from CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
+				"          left outer join LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"          where CUSTOMERLMSFEATURE.CUSTOMER_id= :customerId\n" + 
+				"          and CUSTOMERLMSFEATURE.ENABLEDTF=0\n" + 
+				"        )\n" + 
+				"      ) as disabledfeatures");
+
 		
 		Query query = entityManager.createNativeQuery(builder.toString());
-		List<String> featureGroups = (ArrayList<String>)query.getResultList();
+		query.setParameter("distributorId", distributorId);
+		query.setParameter("customerId", customerId);
+		List<Object[]> results = query.getResultList();
 		
-		return featureGroups;
+		if(results != null) {
+			results.forEach(r -> {
+				disabledFeature.put(r[0].toString(), r[1].toString());
+			});
+		}
+		
+		return disabledFeature;
 	}
 
 	public Map<String, String> countLearnerByRoles(Long [] roleIds){
