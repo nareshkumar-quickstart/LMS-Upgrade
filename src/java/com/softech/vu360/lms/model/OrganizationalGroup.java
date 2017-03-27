@@ -46,14 +46,15 @@ public class OrganizationalGroup implements SearchableKey,Comparable<Organizatio
 	@JoinColumn(name = "ROOTORGGROUP_ID")
 	private OrganizationalGroup rootOrgGroup = null;
 	
-	
-	@ManyToOne (cascade =  CascadeType.MERGE , fetch=FetchType.LAZY)
+	// @MariumSaud : Remove fetch=LAZY and handled it via JPQL for Batch Import
+	@ManyToOne (cascade =  CascadeType.MERGE)
 	@JoinColumn(name = "PARENTORGGROUP_ID")
 	private OrganizationalGroup parentOrgGroup = null;
 	
 	
 //	@OneToMany(mappedBy="parentOrgGroup" , cascade =  {CascadeType.ALL} )
-    @OneToMany(cascade={CascadeType.MERGE, CascadeType.REMOVE})// BatchImport IS THE Impact Area IF changing FetchType.EAGER
+	// @MariumSaud : Remove fetch=EAGER and handled it via JPQL for Batch Import
+    @OneToMany(cascade={CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name="PARENTORGGROUP_ID")
     //@LazyCollection(LazyCollectionOption.FALSE)
 	private List<OrganizationalGroup> childrenOrgGroups = new ArrayList<OrganizationalGroup>();
