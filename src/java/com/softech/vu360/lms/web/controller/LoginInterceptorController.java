@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import com.ctc.wstx.util.StringUtil;
+import com.softech.vu360.lms.helpers.ManagerHelper;
 import com.softech.vu360.lms.model.Alert;
 import com.softech.vu360.lms.model.AlertQueue;
 import com.softech.vu360.lms.model.CustomerLMSFeature;
@@ -280,155 +283,7 @@ public class LoginInterceptorController implements Controller {
 			}
 			
 			if(user.isManagerMode()){				 
-					request.setAttribute("ManagerSwitchMode",VU360UserMode.ROLE_TRAININGADMINISTRATOR);
-					details.doManagerSwitchMode(request);
-					String redirectURL = null;
-					String roleType = "ROLE_TRAININGADMINISTRATOR";
-					List<LMSFeature> lstcustomerLMSFeatures =  securityAndRolesService.findAllActiveLMSFeaturesByUser(user.getId(), user.getLearner().getCustomer().getId(), roleType);
-					//List<LMSRoleLMSFeature> lstcustomerLMSFeatures =  securityAndRolesService.findLMSRoleLMSFeatureByUser(user.getId(), user.getLearner().getCustomer().getId(), roleType);
-					//List<CustomerLMSFeature> lstcustomerLMSFeatures = securityAndRolesService.getCustomerLMSFeatures (user.getLearner().getCustomer(), roleType);
-					for(LMSFeature userLMSFeature : lstcustomerLMSFeatures)
-					{
-						if(UserPermissionChecker.hasAccessToFeature(userLMSFeature.getFeatureCode(), user, request.getSession()))
-						{
-							log.debug(userLMSFeature.getFeatureName());
-							if(userLMSFeature.getFeatureCode().equals("AssignTrainingPlans"))
-							 {
-							   redirectURL = "redirect:/mgr_assignTraningPlan.do";
-							   break;
-							 }  
-							
-							else if( userLMSFeature.getFeatureCode().equals("LMS-MGR-0001"))
-							 {
-							   redirectURL = "redirect:/mgr_manageLearners.do";
-							   break;
-							 } 
-							
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0002"))
-							 {
-							   redirectURL = "redirect:/mgr_batchImportLearners.do";
-							   break;
-							 }
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0003"))
-							 {
-							   redirectURL = "redirect:/mgr_regInvitation-1.do";
-							   break;
-							 } 
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0004"))
-							 {
-							   redirectURL = "redirect:/mgr_manageOrganizationGroup.do";
-							   break;
-							 } 
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0005"))
-							 {
-							   redirectURL = "redirect:/mgr_manageLearnerGroups.do";
-							   break;
-							 }
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0006"))
-							 {
-							   redirectURL = "redirect:/mgr_manageSecurityRoles.do?method=showSecurityRoles";
-							   break;
-							 } 
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0007"))
-							 {
-							   redirectURL = "redirect:/mgr_viewAssignSecurityRoleMain.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0029"))
-							 {
-							   redirectURL = "redirect:/mgr_learnerEnrollments.do?method=showSearchLearnerPage";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0008"))
-							 {
-							   redirectURL = "redirect:/mgr_viewPlanAndEnroll.do";
-							   break;
-							 }
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0009"))
-							 {
-							   redirectURL = "redirect:/mgr_searchTrainingPlans.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0010"))
-							 {
-							   redirectURL = "redirect:/mgr_manageSynchronousCourse.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0011"))
-							 {
-							   redirectURL = "redirect:/mgr_viewAllEntitlements.do";
-							   break;
-							 }
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0012"))
-							 {
-							   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0012"))
-							 {
-								   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0013"))
-							 {
-								   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0014"))
-							 {
-								   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0015"))
-							 {
-								   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0032"))
-							 {
-							   redirectURL = "redirect:/mgr_ManageReports.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0017"))
-							 {
-							   redirectURL = "redirect:/mgr_alertCourse.do";
-							   break;
-							 }
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0018"))
-							 {
-							   redirectURL = "redirect:/mgr_sendMailToLearners.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0019"))
-							 {
-							   redirectURL = "redirect:/mgr_viewAssignSurveyMain.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0020"))
-							 {
-							   redirectURL = "redirect:/mgr_manageSurveys.do";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0023"))
-							 {
-							   redirectURL = "redirect:/mgr_editCustomer.do?method=editCustomerProfile";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0024"))
-							 {
-							   redirectURL = "redirect:/mgr_editCustomer.do?method=editCustomerPreferences";
-							   break;
-							 }  
-							 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0025"))
-							 {
-							   redirectURL = "redirect:/mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner";
-							   break;
-							 }  
-
-						}
-					}
-					//return new ModelAndView("redirect:/mgr_manageLearners.do");//Jump right to manager mode if thats the highest mode
-					return new ModelAndView(redirectURL);//Jump right to manager mode if thats the highest mode
+					return new ModelAndView((new StringBuilder().append("redirect:").append(ManagerHelper.getManagerURL(request))).toString());
 			}
 			
 			if(user.isProctorMode()){				 
@@ -463,58 +318,26 @@ public class LoginInterceptorController implements Controller {
 	 */
 	private void setDisabledLmsFeatureCodesAndGroupsForUser (com.softech.vu360.lms.vo.VU360User user, HttpSession session)
 	{
-		try
-		{
-			log.info(" ---------- START - setDisabledLmsFeatureCodesAndGroupsForUser : " + this.getClass().getName() + " ---------- ");
+		try {
+			log.info(" ---------- START - setDisabledLmsFeatureCodesAndGroupsForUser : " + this.getClass().getName()
+					+ " ---------- ");
 
-			Set<String> disabledFeatureCodes = new HashSet<String>();
-			Set<String> disabledFeatureGroups = new HashSet<String>();
-			List<String> featureGroupSet = securityAndRolesService.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(
-					user.getLearner().getCustomer().getDistributor().getId(), user.getLearner().getCustomer().getId());
-			
-			log.info("fetching disabled lms feaure codes and groups defined at distributor level...");
-			List<DistributorLMSFeature> disabledDistributorLMSFeatures = securityAndRolesService.getDisabledDistributorLMSFeatures(
-					user.getLearner().getCustomer().getDistributor().getId());
-			log.info("disabledDistributorLMSFeatures " + (disabledDistributorLMSFeatures == null ? "is null" : "size = " 
-				+ disabledDistributorLMSFeatures.size()));
-			
-			for(DistributorLMSFeature distributorLMSFeature : disabledDistributorLMSFeatures)
-			{
-				log.info("distributorLMSFeature - " + distributorLMSFeature.getLmsFeature().getFeatureCode());
-				if(distributorLMSFeature.getLmsFeature().getFeatureName().equals(distributorLMSFeature.getLmsFeature().getFeatureGroup()) // OMG What is this :(
-						&& !featureGroupSet.contains((String)distributorLMSFeature.getLmsFeature().getFeatureGroup()))
-				{
-					log.info(" => group");
-					disabledFeatureGroups.add(distributorLMSFeature.getLmsFeature().getFeatureName());
-				}
-				else
-					disabledFeatureCodes.add(distributorLMSFeature.getLmsFeature().getFeatureCode());
+			Map<String, String> disabledFeatures = securityAndRolesService
+					.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(
+							user.getLearner().getCustomer().getDistributor().getId(),
+							user.getLearner().getCustomer().getId());
+
+			if(disabledFeatures == null) {
+				disabledFeatures = new HashMap<>();
+				disabledFeatures.put("", "");
 			}
 			
-			log.info("fetching disabled lms feaures defined at customer level...");
-			List<CustomerLMSFeature> disabledCustomerLMSFeatures = securityAndRolesService.getDisabledCustomerLMSFeatures(user.getLearner().getCustomer().getId());
-			log.info("disabledCustomerLMSFeatures " + (disabledCustomerLMSFeatures == null ? "is null" : "size = " 
-				+ disabledCustomerLMSFeatures.size()));
-			for(CustomerLMSFeature customerLMSFeature : disabledCustomerLMSFeatures)
-			{
-				log.info("customerLMSFeature - " + customerLMSFeature.getLmsFeature().getFeatureCode());
-				if(customerLMSFeature.getLmsFeature().getFeatureName().equals(customerLMSFeature.getLmsFeature().getFeatureGroup())
-						&& !featureGroupSet.contains((String)customerLMSFeature.getLmsFeature().getFeatureGroup()))
-				{
-					log.info(" => group");
-					disabledFeatureGroups.add(customerLMSFeature.getLmsFeature().getFeatureName());
-				}
-				else
-					disabledFeatureCodes.add(customerLMSFeature.getLmsFeature().getFeatureCode());
-			}
-			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_GROUPS, disabledFeatureGroups);
-			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_CODES, disabledFeatureCodes);
-		}
-		catch(Exception e){
+			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_GROUPS, disabledFeatures.keySet().stream().collect(Collectors.toSet()));
+			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_CODES, disabledFeatures.values().stream().collect(Collectors.toSet()));
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			log.info(" ---------- END - setDisabledLmsFeaturesForUser : " + this.getClass().getName() + " ---------- ");
 		}
 	}

@@ -2,6 +2,7 @@ package com.softech.vu360.lms.service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerLMSFeature;
@@ -130,7 +131,7 @@ public interface SecurityAndRolesService {
 
 	public List<CustomerLMSFeature> getAllCustomerLMSFeatures (Customer customer);
 	public List<CustomerLMSFeature> getAllByCustomerAndEnabledTrue(Customer customer);
-	public List<String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
+	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
 	
 	List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType);
 	

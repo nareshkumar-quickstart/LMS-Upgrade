@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -362,7 +363,7 @@ public class SecurityAndRolesServiceImpl implements SecurityAndRolesService {
 		return customerLmsFeatureRepository.getAllByCustomerAndEnabledTrue(customer);
 	}
 	@Override
-	public List<String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		return lmsRoleRepository.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(distributorId, customerId);
 	}
