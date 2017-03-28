@@ -66,30 +66,15 @@ public class VU360UserServiceImpl implements VU360UserService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		log.debug("called authentication:"+username);
-		//log.debug("Start------"+DateUtil.getCurrentServerTimeGMT());
 		VU360User user=getUserByUsernameAndDomain(username, null);
-		//VU360User user = vu360UserRepository.findUserByUserName(username);
-		//log.debug("End------"+DateUtil.getCurrentServerTimeGMT());
 		if(user==null)
 			throw new UsernameNotFoundException("No user detail found from DB Bad credentials");
 		user.setLmsRoles(user.getLmsRoles());
-		//This is being used to populate flags to show guided tour  
-		/* added by noman to validate user mode on the basis of LMSRole */
-		/*List<LMSRole>  roles=getLMSRolesByUserById(user.getId());
-		Set<LMSRole> userRoles = new HashSet<LMSRole>();
-		
-		for(LMSRole role: roles){
-			userRoles.add(role);
-		}
-		user.setLmsRoles(userRoles);
-		
-		user.setProxyProperties(user);*/
-		
+				
 		log.debug("isEnabled:"+user.getEnabled());
 		log.debug("isCredentialNonExpired:"+user.isCredentialsNonExpired());
 		log.debug("isAccountNonLocked:"+user.getAccountNonLocked());
-		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(user);
-		return voUser;
+		return ProxyVOHelper.setUserProxy(user);
 	}
 	
 	@Override
@@ -100,14 +85,12 @@ public class VU360UserServiceImpl implements VU360UserService {
 	@Override
 	public VU360User getUserByUsernameAndDomain(String username,String domain) {
 		List<VU360User> results = vu360UserRepository.findUserByUsernameAndDomain(username , domain);
-		log.debug("total number of matching users found:"+results.size());
-		
-		if ( results.size() > 0 ) {
-			VU360User user = (VU360User)results.get(0);
-			
+		if ( !results.isEmpty() ) {
+			VU360User user = results.get(0);
 			checkForPermission(user);
 			return user;
 		}
+		
 		throw new UsernameNotFoundException("FOUND NO SUCH USER NAME");
 	}
 	
@@ -346,10 +329,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 		results = vu360UserRepository.findAllLearners(firstName,lastName,email,loggedInUser,  sortBy, sortDirection);
 		return results;
 	}	
-	
-	public VU360User getUpdatedUserById(Long id) {
-		return vu360UserRepository.getUpdatedUserById(id);
-	}
 	
 	public List<VU360User> searchCustomerUsers(Customer customer, String firstName, String lastName,
 			String email, String sortBy, int sortDirection) {

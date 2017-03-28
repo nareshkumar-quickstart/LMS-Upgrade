@@ -132,7 +132,7 @@ public class LoginPageController implements Controller {
 						cookieCAS.setMaxAge(60*60*24); 
 						response.addCookie(cookieCAS);
 						
-						VU360User vu360User = vu360UserService.getUserByUsernameAndDomain(casModelMap.get("userName").toString(), StringUtils.EMPTY);
+						VU360User vu360User = vu360UserService.getUserByUsernameAndDomain(casModelMap.get("userName").toString(), null);
 						Cookie cookieLogoutSuccessUrl = new Cookie("logoutSuccessUrl", CASStorefrontUtil.getLogOutUrl(ProxyVOHelper.setUserProxy(vu360User)));
 						cookieLogoutSuccessUrl.setMaxAge(60*60*24);
 						response.addCookie(cookieLogoutSuccessUrl);
@@ -221,7 +221,7 @@ public class LoginPageController implements Controller {
 		casUserName = validateTicket(serviceUrl, ticket);
 		if(!casUserName.equals(StringUtils.EMPTY)) {
 			
-			VU360User vu360User = vu360UserService.getUserByUsernameAndDomain(casUserName, StringUtils.EMPTY);
+			VU360User vu360User = vu360UserService.getUserByUsernameAndDomain(casUserName, null);
 			if(vu360User != null) {
 				password = vu360User.getPassword();
 	

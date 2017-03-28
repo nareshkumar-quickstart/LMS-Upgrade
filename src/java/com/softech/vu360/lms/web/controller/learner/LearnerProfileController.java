@@ -33,6 +33,7 @@ import com.softech.vu360.lms.model.CustomFieldValueChoice;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerOrder;
 import com.softech.vu360.lms.model.Distributor;
+import com.softech.vu360.lms.model.LMSRoleLMSFeature;
 import com.softech.vu360.lms.model.LearnerValidationAnswers;
 import com.softech.vu360.lms.model.LicenseOfLearner;
 import com.softech.vu360.lms.model.MultiSelectCreditReportingField;
@@ -469,13 +470,9 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 	public ModelAndView  updateProfile(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception{
 		
 		LearnerProfileForm form = (LearnerProfileForm)command;
-		VU360User vu360User = form.getVu360User();
-		TimeZone tz = learnerService.getTimeZoneById(Long.valueOf(form.getTimeZoneId()));
-		vu360User.getLearner().getLearnerProfile().setTimeZone(tz);
-		
+		VU360User frmUser = form.getVu360User();
 		
 		if(errors.hasErrors()){
-			
 			CreditReportingFieldBuilder fieldBuilder = new CreditReportingFieldBuilder();
 			List<com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingField> customFieldList=form.getCreditReportingFields();
 			
@@ -539,8 +536,10 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		 * null. So here we are putting this condition which means check box is not present on page.
 		 * 
 		 */
-		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(vu360User);
-		if ( UserPermissionChecker.hasAccessToFeature("LMS-LRN-0013", voUser, request.getSession())) {
+		TimeZone tz = learnerService.getTimeZoneById(form.getTimeZoneId());
+		frmUser.getLearner().getLearnerProfile().setTimeZone(tz);
+		
+		if ( vu360UserService.hasAccessToFeatureCode(frmUser.getId(), "LMS-LRN-0013")) {
 			
 			boolean notifyOnLicenseExpire;
 			boolean licenseExpireChkBoxCurrentState;
@@ -556,20 +555,18 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 			 */
 			notifyOnLicenseExpire = (request.getParameter("notifyOnLicenseExpire") == null) ? false : true ;
 		
-			licenseExpireChkBoxPreviousState = vu360User.getNotifyOnLicenseExpire();
+			licenseExpireChkBoxPreviousState = frmUser.getNotifyOnLicenseExpire();
 			licenseExpireChkBoxCurrentState = notifyOnLicenseExpire;
 			
 			if (licenseExpireChkBoxPreviousState != licenseExpireChkBoxCurrentState) {
 				
 				form.setNotifyOnLicenseExpire(licenseExpireChkBoxCurrentState);
-				vu360User.setNotifyOnLicenseExpire(licenseExpireChkBoxCurrentState);
+				frmUser.setNotifyOnLicenseExpire(licenseExpireChkBoxCurrentState);
 				
 				Brander brander= VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());
-				
-				//licenseExpireChkBoxPreviousState = licenseExpireChkBoxCurrentState;
-				String url = null;
+				String url;
 				String mySqlUrl = brander.getBrandElement("autoalerts.user.subscribe.mysql.url");
-				String userGuid = vu360User.getUserGUID();
+				String userGuid = frmUser.getUserGUID();
 				if (notifyOnLicenseExpire) {
 					
 					String queryString = "?command=MySQL&opt=subscribe&usr=" + userGuid;
@@ -589,11 +586,11 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		
 		String learnerPassWord=null;
 		if(StringUtils.isNotBlank(ServletRequestUtils.getStringParameter(request, "password"))){
-			vu360User.setPassWordChanged(true);
-			vu360User.setPassword(ServletRequestUtils.getStringParameter(request, "password"));
-			learnerPassWord=vu360User.getPassword();
+			frmUser.setPassWordChanged(true);
+			frmUser.setPassword(ServletRequestUtils.getStringParameter(request, "password"));
+			learnerPassWord=frmUser.getPassword();
 		}
-		VU360User usr = this.getLearnerService().saveUser(vu360User);
+		VU360User usr = this.getLearnerService().saveUser(frmUser);
 		//LMS-2114 Mail Send to User
 		if(learnerPassWord != null){
 			
