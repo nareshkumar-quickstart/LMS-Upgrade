@@ -7,9 +7,9 @@ import org.apache.log4j.Logger;
 
 public class UserPermissionChecker {
 
-	public static String DISABLED_FEATURE_CODES = "DISABLED_FEATURE_CODES";
-	public static String DISABLED_FEATURE_GROUPS = "DISABLED_FEATURE_GROUPS";
-	private static Logger log = Logger.getLogger(UserPermissionChecker.class);
+	public static final String DISABLED_FEATURE_CODES = "DISABLED_FEATURE_CODES";
+	public static final String DISABLED_FEATURE_GROUPS = "DISABLED_FEATURE_GROUPS";
+	private static final Logger log = Logger.getLogger(UserPermissionChecker.class);
 	
 	@SuppressWarnings("unchecked")
 	private static Set<String> getDisabledFeatureGroups (HttpSession session)

@@ -794,7 +794,7 @@ public class AssignSurveyController extends AbstractWizardFormController{
     		if(adminDetails.getCurrentSearchType().equals(AdminSearchType.CUSTOMER)){
     			// Modified By MariumSaud : VU360User fetch again as the learner object in SurveyLearner has customized User Object created From customized Constructor from Learner.java 
     			// to improve performance inacse of Enrollment through OrgGrpEntitlement
-    			VU360User vu360user = vu360UserService.getUpdatedUserById(surveyLearners.get(0).getVu360User().getId());
+    			VU360User vu360user = vu360UserService.getUserById(surveyLearners.get(0).getVu360User().getId());
     			brander=VU360Branding.getInstance().getBranderByUser(request, vu360user);    		
     		}
         }

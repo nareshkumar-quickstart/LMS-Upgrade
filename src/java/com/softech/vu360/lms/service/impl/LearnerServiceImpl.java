@@ -744,7 +744,8 @@ public class LearnerServiceImpl implements LearnerService {
 		if (userToSave.isPassWordChanged()) {
 			// required since we need to get the old guid...assuming the guid wont change
 			newPassword = userToSave.getPassword();
-			com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(userToSave);
+			com.softech.vu360.lms.vo.VU360User voUser = new com.softech.vu360.lms.vo.VU360User();
+			voUser.setUserGUID(userToSave.getUserGUID());
 			Object salt = saltSource.getSalt(voUser); // salt is the guid
 			encodedPassword = passwordEncoder.encodePassword(newPassword, salt);
 			dbUser.setPassword(encodedPassword);
