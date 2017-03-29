@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.util.CollectionUtils;
 
 import com.softech.vu360.lms.model.Customer;
@@ -363,13 +363,17 @@ public class SecurityAndRolesServiceImpl implements SecurityAndRolesService {
 		return customerLmsFeatureRepository.getAllByCustomerAndEnabledTrue(customer);
 	}
 	@Override
-	public List<String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		return lmsRoleRepository.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(distributorId, customerId);
 	}
 	@Override
 	public List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType) {
 		return lmsFeatureRepository.findAllActiveLMSFeaturesByUser(loggedInUserId, customerId, roleType);
+	}
+	@Override
+	public String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId, String roleType, List<String> disabledFeatureCode) {
+		return lmsFeatureRepository.getAnyEnabledFeatureCodeInDisplayOrderByRoleType(userId, roleType, disabledFeatureCode);
 	}
 	@Override
 	public CustomerLMSFeature getCustomerLMSFeatureByFeatureCode(Long customerID,String featureCode){

@@ -69,7 +69,6 @@ public interface VU360UserService extends UserDetailsService {
 	public List<LMSRole> findRolesByName( String name, Customer customer, VU360User loggedInUser);
 	public Map<Object,Object> findUsers(String firstName,String lastName,String email,VU360User loggedInUser,int pageIndex,int pageSize,String sortBy,int sortDirection);
 	public Map<Object, Object> findAllLearners(String firstName,String lastName,String email,VU360User loggedInUser, String sortBy, int sortDirection);
-	public VU360User getUpdatedUserById(Long id);
 	public Map<Object,Object> searchCustomerUsers(Customer customer, String firstName, String lastName,
 			String email, int pageIndex, int pageSize,
 			String sortBy, int sortDirection);
@@ -85,4 +84,17 @@ public interface VU360UserService extends UserDetailsService {
 	//Added By Marium Saud
 	public int countUserByEmailAddress(String emailAddress);
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
+	void checkForPermission(VU360User user);
+	boolean hasLearnerRole(VU360User user);
+	boolean hasProctorRole(VU360User user);
+	boolean hasAdministratorRole(VU360User user);
+	boolean hasTrainingAdministratorRole(VU360User user);
+	boolean hasRegulatoryAnalystRole(VU360User user);
+	boolean hasInstructorRole(VU360User user);
+	boolean hasAccessToFeatureGroup(Long userId, String featureGroup);
+	boolean hasAccessToFeatureCode(Long userId, String featureCode);
+	boolean hasAccessToFeatureGroup(Long userId, Long roleId, String featureGroup);
+	boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode);
+	List<String> getEnabledFeatureGroups(Long userId, Long roleId);
+	List<String> getEnabledFeatureGroups(Long userId);
 }

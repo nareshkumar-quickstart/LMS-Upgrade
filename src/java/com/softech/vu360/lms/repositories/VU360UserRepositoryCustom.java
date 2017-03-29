@@ -40,8 +40,6 @@ public interface VU360UserRepositoryCustom {
 
 	public VU360User updateUserWithLoad(VU360User updatedUser);
 
-	public VU360User getUpdatedUserById(Long id);
-
 	public Map findUsers(String firstName, String lastName, String email,
 			VU360User loggedInUser, int pageIndex, int pageSize, String sortBy,
 			int sortDirection);

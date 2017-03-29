@@ -527,7 +527,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
                 timer("getRootOrgGroupForCustomer", true);
                 OrganizationalGroup rootOrgGroup = orgGroupService.getRootOrgGroupForCustomer(currentCustomer.getId());
-                rootOrgGroup = orgGroupService.loadForUpdateOrganizationalGroup(rootOrgGroup.getId());
+//              rootOrgGroup = orgGroupService.loadForUpdateOrganizationalGroup(rootOrgGroup.getId());
+                
+                //@MariumSaud : New Method was added to load Organization Group inorder to avoid 'Could not find Session - Lazy Initialization Exception'
+        		rootOrgGroup = orgGroupService.getOrgGroupById(rootOrgGroup.getId());
                 Map<String, OrganizationalGroup> allOrganizationalGroups = new HashMap<String, OrganizationalGroup>();
                 allOrganizationalGroups = this.getOrganizationalGroupMap(allOrganizationalGroups, rootOrgGroup);
                 Map<String, LearnerGroup> allLearnerGroups = new HashMap<String, LearnerGroup>();
@@ -1969,13 +1972,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 OrganizationalGroup newOrgGroup;
                 for(String orgGroupName : orgGroupNames)
                 {
-                    log.info("orgGroupName = " + orgGroupName);
-                    log.info("loggedInUser.isLMSAdministrator() = " +
-                            sharedContext.getLoggedInUser().isLMSAdministrator());
-                    log.info("loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() = " +
-                            sharedContext.getLoggedInUser().getTrainingAdministrator().
-                                    isManagesAllOrganizationalGroups());
-                    if(sharedContext.getLoggedInUser().isLMSAdministrator() ||
+                    if(vu360UserService.hasAdministratorRole(sharedContext.getLoggedInUser()) ||
                             sharedContext.getLoggedInUser().getTrainingAdministrator().
                                     isManagesAllOrganizationalGroups())
                     {
@@ -2881,11 +2878,17 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         return orgGroup;
     }
 
+    @Transactional
     private Map<String, OrganizationalGroup> getOrganizationalGroupMap (Map<String, OrganizationalGroup> orgGroupMap, OrganizationalGroup orgGroup)
     {
-    	orgGroup = orgGroupService.loadForUpdateOrganizationalGroup(orgGroup.getId());
+    	//orgGroup = orgGroupService.loadForUpdateOrganizationalGroup(orgGroup.getId());
+    	
+    	//@MariumSaud : New Method was added to load Organization Group inorder to avoid 'Could not find Session - Lazy Initialization Exception'
+    	// occured when orgGroup.getChildrenOrgGroups() is called.
+    	orgGroup = orgGroupService.getOrgGroupById(orgGroup.getId());
     	orgGroupMap.put(orgGroup.toString().toUpperCase(), orgGroup);
         List<OrganizationalGroup> childrenOrgGroups = orgGroup.getChildrenOrgGroups();
+        //List<OrganizationalGroup> childrenOrgGroups = orgGroupService.getChildrenOrgGroupByParentOrgGroupId(orgGroup.getParentOrgGroup().getId());
         if(childrenOrgGroups != null && childrenOrgGroups.size() > 0)
             for (OrganizationalGroup childOrgGroup : childrenOrgGroups)
                 orgGroupMap = this.getOrganizationalGroupMap(orgGroupMap, childOrgGroup);
@@ -2904,6 +2907,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     	OrganizationalGroup og = null;
     	while(!ogStack.isEmpty()){
     		og = ogStack.pop();
+    		//@MariumSaud : Method was added to load 'og' Organization Group again inorder to avoid 'Could not find Session - Lazy Initialization Exception'
+    		// occured when og.getChildrenOrgGroups() is called.
+    		og= orgGroupService.getOrgGroupById(og.getId());
     		//Set<LearnerGroup> learnerGroups = og.getLearnerGroups();
     		List<LearnerGroup> learnerGroups = orgGroupService.getLearnerGroupsByOrgGroup(og.getId());
     		if(CollectionUtils.isNotEmpty(learnerGroups)){

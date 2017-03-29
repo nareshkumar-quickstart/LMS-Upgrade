@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -14,6 +15,7 @@ import javax.persistence.TypedQuery;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.service.VU360UserService;
 
 /*
  * @ author Kaunain Wajeeh
@@ -26,6 +28,9 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 	@PersistenceContext
 	protected EntityManager entityManager;
 
+	@Inject
+	private VU360UserService vu360UserService;
+	
 	@Deprecated
 	public LMSRole getDefaultRole(Customer customer) {
 		LMSRole role = null;
@@ -62,17 +67,16 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		List<LMSRole> userList = null;
 		StringBuilder builder = new StringBuilder();
 
-		if (loggedInUser.isLMSAdministrator()) {// get all roles for this
-												// customer
+		if (vu360UserService.hasAdministratorRole(loggedInUser)) {// get all roles for this customer
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId");
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (vu360UserService.hasTrainingAdministratorRole(loggedInUser)) {
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId AND p.roleType != :role1 AND p.roleType  != :role2");
 		}
 
 		TypedQuery<LMSRole> query = entityManager.createQuery(builder.toString(), LMSRole.class);
-		if (loggedInUser.isLMSAdministrator()) {// get all roles for this customer
+		if (vu360UserService.hasAdministratorRole(loggedInUser)) {// get all roles for this customer
 			query.setParameter("customerId", customer.getId());
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (vu360UserService.hasTrainingAdministratorRole(loggedInUser)) {
 			query.setParameter("customerId", customer.getId());
 			query.setParameter("role1", LMSRole.ROLE_LMSADMINISTRATOR);
 			query.setParameter("role2", LMSRole.ROLE_REGULATORYANALYST);
@@ -118,19 +122,19 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		List<LMSRole> userList = null;
 		StringBuilder builder = new StringBuilder();
 
-		if (loggedInUser.isLMSAdministrator()) {
+		if (vu360UserService.hasAdministratorRole(loggedInUser)) {
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId AND p.roleName LIKE :rolename ");
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (vu360UserService.hasTrainingAdministratorRole(loggedInUser)) {
 			builder.append("SELECT p FROM LMSRole p WHERE p.owner.id = :customerId AND p.roleName LIKE :rolename AND p.roleType != :role1 AND p.roleType != :role2");
 		}
 
 		Query query = entityManager.createQuery(builder.toString());
 		
-		if (loggedInUser.isLMSAdministrator()) {
+		if (vu360UserService.hasAdministratorRole(loggedInUser)) {
 			query.setParameter("customerId", customer.getId());
 			query.setParameter("rolename", "%"+name+"%");
 			
-		} else if (loggedInUser.isTrainingAdministrator()) {
+		} else if (vu360UserService.hasTrainingAdministratorRole(loggedInUser)) {
 			query.setParameter("customerId", customer.getId());
 			query.setParameter("rolename", "%"+name+"%");
 			query.setParameter("role1", LMSRole.ROLE_LMSADMINISTRATOR);
@@ -155,7 +159,6 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		return count;
 	}
 
-	@Override
 	public LMSRole getOptimizedBatchImportLearnerDefaultRole(Customer customer) {
 		LMSRole role = null;
 
@@ -184,26 +187,43 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		}
 	}
 
-
-	@Override
-	public List<String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		
-		StringBuilder builder = new StringBuilder("SELECT featuregroup FROM (");
-		builder.append("(select distinct featuregroup from DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE	"
-				+ "left outer join LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id "
-				+ "where DISTRIBUTORLMSFEATURE.distributor_id= "+distributorId+" and DISTRIBUTORLMSFEATURE.ENABLEDTF=1)"); 
-		builder.append(" UNION ");
-		builder.append("(select distinct featuregroup from CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE "
-				+ "left outer join LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id	"
-				+ "where CUSTOMERLMSFEATURE.CUSTOMER_id= "+customerId+" and CUSTOMERLMSFEATURE.ENABLEDTF=1) ");
+		Map<String, String> disabledFeature = new HashMap<String, String>();
 
-		builder.append(") AS TEMPTABLE");
+		StringBuilder builder = new StringBuilder("SELECT featuregroup, featurecode\n" + 
+				"FROM (\n" + 
+				"        (\n" + 
+				"          select distinct featuregroup, featurecode\n" + 
+				"          from DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
+				"          left outer join LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"          where DISTRIBUTORLMSFEATURE.distributor_id= :distributorId\n" + 
+				"          and DISTRIBUTORLMSFEATURE.ENABLEDTF=0\n" + 
+				"        ) \n" + 
+				"        UNION \n" + 
+				"        (\n" + 
+				"          select distinct featuregroup, featurecode\n" + 
+				"          from CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
+				"          left outer join LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"          where CUSTOMERLMSFEATURE.CUSTOMER_id= :customerId\n" + 
+				"          and CUSTOMERLMSFEATURE.ENABLEDTF=0\n" + 
+				"        )\n" + 
+				"      ) as disabledfeatures");
+
 		
 		Query query = entityManager.createNativeQuery(builder.toString());
-		List<String> featureGroups = (ArrayList<String>)query.getResultList();
+		query.setParameter("distributorId", distributorId);
+		query.setParameter("customerId", customerId);
+		List<Object[]> results = query.getResultList();
 		
-		return featureGroups;
+		if(results != null) {
+			results.forEach(r -> {
+				disabledFeature.put(r[0].toString(), r[1].toString());
+			});
+		}
+		
+		return disabledFeature;
 	}
 
 	public Map<String, String> countLearnerByRoles(Long [] roleIds){
@@ -225,5 +245,13 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 			}
 		}
 		return mapA;
+	}
+
+	public VU360UserService getVu360UserService() {
+		return vu360UserService;
+	}
+
+	public void setVu360UserService(VU360UserService vu360UserService) {
+		this.vu360UserService = vu360UserService;
 	}
 }

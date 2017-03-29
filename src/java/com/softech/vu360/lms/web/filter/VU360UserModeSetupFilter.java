@@ -2,8 +2,10 @@ package com.softech.vu360.lms.web.filter;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -37,15 +39,14 @@ import org.springframework.security.web.authentication.switchuser.SwitchUserFilt
 import org.springframework.security.web.authentication.switchuser.SwitchUserGrantedAuthority;
 import org.springframework.util.Assert;
 
+import com.softech.vu360.lms.helpers.ManagerHelper;
 import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Customer;
-import com.softech.vu360.lms.model.LMSFeature;
 import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.service.CustomerService;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.SecurityAndRolesService;
 import com.softech.vu360.lms.service.VU360UserService;
-import com.softech.vu360.lms.util.UserPermissionChecker;
 import com.softech.vu360.lms.web.controller.model.Menu;
 import com.softech.vu360.util.RedirectUtils;
 /**
@@ -1768,150 +1769,7 @@ private void attemptAccreditationSwitchBackFromLearnerUser(HttpServletRequest re
 	
 	public String getManagerRedirectURL(HttpServletRequest request)
 	{
-		//Customer customer = null;
-		String redirectURL = null;
-		String roleType = "ROLE_TRAININGADMINISTRATOR";
-		com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
-		//List<CustomerLMSFeature> lstcustomerLMSFeatures = securityService.getCustomerLMSFeatures (user.getLearner().getCustomer(), roleType);
-		//List<LMSRoleLMSFeature> lstcustomerLMSFeatures = securityService.findLMSRoleLMSFeatureByUser(user.getId(), user.getLearner().getCustomer().getId(), roleType);
-		List<LMSFeature> lstcustomerLMSFeatures =  securityService.findAllActiveLMSFeaturesByUser(user.getId(), user.getLearner().getCustomer().getId(), roleType);
-		for(LMSFeature userLMSFeature : lstcustomerLMSFeatures)
-		{
-			if(UserPermissionChecker.hasAccessToFeature(userLMSFeature.getFeatureCode(), user, request.getSession()))
-			{
-				log.debug(userLMSFeature.getFeatureName());
-				
-				if(userLMSFeature.getFeatureCode().equals("AssignTrainingPlans"))
-				 {
-				   redirectURL = "/mgr_assignTraningPlan.do";
-				   break;
-				 } 
-				else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0029"))
-				 {
-				   redirectURL = "/mgr_learnerEnrollments.do?method=showSearchLearnerPage";
-				   break;
-				 }  
-				
-				else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0001"))
-				 {
-				   redirectURL = "/mgr_manageLearners.do";
-				   break;
-				 } 
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0002"))
-				 {
-				   redirectURL = "/mgr_batchImportLearners.do";
-				   break;
-				 }
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0003"))
-				 {
-				   redirectURL = "/mgr_regInvitation-1.do";
-				   break;
-				 } 
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0004"))
-				 {
-				   redirectURL = "/mgr_manageOrganizationGroup.do";
-				   break;
-				 } 
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0005"))
-				 {
-				   redirectURL = "/mgr_manageLearnerGroups.do";
-				   break;
-				 }
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0006"))
-				 {
-				   redirectURL = "/mgr_manageSecurityRoles.do?method=showSecurityRoles";
-				   break;
-				 } 
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0007"))
-				 {
-				   redirectURL = "/mgr_viewAssignSecurityRoleMain.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0008"))
-				 {
-				   redirectURL = "/mgr_viewPlanAndEnroll.do";
-				   break;
-				 }
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0009"))
-				 {
-				   redirectURL = "/mgr_searchTrainingPlans.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0010"))
-				 {
-				   redirectURL = "/mgr_manageSynchronousCourse.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0011"))
-				 {
-				   redirectURL = "/mgr_viewAllEntitlements.do";
-				   break;
-				 }
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0012"))
-				 {
-				   redirectURL = "/mgr_ManageReports.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0013"))
-				 {
-				   redirectURL = "/mgr_ManageReports.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0014"))
-				 {
-				   redirectURL = "/mgr_ManageReports.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0015"))
-				 {
-				   redirectURL = "/mgr_ManageReports.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0032"))
-				 {
-				   redirectURL = "/mgr_ManageReports.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0017"))
-				 {
-				   redirectURL = "/mgr_alertCourse.do";
-				   break;
-				 }
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0018"))
-				 {
-				   redirectURL = "/mgr_sendMailToLearners.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0019"))
-				 {
-				   redirectURL = "/mgr_viewAssignSurveyMain.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0020"))
-				 {
-				   redirectURL = "/mgr_manageSurveys.do";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0023"))
-				 {
-				   redirectURL = "/mgr_editCustomer.do?method=editCustomerProfile";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0024"))
-				 {
-				   redirectURL = "/mgr_editCustomer.do?method=editCustomerPreferences";
-				   break;
-				 }  
-				 else if(userLMSFeature.getFeatureCode().equals("LMS-MGR-0025"))
-				 {
-				   redirectURL = "/mgr_ViewEnrollmentForCertEnableDisable.do?method=searchLearner";
-				   break;
-				 }  
-
-			}
-		}
-		return redirectURL;
+		return ManagerHelper.getManagerURL(request);
 	}
 
 }
