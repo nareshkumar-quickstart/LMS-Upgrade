@@ -10,7 +10,6 @@ public class VU360UserAudit implements SearchableKey {
     private Long id;
     private String userGUID = null;
     private String username = null;
-    private String domain = null;
     private String emailAddress = null;
     private String firstName = null;
     private String lastName = null;
@@ -75,17 +74,6 @@ public class VU360UserAudit implements SearchableKey {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
-
-	public String getDomain() {
-		return domain;
-	}
-
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
 
 	public String getEmailAddress() {
 		return emailAddress;
