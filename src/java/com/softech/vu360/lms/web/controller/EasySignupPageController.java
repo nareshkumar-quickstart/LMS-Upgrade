@@ -221,7 +221,7 @@ public class EasySignupPageController implements Controller {
 			AuthenticationCredential authCredential = new AuthenticationCredential();
 			authCredential.setUsername(userLoggedin.getUsername());
 			authCredential.setPassword(this.easySignupForm.getrPassword());
-			authCredential.setDomain(userLoggedin.getDomain());
+			//authCredential.setDomain(userLoggedin.getDomain());
 			
 
 			// Create Customer Primary address Object (Billing Address)

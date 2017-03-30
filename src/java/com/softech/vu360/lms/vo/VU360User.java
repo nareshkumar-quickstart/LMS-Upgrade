@@ -21,7 +21,6 @@ public class VU360User implements UserDetails, Serializable{
 	private Long id;
 	private String userGUID = null;
 	private String username = null;
-	private String domain = null;
 	private String emailAddress = null;
 	private String firstName = null;
 	private String lastName = null;
@@ -175,14 +174,6 @@ public class VU360User implements UserDetails, Serializable{
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
 	}
 
 	public void setUsername(String username) {
