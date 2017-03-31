@@ -25,6 +25,7 @@ import com.softech.vu360.lms.model.RegistrationInvitation;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.LearnerService;
 import com.softech.vu360.lms.service.OrgGroupLearnerGroupService;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.SelfRegistrationInvitationForm;
@@ -42,6 +43,8 @@ public class AddSelfRegistrationInvitationWizardController extends AbstractWizar
 	private static final Logger log = Logger.getLogger(AddLearnerController.class.getName());
 	private String closeTemplate = null;
 	private LearnerService learnerService;
+	private VU360UserService vu360UserService;
+
 	private JavaMailSenderImpl mailSender;
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 	private VelocityEngine velocityEngine;
@@ -174,7 +177,7 @@ public class AddSelfRegistrationInvitationWizardController extends AbstractWizar
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 
 			Long customerId = null;
-			if (loggedInUser.isLMSAdministrator())
+			if (vu360UserService.hasAdministratorRole(loggedInUser))
 				customerId = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomerId();
 			else
 				customerId = loggedInUser.getLearner().getCustomer().getId();
@@ -392,14 +395,19 @@ public class AddSelfRegistrationInvitationWizardController extends AbstractWizar
 		this.orgGroupLearnerGroupService = orgGroupLearnerGroupService;
 	}
 
-
 	public VelocityEngine getVelocityEngine() {
 		return velocityEngine;
 	}
-
 
 	public void setVelocityEngine(VelocityEngine velocityEngine) {
 		this.velocityEngine = velocityEngine;
 	}
 
+	public VU360UserService getVu360UserService() {
+		return vu360UserService;
+	}
+
+	public void setVu360UserService(VU360UserService vu360UserService) {
+		this.vu360UserService = vu360UserService;
+	}
 }

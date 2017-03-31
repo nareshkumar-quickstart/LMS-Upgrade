@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.softech.vu360.lms.LmsTestConfig;
 import com.softech.vu360.lms.model.Address;
@@ -23,14 +23,19 @@ import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerProfile;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.util.GUIDGeneratorUtil;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=LmsTestConfig.class)
 @Transactional
-public class VU360UserRepositoryTest{
+public class VU360UserRepositoryTest {
 
 	@Inject
 	private VU360UserRepository vu360UserRepository;
+	
+	@Inject
+	private VU360UserService vu360UserService;
 	
 	//@Test
 	public void findByUsernameOrEmailAddressAndDomain() {
@@ -419,14 +424,18 @@ public class VU360UserRepositoryTest{
 		System.out.println("No. of Users count" +usersCount );
 	}
 	
-	@Test
+	//@Test
 	public void VU360User_showAllLearners(){
 		VU360User u = vu360UserRepository.findOne(new Long(558716));
 		Long[] idbucekt = {558716L,558700L,558701L,558702L,558703L,558704L,558720L,558705L,558722L,558707L,558708L,558709L};
 		List<VU360User> ls = vu360UserRepository.showAll(null, 
-				u.isLMSAdministrator(),u.getTrainingAdministrator().isManagesAllOrganizationalGroups(), u.getLearner().getCustomer().getId(), u.getId(), 
+				vu360UserService.hasAdministratorRole(u),u.getTrainingAdministrator().isManagesAllOrganizationalGroups(), u.getLearner().getCustomer().getId(), u.getId(), 
 				"", "2016", "", "", idbucekt, false, false, null, null, false, "firstName", 1);
 		Assert.assertNotNull(ls);
 	}
 
+	@Test
+	public void VU360User_hasAtLeastOnePermssionEnabled() {
+		vu360UserRepository.hasAtLeastOnePermssionOfRoleEnabled(1L, 1L);
+	}
 }

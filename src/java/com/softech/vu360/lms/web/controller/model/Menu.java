@@ -25,7 +25,7 @@ public class Menu implements ILMSBaseInterface {
 	{	
 		boolean setup=false;
 		
-		if(user.isInLearnerRole())
+		if(user.isLearnerMode())
 		{
 			HttpSession session = request.getSession();
 			//log.debug("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + session.getAttribute("isAdminSwitch"));

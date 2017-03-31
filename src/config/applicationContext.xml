@@ -51,7 +51,10 @@
 		base-package="com.softech.vu360.lms.web.restful.request.**.driver" />
 	<context:component-scan
 		base-package="com.softech.vu360.lms.web.restful.request.**.responsible" />
+	<context:component-scan base-package="com.softech.vu360.util" />
 	<context:component-scan base-package="com.softech.vu360.lms.rest" />
+	<context:component-scan base-package="com.softech.vu360.lms.util" />
+	<context:component-scan base-package="com.softech.vu360.lms.helpers" />
 	<mvc:annotation-driven />
 	<context:property-placeholder location="/WEB-INF/classes/vu360-lms.properties" />
 
@@ -80,24 +83,12 @@
 	<bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
 
 	<tx:annotation-driven />
-
+	
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 		<property name="dataSource" ref="dataSource" />
 		<property name="jpaDialect" ref="jpaDialect" />
 	</bean>
-
-
-
-	<!-- <bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-		<property name="url"
-			value="jdbc:sqlserver://kar-db-2\lms;databaseName=vu360_dev_5_2" />
-		<property name="username" value="lms-rwe" />
-		<property name="password" value="lms!@#$" />
-	</bean> -->
-
 
 	<!-- ========================= SERVICE/BUSINESS LOGIC DEFINITIONS ========================= -->
 	<bean id="myAspect" class="com.softech.vu360.lms.aspects.audit.AuditLogAspect"/>
@@ -461,7 +452,7 @@
 	
 	<bean id="aiccAssignableUnitService" class="com.softech.vu360.lms.service.impl.AICCAssignableUnitServiceImpl"/>
 	
-	<bean id="velocityEngine"
+	<!-- <bean id="velocityEngine"
 		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
 		<property name="velocityProperties">
 			<value>
@@ -469,6 +460,20 @@
 				class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
 			</value>
 		</property>
+	</bean> -->
+
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	    <property name="preferFileSystemAccess" value="false" />
+	    <property name="velocityProperties">
+	        <props>
+	            <prop key="class.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
+	            <prop key="file.resource.loader.cache">true</prop>
+	            <prop key="class.resource.loader.cache">true</prop>
+	            <prop key="velocimacro.library.autoreload">false</prop>
+	            <prop key="input.encoding">utf-8</prop>
+	            
+	        </props>
+	    </property>
 	</bean>
 
 	<!-- Active MQ Configuration -->
@@ -609,7 +614,7 @@
 	   	jndi-name="jdbc/lcms"
 	   	expected-type="javax.sql.DataSource" 
 	   	resource-ref="true" />
-	   	
+
    	<mvc:resources mapping="/avatars/**" location="/avatars/" />
 	<mvc:resources mapping="/bandwidth/**" location="/bandwidth/" />
 	<mvc:resources mapping="/brands/**" location="/brands/" />

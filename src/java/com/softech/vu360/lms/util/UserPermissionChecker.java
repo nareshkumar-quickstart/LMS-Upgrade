@@ -2,26 +2,14 @@ package com.softech.vu360.lms.util;
 
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 
-import com.softech.vu360.lms.model.LMSRole;
-import com.softech.vu360.lms.model.LMSRoleLMSFeature;
-import com.softech.vu360.lms.model.VU360User;
-
-/**
- * Refactor out permission checking code from VU360User class to this one
- * 
- * @author sm.humayun
- * @since 4.19 {LMS-11293}
- */
 public class UserPermissionChecker {
 
-	public static String DISABLED_FEATURE_CODES = "DISABLED_FEATURE_CODES";
-	public static String DISABLED_FEATURE_GROUPS = "DISABLED_FEATURE_GROUPS";
-	private static Logger log = Logger.getLogger(UserPermissionChecker.class);
+	public static final String DISABLED_FEATURE_CODES = "DISABLED_FEATURE_CODES";
+	public static final String DISABLED_FEATURE_GROUPS = "DISABLED_FEATURE_GROUPS";
+	private static final Logger log = Logger.getLogger(UserPermissionChecker.class);
 	
 	@SuppressWarnings("unchecked")
 	private static Set<String> getDisabledFeatureGroups (HttpSession session)
