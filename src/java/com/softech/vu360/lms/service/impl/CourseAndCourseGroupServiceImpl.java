@@ -358,7 +358,7 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		List<TrainingPlanAssignment> trainingPlanAssignments = this.trainingPlanAssignmentRepository.findDistinctByLearnerEnrollmentsIn(enrollments);
 		//Modified By MariumSAud : Code added to reload TrainPlanAssignment with LearenrEnrollment and TrainingPlan Entity Graph in order to avoid Proxy Error 
 		// due to no of queries execution while displaying Learner > MyCourses. Entity Graph can not be used with JPA IN clause (Hibernate Bug)
-//		List<TrainingPlanAssignment> trainingPlanAssignmentsWithEntityGraph = new ArrayList<TrainingPlanAssignment>();
+		List<TrainingPlanAssignment> trainingPlanAssignmentsWithEntityGraph = new ArrayList<TrainingPlanAssignment>();
 
 		//http://jira.360training.com/browse/LMS-22136
 		//I am commenting out this code in the ticket above. Not needed.//Muhammad Sajjad
@@ -367,7 +367,7 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 			trainingPlanAssignmentsWithEntityGraph.add(trainingPlanAssignment);
 		}*/
 
-		return trainingPlanAssignments;
+		return trainingPlanAssignmentsWithEntityGraph;
 	}
 	
 	public List<Map<Object, Object>> getCoursesForCatalog(long learnerId,List<CustomerEntitlement> customerEntitlements, String search){
