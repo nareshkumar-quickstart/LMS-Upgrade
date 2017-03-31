@@ -56,11 +56,11 @@ public class ValidationQuestion implements SearchableKey{
 	
 	@OneToOne
     @JoinColumn(name="CREATED_BY")
-	private VU360UserNew createdBy=null;
+	private VU360User createdBy=null;
 	
 	@OneToOne
     @JoinColumn(name="MODIFIED_BY")
-	private VU360UserNew modifiedBy=null;
+	private VU360User modifiedBy=null;
 	
 	@Column(name="CREATED_DATE")
 	private Date createdDate=null;
@@ -130,19 +130,19 @@ public class ValidationQuestion implements SearchableKey{
 		this.isActive = isActive;
 	}
 
-	public VU360UserNew getCreatedBy() {
+	public VU360User getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(VU360UserNew createdBy) {
+	public void setCreatedBy(VU360User createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public VU360UserNew getModifiedBy() {
+	public VU360User getModifiedBy() {
 		return modifiedBy;
 	}
 
-	public void setModifiedBy(VU360UserNew modifiedBy) {
+	public void setModifiedBy(VU360User modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
 

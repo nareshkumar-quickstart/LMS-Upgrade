@@ -232,14 +232,14 @@ public class AddInstructorWizardController extends AbstractWizardFormController 
 			HttpServletResponse response, Object command, BindException errors)	throws Exception {
 
 		log.debug("IN processFinish");
-        com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
 		Customer customer = null;
-		if( loggedInUserVO.isLMSAdministrator() ) {
+		if( loggedInUser.isLMSAdministrator() ) {
 			customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().
 					getAuthentication().getDetails()).getCurrentCustomer();
 		} else {
-			customer = customerService.getCustomerById(loggedInUserVO.getLearner().getCustomer().getId());
+			customer = loggedInUser.getLearner().getCustomer();
 		}
 
 		ContentOwner contentOwner = customer.getContentOwner();

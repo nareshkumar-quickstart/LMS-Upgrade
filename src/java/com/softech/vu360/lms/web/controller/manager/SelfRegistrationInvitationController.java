@@ -429,14 +429,13 @@ public class SelfRegistrationInvitationController extends MultiActionController 
 		try {
 			RegistrationInvitation regInvitation = null;
 			HttpSession session = request.getSession();
-			com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 			regInvitation = (RegistrationInvitation)session.getAttribute("regInvitationSession");
 
-			if (user.isLMSAdministrator()) {
+			if (user.isLMSAdministrator())
 				regInvitation.setCustomer(((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer());
-			} else {
-				regInvitation.setCustomer(learnerService.findCustomerByLearnerId(user.getLearner().getId()));
-			}
+			else
+				regInvitation.setCustomer(user.getLearner().getCustomer());
 
 			learnerService.saveRegistrationInvitation(regInvitation);
 

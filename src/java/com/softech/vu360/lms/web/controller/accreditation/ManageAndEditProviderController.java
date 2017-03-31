@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,14 +28,15 @@ import com.softech.vu360.lms.model.Provider;
 import com.softech.vu360.lms.model.SSNCustomFiled;
 import com.softech.vu360.lms.model.SingleLineTextCustomFiled;
 import com.softech.vu360.lms.model.SingleSelectCustomField;
+import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.AccreditationService;
-import com.softech.vu360.lms.service.RegulatoryAnalystService;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
 import com.softech.vu360.lms.web.controller.model.accreditation.ManageCustomField;
 import com.softech.vu360.lms.web.controller.model.accreditation.ProviderForm;
 import com.softech.vu360.lms.web.controller.model.customfield.CustomFieldBuilder;
 import com.softech.vu360.lms.web.controller.validator.Accreditation.AddProviderValidator;
+import com.softech.vu360.util.Brander;
 import com.softech.vu360.util.CustomFieldEntityType;
 import com.softech.vu360.util.CustomFieldSort;
 import com.softech.vu360.util.HtmlEncoder;
@@ -51,8 +52,6 @@ public class ManageAndEditProviderController extends VU360BaseMultiActionControl
 	private static final Logger log = Logger.getLogger(ManageAndEditInstructorController.class.getName());
 
 	private AccreditationService accreditationService;
-	@Inject
-	private RegulatoryAnalystService regulatoryAnalystService;
 //	HttpSession session = null;
 
 	private String searchProviderTemplate = null;
@@ -172,10 +171,9 @@ public class ManageAndEditProviderController extends VU360BaseMultiActionControl
 //			session = request.getSession();
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			Map<String, String> PagerAttributeMap = new HashMap <String, String>();
-	        com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			String name = (request.getParameter("providerName") == null) ? "" : request.getParameter("providerName");
-			List<Provider> providers = accreditationService.findProviders(name,regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
+			List<Provider> providers = accreditationService.findProviders(name,loggedInUser.getRegulatoryAnalyst());
 
 			name = HtmlEncoder.escapeHtmlFull(name).toString();
 			context.put("name", name);
@@ -232,7 +230,7 @@ public class ManageAndEditProviderController extends VU360BaseMultiActionControl
 			Object command, BindException errors ) throws Exception {
 		try {
 			Map<Object, Object> context = new HashMap<Object, Object>();
-	        com.softech.vu360.lms.vo.VU360User loggedInUserVO = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			if  ( request.getParameterValues("providers") != null ) {
 				long[] id = new long[request.getParameterValues("providers").length];
 				String []checkID = request.getParameterValues("providers");
@@ -245,7 +243,7 @@ public class ManageAndEditProviderController extends VU360BaseMultiActionControl
 				}
 				log.debug("TO BE DELETED ::- "+id.length);
 			}
-			List<Provider> providers = accreditationService.findProviders("", regulatoryAnalystService.getRegulatoryAnalystById(loggedInUserVO.getRegulatoryAnalyst().getId()));
+			List<Provider> providers = accreditationService.findProviders("", loggedInUser.getRegulatoryAnalyst());
 			context.put("providers", providers);
 			return new ModelAndView(searchProviderTemplate, "context", context);
 
