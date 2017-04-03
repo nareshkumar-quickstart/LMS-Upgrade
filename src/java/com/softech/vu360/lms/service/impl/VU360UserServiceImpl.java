@@ -84,7 +84,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 	
 	@Override
 	public VU360User getUserByUsernameAndDomain(String username,String domain) {
-		List<VU360User> results = vu360UserRepository.findUserByUsernameAndDomain(username , domain);
+		List<VU360User> results = vu360UserRepository.getActiveUserByUsername(username);
 		if ( !results.isEmpty() ) {
 			VU360User user = results.get(0);
 			checkForPermission(user);

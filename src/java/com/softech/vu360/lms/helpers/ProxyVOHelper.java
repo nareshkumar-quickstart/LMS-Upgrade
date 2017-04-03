@@ -495,7 +495,6 @@ public class ProxyVOHelper {
 		usrVO.setChangePasswordOnLogin(vu360UserModel.getChangePasswordOnLogin());
 		usrVO.setCreatedDate(vu360UserModel.getCreatedDate());
 		usrVO.setCredentialsNonExpired(vu360UserModel.isCredentialsNonExpired());
-		usrVO.setDomain(vu360UserModel.getDomain());
 		usrVO.setEmailAddress(vu360UserModel.getEmailAddress());
 		usrVO.setEnabled(vu360UserModel.getEnabled());
 		usrVO.setExpirationDate(vu360UserModel.getExpirationDate());
@@ -544,7 +543,6 @@ public class ProxyVOHelper {
 		usrVO.setChangePasswordOnLogin(vu360UserModel.getChangePasswordOnLogin());
 		usrVO.setCreatedDate(vu360UserModel.getCreatedDate());
 		usrVO.setCredentialsNonExpired(vu360UserModel.isCredentialsNonExpired());
-		usrVO.setDomain(vu360UserModel.getDomain());
 		usrVO.setEmailAddress(vu360UserModel.getEmailAddress());
 		usrVO.setEnabled(vu360UserModel.getEnabled());
 		usrVO.setExpirationDate(vu360UserModel.getExpirationDate());

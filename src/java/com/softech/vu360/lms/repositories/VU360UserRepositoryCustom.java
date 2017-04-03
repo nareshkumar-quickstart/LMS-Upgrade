@@ -13,11 +13,7 @@ import com.softech.vu360.lms.model.VU360UserAudit;
 
 public interface VU360UserRepositoryCustom {
 
-
-	public List<VU360User> findUserByUsernameAndDomain(String username, String domain);
-
-	public List<VU360User> getUserByFirstNameAndLastName(Customer cust,
-			String firstName, String lastName);
+	public List<VU360User> getUserByFirstNameAndLastName(Customer cust,String firstName, String lastName);
 
 	public List<VU360User> getActiveUserByUsername(String username);
 
@@ -31,8 +27,7 @@ public interface VU360UserRepositoryCustom {
 
 	public List<VU360User> getUserByIds(String[] idl);
 
-	public List<VU360User> getUserByEmailFirstNameLastName(String email,
-			String firstName, String lastName);
+	public List<VU360User> getUserByEmailFirstNameLastName(String email,String firstName, String lastName);
 
 	public List<VU360User> getListOfUsersByGUID(List<String> guids);
 
@@ -40,9 +35,8 @@ public interface VU360UserRepositoryCustom {
 
 	public VU360User updateUserWithLoad(VU360User updatedUser);
 
-	public Map findUsers(String firstName, String lastName, String email,
-			VU360User loggedInUser, int pageIndex, int pageSize, String sortBy,
-			int sortDirection);
+	public Map<Object, Object> findUsers(String firstName, String lastName, String email,
+			VU360User loggedInUser, int pageIndex, int pageSize, String sortBy,	int sortDirection);
 
 	public Map<Object, Object> findAllLearners(String firstName,
 			String lastName, String email, VU360User loggedInUser,
