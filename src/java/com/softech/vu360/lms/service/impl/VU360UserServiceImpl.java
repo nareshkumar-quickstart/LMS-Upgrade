@@ -330,9 +330,9 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return results;
 	}	
 	
-	public VU360User getUpdatedUserById(Long id) {
-		return vu360UserRepository.getUpdatedUserById(id);
-	}
+//	public VU360User getUpdatedUserById(Long id) {
+//		return vu360UserRepository.getUpdatedUserById(id);
+//	}
 	
 	public List<VU360User> searchCustomerUsers(Customer customer, String firstName, String lastName,
 			String email, String sortBy, int sortDirection) {
