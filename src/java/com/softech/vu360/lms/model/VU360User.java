@@ -26,24 +26,31 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
+import org.hibernate.engine.spi.PersistentAttributeInterceptable;
+import org.hibernate.engine.spi.PersistentAttributeInterceptor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
- * 
+ *
  * @author haider.ali, Muhammad Saleem
  * modified by marium.saud
  */
 @Entity
 @NamedStoredProcedureQuery(name = "VU360User.getOrganizational_Group_Members", procedureName = "LMS_GETORGANIZATIONALGROUP_MEMBERS", parameters = {
-		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "VU360USER_ID", type = Long.class),
-		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "CUSTOMER_ID", type = Long.class) })
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "VU360USER_ID", type = Long.class),
+		@StoredProcedureParameter(mode = ParameterMode.IN, name = "CUSTOMER_ID", type = Long.class) })
 
 @Table(name = "VU360USER")
-public class VU360User implements Serializable {
+public class VU360User implements Serializable, PersistentAttributeInterceptable {
 
 	private static final long serialVersionUID = 52260678146352048L;
 	private static Logger log = Logger.getLogger(VU360User.class);
+
+	@Transient
+	private PersistentAttributeInterceptor interceptor;
 
 	@Id
 	@javax.persistence.TableGenerator(name = "VU360USER_ID", table = "VU360_SEQ", pkColumnName = "TABLE_NAME", valueColumnName = "NEXT_ID", pkColumnValue = "vu360user", allocationSize = 1)
@@ -57,11 +64,11 @@ public class VU360User implements Serializable {
 	@Column(name = "USERNAME", unique = true, nullable = false)
 	private String username = null;
 
-/*	
- * As their is no record in PROD and as well as in DEV; let's remove this one
- * @Column(name = "DOMAIN")
-	private String domain = null;
-*/
+	/*
+     * As their is no record in PROD and as well as in DEV; let's remove this one
+     * @Column(name = "DOMAIN")
+        private String domain = null;
+    */
 	@Column(name = "EMAILADDRESS", unique = false, nullable = false)
 	private String emailAddress = null;
 
@@ -115,29 +122,32 @@ public class VU360User implements Serializable {
 
 	@Column(name = "EXPIRATIONDATE")
 	private Date expirationDate = null;
-	
+
 	@Column(name = "NotifyOnLicenseExpire")
 	private Boolean  notifyOnLicenseExpire = Boolean.TRUE;
-	
-	@OneToOne(mappedBy="vu360User") 
+
+	@OneToOne(mappedBy="vu360User", fetch = FetchType.LAZY)
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private Learner learner;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="vu360User" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private TrainingAdministrator trainingAdministrator;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="vu360User" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private LMSAdministrator lmsAdministrator;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Proctor proctor;
 
-	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE }) 
+	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private RegulatoryAnalyst regulatoryAnalyst;
 
-	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE }) 
+	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private Instructor instructor;
 
-	@ManyToMany(fetch=FetchType.LAZY, cascade={CascadeType.MERGE })
+	@ManyToMany(cascade={CascadeType.MERGE })
 	@JoinTable(name="VU360USER_ROLE", joinColumns = @JoinColumn(name="USER_ID"),inverseJoinColumns = @JoinColumn(name="ROLE_ID"))
 	private Set<LMSRole> lmsRoles = new HashSet<LMSRole>();
 
@@ -171,17 +181,17 @@ public class VU360User implements Serializable {
 	/**
 	 * Added By Marium Saud
 	 * Fields required for Search All Users
-	 * 
+	 *
 	 */
 	@Transient
 	private Long roleID;
-	
+
 	@Transient
 	private String roleName;
-	
+
 	@Transient
 	private Long learnerID;
-	
+
 	@Transient
 	private Integer accountNonLockedInt;
 
@@ -246,7 +256,7 @@ public class VU360User implements Serializable {
 	}
 
 	public void setNumLogons(Integer numLogons) {
-		
+
 		this.numLogons = numLogons;
 	}
 
@@ -311,27 +321,48 @@ public class VU360User implements Serializable {
 	}
 
 	public Learner getLearner() {
-		return learner;
+		if(interceptor != null){
+			this.learner = (Learner) this.interceptor.readObject(this, "learner", this.learner);
+		}
+			return learner;
 	}
 
 	public void setLearner(Learner learner) {
-		this.learner = learner;
+		Learner learnerVal = learner;
+		if(interceptor != null){
+			learnerVal = (Learner)this.interceptor.writeObject(this, "learner", this.learner, learner);
+		}
+		this.learner = learnerVal;
 	}
 
 	public TrainingAdministrator getTrainingAdministrator() {
-		return trainingAdministrator;
+		if(this.interceptor != null){
+			this.trainingAdministrator = (TrainingAdministrator) this.interceptor.readObject(this, "trainingAdministrator", trainingAdministrator);
+		}
+		return this.trainingAdministrator;
 	}
 
 	public void setTrainingAdministrator(TrainingAdministrator trainingAdministrator) {
-		this.trainingAdministrator = trainingAdministrator;
+		TrainingAdministrator trainingAdmin = trainingAdministrator;
+		if(this.interceptor != null){
+			trainingAdmin = (TrainingAdministrator) this.interceptor.writeObject(this, "trainingAdministrator", this.trainingAdministrator, trainingAdministrator);
+		}
+		this.trainingAdministrator = trainingAdmin;
 	}
 
 	public LMSAdministrator getLmsAdministrator() {
-		return lmsAdministrator;
+		if(this.interceptor != null){
+			this.lmsAdministrator = (LMSAdministrator) this.interceptor.readObject(this, "lmsAdministrator", lmsAdministrator);
+		}
+		return this.lmsAdministrator;
 	}
 
 	public void setLmsAdministrator(LMSAdministrator lmsAdministrator) {
-		this.lmsAdministrator = lmsAdministrator;
+		LMSAdministrator lmsAdmin = lmsAdministrator;
+		if(this.interceptor != null) {
+			lmsAdmin = (LMSAdministrator) this.interceptor.writeObject(this, "lmsAdministrator", this.lmsAdministrator, lmsAdministrator);
+		}
+		this.lmsAdministrator = lmsAdmin;
 	}
 
 	public Proctor getProctor() {
@@ -412,7 +443,10 @@ public class VU360User implements Serializable {
 	}
 
 	public Set<LMSRole> getLmsRoles() {
-		return lmsRoles;
+		if(this.interceptor != null){
+			this.lmsRoles = (Set<LMSRole>) this.interceptor.readObject(this, "lmsRoles", lmsRoles);
+		}
+		return this.lmsRoles;
 	}
 
 	public void addLmsRole(LMSRole lmsRole) {
@@ -420,7 +454,11 @@ public class VU360User implements Serializable {
 	}
 
 	public void setLmsRoles(Set<LMSRole> lmsRoles) {
-		this.lmsRoles = lmsRoles;
+		Set<LMSRole> lmsRolesList = lmsRoles;
+		if(this.interceptor != null){
+			lmsRolesList = (Set<LMSRole>) this.interceptor.writeObject(this, "lmsRoles", this.lmsRoles, lmsRoles);
+		}
+		this.lmsRoles = lmsRolesList;
 
 		this.isAdminMode = false;
 		this.isProctorMode = false;
@@ -500,136 +538,136 @@ public class VU360User implements Serializable {
 	}
 
 	public void updateDeepValues(VU360User user)
-    {
-        this.setAcceptedEULA(user.isAcceptedEULA());
-        this.setNewUser(user.isNewUser());
-        this.setAccountNonExpired(user.getAccountNonExpired());
-        this.setAccountNonLocked(user.getAccountNonLocked());
-        this.setChangePasswordOnLogin(user.getChangePasswordOnLogin());
-        this.setCreatedDate(user.getCreatedDate());
-        this.setCredentialsNonExpired(user.isCredentialsNonExpired());
-        this.setEmailAddress(user.getEmailAddress());
-        this.setEnabled(user.getEnabled());
-        this.setExpirationDate(user.getExpirationDate());
-        this.setLastLogonDate(user.getLastLogonDate());
-        this.setFirstName(user.getFirstName());
-        this.setLastName(user.getLastName());
-        this.setLastUpdatedDate(user.getLastUpdatedDate());
-        this.setMiddleName(user.getMiddleName());
-        this.setNumLogons(user.getNumLogons());
-        this.setUsername(user.getUsername());
-        this.setPassword(user.getPassword());
-        this.setVissibleOnReport(user.getVissibleOnReport());
-        this.setUserGUID(user.getUserGUID());
-        this.setShowGuidedTourScreenOnLogin(user.getShowGuidedTourScreenOnLogin());
-        this.getLearner().getLearnerProfile().setTimeZone(user.getLearner().getLearnerProfile().getTimeZone());
+	{
+		this.setAcceptedEULA(user.isAcceptedEULA());
+		this.setNewUser(user.isNewUser());
+		this.setAccountNonExpired(user.getAccountNonExpired());
+		this.setAccountNonLocked(user.getAccountNonLocked());
+		this.setChangePasswordOnLogin(user.getChangePasswordOnLogin());
+		this.setCreatedDate(user.getCreatedDate());
+		this.setCredentialsNonExpired(user.isCredentialsNonExpired());
+		this.setEmailAddress(user.getEmailAddress());
+		this.setEnabled(user.getEnabled());
+		this.setExpirationDate(user.getExpirationDate());
+		this.setLastLogonDate(user.getLastLogonDate());
+		this.setFirstName(user.getFirstName());
+		this.setLastName(user.getLastName());
+		this.setLastUpdatedDate(user.getLastUpdatedDate());
+		this.setMiddleName(user.getMiddleName());
+		this.setNumLogons(user.getNumLogons());
+		this.setUsername(user.getUsername());
+		this.setPassword(user.getPassword());
+		this.setVissibleOnReport(user.getVissibleOnReport());
+		this.setUserGUID(user.getUserGUID());
+		this.setShowGuidedTourScreenOnLogin(user.getShowGuidedTourScreenOnLogin());
+		this.getLearner().getLearnerProfile().setTimeZone(user.getLearner().getLearnerProfile().getTimeZone());
 
-        LearnerProfile lp=this.getLearner().getLearnerProfile();
-        LearnerProfile lp2=user.getLearner().getLearnerProfile();
-        lp.setMobilePhone(lp2.getMobilePhone());
-        lp.setOfficePhone(lp2.getOfficePhone());
-        lp.setOfficePhoneExtn(lp2.getOfficePhoneExtn());
+		LearnerProfile lp=this.getLearner().getLearnerProfile();
+		LearnerProfile lp2=user.getLearner().getLearnerProfile();
+		lp.setMobilePhone(lp2.getMobilePhone());
+		lp.setOfficePhone(lp2.getOfficePhone());
+		lp.setOfficePhoneExtn(lp2.getOfficePhoneExtn());
 
 
-        if(lp.getLearnerAddress()==null || lp2.getLearnerAddress()==null)
-        {
-            lp.setLearnerAddress(lp2.getLearnerAddress());
+		if(lp.getLearnerAddress()==null || lp2.getLearnerAddress()==null)
+		{
+			lp.setLearnerAddress(lp2.getLearnerAddress());
 
-        }
-        else
-        {
-            lp.getLearnerAddress().setCity(lp2.getLearnerAddress().getCity());
-            lp.getLearnerAddress().setCountry(lp2.getLearnerAddress().getCountry());
-            lp.getLearnerAddress().setProvince(lp2.getLearnerAddress().getProvince());
-            lp.getLearnerAddress().setState(lp2.getLearnerAddress().getState());
-            lp.getLearnerAddress().setStreetAddress(lp2.getLearnerAddress().getStreetAddress());
-            lp.getLearnerAddress().setStreetAddress2(lp2.getLearnerAddress().getStreetAddress2());
-            lp.getLearnerAddress().setStreetAddress3(lp2.getLearnerAddress().getStreetAddress3());
-            lp.getLearnerAddress().setZipcode(lp2.getLearnerAddress().getZipcode());
-        }
+		}
+		else
+		{
+			lp.getLearnerAddress().setCity(lp2.getLearnerAddress().getCity());
+			lp.getLearnerAddress().setCountry(lp2.getLearnerAddress().getCountry());
+			lp.getLearnerAddress().setProvince(lp2.getLearnerAddress().getProvince());
+			lp.getLearnerAddress().setState(lp2.getLearnerAddress().getState());
+			lp.getLearnerAddress().setStreetAddress(lp2.getLearnerAddress().getStreetAddress());
+			lp.getLearnerAddress().setStreetAddress2(lp2.getLearnerAddress().getStreetAddress2());
+			lp.getLearnerAddress().setStreetAddress3(lp2.getLearnerAddress().getStreetAddress3());
+			lp.getLearnerAddress().setZipcode(lp2.getLearnerAddress().getZipcode());
+		}
 
-        if(lp.getLearnerAddress2()==null || lp2.getLearnerAddress2()==null)
-        {
-            lp.setLearnerAddress2(lp2.getLearnerAddress2());
+		if(lp.getLearnerAddress2()==null || lp2.getLearnerAddress2()==null)
+		{
+			lp.setLearnerAddress2(lp2.getLearnerAddress2());
 
-        }
-        else
-        {
-            lp.getLearnerAddress2().setCity(lp2.getLearnerAddress2().getCity());
-            lp.getLearnerAddress2().setCountry(lp2.getLearnerAddress2().getCountry());
-            lp.getLearnerAddress2().setProvince(lp2.getLearnerAddress2().getProvince());
-            lp.getLearnerAddress2().setState(lp2.getLearnerAddress2().getState());
-            lp.getLearnerAddress2().setStreetAddress(lp2.getLearnerAddress2().getStreetAddress());
-            lp.getLearnerAddress2().setStreetAddress2(lp2.getLearnerAddress2().getStreetAddress2());
-            lp.getLearnerAddress2().setStreetAddress3(lp2.getLearnerAddress2().getStreetAddress3());
-            lp.getLearnerAddress2().setZipcode(lp2.getLearnerAddress2().getZipcode());
-        }
+		}
+		else
+		{
+			lp.getLearnerAddress2().setCity(lp2.getLearnerAddress2().getCity());
+			lp.getLearnerAddress2().setCountry(lp2.getLearnerAddress2().getCountry());
+			lp.getLearnerAddress2().setProvince(lp2.getLearnerAddress2().getProvince());
+			lp.getLearnerAddress2().setState(lp2.getLearnerAddress2().getState());
+			lp.getLearnerAddress2().setStreetAddress(lp2.getLearnerAddress2().getStreetAddress());
+			lp.getLearnerAddress2().setStreetAddress2(lp2.getLearnerAddress2().getStreetAddress2());
+			lp.getLearnerAddress2().setStreetAddress3(lp2.getLearnerAddress2().getStreetAddress3());
+			lp.getLearnerAddress2().setZipcode(lp2.getLearnerAddress2().getZipcode());
+		}
 
-        // cascade update instructor related entities
-        Instructor i=user.getInstructor();
-        Instructor i2=this.getInstructor();
-        if(i==null || (i!=null && i2==null))//it means instructor should be set by new user value
-        {
-            this.setInstructor(i);
-        }
-        else if (i!=null && i2!=null) //it means instructor was null now instructor is assigned to user
-        {
-            i2.setActive(i.isActive());
-            i2.setApprovedCourses(i.getApprovedCourses());
-            i2.setAreaOfExpertise(i.getAreaOfExpertise());
-            i2.setCustomfields(i.getCustomfields());
-            i2.setCustomfieldValues(i.getCustomfieldValues());
-            i2.setUser(user);
-            user.setInstructor(i2);
-        }
+		// cascade update instructor related entities
+		Instructor i=user.getInstructor();
+		Instructor i2=this.getInstructor();
+		if(i==null || (i!=null && i2==null))//it means instructor should be set by new user value
+		{
+			this.setInstructor(i);
+		}
+		else if (i!=null && i2!=null) //it means instructor was null now instructor is assigned to user
+		{
+			i2.setActive(i.isActive());
+			i2.setApprovedCourses(i.getApprovedCourses());
+			i2.setAreaOfExpertise(i.getAreaOfExpertise());
+			i2.setCustomfields(i.getCustomfields());
+			i2.setCustomfieldValues(i.getCustomfieldValues());
+			i2.setUser(user);
+			user.setInstructor(i2);
+		}
 
-        // cascade update role entities
-        RegulatoryAnalyst ra=user.getRegulatoryAnalyst();
-        RegulatoryAnalyst ra2=this.getRegulatoryAnalyst();
-        if(ra==null || (ra!=null && ra2==null))
-        {
-            this.setRegulatoryAnalyst(ra);
-        }
-        else if (ra!=null && ra2!=null)
-        {
-            ra2.setContentOwners(ra.getContentOwners());
-            ra2.setForAllContentOwner(ra.isForAllContentOwner());
-            ra2.setUser(user);
-            user.setRegulatoryAnalyst(ra2);
-        }
-        //cascade LMSAdministrator change
-        LMSAdministrator admin2=this.getLmsAdministrator();
-        LMSAdministrator admin=user.getLmsAdministrator();
-        if(admin==null || (admin!=null && admin2==null))
-        {
-            this.setLmsAdministrator(admin);
-        }
-        else if (admin!=null && admin2!=null)
-        {
-            admin2.setGlobalAdministrator(admin.isGlobalAdministrator());
-            admin2.setDistributorGroups(admin.getDistributorGroups());
-            admin2.setVu360User(user);
-            user.setLmsAdministrator(admin2);
-        }
-        //cascade training administrator
-        TrainingAdministrator trainingAdmin2=this.getTrainingAdministrator();
-        TrainingAdministrator trainingAdmin=user.getTrainingAdministrator();
-        if(trainingAdmin==null || (trainingAdmin!=null && trainingAdmin2==null))
-        {
-            this.setTrainingAdministrator(trainingAdmin);
-        }
-        else if (trainingAdmin!=null && trainingAdmin2!=null)
-        {
-            trainingAdmin2.setCustomer(trainingAdmin.getCustomer());
-            trainingAdmin2.setManagedGroups(trainingAdmin.getManagedGroups());
-            trainingAdmin2.setVu360User(user);
-            trainingAdmin2.setManagesAllOrganizationalGroups(trainingAdmin.isManagesAllOrganizationalGroups());
-            user.setTrainingAdministrator(trainingAdmin2);
-        }
-        //cascade lms roles
-        this.setLmsRoles(user.getLmsRoles());
-        this.setNotifyOnLicenseExpire(user.getNotifyOnLicenseExpire());
-    }
+		// cascade update role entities
+		RegulatoryAnalyst ra=user.getRegulatoryAnalyst();
+		RegulatoryAnalyst ra2=this.getRegulatoryAnalyst();
+		if(ra==null || (ra!=null && ra2==null))
+		{
+			this.setRegulatoryAnalyst(ra);
+		}
+		else if (ra!=null && ra2!=null)
+		{
+			ra2.setContentOwners(ra.getContentOwners());
+			ra2.setForAllContentOwner(ra.isForAllContentOwner());
+			ra2.setUser(user);
+			user.setRegulatoryAnalyst(ra2);
+		}
+		//cascade LMSAdministrator change
+		LMSAdministrator admin2=this.getLmsAdministrator();
+		LMSAdministrator admin=user.getLmsAdministrator();
+		if(admin==null || (admin!=null && admin2==null))
+		{
+			this.setLmsAdministrator(admin);
+		}
+		else if (admin!=null && admin2!=null)
+		{
+			admin2.setGlobalAdministrator(admin.isGlobalAdministrator());
+			admin2.setDistributorGroups(admin.getDistributorGroups());
+			admin2.setVu360User(user);
+			user.setLmsAdministrator(admin2);
+		}
+		//cascade training administrator
+		TrainingAdministrator trainingAdmin2=this.getTrainingAdministrator();
+		TrainingAdministrator trainingAdmin=user.getTrainingAdministrator();
+		if(trainingAdmin==null || (trainingAdmin!=null && trainingAdmin2==null))
+		{
+			this.setTrainingAdministrator(trainingAdmin);
+		}
+		else if (trainingAdmin!=null && trainingAdmin2!=null)
+		{
+			trainingAdmin2.setCustomer(trainingAdmin.getCustomer());
+			trainingAdmin2.setManagedGroups(trainingAdmin.getManagedGroups());
+			trainingAdmin2.setVu360User(user);
+			trainingAdmin2.setManagesAllOrganizationalGroups(trainingAdmin.isManagesAllOrganizationalGroups());
+			user.setTrainingAdministrator(trainingAdmin2);
+		}
+		//cascade lms roles
+		this.setLmsRoles(user.getLmsRoles());
+		this.setNotifyOnLicenseExpire(user.getNotifyOnLicenseExpire());
+	}
 
 	public void shallowCopy(VU360User user) {
 		this.setAcceptedEULA(user.isAcceptedEULA());
@@ -653,6 +691,7 @@ public class VU360User implements Serializable {
 		this.setVissibleOnReport(user.getVissibleOnReport());
 		this.setUserGUID(user.getUserGUID());
 		this.setShowGuidedTourScreenOnLogin(user.getShowGuidedTourScreenOnLogin());
+		this.setLmsRoles(user.getLmsRoles());
 	}
 
 	// [2/24/2011] LMS-9120 :: Centralized the method to fetch the User's
@@ -733,13 +772,13 @@ public class VU360User implements Serializable {
 		if(showGuidedTourScreenOnLogin==null){
 			showGuidedTourScreenOnLogin = Boolean.TRUE;
 		}
-		
+
 		return showGuidedTourScreenOnLogin;
 	}
 
 	public void setShowGuidedTourScreenOnLogin(
-			 Boolean showGuidedTourScreenOnLogin) {
-		
+			Boolean showGuidedTourScreenOnLogin) {
+
 		if(showGuidedTourScreenOnLogin==null){
 			this.showGuidedTourScreenOnLogin = Boolean.TRUE;
 		}
@@ -755,7 +794,7 @@ public class VU360User implements Serializable {
 	public  Boolean getNotifyOnLicenseExpire() {
 		if(notifyOnLicenseExpire == null)
 			notifyOnLicenseExpire = Boolean.TRUE;
-		
+
 		return notifyOnLicenseExpire;
 	}
 
@@ -765,7 +804,7 @@ public class VU360User implements Serializable {
 		else
 			this.notifyOnLicenseExpire = notifyOnLicenseExpire;
 	}
-	
+
 	public Long getRoleID() {
 		return roleID;
 	}
@@ -799,8 +838,8 @@ public class VU360User implements Serializable {
 	}
 
 	public VU360User(Long id, String firstName, String lastName,
-			String userName, String emailAddress, Integer accountNonLockedInt,
-			Long learnerID,Long lmsAdministratorID, Long trainingAdministratorID,String roleName,Long roleID) {
+					 String userName, String emailAddress, Integer accountNonLockedInt,
+					 Long learnerID,Long lmsAdministratorID, Long trainingAdministratorID,String roleName,Long roleID) {
 		super();
 		this.id = id;
 		this.username = userName;
@@ -811,30 +850,39 @@ public class VU360User implements Serializable {
 		Learner l = new Learner();
 		l.setId(learnerID);
 		this.learner = l;
-		
+
 		if(lmsAdministratorID!=0) {
 			LMSAdministrator lmsAdmin= new LMSAdministrator();
 			lmsAdmin.setId(lmsAdministratorID);
 			this.lmsAdministrator=lmsAdmin;
 		}
-		
+
 		if(trainingAdministratorID!=0){
 			TrainingAdministrator trainingAdmin=new TrainingAdministrator();
 			trainingAdmin.setId(trainingAdministratorID);
 			this.trainingAdministrator=trainingAdmin;
 		}
-		
+
 		if(roleID!=0){
 			LMSRole role=new LMSRole();
 			role.setId(roleID);
 			role.setRoleName(roleName);
 			this.getLmsRoles().add(role);
 		}
-		
+
 	}
 
 	public VU360User() {
-		
+
 	}
 
+	@Override
+	public PersistentAttributeInterceptor $$_hibernate_getInterceptor() {
+		return interceptor;
+	}
+
+	@Override
+	public void $$_hibernate_setInterceptor(PersistentAttributeInterceptor persistentAttributeInterceptor) {
+		this.interceptor = persistentAttributeInterceptor;
+	}
 }
