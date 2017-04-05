@@ -495,6 +495,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 		// set LmsRoles into Form bean instance vu360User
 		if(frmUser.getId()!=null){
 			VU360User dbUsesr= vu360UserService.getUserById(frmUser.getId());
+			frmUser.setTrainingAdministrator(dbUsesr.getTrainingAdministrator());
+			frmUser.setLmsAdministrator(dbUsesr.getLmsAdministrator());
 			frmUser.setLmsRoles(dbUsesr.getLmsRoles());
 		}
 		
