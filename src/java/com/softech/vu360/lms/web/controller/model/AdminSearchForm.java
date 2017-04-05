@@ -54,6 +54,8 @@ public class AdminSearchForm  implements ILMSBaseInterface{
 	// Added By Marium Saud : For Column Sorting
 	private String sortColumnIndex;
 	private String sortDirection;
+	
+	private int selectedResultSize;
 	/**
 	 * @return the firstPageIndex
 	 */
@@ -347,5 +349,12 @@ public class AdminSearchForm  implements ILMSBaseInterface{
 		this.sortDirection = sortDirection;
 	}
 
-	
+	public int getSelectedResultSize() {
+		return selectedResultSize;
+	}
+
+	public void setSelectedResultSize(int selectedResultSize) {
+		this.selectedResultSize = selectedResultSize;
+	}
+
 }
