@@ -18,11 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.NamedStoredProcedureQuery;
-import javax.persistence.NamedSubgraph;
 import javax.persistence.OneToOne;
 import javax.persistence.ParameterMode;
 import javax.persistence.StoredProcedureParameter;
@@ -32,9 +28,6 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import com.softech.vu360.util.ProctorStatusEnum;
 
 /**
  * 
@@ -64,9 +57,11 @@ public class VU360User implements Serializable {
 	@Column(name = "USERNAME", unique = true, nullable = false)
 	private String username = null;
 
-	@Column(name = "DOMAIN")
+/*	
+ * As their is no record in PROD and as well as in DEV; let's remove this one
+ * @Column(name = "DOMAIN")
 	private String domain = null;
-
+*/
 	@Column(name = "EMAILADDRESS", unique = false, nullable = false)
 	private String emailAddress = null;
 
@@ -307,14 +302,6 @@ public class VU360User implements Serializable {
 		this.password = password;
 	}
 
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -521,7 +508,6 @@ public class VU360User implements Serializable {
         this.setChangePasswordOnLogin(user.getChangePasswordOnLogin());
         this.setCreatedDate(user.getCreatedDate());
         this.setCredentialsNonExpired(user.isCredentialsNonExpired());
-        this.setDomain(user.getDomain());
         this.setEmailAddress(user.getEmailAddress());
         this.setEnabled(user.getEnabled());
         this.setExpirationDate(user.getExpirationDate());
@@ -653,7 +639,6 @@ public class VU360User implements Serializable {
 		this.setChangePasswordOnLogin(user.getChangePasswordOnLogin());
 		this.setCreatedDate(user.getCreatedDate());
 		this.setCredentialsNonExpired(user.isCredentialsNonExpired());
-		this.setDomain(user.getDomain());
 		this.setEmailAddress(user.getEmailAddress());
 		this.setEnabled(user.getEnabled());
 		this.setExpirationDate(user.getExpirationDate());

@@ -56,24 +56,6 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VU360User> findUserByUsernameAndDomain(String username, String domain) {
-		boolean isDomainBlank=StringUtils.isBlank(domain);
-		String jpq ;
-		if (isDomainBlank) {
-			jpq = "SELECT p FROM VU360User p WHERE p.username = :username AND p.learner.customer.active = true AND p.learner.customer.distributor.active = true AND p.domain IS NULL";
-		} else {
-			jpq = "SELECT p FROM VU360User p WHERE p.username = :username AND p.learner.customer.active = true AND p.learner.customer.distributor.active = true AND p.domain = :domain";
-		}
-		Query query = entityManager.createQuery(jpq);
-		query.setParameter("username", username);
-		if (!isDomainBlank) {
-			query.setParameter("domain", domain);
-		}
-		return query.getResultList();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
 	public List<VU360User> getUserByFirstNameAndLastName(Customer cust,String firstName, String lastName) {
 		String jpq =null;
 		boolean fNameBlank=StringUtils.isBlank(firstName);
@@ -488,7 +470,6 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 			userAudit.setChangePasswordOnLogin(user.getChangePasswordOnLogin());
 			userAudit.setCreatedDate(user.getCreatedDate());
 			userAudit.setCredentialsNonExpired(user.isCredentialsNonExpired());
-			userAudit.setDomain(user.getDomain());
 			userAudit.setEmailAddress(user.getEmailAddress());
 			userAudit.setExpirationDate(user.getExpirationDate());
 			userAudit.setEnabled(user.getEnabled());
