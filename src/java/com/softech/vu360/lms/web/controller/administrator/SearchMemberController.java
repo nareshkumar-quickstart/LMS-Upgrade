@@ -196,6 +196,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		String sortDirection, sortColumnIndex;
 		String showAll;
 		int pageIndex;
+		int pageSize;
 
 		final Map<String, String> PagerAttributeMap;
 		final Map<Object, Object> context;
@@ -221,11 +222,19 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 			pageIndex = 0;
 		}
 
+		// Added By MariumSaud LMS-22148: Attribute that will hold the value of selected Page Size
+		String selectedResultSize = request.getParameter("selectedResultSize")==""?"10":request.getParameter("selectedResultSize");
+		if (StringUtils.isNumeric(selectedResultSize)) {
+			pageSize = Integer.parseInt(selectedResultSize);
+		} else {
+			pageSize = 10;
+		}
+		
 		log.debug("pageIndex = " + pageIndex);
 
 		PagerAttributeMap = new HashMap<String, String>();
 		PagerAttributeMap.put("pageIndex", String.valueOf(pageIndex));
-
+	
 		context = new HashMap<Object, Object>();
 
 		form = (AdminSearchForm) command;
@@ -303,7 +312,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 				adminSearchMemberList, resultset, sortDirection,
 				sortColumnIndex, (showAll.equals("false") ? pageIndex : 0),
 				PagerAttributeMap, context,
-				(showAll.equals("false") ? VelocityPagerTool.DEFAULT_PAGE_SIZE : -1));
+				pageSize);
 
 		form.setCurrentPageIndex((showAll.equals("false") ? pageIndex : 0));
 		form.setTotalRecordCount(resultset.total);
@@ -313,11 +322,19 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		form.setSortColumnIndex(sortColumnIndex);
 		form.setSortDirection(sortDirection);
 		
+		// Added By MariumSaud LMS-22148: Form Attribute that will hold the value of selected Page Size and is used when Next and Prev Button is clicked
+		form.setSelectedResultSize(Integer.parseInt(selectedResultSize));
+		
+		context.put("selectedResultSize", selectedResultSize);
+		context.put("resultSize", selectedResultSize);
+		
 		context.put("sortDirection", sortDirection);
 		context.put("sortColumnIndex", sortColumnIndex);
+		
+		context.put("sortColumnIndex", sortColumnIndex);
 
-		context.put("showAll", showAll);
-
+		
+	
 		return new ModelAndView(searchMemberTemplate, "context", context);
 
 	}
@@ -435,6 +452,9 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 			// form.resetAdminSearchForm();
 
 			request.setAttribute("PagerAttributeMap", PagerAttributeMap);
+			
+			//Added By MariumSaud : setting the pageSize as request Attribute to be used as DEFAULT_PAGE_SIZE for Admin search and will effect any other search via VelocityPagerTool.java
+			request.setAttribute("selectedResultSize", retrieveRowCount);
 			
 			 setupPageSorting(context, form, adminSearchMemberList,
 			 sortDirection,
@@ -1089,6 +1109,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 
 		int sortDirection, sortColumnIndex;
 		int pageIndex = 0;
+		int pageSize;
 
 		final Map<String, String> PagerAttributeMap;
 		final Map<Object, Object> context;
@@ -1096,6 +1117,14 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		String currentPageIndex = request.getParameter("pageCurrIndex");
 		if (StringUtils.isNumeric(currentPageIndex)) {
 			pageIndex = Integer.parseInt(currentPageIndex);
+		}
+		
+		// Added By MariumSaud LMS-22148: Attribute that will hold the value of selected Page Size
+		String selectedResultSize = request.getParameter("selectedResultSize")==""?"10":request.getParameter("selectedResultSize");
+		if (StringUtils.isNumeric(selectedResultSize)) {
+			pageSize = Integer.parseInt(selectedResultSize);
+		} else {
+			pageSize = 10;
 		}
 		
 		PagerAttributeMap = new HashMap<String, String>();
@@ -1175,7 +1204,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		context.put("sortColumnIndex", sortColumnIndex);
 
 		context.put("showAll", showAll);
-
+		
 		searchMembers(request, form, loggedInUser, distributor,
 				constrainedCustomerSearch, constrainedLearnerSearch,
 				hasValidationErrors, searchedCustomerName, searchedOrderId,
@@ -1185,11 +1214,16 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 				adminSearchMemberList, resultset,
 				String.valueOf(sortDirection), String.valueOf(sortColumnIndex),
 				(showAll.equals("false") ? pageIndex : 0), PagerAttributeMap,
-				context,
-				(showAll.equals("false") ? VelocityPagerTool.DEFAULT_PAGE_SIZE : -1));
+				context,pageSize);
 
 		form.setCurrentPageIndex((showAll.equals("false") ? pageIndex : 0));
 		form.setTotalRecordCount(resultset.total);
+		
+		// Added By MariumSaud LMS-22148: Form Attribute that will hold the value of selected Page Size and is used when Next and Prev Button is clicked
+		form.setSelectedResultSize(Integer.parseInt(selectedResultSize));
+		
+		context.put("selectedResultSize", selectedResultSize);
+		context.put("resultSize", selectedResultSize);
 
 		return new ModelAndView(searchMemberTemplate, "context", context);
 	}

@@ -57,6 +57,11 @@
  		  return str.replace(new RegExp(find, 'g'), replace);
  		} 
  
+ 		function doSearchDistributor(){
+ 			var selectedResultSize=$('#resultSizeDropDown :selected').text();
+ 			$("#searchDistributorForm #selectedResultSize").val(selectedResultSize);
+ 			document.searchDistributorForm.submit();
+ 		}
 		function doSearchLearner() {
 		
 		   chkLearner = document.getElementById('constrainedLearnerSearch');
@@ -82,7 +87,9 @@
 				$('#selectLearner').modal({close:false,position: ["40%",]});
 				return false;
 			}
-            document.searchLearnerForm.submit();
+			var selectedResultSize=$('#resultSizeDropDown :selected').text();
+ 			$("#searchLearnerForm #selectedResultSize").val(selectedResultSize);
+			document.searchLearnerForm.submit();
         }
         
         function doSearchCustomer(submitFormName) {
@@ -110,8 +117,12 @@
 				return false;
         	}
         	if(submitFormName == 'searchCustomerForm') {
+        		var selectedResultSize=$('#resultSizeDropDown :selected').text();
+ 				$("#searchCustomerForm #selectedResultSize").val(selectedResultSize);
         		document.searchCustomerForm.submit();
         	} else if(submitFormName == 'advanceSearchCustomerForm') {
+        		var selectedResultSize=$('#resultSizeDropDown :selected').text();
+ 				$("#advanceSearchCustomerForm #selectedResultSize").val(selectedResultSize);
         		document.advanceSearchCustomerForm.submit();
         	}
         }
@@ -172,7 +183,7 @@
     }
     $(document).ready(function(){       
     });
-    
+  
 </script>
 </head>
 
@@ -261,7 +272,7 @@
 
                      <!-- Search Box Distributor -->
                     <div id="searchBoxDistributor" style="float: left; height: auto; width: 300px;" class="visible">
-                        <form name="searchDistributorForm" action="adm_searchMember.do" method="POST">
+                        <form id="searchDistributorForm" name="searchDistributorForm" action="adm_searchMember.do" method="POST">
                             <div style="padding: 5px"><b> $brander.getBrandElement("lms.admin.searchReseller")</b></div>
                             <br/>
                             <div style="padding: 5px">
@@ -272,7 +283,7 @@
                             </div>
                             <div style="padding: 5px;margin-left:20px;margin-right:20px;height:20px">
 								<div style="float:right; margin-top:2px; margin-right:15px;">
-                                    <span class="button" onClick="document.searchDistributorForm.submit();">
+                                    <span class="button" onClick="doSearchDistributor();">
 										<div class="btn_start"></div>
 										<div class="btn_normal">Search</div>
 										<div class="btn_end"></div>
@@ -289,6 +300,7 @@
                             <input type="hidden" name="advancedSearch" value="true"/>
                             <input type="hidden" name="method" value="searchMembers"/>
                             <input type="hidden" name="searchType" value="distributorSearch"/>
+                            <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="" />
                         </form>
                         <br />
                     </div>
@@ -296,7 +308,7 @@
                     <!-- Search Box Customer -->
                     <div id="searchBoxCustomer" style="float:left;width : 290px; height: auto" class="visible">
 
-                        <form name="searchCustomerForm" action="adm_searchMember.do" method="POST">
+                        <form id="searchCustomerForm" name="searchCustomerForm" action="adm_searchMember.do" method="POST">
                             <div style="padding: 5px"><b>Search Customer</b></div><br />
                             <div style="padding: 5px">
                                 #springBind("adminSearchForm.searchCustomerName")
@@ -370,6 +382,7 @@
                             <input type="hidden" name="advancedSearch" value="true"/>
                             <input type="hidden" name="method" value="searchMembers"/>
                             <input type="hidden" name="searchType" value="customerSearch"/>
+                            <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="" />
                         </form>
                         
                 		<div style="float:right; margin-top: 9px; margin-right:5px;">
@@ -390,7 +403,7 @@
 				    <!--------------------Start------------------------------------->
                     <div id="searchBoxCustomerAdvance" style="float:left;width : 340px; height: auto;" class="visible">
 
-                        <form name="advanceSearchCustomerForm" action="adm_searchMember.do" method="POST">
+                        <form id="advanceSearchCustomerForm" name="advanceSearchCustomerForm" action="adm_searchMember.do" method="POST">
                             <div style="padding: 5px"><b>Search Customer</b></div><br />
                             <div style="padding: 5px">
                                 #springBind("adminSearchForm.searchCustomerName")
@@ -483,12 +496,12 @@
 										<div class="btn_normal">Cancel</div>
 										<div class="btn_end"></div>
 									</span>
-                                </div>
-                                
+                                </div>                                
                             </div>
                             
                             <input type="hidden" name="method" value="searchMembers"/>
                             <input type="hidden" name="searchType" value="advanceCustomerSearch"/>
+                            <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="" />
                         </form>
                         
                         <div style="float:right; margin-top: 10px; margin-right:18px;">
@@ -508,7 +521,7 @@
                     <!-- Search Box Learner -->
                    <div id="searchBoxLearner" style="float:left;height: auto;" class="visible">
 
-                        <form name="searchLearnerForm" action="adm_searchMember.do" method="POST">
+                        <form id="searchLearnerForm" name="searchLearnerForm" action="adm_searchMember.do" method="POST">
                             <div style="padding: 5px"><b>Search Learner </b></div><br />
                             <div style="padding: 5px">
                                 #springBind("adminSearchForm.searchFirstName")
@@ -561,6 +574,7 @@
                             <input type="hidden" name="advancedSearch" value="true"/>
                             <input type="hidden" name="method" value="searchMembers"/>
                             <input type="hidden" name="searchType" value="learnerSearch"/>
+                            <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="" />
                         </form>
                         <br /><br />
                     </div>
@@ -603,7 +617,7 @@
                             #set($pageCurrIndex = $pager.index)
                             #set($sortColumnIndex = $adminSearchForm.sortColumnIndex)
                             #set($sortDirection = $adminSearchForm.sortDirection)
-                           
+                            #set($selectedResultSize = $adminSearchForm.selectedResultSize)
                         #else
                             #set($pageFirstIndex = 0)
                             #set($pageLastIndex = 0)
@@ -612,14 +626,16 @@
                             #set($pageCurrIndex = 0)
                             #set($sortColumnIndex = 0)
                             #set($sortDirection = 0)
+                         
                           
                         #end
                         <form name="nextPreviousForm" name="searchResultForm" action="adm_searchMember.do" method="POST">
                             <div class="result_left_side">
                                 <!-- All Icon -->
-                                #if($pager.total>0)
-                                <div  class="icon_all" value="Search" name="_target1"  onclick="onAllPage();" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
-                                #end 
+                                <!-- Removing Show All Icon -->
+                                <!--#if($pager.total>0) <div  class="icon_all" value="Search" name="_target1"  onclick="onAllPage();" onmouseover="showTooltip('Show All', event);" onmouseout="hideTooltip();"></div>
+                                #end -->
+                                
                                 <!-- Next Icon -->
                                 #if ( $pager.nextIndex )
                                 <div id="goNext" value="Search" name="_target1" onclick="onNextPage($pager.nextIndex);" class="icon_next" onmouseover="showTooltip('Next', event);" onmouseout="hideTooltip();"></div>
@@ -645,6 +661,16 @@
 								<input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
 								<input type="hidden" id="sortIndex" name="sortIndex" value="$sortIndex" />
                                 <input type="hidden" id="direction" name="direction" value="$direction" />
+                                <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="$selectedResultSize" />
+                                
+                                <!-- Custom DropDown For Selecting PageSize -->
+                                <select class="searchadmin-dropdown" name="resultSizeDropDown" id="resultSizeDropDown">   
+                                <option value="10" #if($!{context.resultSize} == "10" ) selected #end>10</option>                            
+                            	<option value="20"  #if($!{context.resultSize} == "20" ) selected #end>20</option>
+                            	<option value="30"  #if($!{context.resultSize} == "30" ) selected #end>30</option> 
+                            	<option value="40"  #if($!{context.resultSize} == "40" ) selected #end>40</option> 
+                            	<option value="50"  #if($!{context.resultSize} == "50" ) selected #end>50</option>                                        
+                            	</select>
                             </div>
                         </form>
 
@@ -657,7 +683,8 @@
                                 <input type="hidden" id="sortColumnIndex" name="sortColumnIndex" value="$sortColumnIndex" />
                                 <input type="hidden" id="sortDirection" name="sortDirection" value="$sortDirection" />
                                 <input type="hidden" id="pageCurrIndex" name="pageCurrIndex" value="$pageCurrIndex" />
-
+                                <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="$selectedResultSize" />
+                            
                             <table width="100%"  cellpadding="0" cellspacing="0" style="margin-top:2px; border-top:1px;">
 
 							<!-- Call Logging | LMS-8108 | S M Humayun | 27 April 2011 -->
