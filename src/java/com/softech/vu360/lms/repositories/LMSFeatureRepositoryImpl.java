@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.repositories;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -36,6 +37,42 @@ public class LMSFeatureRepositoryImpl implements LMSFeatureRepositoryCustom {
 		List<LMSFeature> lmsFeatureList = query.getResultList(); 
 		
 		return lmsFeatureList;
+	}
+
+	@Override
+	public String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId,String roleType, List<String> disabledFeatureCode) {
+		String featureCode=null;
+		StringBuilder sql = new StringBuilder("select top 1 f.featurecode from vu360user u, learner l, vu360user_role ur, lmsrole r, lmsrolelmsfeature rf, lmsfeature f");
+		sql.append(" where u.id ="+userId+ " and l.VU360USER_ID = u.id and ur.USER_ID = u.ID");
+		sql.append(" and (r.id = ur.role_id and r.customer_id = l.customer_id and r.ROLE_TYPE ='"+roleType+"')");
+		sql.append(" and (rf.LMSROLE_ID = r.id and rf.ENABLEDTF = 1)");
+		sql.append(" and (f.id = rf.LMSFEATURE_ID");
+		if(!disabledFeatureCode.isEmpty()){
+			
+			StringBuilder subQueryBuilder = new StringBuilder();
+			
+			subQueryBuilder.append(" and f.FEATURECODE not in (");
+			
+			for (String code : disabledFeatureCode) {
+				subQueryBuilder.append("'").append(code).append("'").append(",");
+			}
+			
+			subQueryBuilder.deleteCharAt(subQueryBuilder.length() - 1);
+			subQueryBuilder.append(")");
+			sql.append(subQueryBuilder);
+		}
+		
+		sql.append(" ) order by DISPLAYORDER");		
+		
+		Query query = entityManager.createNativeQuery(sql.toString());
+		
+		Object result = query.getSingleResult();
+		
+		if(result!=null){
+			featureCode = result.toString();
+		}
+	
+		return featureCode;
 	}
 
 		

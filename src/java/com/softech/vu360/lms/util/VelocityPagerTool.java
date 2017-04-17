@@ -45,6 +45,9 @@ public class VelocityPagerTool extends AbstractPagerTool {
 		setItemsPerPage(parser.getInt("pageSize", DEFAULT_PAGE_SIZE));
 		if(request.getAttribute("myPageSize")!=null)
 			setItemsPerPage( ((Integer) request.getAttribute("myPageSize")).intValue() );
+		// Added by MariumSaud : LMS-22148 -Attribute to hold PageSize for Admin Search
+		if(request.getAttribute("selectedResultSize")!=null)
+			setItemsPerPage( ((Integer) request.getAttribute("selectedResultSize")).intValue() );
 	}
 
 
