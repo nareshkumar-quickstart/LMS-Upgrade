@@ -39,8 +39,6 @@ public interface LMSFeatureRepository extends CrudRepository<LMSFeature, Long>, 
 			"else\n" + 
 			"	select cast(0 as bit)", nativeQuery = true)
 	public boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode);
-	@Query(value = "select top 1 f.featurecode from vu360user u, learner l, vu360user_role ur, lmsrole r, lmsrolelmsfeature rf, lmsfeature f where u.id = ?1 and l.VU360USER_ID = u.id and ur.USER_ID = u.ID and (r.id = ur.role_id and r.customer_id = l.customer_id and r.ROLE_TYPE = ?2) and (rf.LMSROLE_ID = r.id and rf.ENABLEDTF = 1) and (f.id = rf.LMSFEATURE_ID and f.FEATURECODE not in (?3)) order by DISPLAYORDER", nativeQuery = true)
-	public String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId, String roleType, List<String> disabledFeatureCode);
 	@Query(value = "select f.featuregroup from vu360user u, learner l, vu360user_role ur, lmsrole r, lmsrolelmsfeature rf, lmsfeature f where u.id = ?1 and l.VU360USER_ID = u.id and ur.USER_ID = u.ID and (r.id = ur.role_id and r.customer_id = l.customer_id) and (rf.LMSROLE_ID = r.id and rf.ENABLEDTF = 1) and (f.id = rf.LMSFEATURE_ID) order by DISPLAYORDER", nativeQuery = true)
 	public List<String> getEnabledFeatureGroups(Long userId);
 	@Query(value = "select f.featuregroup from vu360user u, learner l, vu360user_role ur, lmsrole r, lmsrolelmsfeature rf, lmsfeature f where u.id = ?1 and l.VU360USER_ID = u.id and (ur.USER_ID = u.ID  and ur.ROLE_ID = ?2) and (r.id = ur.role_id and r.customer_id = l.customer_id) and (rf.LMSROLE_ID = r.id and rf.ENABLEDTF = 1) and (f.id = rf.LMSFEATURE_ID) order by DISPLAYORDER", nativeQuery = true)
