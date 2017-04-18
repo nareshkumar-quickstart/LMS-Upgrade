@@ -1210,7 +1210,6 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 						validationQuestion.setCreatedDate(new Date());
 						accreditationService.saveValidationQuestion(validationQuestion);
 						uniqueQuestionsVO.setId(validationQuestion.getId().toString());
-						validationQuestion = accreditationService.loadForUpdateValidationQuestion(validationQuestion.getId());
 						validationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + validationQuestion.getId());
 						accreditationService.saveValidationQuestion(validationQuestion);
 					}

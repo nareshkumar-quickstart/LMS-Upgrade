@@ -26,6 +26,6 @@ public interface LearnerValidationAnswersRepository extends CrudRepository<Learn
 	@Query(value= "select a.* from learnervalidationanswers a, VALIDATIONQUESTION q where a.LEARNER_ID = :learnerId and q.id = a.question_id and q.COURSECONFIGURATION_ID = :courseconfigurationId", nativeQuery = true)	
 	public List<LearnerValidationAnswers> getLearnerUniqueValidationQuestionsAnswers(@Param("learnerId") Long learnerId, @Param("courseconfigurationId") Long courseconfigurationId);
 	
-	public  LearnerValidationAnswers findByQuestionId(long questionId);
+	public  LearnerValidationAnswers findByQuestionIdAndLearnerId(long questionId, long learnerId);
 
 }

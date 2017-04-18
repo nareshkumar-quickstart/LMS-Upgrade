@@ -30,5 +30,7 @@ public interface CourseApprovalRepository extends CrudRepository<CourseApproval,
 	
 	List<CourseApproval> findByCourseApprovalEffectivelyEndsDateBetweenAndDeletedFalseAndActiveTrue(Date startDate,Date endDate);
 	
+	@Query(value = "select ca.* from courseapproval ca, learningsession ls where ls.enrollment_id = ?1 and ca.id = ls.courseapprovalid", nativeQuery = true)
+	CourseApproval getCourseApprovalByEnrollment(long learnerEnrollmentId);
 	
 }

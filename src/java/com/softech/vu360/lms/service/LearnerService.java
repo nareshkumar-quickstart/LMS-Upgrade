@@ -2,6 +2,7 @@ package com.softech.vu360.lms.service;
 
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import com.softech.vu360.lms.model.DiscussionForumCourse;
 import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.model.Learner;
+import com.softech.vu360.lms.model.LearnerEnrollment;
 import com.softech.vu360.lms.model.LearnerGroup;
 import com.softech.vu360.lms.model.LearnerGroupItem;
 import com.softech.vu360.lms.model.LearnerPreferences;
@@ -277,7 +279,7 @@ public interface LearnerService {
 	public void saveLearnerValidationAnswers(LearnerValidationQASetDTO qaDTO, Learner learner);
 	public Learner addNewLearnerGivenCustomer(Customer customer, Hashtable<String, Object> leanerDetailInHashmap)  throws Exception;
 	public Map<Object,Object> getLearnerUniqueQuestions(long learnerId);
-	public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId);
+	public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId, long learnerId);
 	public void saveLearnerUniquesValidationQuestions(LearnerValidationAnswers answer);
 	public LearnerValidationAnswers loadForUpdateLearnerValidationAnswers(long answer);
 	public LearnerValidationAnswers updateLearnerValidationAnswers(LearnerValidationAnswers lva ); 
@@ -287,4 +289,9 @@ public interface LearnerService {
 	
 	public Learner getLearnerByVU360UserId(VU360User user);
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
+
+	public void setIdentityValidationQuestions(long learnerId,
+			LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfCoursesOfLearner,
+			boolean[] hasValidationQuestion);
+	
 }
