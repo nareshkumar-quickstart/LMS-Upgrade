@@ -1,13 +1,11 @@
 package com.softech.vu360.lms.repositories;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.Query;
+import com.softech.vu360.lms.model.Customer;
+import com.softech.vu360.lms.model.LMSRole;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.softech.vu360.lms.model.Customer;
-import com.softech.vu360.lms.model.LMSRole;
+import java.util.List;
 
 /**
  * @author marium.saud
