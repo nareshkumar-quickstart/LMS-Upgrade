@@ -139,12 +139,15 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 	private LMSAdministrator lmsAdministrator;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private Proctor proctor;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private RegulatoryAnalyst regulatoryAnalyst;
 
 	@OneToOne(fetch=FetchType.LAZY, mappedBy="user" , cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@LazyToOne(LazyToOneOption.NO_PROXY)
 	private Instructor instructor;
 
 	@ManyToMany(cascade={CascadeType.MERGE })
@@ -366,11 +369,18 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 	}
 
 	public Proctor getProctor() {
-		return proctor;
+		if(this.interceptor != null){
+			this.proctor = (Proctor) this.interceptor.readObject(this, "proctor", proctor);
+		}
+		return this.proctor;
 	}
 
 	public void setProctor(Proctor proctor) {
-		this.proctor = proctor;
+		Proctor lmsProctor = proctor;
+		if(this.interceptor != null) {
+			lmsProctor = (Proctor) this.interceptor.writeObject(this, "proctor", this.proctor, proctor);
+		}
+		this.proctor = lmsProctor;
 	}
 
 	public String getPassword() {
@@ -522,19 +532,33 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 	}
 
 	public RegulatoryAnalyst getRegulatoryAnalyst() {
+		if(this.interceptor != null){
+			this.regulatoryAnalyst = (RegulatoryAnalyst) this.interceptor.readObject(this, "regulatoryAnalyst", regulatoryAnalyst);
+		}
 		return this.regulatoryAnalyst;
 	}
 
 	public void setRegulatoryAnalyst(RegulatoryAnalyst regulatoryAnalyst) {
-		this.regulatoryAnalyst = regulatoryAnalyst;
+		RegulatoryAnalyst lmsRegulatoryAnalyst = regulatoryAnalyst;
+		if(this.interceptor != null) {
+			lmsRegulatoryAnalyst = (RegulatoryAnalyst) this.interceptor.writeObject(this, "regulatoryAnalyst", this.regulatoryAnalyst, regulatoryAnalyst);
+		}
+		this.regulatoryAnalyst = lmsRegulatoryAnalyst;
 	}
 
 	public Instructor getInstructor() {
+		if(this.interceptor != null){
+			this.instructor = (Instructor) this.interceptor.readObject(this, "instructor", instructor);
+		}
 		return this.instructor;
 	}
 
 	public void setInstructor(Instructor instructor) {
-		this.instructor = instructor;
+		Instructor lmsInstructor = instructor;
+		if(this.interceptor != null) {
+			lmsInstructor = (Instructor) this.interceptor.writeObject(this, "instructor", this.instructor, instructor);
+		}
+		this.instructor = lmsInstructor;
 	}
 
 	public void updateDeepValues(VU360User user)
