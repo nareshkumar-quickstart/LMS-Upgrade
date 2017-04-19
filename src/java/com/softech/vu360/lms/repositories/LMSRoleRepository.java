@@ -2,6 +2,7 @@ package com.softech.vu360.lms.repositories;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -39,5 +40,7 @@ public interface LMSRoleRepository extends CrudRepository<LMSRole, Long>, LMSRol
 	@Override
 	//@CacheEvict(value = "getDisabledCustomerLMSFeatures", allEntries = true)
 	public <S extends LMSRole> S save(S entity);
+
+
 	
 }

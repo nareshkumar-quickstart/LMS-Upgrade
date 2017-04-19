@@ -2,7 +2,9 @@ package com.softech.vu360.lms.repositories;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import com.softech.vu360.lms.model.LMSRole;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +37,10 @@ public interface LMSRoleLMSFeatureRepository extends
 			@Param(value = "customer") Customer customer,
 			@Param(value = "roleType") String roleType);
 	
-	
+
+	@Query("SELECT LRLF FROM LMSRoleLMSFeature LRLF " +
+			"	JOIN FETCH LRLF.lmsFeature " +
+			"	WHERE LRLF.lmsRole IN (:lmsRoles)")
+	public List<LMSRoleLMSFeature> getLMSRoleLMSFeature(@Param(value = "lmsRoles")Set<LMSRole> lmsRoles);
 
 }
