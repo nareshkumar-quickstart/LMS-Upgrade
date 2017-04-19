@@ -12,5 +12,6 @@ public interface LearnerEnrollmentRepositoryCustom {
 	public Long getEnrollmentCountBySynchronousClassId(Long synchronousClassId);
 	public List<LearnerEnrollment> getEnrollmentsByProctor(Proctor proctor, String firstName, String lastName, String emailAddress,Date startDate,Date endDate, String courseTitle, String status[]);
 	public List<LearnerEnrollment> findByLearnerIdAndEnrollmentStatusNotIn(Long learnerId,List<String> status);
+	public List<LearnerEnrollment> getFreshLearnerEnrollmentsForLearner(Learner l);
 	
 }

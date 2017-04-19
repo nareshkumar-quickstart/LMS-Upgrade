@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerEnrollment;
 import com.softech.vu360.lms.model.Proctor;
 
@@ -110,6 +111,16 @@ public class LearnerEnrollmentRepositoryImpl implements LearnerEnrollmentReposit
 		Query query = entityManager.createQuery(builder.toString());
 		query.setParameter("learnerId", learnerId);
 		query.setParameter("status", status);
+		List<LearnerEnrollment> LearnerEnrollment = query.getResultList();
+		return LearnerEnrollment;
+	}
+
+	@Override
+	public List<LearnerEnrollment> getFreshLearnerEnrollmentsForLearner(Learner l) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SELECT le FROM LearnerEnrollment le LEFT JOIN FETCH le.courseStatistics cs JOIN FETCH le.customerEntitlement ce WHERE le.learner.id = :learnerId");
+		Query query = entityManager.createQuery(builder.toString());
+		query.setParameter("learnerId", l.getId());
 		List<LearnerEnrollment> LearnerEnrollment = query.getResultList();
 		return LearnerEnrollment;
 	}
