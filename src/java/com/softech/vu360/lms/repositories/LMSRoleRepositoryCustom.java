@@ -19,6 +19,6 @@ public interface LMSRoleRepositoryCustom {
 	public List<LMSRole> getSystemRolesByCustomer(Customer customer);
 	public List<LMSRole> findRolesByName( String name, Customer customer, VU360User loggedInUser);
 	public int checkNoOfBefaultReg(Customer customer);
-	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
+	public String[] findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
 	Map<String, String> countLearnerByRoles(Long [] roleIds);
 }

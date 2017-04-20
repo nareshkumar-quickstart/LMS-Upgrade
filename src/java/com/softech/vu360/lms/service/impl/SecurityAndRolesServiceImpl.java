@@ -363,7 +363,7 @@ public class SecurityAndRolesServiceImpl implements SecurityAndRolesService {
 		return customerLmsFeatureRepository.getAllByCustomerAndEnabledTrue(customer);
 	}
 	@Override
-	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public String[] findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		return lmsRoleRepository.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(distributorId, customerId);
 	}
