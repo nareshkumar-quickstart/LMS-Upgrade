@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.softech.vu360.lms.model.CustomField;
 import com.softech.vu360.lms.model.CustomFieldValueChoice;
@@ -139,6 +140,7 @@ public class CustomFieldRepositoryImpl implements CustomFieldRepositoryCustom {
 
 	
 	@Override
+	@Transactional
 	public void deleteCustomFields(Long[] customFieldIds) {
 
 		List<Long> lls = Arrays.asList(customFieldIds);
