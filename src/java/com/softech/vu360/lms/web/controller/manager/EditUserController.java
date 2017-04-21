@@ -498,6 +498,9 @@ public class EditUserController extends VU360BaseMultiActionController{
 			frmUser.setTrainingAdministrator(dbUsesr.getTrainingAdministrator());
 			frmUser.setLmsAdministrator(dbUsesr.getLmsAdministrator());
 			frmUser.setLmsRoles(dbUsesr.getLmsRoles());
+			frmUser.setInstructor(dbUsesr.getInstructor());
+			frmUser.setProctor(dbUsesr.getProctor());
+			frmUser.setRegulatoryAnalyst(dbUsesr.getRegulatoryAnalyst());
 		}
 		
 		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(frmUser);
