@@ -182,7 +182,7 @@ public class LearnerServiceImpl implements LearnerService {
 	private EnrollmentService enrollmentService = null;
 	private VU360UserService vu360UserService;
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
-	
+
 	@Inject
 	private WidgetRepository widgetRepository;
 	private boolean isProctorRole = false;
@@ -209,9 +209,9 @@ public class LearnerServiceImpl implements LearnerService {
 	private static final Logger log = Logger.getLogger(LearnerServiceImpl.class
 			.getName());
 
-	public List<VU360User> findLearner(String firstName, String lastName, String email, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId) {
+	public List<VU360User> findLearner(String firstName, String lastName, String email,
+									   boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+									   boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId) {
 		List<VU360User> results = new ArrayList<VU360User>();
 		if (trainingAdmin_isManagesAllOrganizationalGroups || (managedGroups!=null && managedGroups.size() > 0)) {
 			Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria(
@@ -247,31 +247,31 @@ public class LearnerServiceImpl implements LearnerService {
 	public Long getLearnerForSelectedCustomer(Long customerId) {
 		Long learnerId = 0l;
 		Learner learner =learnerRepository.findFirstByCustomerIdOrderByIdAsc(customerId);
-		
+
 		if(learner != null) {
 			learnerId = learner.getId();
-		} 
-		
+		}
+
 		return learnerId;
 	}
 
 	public Long getLearnerForSelectDistributor(Long myCustomerId) {
-		
+
 		Long learnerId = 0l;
 		Learner learner =learnerRepository.findFirstByCustomerIdOrderByIdAsc(myCustomerId);
-		
+
 		if(learner != null) {
 			learnerId = learner.getId();
-		} 
-		
+		}
+
 		return learnerId;
 	}
 
 	public List<VU360User> findLearner(String searchCriteria,
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId) {
-		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria, null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+									   boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+									   boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId) {
+		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria, null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				-1, -1, "", -1, "", "", "",
 				-1, false);
 		List<VU360User> results = (ArrayList<VU360User>) searchResult
@@ -282,40 +282,40 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public Map<Object, Object> findAllLearnersWithCriteria(String name,
-			String name2, String mail, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			String sortBy,
-			int sortDirection) {
+														   String name2, String mail,
+														   boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+														   boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+														   String sortBy,
+														   int sortDirection) {
 		Map<Object, Object> results = new HashMap<Object, Object>();
 		results = (Map<Object, Object>) this.getAllUsersByCriteria("", null,
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				-1, -1, sortBy, sortDirection, name, name2, mail,
 				-1, false);
 		return results;
 	}
 
 	public Map<Object, Object> findAllLearners(String searchCriteria,
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			String sortBy, int sortDirection) {
+											   boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+											   boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+											   String sortBy, int sortDirection) {
 		Map<Object, Object> results = new HashMap<Object, Object>();
-		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria,null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria,null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				-1, -1, sortBy, sortDirection, "", "", "",
 				-1, false);
 		return results;
 	}
 
-	
-	public Map<Object, Object> findAllLearners(String searchCriteria, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			int pageIndex, int pageSize, String sortBy, int sortDirection) {
-		
+
+	public Map<Object, Object> findAllLearners(String searchCriteria,
+											   boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+											   boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+											   int pageIndex, int pageSize, String sortBy, int sortDirection) {
+
 		Map<Object, Object> results = new HashMap<Object, Object>();
-		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria, null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria, null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				pageIndex, pageSize, sortBy, sortDirection, "", "", "",	-1, false);
 		return results;
 	}
@@ -329,12 +329,12 @@ public class LearnerServiceImpl implements LearnerService {
 		return results;
 	}
 
-	public List<VU360User> findAllLearner(String firstName, String lastName, String email, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			int pageIndex, int pageSize, String sortBy, int sortDirection, int limit) {
-		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria("", null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+	public List<VU360User> findAllLearner(String firstName, String lastName, String email,
+										  boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+										  boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+										  int pageIndex, int pageSize, String sortBy, int sortDirection, int limit) {
+		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria("", null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				pageIndex, -1, sortBy, sortDirection,
 				firstName, lastName, email, -1, false);
 		List<VU360User> results = (ArrayList<VU360User>) searchResult
@@ -343,39 +343,39 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public Map<Object, Object> findAllLearnersByCustomer(String firstName, String lastName,
-			String email, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			String sortBy, int sortDirection, int limit) {
-		Map<Object, Object> results = (Map<Object, Object>) this.getAllUsersByCriteria("", null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+														 String email,
+														 boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+														 boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+														 String sortBy, int sortDirection, int limit) {
+		Map<Object, Object> results = (Map<Object, Object>) this.getAllUsersByCriteria("", null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				-1, -1, sortBy, sortDirection,
 				firstName, lastName, email, limit, false);
 		return results;
 	}
 
 	public Map<Object, Object> findLearner1(String searchCriteria,
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, 
-			Long customerId, Long userId, int pageIndex, int pageSize, String sortBy,
-			int sortDirection) {
+											boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+											boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups,
+											Long customerId, Long userId, int pageIndex, int pageSize, String sortBy,
+											int sortDirection) {
 		Map<Object, Object> results = new HashMap<Object, Object>();
-		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria,null, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+		results = (Map<Object, Object>) this.getAllUsersByCriteria(searchCriteria,null,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				pageIndex, pageSize, sortBy, sortDirection,
 				"", "", "", -1, false);
 		return results;
 	}
 
 	public Map<Object, Object> findLearner1(String firstName, String lastName,
-			String email, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			int pageIndex, int pageSize,
-			String sortBy, int sortDirection) {
+											String email,
+											boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+											boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+											int pageIndex, int pageSize,
+											String sortBy, int sortDirection) {
 		Map<Object, Object> results = new HashMap<Object, Object>();
 		results = (Map<Object, Object>) this.getAllUsersByCriteria("", null,
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				pageIndex, pageSize, sortBy, sortDirection,
 				firstName, lastName, email, -1, false);
 		return results;
@@ -383,26 +383,26 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	/**
-	 * code modified by Marium Saud eliminating  
+	 * code modified by Marium Saud eliminating
 	 * boolean notLmsRole, String searchCriteria and LMSRole are commented from this method as they are not used in search where clause
 	 */
 
 	public Map<Object, Object> findActiveLearners(String firstName,
-			String lastName, String email, 
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
-			boolean accountNonExpired, boolean accountNonLocked,
-			boolean enabled, int pageIndex, int pageSize, String sortBy,
-			int sortDirection) {
+												  String lastName, String email,
+												  boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+												  boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+												  boolean accountNonExpired, boolean accountNonLocked,
+												  boolean enabled, int pageIndex, int pageSize, String sortBy,
+												  int sortDirection) {
 
-		/** Marium Saud 
+		/** Marium Saud
 		 * boolean notLmsRole, String searchCriteria and LMSRole are commented from this method as they are not used in search where clause
-		 
-		boolean notLmsRole = false;
-		String searchCriteria = "";
-		LMSRole lmsRole = null;
-		*/
- 
+
+		 boolean notLmsRole = false;
+		 String searchCriteria = "";
+		 LMSRole lmsRole = null;
+		 */
+
 		List<VU360User> userList = new ArrayList<VU360User>();
 		Map<Object, Object> serachResult = new HashMap<Object, Object>();
 		RepositorySpecificationsBuilder<VU360User> specificationBuilder = new RepositorySpecificationsBuilder<VU360User>();
@@ -426,9 +426,9 @@ public class LearnerServiceImpl implements LearnerService {
 				while (loop) {
 					if (index + max_limit > ids.length) {
 						bucketSize = ids.length - index;// supposed to be last
-														// bucket with the
-														// content less than
-														// max_limit
+						// bucket with the
+						// content less than
+						// max_limit
 					} else {
 						bucketSize = max_limit;
 					}
@@ -452,19 +452,19 @@ public class LearnerServiceImpl implements LearnerService {
 
 							PageRequest pageRequest = null;
 
-								pageRequest = new PageRequest(pageIndex, pageSize,sortSpec);
+							pageRequest = new PageRequest(pageIndex, pageSize,sortSpec);
 
-								Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
+							Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
 
-								recordSize = recordSize	+ ((int) (long) page.getTotalElements());
+							recordSize = recordSize	+ ((int) (long) page.getTotalElements());
 
-								userList = page.getContent();
+							userList = page.getContent();
 						}
 						else {
 
-							List<VU360User> users = vu360UserRepository.showAll(null, 
-								isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId, 
-								"", firstName, lastName, email, idbucket, false, false, accountNonExpired, accountNonLocked, enabled, sortBy, sortDirection);
+							List<VU360User> users = vu360UserRepository.showAll(null,
+									isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId,
+									"", firstName, lastName, email, idbucket, false, false, accountNonExpired, accountNonLocked, enabled, sortBy, sortDirection);
 
 							recordSize = recordSize + users.size();
 
@@ -501,20 +501,20 @@ public class LearnerServiceImpl implements LearnerService {
 					}
 
 					PageRequest pageRequest = null;
-					
-						pageRequest = new PageRequest(pageIndex, pageSize, sortSpec);
-						
-						Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
-						
-						recordSize = ((int) (long)page.getTotalElements());
 
-						userList = page.getContent();
- 
+					pageRequest = new PageRequest(pageIndex, pageSize, sortSpec);
+
+					Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
+
+					recordSize = ((int) (long)page.getTotalElements());
+
+					userList = page.getContent();
+
 				}
 				else {
 
-					List<VU360User> users = vu360UserRepository.showAll(null, 
-							isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId, 
+					List<VU360User> users = vu360UserRepository.showAll(null,
+							isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId,
 							"", firstName, lastName, email, null, false, false, accountNonExpired, accountNonLocked, enabled, sortBy, sortDirection);
 
 					recordSize = users.size();
@@ -543,7 +543,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 		// Get all learners of the current Distributor's customers.
 		specificationBuilder.with("learner_customer_distributor_id", specificationBuilder.JOIN_EQUALS, distributorId, "AND");
-		
+
 		if (enrollmentMethod != null) {
 			if (enrollmentMethod
 					.equals(AssignSurveyController.SURVEY_METHOD_LEARNER)) {
@@ -668,20 +668,20 @@ public class LearnerServiceImpl implements LearnerService {
 	public VU360User updateUserFromBatchFile(VU360User updatedUser) {
 		String newPassword = "", encodedPassword = "";
 		if (updatedUser.isPassWordChanged()) {
-			newPassword = updatedUser.getPassword(); // Update in the Active Directory 
+			newPassword = updatedUser.getPassword(); // Update in the Active Directory
 			//com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(updatedUser);
 			//Object salt = saltSource.getSalt(voUser); // salt is the guid
 			//encodedPassword = passwordEncoder.encodePassword(newPassword, salt);
-			
-			
+
+
 			com.softech.vu360.lms.vo.VU360User vu360UserVO = new com.softech.vu360.lms.vo.VU360User();
 			vu360UserVO.setUserGUID(updatedUser.getUserGUID());
 			vu360UserVO.setId(updatedUser.getId());
 			vu360UserVO.setPassword(updatedUser.getPassword());
-			
-			
+
+
 			encodedPassword = LoginSecurityHelper.getEncryptedPassword(vu360UserVO);
-			
+
 			updatedUser.setPassword(encodedPassword);
 		}
 
@@ -689,15 +689,15 @@ public class LearnerServiceImpl implements LearnerService {
 
 		if (updatedUserForAD != null
 				&& activeDirectoryService.isADIntegrationEnabled()) {// if
-																		// success
-																		// and
-																		// AD is
-																		// enabled
+			// success
+			// and
+			// AD is
+			// enabled
 			updatedUser.setPassword(newPassword);// we require plain password in
-													// AD
+			// AD
 			activeDirectoryService.updateUser(updatedUser);// edit user to AD
 			updatedUser.setPassword(encodedPassword);// reset the password to
-														// encrypted
+			// encrypted
 		}
 
 		return updatedUserForAD;
@@ -715,8 +715,8 @@ public class LearnerServiceImpl implements LearnerService {
 			vu360UserVO.setUserGUID(updatedUser.getUserGUID());
 			vu360UserVO.setId(updatedUser.getId());
 			vu360UserVO.setPassword(updatedUser.getPassword());
-			
-			
+
+
 			String encodedPassword = LoginSecurityHelper.getEncryptedPassword(vu360UserVO);
 			updatedUser.setPassword(encodedPassword);
 		}
@@ -741,7 +741,7 @@ public class LearnerServiceImpl implements LearnerService {
 		profile.setOfficePhone(userToSave.getLearner().getLearnerProfile().getOfficePhone());
 		profile.setOfficePhoneExtn(userToSave.getLearner().getLearnerProfile().getOfficePhoneExtn());
 		profile.setTimeZone(userToSave.getLearner().getLearnerProfile().getTimeZone());
-		
+
 		if (userToSave.isPassWordChanged()) {
 			// required since we need to get the old guid...assuming the guid wont change
 			newPassword = userToSave.getPassword();
@@ -753,6 +753,7 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 
 		isEmailChanged = !userToSave.getEmailAddress().equalsIgnoreCase(dbUser.getEmailAddress());
+		userToSave.setLmsRoles(userToSave.getLmsRoles());
 		// if name (first name OR last name) is changed. Then only, audit the change
 		if (!userToSave.getLastName().equalsIgnoreCase(dbUser.getLastName())
 				|| !userToSave.getFirstName().equalsIgnoreCase(dbUser.getFirstName())) {
@@ -785,16 +786,16 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public Learner addLearner(Customer cust,
-			List<OrganizationalGroup> orgGroups,
-			List<LearnerGroup> learnerGroups, Learner newLearner) {
+							  List<OrganizationalGroup> orgGroups,
+							  List<LearnerGroup> learnerGroups, Learner newLearner) {
 		Learner savedLearner = addLearner(true, cust, orgGroups, learnerGroups,newLearner);
 		return savedLearner;
 	}
 
 	@Transactional
 	public Learner addLearner(boolean shouldAddUserInAD, Customer cust,
-			List<OrganizationalGroup> orgGroups,
-			List<LearnerGroup> learnerGroups, Learner newLearner) {
+							  List<OrganizationalGroup> orgGroups,
+							  List<LearnerGroup> learnerGroups, Learner newLearner) {
 
 		// setup new learner and persist to database
 		VU360User user = newLearner.getVu360User();
@@ -804,19 +805,19 @@ public class LearnerServiceImpl implements LearnerService {
 		voUser.setId(user.getId());
 		voUser.setPassword(user.getPassword());
 		voUser.setUserGUID(user.getUserGUID());
-		
+
 		/*Object salt = saltSource.getSalt(voUser); // salt is the guid
 		String encodedPassword = passwordEncoder.encodePassword(plainPwd, salt);*/
-		
+
 		String encodedPassword = LoginSecurityHelper.getEncryptedPassword(voUser);
-		
+
 		user.setPassword(encodedPassword);
 		LearnerProfile profile= newLearner.getLearnerProfile();
 		profile=learnerProfileRepository.save(profile);
 
 		newLearner=profile.getLearner();
 		user=newLearner.getVu360User();
-		
+
 		// associated as member to org groups, persist to database
 		if (orgGroups != null) {
 			for (OrganizationalGroup og : orgGroups) {
@@ -844,7 +845,7 @@ public class LearnerServiceImpl implements LearnerService {
 		preferences = learnerPreferenceRepository.save(preferences);
 
 		boolean dashboardFeature = lmsRoleLMSFeatureRepository.isAllowedLearnerDashboard(newLearner.getVu360User().getId());
-		
+
 		/*for (LMSRole role : newLearner.getVu360User().getLmsRoles()) {
 			List<LMSRoleLMSFeature> permissions = (List<LMSRoleLMSFeature>) lmsRoleLMSFeatureRepository.findByLmsRoleId(role.getId());
 			for (LMSRoleLMSFeature feature : permissions) {
@@ -902,7 +903,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return registrationInvitationRepository.findOne(id);
 	}
 
-	
+
 
 	public OrganizationalGroup getOrganizationalGroupById(Long id) {
 		OrganizationalGroup org = null;
@@ -932,10 +933,10 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return learnerGroup;
 	}
-	
+
 
 	public List<Learner> addLearnersInOrgGroup(String[] selectedLearners,
-			Long orgGroupId) {
+											   Long orgGroupId) {
 		Long[] selectedLearnerIds = new Long[selectedLearners.length];
 		for (int i = 0; i < selectedLearners.length; i++) {
 			selectedLearnerIds[i] = Long.valueOf(selectedLearners[i]);
@@ -945,7 +946,7 @@ public class LearnerServiceImpl implements LearnerService {
 		OrganizationalGroup orgGroup = organizationalGrpRepository.findOne(orgGroupId);
 		return this.addLearnersInOrgGroup(learners, orgGroup);
 	}
-	
+
 
 	public List<Learner> addLearnersInOrgGroup(
 			List<Learner> listSelectedLearner, OrganizationalGroup orgGroup) {
@@ -956,7 +957,7 @@ public class LearnerServiceImpl implements LearnerService {
 			counter += 1;
 		}
 		List<OrganizationalGroupMember> existingMemberships = organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn
-																											(orgGroup.getId(), learnersArray);
+				(orgGroup.getId(), learnersArray);
 		if (CollectionUtils.isNotEmpty(existingMemberships)) {
 			for (OrganizationalGroupMember member : existingMemberships) {
 				if (listSelectedLearner.contains(member.getLearner())) {
@@ -979,13 +980,13 @@ public class LearnerServiceImpl implements LearnerService {
 
 	@Transactional
 	public void deleteOrgGroup(List<Learner> listSelectedLearner,
-			OrganizationalGroup OrgGroup) {
+							   OrganizationalGroup OrgGroup) {
 		organizationalGrpRepository.deleteById(OrgGroup.getId());
 	}
 
 
 	public void addLearnersInLearnerGroup(List<Learner> listSelectedLearner,
-			LearnerGroup learnerGroup) {
+										  LearnerGroup learnerGroup) {
 
 		Long[] learnersArray = new Long[listSelectedLearner.size()];
 		int counter = 0;
@@ -1004,59 +1005,59 @@ public class LearnerServiceImpl implements LearnerService {
 			}
 		}
 		List<OrganizationalGroupMember> existingOrgGroupMembers =
-	            organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn(learnerGroup.getOrganizationalGroup().getId(), learnersArray);
-	        if (CollectionUtils.isNotEmpty(existingOrgGroupMembers)) {
-	          for (OrganizationalGroupMember member : existingOrgGroupMembers) {
-	            if (listSelectedLearner.contains(member.getLearner())) {
-	              log.warn("duplicate OG membership found, fail safe logic executing:"
-	                  + member.getLearner().getVu360User().getUsername());
-	              listSelectedLearner.remove(member.getLearner());
-	            }
-	          }
-	        }
-			
+				organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn(learnerGroup.getOrganizationalGroup().getId(), learnersArray);
+		if (CollectionUtils.isNotEmpty(existingOrgGroupMembers)) {
+			for (OrganizationalGroupMember member : existingOrgGroupMembers) {
+				if (listSelectedLearner.contains(member.getLearner())) {
+					log.warn("duplicate OG membership found, fail safe logic executing:"
+							+ member.getLearner().getVu360User().getUsername());
+					listSelectedLearner.remove(member.getLearner());
+				}
+			}
+		}
+
 		LearnerGroupMember learnerGroupMember = null;
 		for (Learner learner : listSelectedLearner) {
-			log.debug("... addLearnersInLearnerGroup start *3 learner.getId()"+ learner.getId()); 
+			log.debug("... addLearnersInLearnerGroup start *3 learner.getId()"+ learner.getId());
 			learnerGroupMember = new LearnerGroupMember();
 			learnerGroupMember.setLearner(learner);
 			learnerGroupMember.setLearnerGroup(learnerGroup);
 			learnerGroupMemberRepository.saveLGM(learnerGroupMember).getLearner();
 			log.debug("...addLearnersInLearnerGroup end *3");
 		}
-		
-		OrganizationalGroupMember orgGroupMember = null;
-        for (Learner learner : listSelectedLearner) {
-          log.debug("... addLearnersInOrgGroup start *4 learner.getVu360User().getId()"
-              + learner.getVu360User().getId());
-          orgGroupMember = new OrganizationalGroupMember();
-          orgGroupMember.setLearner(learner);
-          orgGroupMember.setOrganizationalGroup(learnerGroup.getOrganizationalGroup());
-          organizationalGroupMemberRepository.saveOGM(orgGroupMember).getLearner();
-          log.debug("...addLearnersInOrgGroup end *4");
-        }
-    }
-	
 
-	public void addLearnerInLearnerGroup(Learner learner,
-			LearnerGroup learnerGroup) {
-		if (learnerGroup != null) {
-			LearnerGroupMember member = new LearnerGroupMember();
-	    	member.setLearner(learner);
-	    	member.setLearnerGroup(learnerGroup);
-	    	learnerGroupMemberRepository.save(member);
+		OrganizationalGroupMember orgGroupMember = null;
+		for (Learner learner : listSelectedLearner) {
+			log.debug("... addLearnersInOrgGroup start *4 learner.getVu360User().getId()"
+					+ learner.getVu360User().getId());
+			orgGroupMember = new OrganizationalGroupMember();
+			orgGroupMember.setLearner(learner);
+			orgGroupMember.setOrganizationalGroup(learnerGroup.getOrganizationalGroup());
+			organizationalGroupMemberRepository.saveOGM(orgGroupMember).getLearner();
+			log.debug("...addLearnersInOrgGroup end *4");
 		}
 	}
-	
+
+
+	public void addLearnerInLearnerGroup(Learner learner,
+										 LearnerGroup learnerGroup) {
+		if (learnerGroup != null) {
+			LearnerGroupMember member = new LearnerGroupMember();
+			member.setLearner(learner);
+			member.setLearnerGroup(learnerGroup);
+			learnerGroupMemberRepository.save(member);
+		}
+	}
+
 
 	public void deleteLearnerFromLearnerGroup(Learner learner,
-			LearnerGroup learnerGroup) {
-		List<LearnerGroupMember> lstLGM = learnerGroupMemberRepository.findByLearnerGroupIdAndLearnerIdIn(learnerGroup.getId(), 
-																										new Long[] { learner.getId() });
+											  LearnerGroup learnerGroup) {
+		List<LearnerGroupMember> lstLGM = learnerGroupMemberRepository.findByLearnerGroupIdAndLearnerIdIn(learnerGroup.getId(),
+				new Long[] { learner.getId() });
 		for(LearnerGroupMember LGM : lstLGM)
 			learnerGroupMemberRepository.delete(LGM);
 	}
-	
+
 
 	public LMSRole getLMSRoleById(Long id) {
 		LMSRole lmsRole = null;
@@ -1084,15 +1085,15 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return learners;
 	}
-	
+
 	public Long countMembersByRole(LMSRole lmsRole) {
-			return learnerRepository.countByVu360User_LmsRoles_Id(lmsRole.getId());
+		return learnerRepository.countByVu360User_LmsRoles_Id(lmsRole.getId());
 	}
-	
+
 	public Map<String, String> countLearnerByRoles(Long [] trainingPlanIds){
 		return lmsRoleRepository.countLearnerByRoles(trainingPlanIds);
 	}
-	
+
 	public void InactiveUsers(long userIdArray[]) {
 
 		for (int userId = 0; userId < userIdArray.length; userId++) {
@@ -1105,8 +1106,8 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 
 	}
-	
-	
+
+
 	// Added by partha
 	@Transactional
 	public LMSRole addRole(LMSRole role, Customer customer) {
@@ -1114,9 +1115,9 @@ public class LearnerServiceImpl implements LearnerService {
 		if (role.getRoleType().equalsIgnoreCase(LMSRole.ROLE_LEARNER)) {
 
 			if (role.isDefaultForRegistration()) {
-				
+
 				LMSRole defaultRole = lmsRoleRepository.getDefaultRole(customer);
-				
+
 				if (defaultRole != null) {
 					defaultRole.setDefaultForRegistration(Boolean.FALSE);
 					lmsRoleRepository.save(defaultRole);
@@ -1126,7 +1127,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return lmsRoleRepository.save(role);
 
 	}
-	
+
 
 	public LMSRole getDefaultRoleForUser(Customer customer) {
 		LMSRole role = null;
@@ -1202,7 +1203,7 @@ public class LearnerServiceImpl implements LearnerService {
 	 */
 	@Transactional
 	public void assignUserToRole(long userIdArray[], LMSRole lmsRole,
-			String manageAll, List<OrganizationalGroup> orgGroupsList) {
+								 String manageAll, List<OrganizationalGroup> orgGroupsList) {
 
 		boolean mngAll = false;
 
@@ -1287,7 +1288,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 	@Transactional
 	public void assignUserToRole(Map<Long, Long> userIdContentOwnerMap,
-			LMSRole lmsRole) {
+								 LMSRole lmsRole) {
 		// public void assignUserToRole(long userIdArray[], LMSRole lmsRole){
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -1322,7 +1323,7 @@ public class LearnerServiceImpl implements LearnerService {
 					 * LMS-4266,LMS-4469 manager role is not supposed to be
 					 * assigned along Admin type role. both are separate roles
 					 * if(!user.isTrainingAdministrator()){
-					 * 
+					 *
 					 * TrainingAdministrator trainingAdministrator = new
 					 * TrainingAdministrator();
 					 * trainingAdministrator.setCustomer
@@ -1332,7 +1333,7 @@ public class LearnerServiceImpl implements LearnerService {
 					 * userDAO.getSystemRolesByCustomer
 					 * (user.getLearner().getCustomer()); for( LMSRole role :
 					 * systemRoles ) {
-					 * 
+					 *
 					 * if(role.getRoleType().equalsIgnoreCase(LMSRole.
 					 * ROLE_TRAININGMANAGER)) { user.getLmsRoles().add(role);
 					 * break; } } }
@@ -1347,10 +1348,10 @@ public class LearnerServiceImpl implements LearnerService {
 				user.addLmsRole(lmsRole);
 			} else if (lmsRole.getRoleType().equalsIgnoreCase(
 					LMSRole.ROLE_REGULATORYANALYST)) {
-				
+
 				RegulatoryAnalyst regulatoryAnalyst = user.getRegulatoryAnalyst();
 				if(regulatoryAnalyst==null || (regulatoryAnalyst!=null && regulatoryAnalyst.getId()==null)){
-					regulatoryAnalyst = new RegulatoryAnalyst();	
+					regulatoryAnalyst = new RegulatoryAnalyst();
 					regulatoryAnalyst.setUser(user);
 					user.setRegulatoryAnalyst(regulatoryAnalyst);
 				}
@@ -1403,7 +1404,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 	@Transactional
 	public void unAssignUsersFromAllRolesOfType(String userIdArray[],
-			String roleType) {
+												String roleType) {
 		for (int i = 0; i < userIdArray.length; i++) {
 			VU360User user = vu360UserRepository.findOne(Long
 					.valueOf(userIdArray[i]));
@@ -1420,9 +1421,9 @@ public class LearnerServiceImpl implements LearnerService {
 			}
 			vu360UserRepository.saveUser(user);
 		}
-		
+
 	}
-	
+
 	@Transactional
 	public void unAssignUserFromRole(long userIdArray[], LMSRole lmsRole) {
 
@@ -1475,13 +1476,13 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public Map<Object, Object> getAllUsersInLmsRole(LMSRole lmsRole,
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			String sortBy, int sortDirection) {
+													boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+													boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+													String sortBy, int sortDirection) {
 
 		Map<Object, Object> results = new HashMap<Object, Object>();
 		results = (Map<Object, Object>) this.getAllUsersByCriteria("", lmsRole,
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				-1, -1, sortBy, sortDirection, "", "", "", -1,
 				false);
 		return results;
@@ -1489,13 +1490,13 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public Map<Object, Object> getAllUsersInLmsRole(LMSRole lmsRole,
-			boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, 
-			int pageIndex, int pageSize, String sortBy,
-			int sortDirection) {
+													boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
+													boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
+													int pageIndex, int pageSize, String sortBy,
+													int sortDirection) {
 		isProctorRole = true;
-		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria("", lmsRole, 
-				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId, 
+		Map<Object, Object> searchResult = (Map<Object, Object>) this.getAllUsersByCriteria("", lmsRole,
+				isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId,
 				pageIndex, pageSize, sortBy,
 				sortDirection, "", "", "", -1, false);
 		isProctorRole = false;
@@ -1508,15 +1509,15 @@ public class LearnerServiceImpl implements LearnerService {
 	// ========= TopLinkLearnerDAOImpl to Service ===============//
 
 	@SuppressWarnings("unchecked")
-	public Map<Object, Object> getAllUsersByCriteria(String searchCriteria, LMSRole lmsRole, boolean isLMSAdministrator, 
-			boolean isTrainingAdministrator, Long trainingAdministratorId,
-			boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, int pageIndex,
-			int pageSize, String sortBy, int sortDirection, String firstName,	String lastName, String email, int limit, boolean notLmsRole) {
-		
+	public Map<Object, Object> getAllUsersByCriteria(String searchCriteria, LMSRole lmsRole, boolean isLMSAdministrator,
+													 boolean isTrainingAdministrator, Long trainingAdministratorId,
+													 boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId, int pageIndex,
+													 int pageSize, String sortBy, int sortDirection, String firstName,	String lastName, String email, int limit, boolean notLmsRole) {
+
 		List<VU360User> userList = new ArrayList<VU360User>();
 		Map<Object, Object> serachResult = new HashMap<Object, Object>();
 		try {
-			RepositorySpecificationsBuilder<VU360User> specificationBuilder = new RepositorySpecificationsBuilder<VU360User>();	
+			RepositorySpecificationsBuilder<VU360User> specificationBuilder = new RepositorySpecificationsBuilder<VU360User>();
 			if (sortBy == "" || sortBy.equalsIgnoreCase(""))
 				sortDirection = -1;
 			Map<?, ?> result = getManagerRestrictionUserList(isLMSAdministrator, isTrainingAdministrator, trainingAdministratorId, trainingAdmin_isManagesAllOrganizationalGroups, managedGroups, customerId, userId);
@@ -1542,9 +1543,9 @@ public class LearnerServiceImpl implements LearnerService {
 					idbucket = new Long[bucketSize];
 					System.arraycopy(ids, index, idbucket, 0, bucketSize);
 					try {
-						
+
 						if(pageSize != -1 && pageIndex != -1){
-						
+
 							specificationBuilder.with("id", specificationBuilder.IN, idbucket, "AND");
 							if (lmsRole != null && !notLmsRole) {
 								specificationBuilder.with("lmsRoles", specificationBuilder.JOIN_EQUALS, lmsRole.getId(), "AND");
@@ -1573,15 +1574,15 @@ public class LearnerServiceImpl implements LearnerService {
 							Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
 							recordSize = recordSize	+ ((int) (long)page.getTotalElements());
 							userList = page.getContent();
-							 
+
 						}
 						else {
-							//Inorder to optimize performance for Search All Users feature several soluitions are proposed via JPQL, Secondary Tables(Entities) and Native Query 
-							// The adopted solution i-e Native Query has been accepted which minimizes the search response time from 3 min to 1 sec. 
+							//Inorder to optimize performance for Search All Users feature several soluitions are proposed via JPQL, Secondary Tables(Entities) and Native Query
+							// The adopted solution i-e Native Query has been accepted which minimizes the search response time from 3 min to 1 sec.
 							List<VU360User> users = vu360UserRepository.showAll(lmsRole, isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId, searchCriteria, firstName, lastName, email, idbucket, isProctorRole, notLmsRole, null, null, null, sortBy, sortDirection);
 							recordSize = recordSize + users.size();
 							userList.addAll(users);
-							}
+						}
 					} catch (ObjectRetrievalFailureException e) {
 						if (log.isDebugEnabled()) {
 							log.debug("learners:" + ids);
@@ -1596,11 +1597,11 @@ public class LearnerServiceImpl implements LearnerService {
 				serachResult.put("list", userList);
 			} else {
 				if (result.get("expression") != null) { // LMS-16348: Condition // is added due to the	reason that if expression is null then all records are
-														// being fetched. ReadAllQuery raq = new ReadAllQuery(VU360User.class);
+					// being fetched. ReadAllQuery raq = new ReadAllQuery(VU360User.class);
 					int recordSize = 0;
 					if (pageSize != -1 && pageIndex != -1) {
-						specificationBuilder = (RepositorySpecificationsBuilder<VU360User>) result.get("expression");	
-						
+						specificationBuilder = (RepositorySpecificationsBuilder<VU360User>) result.get("expression");
+
 						if (lmsRole != null && !notLmsRole) {
 							specificationBuilder.with("lmsRoles", specificationBuilder.JOIN_EQUALS, lmsRole.getId(), "AND");
 						}
@@ -1623,14 +1624,14 @@ public class LearnerServiceImpl implements LearnerService {
 						}
 
 						PageRequest pageRequest = null;
-						
+
 						pageRequest = new PageRequest(pageIndex, pageSize,	sortSpec);
 						Page<VU360User> page = vu360UserRepository.findAll(specificationBuilder.build(), pageRequest);
 						recordSize = recordSize	+ ((int) (long)page.getTotalElements());
 						userList = page.getContent();
-						
+
 					}
-					 else {
+					else {
 						List<VU360User> users = vu360UserRepository.showAll(lmsRole, isLMSAdministrator, trainingAdmin_isManagesAllOrganizationalGroups, customerId, userId, searchCriteria, firstName, lastName, email, null, isProctorRole, notLmsRole, null,null,null, sortBy, sortDirection);
 						recordSize = users.size();
 						userList.addAll(users);
@@ -1678,7 +1679,7 @@ public class LearnerServiceImpl implements LearnerService {
 				if (managedGroups != null && managedGroups.size() > 0) {
 
 					userIds=vu360UserRepository.getOrganizational_Group_Members(userId, customerId);
-					
+
 					if (userIds == null || userIds.size() == 0) {
 						Object[] objEmptyArray = new Object[1];
 						objEmptyArray[0] = -1;
@@ -1696,7 +1697,7 @@ public class LearnerServiceImpl implements LearnerService {
 		results.put("expression", specificationBuilder);
 		return results;
 	}
-	
+
 	public List<ContentOwner> getContentOwnerList(VU360User loggedInUser) {
 
 		List<ContentOwner> contentOwnerList = new ArrayList<ContentOwner>();
@@ -1723,7 +1724,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 					// LMS-14184
 					List<Distributor> ls = distributorRepository.getAllowedDistributorByGroupId(
-							String.valueOf(distributorGroup.getId()), 
+							String.valueOf(distributorGroup.getId()),
 							String.valueOf(loggedInUser.getLmsAdministrator().getId()));
 					if (ls != null && ls.size() > 0)
 						distributorList.addAll(ls);
@@ -1755,14 +1756,14 @@ public class LearnerServiceImpl implements LearnerService {
 		return contentOwnerList;
 
 	}
-	
+
 
 	@Transactional
 	public LearnerPreferences saveLearnerPreferences(
 			LearnerPreferences learnerPreferences) {
 		return learnerPreferenceRepository.save(learnerPreferences);
 	}
-	
+
 
 	public List<RegistrationInvitation> getRegistrationInvitationByName(
 			Customer customer, String invitationName, VU360User loggedinUser) {
@@ -1780,27 +1781,27 @@ public class LearnerServiceImpl implements LearnerService {
 					registrationInvitations = registrationInvitationRepository
 							.findByCustomerIdAndInvitationNameContainingIgnoreCase(loggedinUser.getLearner().getCustomer().getId(), invitationName);
 				}
-				
+
 			} else {
 				if(loggedinUser.getTrainingAdministrator().getManagedGroups() != null && !loggedinUser.getTrainingAdministrator().getManagedGroups().isEmpty()){
-  					Set<OrganizationalGroup> orgSet = new HashSet<OrganizationalGroup>(loggedinUser.getTrainingAdministrator().getManagedGroups());
-  				     if(orgSet!=null && !orgSet.isEmpty()){
-  				    	registrationInvitations = registrationInvitationRepository
-  								.findDistinctByOrgGroupsIdInAndCustomerIdAndInvitationNameContainingIgnoreCase(
-  										FormUtil.getPropertyArrayFromList(new ArrayList<OrganizationalGroup>(orgSet)), customer.getId(),
-  										invitationName); 
-  				       }
-  				     }
-  				   }
+					Set<OrganizationalGroup> orgSet = new HashSet<OrganizationalGroup>(loggedinUser.getTrainingAdministrator().getManagedGroups());
+					if(orgSet!=null && !orgSet.isEmpty()){
+						registrationInvitations = registrationInvitationRepository
+								.findDistinctByOrgGroupsIdInAndCustomerIdAndInvitationNameContainingIgnoreCase(
+										FormUtil.getPropertyArrayFromList(new ArrayList<OrganizationalGroup>(orgSet)), customer.getId(),
+										invitationName);
+					}
+				}
+			}
 		}
 		return registrationInvitations;
 
 	}
-	
+
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.softech.vu360.lms.service.LearnerService#
 	 * getCreditReportingFieldsByLearner(com.softech.vu360.lms.model.Learner)
 	 */
@@ -1828,7 +1829,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 		return new ArrayList<CreditReportingField>(creditreportingFields);
 	}
-	
+
 
 	public List<CreditReportingField> getCreditReportingFieldsByLearnerCourseApproval(Learner learner) {
 		List<LearnerEnrollment> emrollments = this.entitlementService.getLearnerEnrollmentsForReportingfields(learner);
@@ -1837,10 +1838,10 @@ public class LearnerServiceImpl implements LearnerService {
 
 		// TODO for performance use the below query to fetch course guid for learner enrollment
 		/**
-			SELECT DISTINCT c.GUID
-			FROM LEARNERENROLLMENT le
-			inner join Course c ON c.id=le.course_id
-			where le.id in(51,52,53,54,55);
+		 SELECT DISTINCT c.GUID
+		 FROM LEARNERENROLLMENT le
+		 inner join Course c ON c.id=le.course_id
+		 where le.id in(51,52,53,54,55);
 		 * */
 		for (LearnerEnrollment learnerenrollemnt : emrollments) {
 			if (!coursesList.contains(learnerenrollemnt.getCourse().getCourseGUID()))
@@ -1863,13 +1864,13 @@ public class LearnerServiceImpl implements LearnerService {
 
 		return new ArrayList<CreditReportingField>(creditreportingFields);
 	}
-	
+
 
 	public List<CreditReportingFieldValueChoice> getChoicesByCreditReportingField(
-		CreditReportingField creditReportingField) {
+			CreditReportingField creditReportingField) {
 		return crfValueChoiceRepository.findByCreditReportingFieldIdOrderByDisplayOrderAsc(creditReportingField.getId());
 	}
-	
+
 
 	public List<CreditReportingFieldValue> getCreditReportingFieldValues(
 			Learner learner) {
@@ -1880,7 +1881,7 @@ public class LearnerServiceImpl implements LearnerService {
 		reportingFieldValues = crfValueRepository.findByLearnerprofile_Learner_Id(learner.getId());
 		return reportingFieldValues;
 	}
-	
+
 
 	public List<Learner> getAllLearnersOfCustomer(Customer customer) {
 		List<Learner> learners = new ArrayList<Learner>();
@@ -1892,47 +1893,47 @@ public class LearnerServiceImpl implements LearnerService {
 		return crfValueRepository.findOne(id);
 	}
 
-	
+
 	public PasswordEncoder getPasswordEncoder() {
 		return passwordEncoder;
 	}
 
-	
+
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
 	}
 
-	
+
 	public SaltSource getSaltSource() {
 		return saltSource;
 	}
 
-	
+
 	public void setSaltSource(SaltSource saltSource) {
 		this.saltSource = saltSource;
 	}
 
-	
+
 	public AccreditationService getAccreditationService() {
 		return accreditationService;
 	}
 
-	
+
 	public void setAccreditationService(
 			AccreditationService accreditationService) {
 		this.accreditationService = accreditationService;
 	}
 
-	
+
 	public EntitlementService getEntitlementService() {
 		return entitlementService;
 	}
 
-	
+
 	public void setEntitlementService(EntitlementService entitlementService) {
 		this.entitlementService = entitlementService;
 	}
-	
+
 
 	// Modified By Marium.Saud
 	@Transactional
@@ -1959,8 +1960,8 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 
 		// due to LMS-16564, we have to set CRField it again.- fresh Copy from db
-	    creditReportingfieldValue.setReportingCustomField(crfOriginal);
-				
+		creditReportingfieldValue.setReportingCustomField(crfOriginal);
+
 		creditReportingfieldValue = crfValueRepository
 				.save(creditReportingfieldValue);
 
@@ -1995,7 +1996,7 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return creditReportingfieldValue;
 	}
-	
+
 
 	// Modified By Marium Saud
 	@Transactional
@@ -2014,13 +2015,13 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 
 	}
-	
+
 
 	@Transactional
 	public LearnerProfile updateLearnerProfile(LearnerProfile learnerProfile) {
 		return learnerProfileRepository.save(learnerProfile);
 	}
-	
+
 
 	public List<TimeZone> getTimeZoneList() {
 		List<TimeZone> timeZoneList = new ArrayList<TimeZone>();
@@ -2031,7 +2032,7 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return timeZoneList;
 	}
-	
+
 
 	public TimeZone getTimeZoneById(long id) {
 		TimeZone timeZone = new TimeZone();
@@ -2048,7 +2049,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return authorService;
 	}
 
-	
+
 	public void setAuthorService(AuthorService authorService) {
 		this.authorService = authorService;
 	}
@@ -2057,7 +2058,7 @@ public class LearnerServiceImpl implements LearnerService {
 	 * Register Learner to Discussion Forum on phpBB and returned lauch URL of forum.
 	 */
 	public String registerLearnerToVCS(DiscussionForumCourse dfCourse,
-			Learner learner) {
+									   Learner learner) {
 
 		// Register learner to phpBB if new learner, or update account
 		// information otherwise
@@ -2074,11 +2075,11 @@ public class LearnerServiceImpl implements LearnerService {
 				+ dfCourse.getCourseGUID().replace("-", "");
 
 	}
-	
+
 
 	@Transactional
 	public List<Learner> setupLearnerForUsers(List<String> userGuidList,
-			String contentOwnerGUID) {
+											  String contentOwnerGUID) {
 		ContentOwner contentOwner = authorService
 				.readContentOwnerByGUID(contentOwnerGUID);
 
@@ -2123,46 +2124,46 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		List<OrganizationalGroup> groups = organizationalGrpRepository.findByCustomerIdAndRootOrgGroupIsNull(customer.getId());
 		OrganizationalGroup orgGroup = null;
-		if ( groups.size() > 0 ) 
+		if ( groups.size() > 0 )
 			orgGroup = groups.get(0);
 		this.addLearnersInOrgGroup(listOfLearnersAdded, orgGroup);
 		LMSRole learnerRole = this.getDefaultRoleForLearner(customer);
 		this.addLearnerInRole(listOfLearnersAdded, learnerRole);
 		return listOfLearnersAdded;
 	}
-	
-	
+
+
 	public void addLearnerInRole(List<Learner> learner, LMSRole lmsRole) {
-		
+
 		VU360User updatedUser = null;
-		
+
 		for(int i=0; i<learner.size(); i++) {
-			
+
 			updatedUser = vu360UserRepository.findOne(learner.get(i).getVu360User().getId());
 			updatedUser.getLmsRoles().add(lmsRole);
 		}
 		vu360UserRepository.save(updatedUser);
 	}
-	
+
 
 	public String getLearnerAvatarNameFromVCS(Learner learner) {
 
 		/**
 		 * Modified By Marium Saud : LMS-19051 : The webservice calling has been commented out as it's not in working condition as verified from QA.
-		String avatarName = new VcsDiscussionForumClientWSImpl()
-				.getUserAvatarNameEvent(learner.getVu360User().getUserGUID());
+		 String avatarName = new VcsDiscussionForumClientWSImpl()
+		 .getUserAvatarNameEvent(learner.getVu360User().getUserGUID());
 
-		// Set avatar name to UserGUID if no avatar name is returned; this will
-		// indicate NOT to save avatar on phpBB if it contains UserGUID
-		if (StringUtils.isBlank(avatarName)) {
-			avatarName = learner.getVu360User().getUserGUID().replace("-", "");
-		}
+		 // Set avatar name to UserGUID if no avatar name is returned; this will
+		 // indicate NOT to save avatar on phpBB if it contains UserGUID
+		 if (StringUtils.isBlank(avatarName)) {
+		 avatarName = learner.getVu360User().getUserGUID().replace("-", "");
+		 }
 		 */
-		
+
 		String avatarName = learner.getVu360User().getUserGUID().replace("-", "");
 		return avatarName;
 	}
-	
+
 
 	/**
 	 * Save Learner Avatar on phpBB if and only if Avatar Name is not like
@@ -2170,8 +2171,8 @@ public class LearnerServiceImpl implements LearnerService {
 	 */
 	@Transactional
 	public LearnerPreferences saveLearnerPreferencesToVCS(Learner learner,
-			LearnerPreferences learnerPreferences, int avatarWidth,
-			int avatarHeight) {
+														  LearnerPreferences learnerPreferences, int avatarWidth,
+														  int avatarHeight) {
 
 		String userGUID = learner.getVu360User().getUserGUID().replace("-", "");
 		boolean wsSuccess = true;
@@ -2207,23 +2208,23 @@ public class LearnerServiceImpl implements LearnerService {
 			Object salt = this.saltSource.getSalt(user);
 			String encryptedPassword = this.passwordEncoder.encodePassword(
 					password, salt); // Encrypt given password
-	
+
 			if(encryptedPassword.equals(user.getPassword())){
 				return Boolean.TRUE;
 			}
-			
+
 			// If the password is plain
 			if(password.equals(user.getPassword())){
 				return Boolean.TRUE;
 			}
-			
+
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 		return Boolean.FALSE;
 	}
-	
+
 
 	public LMSRole getDefaultRoleForLearner(Customer customer) {
 		LMSRole role = lmsRoleRepository.getDefaultRole(customer);
@@ -2232,20 +2233,20 @@ public class LearnerServiceImpl implements LearnerService {
 					.findByRoleNameAndOwner("LEARNER", customer);
 		return role;
 	}
-	
+
 
 	public void deleteLearnerFromRole(Learner learner) {
 		vu360UserRepository.deleteLMSTrainingManager(learner.getVu360User());
 
 	}
-	
+
 
 	public List<LearnerGroupItem> getLearnerGroupItemsByLearnerGroupId(
 			Long learnerGroupId) {
 		return learnerGroupItemRepository.findByLearnerGroupId(Long
 				.valueOf(learnerGroupId));
 	}
-	
+
 
 	/*public void saveLearnerGroupItems(List<LearnerGroupItem> learnerGroupItems) {
 		if (!learnerGroupItems.isEmpty()) {
@@ -2254,8 +2255,8 @@ public class LearnerServiceImpl implements LearnerService {
 			}
 		}
 	}*/
-	
-	
+
+
 	public void saveLearnerGroupItems(Set<LearnerGroupItem> learnerGroupItems) {
 		if (!learnerGroupItems.isEmpty()) {
 			for (LearnerGroupItem learnerGroupItem : learnerGroupItems) {
@@ -2263,12 +2264,12 @@ public class LearnerServiceImpl implements LearnerService {
 			}
 		}
 	}
-	
-	
+
+
 	public void saveLearnerGroupItem(LearnerGroupItem learnerGroupItem) {
 		learnerGroupItemRepository.saveLGI(learnerGroupItem);
 	}
-	
+
 
 	/**
 	 * // [9/27/2010] LMS-7219 :: Learner Mode > Login: Force User to Change
@@ -2276,7 +2277,7 @@ public class LearnerServiceImpl implements LearnerService {
 	 */
 	@Override
 	public VU360User updateUser(VU360User vu360User, boolean notifyUserByEmail,
-			String loginURL, Brander brander, VelocityEngine velocityEngine) {
+								String loginURL, Brander brander, VelocityEngine velocityEngine) {
 
 		String plainPassword = vu360User.getPassword();
 
@@ -2300,7 +2301,7 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	private void NotifyUserByEmail(VU360User vu360User, String plainPassword,
-			String loginURL, Brander brander, VelocityEngine velocityEngine) {
+								   String loginURL, Brander brander, VelocityEngine velocityEngine) {
 
 		try {
 			Map<String, Object> model = new HashMap<String, Object>();
@@ -2358,10 +2359,10 @@ public class LearnerServiceImpl implements LearnerService {
 			e.printStackTrace();
 		}
 	}
-	
+
 
 	private void updateProfileOnSF(Customer customer, VU360User vu360User,
-			String plainPassword) {
+								   String plainPassword) {
 		CustomerData customerData = new CustomerData();
 
 		customerData.setCustomerID(customer.getCustomerGUID());
@@ -2375,11 +2376,11 @@ public class LearnerServiceImpl implements LearnerService {
 		new StorefrontClientWSImpl().updateProfileOnStorefront(customerData,
 				auth);
 	}
-	
+
 
 	/**
 	 * Setting the Address info
-	 * 
+	 *
 	 * @param user
 	 * @param address
 	 * @return
@@ -2403,11 +2404,11 @@ public class LearnerServiceImpl implements LearnerService {
 
 		return msgAddress;
 	}
-	
+
 
 	/**
 	 * Setting the Address info
-	 * 
+	 *
 	 * @param user
 	 * @param address
 	 * @return
@@ -2430,7 +2431,7 @@ public class LearnerServiceImpl implements LearnerService {
 				.getOfficePhone());
 		return msgAddress;
 	}
-	
+
 
 	public LMSRole getRoleForProctorByCustomer(Customer customer) {
 		// LMSRole role = userDAO.getDefaultRole(customer);
@@ -2439,7 +2440,7 @@ public class LearnerServiceImpl implements LearnerService {
 				customer);
 		return role;
 	}
-	
+
 
 	public LearnerProfile loadForUpdateLearnerProfile(long id) {
 		return learnerProfileRepository.findOne(id);
@@ -2448,12 +2449,12 @@ public class LearnerServiceImpl implements LearnerService {
 	public CustomerService getCustomerService() {
 		return customerService;
 	}
-	
+
 
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
 	}
-	
+
 
 	public RegistrationInvitation loadForPreviewRegistrationInvitation(long id) {
 		return registrationInvitationRepository.findOne(id);
@@ -2470,19 +2471,20 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return learnerGroup;
 	}
-	
+
 
 	public VU360UserService getVu360UserService() {
 		return vu360UserService;
 	}
-	
+
 
 	public void setVu360UserService(VU360UserService vu360UserService) {
 		this.vu360UserService = vu360UserService;
 	}
-	
+
 	public List<LearnerValidationAnswers> getLearnerUniqueQuestionsAnswers(long learnerId,long courseConfigurationId){
-			List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerUniqueValidationQuestionsAnswers(learnerId, courseConfigurationId);
+
+		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerUniqueValidationQuestionsAnswers(learnerId, courseConfigurationId);
 			return answers;
     }
 	
@@ -2490,13 +2492,14 @@ public class LearnerServiceImpl implements LearnerService {
 		
 		LearnerValidationAnswers questionanswer = learnerValidationAnswerRepository.findByQuestionIdAndLearnerId(questionId, learnerId);
 
+
 		return questionanswer;
 	}
 
-   public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionNoAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId){
+	public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionNoAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId){
 		UniqueQuestionAnswerVO uniqueQuestionAnswerVO = null;
 		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = new ArrayList<>();
-		
+
 		if(lstValidationQuestion!=null && !lstValidationQuestion.isEmpty()){
 			for( ValidationQuestion learnerValidationQuestion :lstValidationQuestion){
 				uniqueQuestionAnswerVO = new UniqueQuestionAnswerVO();
@@ -2506,7 +2509,7 @@ public class LearnerServiceImpl implements LearnerService {
 				uniqueQuestionAnswerVO.setQuestionType(learnerValidationQuestion.getQuestionType());
 				uniqueQuestionAnswerVO.setAnswer("");
 				lstuniqueQuestionAnswerVO.add(uniqueQuestionAnswerVO);
-		  }
+			}
 		}
 		return lstuniqueQuestionAnswerVO;
 	}
@@ -2666,35 +2669,36 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 	
    public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionAvailableAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId, long courseConfigurationId){
+
 		UniqueQuestionAnswerVO uniqueQuestionAnswerVO = null;
 		List<LearnerValidationAnswers> lstAnswers = null;
 		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = new ArrayList<>();
-		
+
 		lstAnswers = getLearnerUniqueQuestionsAnswers(learnerId, courseConfigurationId);
-		
+
 		if(lstValidationQuestion!=null && !lstValidationQuestion.isEmpty()){
 			if(lstAnswers!=null && !lstAnswers.isEmpty()){
-			for( ValidationQuestion learnerValidationQuestion :lstValidationQuestion){
-				for(LearnerValidationAnswers learnerValidationAnswers:lstAnswers){
-					if(learnerValidationAnswers.getQuestionId() == learnerValidationQuestion.getId().longValue()){
-						uniqueQuestionAnswerVO = new UniqueQuestionAnswerVO();
-						uniqueQuestionAnswerVO.setLearnerId(learnerId);
-						uniqueQuestionAnswerVO.setQuestion(learnerValidationQuestion.getQuestion());
-						uniqueQuestionAnswerVO.setQuestionId(learnerValidationQuestion.getId().longValue());
-						uniqueQuestionAnswerVO.setQuestionType(learnerValidationQuestion.getQuestionType());
-						uniqueQuestionAnswerVO.setAnswer(learnerValidationAnswers.getAnswer());
-						uniqueQuestionAnswerVO.setAnswerId(learnerValidationAnswers.getId());
-						lstuniqueQuestionAnswerVO.add(uniqueQuestionAnswerVO);
-			  }
-			 }
+				for( ValidationQuestion learnerValidationQuestion :lstValidationQuestion){
+					for(LearnerValidationAnswers learnerValidationAnswers:lstAnswers){
+						if(learnerValidationAnswers.getQuestionId() == learnerValidationQuestion.getId().longValue()){
+							uniqueQuestionAnswerVO = new UniqueQuestionAnswerVO();
+							uniqueQuestionAnswerVO.setLearnerId(learnerId);
+							uniqueQuestionAnswerVO.setQuestion(learnerValidationQuestion.getQuestion());
+							uniqueQuestionAnswerVO.setQuestionId(learnerValidationQuestion.getId().longValue());
+							uniqueQuestionAnswerVO.setQuestionType(learnerValidationQuestion.getQuestionType());
+							uniqueQuestionAnswerVO.setAnswer(learnerValidationAnswers.getAnswer());
+							uniqueQuestionAnswerVO.setAnswerId(learnerValidationAnswers.getId());
+							lstuniqueQuestionAnswerVO.add(uniqueQuestionAnswerVO);
+						}
+					}
+				}
 			}
-		  }
 		}
 		return lstuniqueQuestionAnswerVO;
 	}
-   
-   public Map<Object,Object> getLearnerUniqueQuestions(long learnerId){
-		
+
+	public Map<Object,Object> getLearnerUniqueQuestions(long learnerId){
+
 		Learner learner = getLearnerByID(learnerId);
 		List<ValidationQuestion> lstValidationQuestion = null;
 		List<LearnerValidationAnswers> lstAnswers = null;
@@ -2706,52 +2710,52 @@ public class LearnerServiceImpl implements LearnerService {
 			List<LearnerEnrollment>  lstLearnerEnrollment = enrollmentService.getAllLearnerEnrollmentsByLearner(learner);
 			for(LearnerEnrollment le :lstLearnerEnrollment){
 				if(le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_PROGRESS)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_COMPLETE)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.LOCKED)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_PENDING)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_RECEIVED)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_DISPUTED)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTING_PENDING)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT)
-				        || le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTED)) {
-				      
-	                  CourseApproval courseApproval =
-	                      accreditationService.getCourseApprovalByCourse(le.getCourse());
-	                  if (courseApproval != null && courseApproval.getTemplate() != null) {
-	                    CourseConfiguration courseCongifuration =
-	                        accreditationService.getCourseConfigurationByTemplateId(courseApproval
-	                            .getTemplate().getId(), true);
-	                    if (courseCongifuration != null
-	                        && courseCongifuration.isRequireDefineUniqueQuestionValidation()) {
-	                      lstValidationQuestion =
-	                          accreditationService
-	                              .getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration
-	                                  .getId());
-	                      if (lstValidationQuestion != null && !lstValidationQuestion.isEmpty()) {
-	                        lstAnswers =
-	                            getLearnerUniqueQuestionsAnswers(learnerId, courseCongifuration.getId());
-	                        if (lstAnswers != null && !lstAnswers.isEmpty()) {
-	                          lstuniqueQuestionAnswerVO =
-	                              getLearnerUniqueQestionAvailableAnswers(lstValidationQuestion, learnerId,
-	                                  courseCongifuration.getId());
-	                        } else {
-	                          lstuniqueQuestionAnswerVO =
-	                              getLearnerUniqueQestionNoAnswers(lstValidationQuestion, learnerId);
-	                        }
-	                        mpUniqueQuestions.put("courseName_" + le.getCourse().getId(), le.getCourse()
-	                            .getCourseTitle());
-	                        if (lstuniqueQuestionAnswerVO != null && !lstuniqueQuestionAnswerVO.isEmpty())
-	                          mpUniqueQuestions.put("questionanswerLst_" + le.getCourse().getId(),
-	                              lstuniqueQuestionAnswerVO);
-	                      }
-	                    }
-	                  }
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_COMPLETE)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.LOCKED)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_PENDING)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_RECEIVED)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_DISPUTED)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTING_PENDING)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTED)) {
+
+					CourseApproval courseApproval =
+							accreditationService.getCourseApprovalByCourse(le.getCourse());
+					if (courseApproval != null && courseApproval.getTemplate() != null) {
+						CourseConfiguration courseCongifuration =
+								accreditationService.getCourseConfigurationByTemplateId(courseApproval
+										.getTemplate().getId(), true);
+						if (courseCongifuration != null
+								&& courseCongifuration.isRequireDefineUniqueQuestionValidation()) {
+							lstValidationQuestion =
+									accreditationService
+											.getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration
+													.getId());
+							if (lstValidationQuestion != null && !lstValidationQuestion.isEmpty()) {
+								lstAnswers =
+										getLearnerUniqueQuestionsAnswers(learnerId, courseCongifuration.getId());
+								if (lstAnswers != null && !lstAnswers.isEmpty()) {
+									lstuniqueQuestionAnswerVO =
+											getLearnerUniqueQestionAvailableAnswers(lstValidationQuestion, learnerId,
+													courseCongifuration.getId());
+								} else {
+									lstuniqueQuestionAnswerVO =
+											getLearnerUniqueQestionNoAnswers(lstValidationQuestion, learnerId);
+								}
+								mpUniqueQuestions.put("courseName_" + le.getCourse().getId(), le.getCourse()
+										.getCourseTitle());
+								if (lstuniqueQuestionAnswerVO != null && !lstuniqueQuestionAnswerVO.isEmpty())
+									mpUniqueQuestions.put("questionanswerLst_" + le.getCourse().getId(),
+											lstuniqueQuestionAnswerVO);
+							}
+						}
+					}
 				}
-			}		
+			}
 		}
 		return mpUniqueQuestions;
 	}
-   
+
 	public LearnerValidationQASetDTO getLearnerValidationQuestions(
 			long learnerId) {
 		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository
@@ -2762,17 +2766,17 @@ public class LearnerServiceImpl implements LearnerService {
 		dto.setLearnerId(learnerId);
 		return dto;
 	}
-	
+
 	public List<LearnerValidationAnswers> getLearnerUniquesValidationQuestions(long learnerId){
 		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerValidationQuestions(learnerId);
-        return answers;
+		return answers;
 	}
-	
+
 	@Transactional
 	public void saveLearnerUniquesValidationQuestions(LearnerValidationAnswers answer){
 		learnerValidationAnswerRepository.save(answer);
-    }
-	
+	}
+
 	public LearnerValidationAnswers loadForUpdateLearnerValidationAnswers(long answer){
 		return learnerValidationAnswerRepository.findOne(answer);
 	}
@@ -2780,11 +2784,11 @@ public class LearnerServiceImpl implements LearnerService {
 	@Transactional
 	public LearnerValidationAnswers updateLearnerValidationAnswers(LearnerValidationAnswers lva ){
 		return learnerValidationAnswerRepository.save(lva );
-		
+
 	}
 	@Transactional
 	public void saveLearnerValidationAnswers(LearnerValidationQASetDTO qaDTO,
-			Learner learner) {
+											 Learner learner) {
 		LearnerValidationAnswers dbAnswer, formAnswer;
 		List<LearnerValidationAnswers> formAnswers = qaDTO
 				.getLearnerValidationAnswersList();
@@ -2819,7 +2823,7 @@ public class LearnerServiceImpl implements LearnerService {
 			}
 		}
 	}
-	
+
 
 	@Override
 	public Learner addLearnerForDefaultCustomer(
@@ -2905,7 +2909,7 @@ public class LearnerServiceImpl implements LearnerService {
 				newLearner);
 		return newLearner;
 	}
-	
+
 
 	public Learner updateLearner(
 			Learner learner,
@@ -2942,7 +2946,7 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return learner;
 	}
-	
+
 
 	private void copyAddress(
 			com.softech.vu360.lms.webservice.message.storefront.Address srcAddress,
@@ -2960,7 +2964,7 @@ public class LearnerServiceImpl implements LearnerService {
 	// this method is not in use, can be use in future.
 	@Override
 	public Learner addNewLearnerGivenCustomer(Customer customer,
-			Hashtable<String, Object> leanerDetailInHashmap) throws Exception {
+											  Hashtable<String, Object> leanerDetailInHashmap) throws Exception {
 
 		String firstName = (String) leanerDetailInHashmap.get("FirstName");
 		String lastName = (String) leanerDetailInHashmap.get("LastName");
@@ -3038,7 +3042,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 		return newLearner;
 	}
-	
+
 
 	private Address getNewAddress(
 			Hashtable<String, Object> leanerDetailInHashmap) {
@@ -3063,7 +3067,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return newAddress;
 
 	}
-	
+
 
 	private Address getNewAddress2(
 			Hashtable<String, Object> leanerDetailInHashmap) {
@@ -3088,7 +3092,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return newAddress;
 
 	}
-	
+
 
 	private Address getEmptyAddress() {
 		Address address = new Address();
@@ -3100,7 +3104,7 @@ public class LearnerServiceImpl implements LearnerService {
 		address.setStreetAddress2("");
 		return address;
 	}
-	
+
 
 	// Added By Marium Saud
 	// Function moved from TopLinkLearnerDao to Service
@@ -3116,8 +3120,8 @@ public class LearnerServiceImpl implements LearnerService {
 		while (loop) {
 			if (index + max_limit > ids.length) {
 				bucketSize = ids.length - index;// supposed to be last bucket
-												// with the content less than
-												// max_limit
+				// with the content less than
+				// max_limit
 			} else {
 				bucketSize = max_limit;
 			}
@@ -3139,23 +3143,23 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return allLearners;
 	}
-	
+
 
 	@Override
 	public Address findAddressById(Long id) {
 		return addressRepository.findOne(id);
 	}
-	
+
 
 	@Override
 	public Address updateAddress(Address address) {
 		if(address!=null && address.getId()!=null){
 			return addressRepository.save(address);
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public Learner getLearnerByVU360UserId(VU360User user) {
 		return learnerRepository.findByVu360UserId(user.getId());
@@ -3179,9 +3183,9 @@ public class LearnerServiceImpl implements LearnerService {
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGrpRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
 	}
-	
+
 	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(long learnerId) {
-		 return learnerRepository.hasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerId);
+		return learnerRepository.hasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerId);
 	}
 
 	public EnrollmentService getEnrollmentService() {

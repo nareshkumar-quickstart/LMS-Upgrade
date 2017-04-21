@@ -51,6 +51,7 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		String jpaQuery = " select p from TrainingAdministrator p "
 				+ "LEFT JOIN FETCH p.managedGroups mg "
+				+ "JOIN FETCH p.vu360User vu "
 				+ "WHERE p.id in (:trainingAdminstratorId)";
 		
 		Query query = entityManager.createQuery(jpaQuery, TrainingAdministrator.class);
