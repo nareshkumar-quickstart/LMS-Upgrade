@@ -16,6 +16,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 /**
  * 
  * @author muhammad.saleem
@@ -32,10 +35,17 @@ public class Customer extends Owner implements SearchableKey {
     public static final String B2C = "b2c";
     public static final String CODE_PREFIX = "VUCUS";
     public static final String CUSTOMER= "CUSTOMER";
-    
+//    
+//    @Id
+//    @javax.persistence.TableGenerator(name = "CUSTOMER_ID", table = "VU360_SEQ", pkColumnName = "TABLE_NAME", valueColumnName = "NEXT_ID", pkColumnValue = "CUSTOMER", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CUSTOMER_ID")
     @Id
-    @javax.persistence.TableGenerator(name = "CUSTOMER_ID", table = "VU360_SEQ", pkColumnName = "TABLE_NAME", valueColumnName = "NEXT_ID", pkColumnValue = "CUSTOMER", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CUSTOMER_ID")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "seqCustomerId")
+	@GenericGenerator(name = "seqCustomerId", strategy = "com.softech.vu360.lms.model.PrimaryKeyGenerator", parameters = {
+			@Parameter(name = "table_name", value = "VU360_SEQ"),
+			@Parameter(name = "value_column_name", value = "NEXT_ID"),
+			@Parameter(name = "segment_column_name", value = "TABLE_NAME"),
+			@Parameter(name = "segment_value", value = "CUSTOMER") })
     private Long id;
     
     @Column(name="NAME")

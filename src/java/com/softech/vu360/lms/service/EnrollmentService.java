@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import com.softech.vu360.lms.model.CourseCustomerEntitlement;
@@ -110,5 +111,5 @@ public interface EnrollmentService {
 	public void marketoPacket(LearnerEnrollment le, String eventName);
 	
 	public LearnerEnrollment addSubscriptionEnrollments(Learner learner, String subscriptionId, String courseId);
-	
+	public List<LearnerEnrollment> findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(long learnerId, String status, Set<String> courseStatisticsStatuses);	
 }

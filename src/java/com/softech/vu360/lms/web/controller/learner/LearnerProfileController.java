@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +23,6 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
-import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Address;
 import com.softech.vu360.lms.model.CreditReportingField;
 import com.softech.vu360.lms.model.CreditReportingFieldValue;
@@ -33,7 +33,6 @@ import com.softech.vu360.lms.model.CustomFieldValueChoice;
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.CustomerOrder;
 import com.softech.vu360.lms.model.Distributor;
-import com.softech.vu360.lms.model.LMSRoleLMSFeature;
 import com.softech.vu360.lms.model.LearnerValidationAnswers;
 import com.softech.vu360.lms.model.LicenseOfLearner;
 import com.softech.vu360.lms.model.MultiSelectCreditReportingField;
@@ -50,7 +49,6 @@ import com.softech.vu360.lms.service.OrderService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.service.impl.lmsapi.UpdateMySqlUser;
 import com.softech.vu360.lms.util.CustomerUtil;
-import com.softech.vu360.lms.util.UserPermissionChecker;
 import com.softech.vu360.lms.vo.Language;
 import com.softech.vu360.lms.vo.UniqueQuestionAnswerVO;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
@@ -133,16 +131,23 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 					form.setTimeZoneId(0);
 				
 				form.setHasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerService.hasAnyInProgressEnrollmentOfStandardValidationQuestions(form.getVu360User().getLearner().getId()));
+				
+				LinkedHashMap<Object,Object> mpValidationQuestion = new LinkedHashMap<>();
+				boolean[] hasValidationQuestion = {false};
+
+				learnerService.setIdentityValidationQuestions(form.getVu360User().getLearner().getId(), mpValidationQuestion, hasValidationQuestion);
+				
+				form.setHasAnyInProgressEnrollmentOfStandardValidationQuestions(hasValidationQuestion[0]);
+				
+				form.setLearnerValidationQuestions(null);
 				if(form.isHasAnyInProgressEnrollmentOfStandardValidationQuestions()) {
 				  form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
 				}
-				Map<Object,Object> mpValidationQuestion = learnerService.getLearnerUniqueQuestions(form.getVu360User().getLearner().getId());
 				
-				if(mpValidationQuestion!=null  && !mpValidationQuestion.isEmpty()){
+				form.setMpValidationQuestion(null);
+				if (mpValidationQuestion != null && !mpValidationQuestion.isEmpty()) {
 					form.setMpValidationQuestion(mpValidationQuestion);
 				}
-				
-				form.setLearnerValidationQuestions(learnerService.getLearnerValidationQuestions(form.getVu360User().getLearner().getId()));
 				
 				CreditReportingFieldBuilder fieldBuilder = new CreditReportingFieldBuilder();
 				List<CreditReportingField> customFieldList=this.getLearnerService().getCreditReportingFieldsByLearnerCourseApproval(loggedInUser.getLearner());
@@ -760,7 +765,9 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		form.getCustomFieldValueList().addAll(myCustomFieldValues);
 		usr.getLearner().getLearnerProfile().setCustomFieldValues(myCustomFieldValues);
 		learnerService.updateLearnerProfile(usr.getLearner().getLearnerProfile());
-		learnerService.saveLearnerValidationAnswers(form.getLearnerValidationQASet(), usr.getLearner());
+		
+		if(form.getLearnerValidationQASet() != null)
+			learnerService.saveLearnerValidationAnswers(form.getLearnerValidationQASet(), usr.getLearner());
 		
 		if(form.getMpValidationQuestion() != null && !form.getMpValidationQuestion().isEmpty()){
 			for (Map.Entry<Object, Object> entry : form.getMpValidationQuestion().entrySet()) {
@@ -771,10 +778,10 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 			    
 			    if(lstUniqueQuestionAnswerVO!=null && !lstUniqueQuestionAnswerVO.isEmpty()){
 			    	for(UniqueQuestionAnswerVO uQAVO :lstUniqueQuestionAnswerVO){
-			    		LearnerValidationAnswers lrnValidationAnswers =learnerService.getLearnerUniqueQuestionsAnswersByQuestion(uQAVO.getQuestionId());
-                        if(lrnValidationAnswers!=null){
-                        	//LearnerValidationAnswers learnerValidationAnswers = new LearnerValidationAnswers();
-                        	LearnerValidationAnswers learnerValidationAnswers = learnerService.loadForUpdateLearnerValidationAnswers(lrnValidationAnswers.getId());
+							LearnerValidationAnswers learnerValidationAnswers = learnerService
+									.getLearnerUniqueQuestionsAnswersByQuestion(uQAVO.getQuestionId(),
+											usr.getLearner().getId());
+                        if(learnerValidationAnswers!=null){
 			    			learnerValidationAnswers.setLearner(usr.getLearner());
 			    			learnerValidationAnswers.setQuestionId(uQAVO.getQuestionId());
 			    			if(uQAVO.getQuestionType().equals("True False")){
@@ -788,7 +795,7 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				    			learnerService.updateLearnerValidationAnswers(learnerValidationAnswers);
 			    			}
 			    		}else{
-			    			LearnerValidationAnswers learnerValidationAnswers = new LearnerValidationAnswers();
+			    			learnerValidationAnswers = new LearnerValidationAnswers();
 			    			learnerValidationAnswers.setLearner(usr.getLearner());
 			    			learnerValidationAnswers.setQuestionId(uQAVO.getQuestionId());
 			    			if(uQAVO.getQuestionType().equals("True False")){

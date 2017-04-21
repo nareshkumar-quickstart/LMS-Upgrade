@@ -2,8 +2,8 @@ package com.softech.vu360.lms.repositories;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -81,4 +81,6 @@ public interface LearnerEnrollmentRepository extends CrudRepository<LearnerEnrol
 	
 	//Added By Marium Saud : Method created in replacement of findByLearnerIdAndCourseIdAndEnrollmentStatus() inorder to avoid ProxyError while enrollment processes through OrgGroup Enrollment Method.
 	List<LearnerEnrollment> findByLearnerIdAndCourseIdAndEnrollmentStatusAndEnrollmentEndDateNotNullAndEnrollmentEndDateAfter(Long learnerId,Long courseId,String enrollmentStatus,Date newEnrollmentDate);
+	
+	List<LearnerEnrollment> findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(long learnerId, String status, Set<String> courseStatisticsStatuses);
 }

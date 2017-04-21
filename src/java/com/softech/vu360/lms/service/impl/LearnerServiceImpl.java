@@ -1,6 +1,7 @@
 package com.softech.vu360.lms.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -29,12 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.softech.vu360.lms.helpers.LoginSecurityHelper;
-import com.softech.vu360.lms.helpers.ProxyVOHelper;
 import com.softech.vu360.lms.model.Address;
 import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.Course;
 import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.CourseConfiguration;
+import com.softech.vu360.lms.model.CourseConfigurationTemplate;
 import com.softech.vu360.lms.model.CreditReportingField;
 import com.softech.vu360.lms.model.CreditReportingFieldValue;
 import com.softech.vu360.lms.model.CreditReportingFieldValueChoice;
@@ -2482,13 +2483,15 @@ public class LearnerServiceImpl implements LearnerService {
 	}
 
 	public List<LearnerValidationAnswers> getLearnerUniqueQuestionsAnswers(long learnerId,long courseConfigurationId){
+
 		List<LearnerValidationAnswers> answers = learnerValidationAnswerRepository.getLearnerUniqueValidationQuestionsAnswers(learnerId, courseConfigurationId);
-		return answers;
-	}
+			return answers;
+    }
+	
+   public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId, long learnerId){
+		
+		LearnerValidationAnswers questionanswer = learnerValidationAnswerRepository.findByQuestionIdAndLearnerId(questionId, learnerId);
 
-	public LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(long questionId){
-
-		LearnerValidationAnswers questionanswer = learnerValidationAnswerRepository.findByQuestionId(questionId);
 
 		return questionanswer;
 	}
@@ -2510,8 +2513,163 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 		return lstuniqueQuestionAnswerVO;
 	}
+   
+	public void setIdentityValidationQuestions(long learnerId,
+			LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfCoursesOfLearner,
+			boolean[] hasValidationQuestion) {
 
-	public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionAvailableAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId, long courseConfigurationId){
+		Learner learner;
+		Course course;
+		List<LearnerEnrollment> enrollments;
+		CourseConfiguration courseConfiguration;
+		LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner;
+
+		learner = null;
+		course = null;
+		enrollments = null;
+		courseConfiguration = null;
+		uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner = null;
+
+		learner = getLearnerByID(learnerId);
+
+		if (learner != null) {
+			
+			String[] inProgressCourseStatuses = new String[] { LearnerCourseStatistics.IN_PROGRESS, LearnerCourseStatistics.IN_COMPLETE,
+					LearnerCourseStatistics.LOCKED, LearnerCourseStatistics.AFFIDAVIT_PENDING,
+					LearnerCourseStatistics.AFFIDAVIT_RECEIVED, LearnerCourseStatistics.AFFIDAVIT_DISPUTED,
+					LearnerCourseStatistics.REPORTING_PENDING, LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT,
+					LearnerCourseStatistics.REPORTED };
+			
+			enrollments = enrollmentService.findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(learnerId,
+					LearnerEnrollment.ACTIVE,
+					new HashSet<String>(Arrays.asList(inProgressCourseStatuses)));
+			
+			for (LearnerEnrollment le : enrollments) {
+				if (isValidEnrollment(getTodayDate(), le)) {
+
+					courseConfiguration = getCourseConfiguration(le);
+					course = le.getCourse();
+
+					if (courseConfiguration != null && courseConfiguration.getEnableIdentityValidation()) {
+						if (courseConfiguration.isRequireDefineUniqueQuestionValidation()) {
+							uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner = getUniqueValidationQuestionsOfCourseByCourseConfiguration(
+									learnerId, courseConfiguration, course);
+
+							if (uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner != null
+									&& !uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner.isEmpty()) {
+								uniqueValidationQuestionAnswersOfCoursesOfLearner
+										.putAll(uniqueValidationQuestionAnswersOfLearnerOfCourseOfLearner);
+							}
+						} else if (!courseConfiguration.isRequireSmartProfileValidation()) {
+							hasValidationQuestion[0] = true;
+						}
+					}
+				}
+			}
+		}
+	}
+   
+	private Date getTodayDate() {
+		Calendar today = Calendar.getInstance();
+		today.set(Calendar.HOUR_OF_DAY, 0);
+		return today.getTime();
+	}
+	
+	private boolean isValidEnrollment(Date today, LearnerEnrollment le) {
+		return (le.getEnrollmentStatus() != null) && (le.getEnrollmentEndDate() != null)
+				&& (le.getCourseStatistics() != null) && (le.getCourseStatistics().getStatus() != null)
+				&& le.getEnrollmentStatus().equals(LearnerEnrollment.ACTIVE) && (le.getEnrollmentEndDate().after(today))
+				&& (le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_PROGRESS)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.IN_COMPLETE)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.LOCKED)
+						|| le.getCourseStatistics().getStatus()
+								.equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_PENDING)
+						|| le.getCourseStatistics().getStatus()
+								.equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_RECEIVED)
+						|| le.getCourseStatistics().getStatus()
+								.equalsIgnoreCase(LearnerCourseStatistics.AFFIDAVIT_DISPUTED)
+						|| le.getCourseStatistics().getStatus()
+								.equalsIgnoreCase(LearnerCourseStatistics.REPORTING_PENDING)
+						|| le.getCourseStatistics().getStatus()
+								.equalsIgnoreCase(LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT)
+						|| le.getCourseStatistics().getStatus().equalsIgnoreCase(LearnerCourseStatistics.REPORTED));
+	}
+	
+	private CourseConfiguration getCourseConfiguration(LearnerEnrollment le) {
+		CourseConfiguration courseConfiguration;
+		CourseApproval courseApproval;
+		courseConfiguration = null;
+
+		courseApproval = accreditationService.getCourseApprovalByCourse(le.getCourse());
+
+		if (courseApproval != null && courseApproval.getTemplate() != null) {
+			courseConfiguration = accreditationService
+					.getCourseConfigurationByTemplateId(courseApproval.getTemplate().getId(), true);
+		} else {
+			CourseConfigurationTemplate courseConfigurationTemplate = le.getCourse().getCourseConfigTemplate();
+			if (courseConfigurationTemplate != null) {
+				courseConfiguration = accreditationService
+						.getCourseConfigurationByTemplateId(le.getCourse().getCourseConfigTemplate().getId(), true);
+			}
+		}
+		return courseConfiguration;
+	}
+	
+	private LinkedHashMap<Object, Object> getUniqueValidationQuestionsOfCourseByCourseConfiguration(long learnerId,
+			CourseConfiguration courseCongifuration, Course course) {
+
+		LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfLearner = null;
+		List<ValidationQuestion> uniqueValidationQuestions = null;
+
+		if (courseCongifuration != null && courseCongifuration.isRequireDefineUniqueQuestionValidation()) {
+			uniqueValidationQuestions = accreditationService
+					.getUniqueValidationQuestionByCourseConfigurationId(courseCongifuration.getId());
+			if (uniqueValidationQuestions != null && !uniqueValidationQuestions.isEmpty()) {
+				uniqueValidationQuestionAnswersOfLearner = getUniqueValidationQuestions(learnerId, courseCongifuration,
+						course, uniqueValidationQuestions);
+			}
+		}
+		return uniqueValidationQuestionAnswersOfLearner;
+	}
+	
+	private LinkedHashMap<Object, Object> getUniqueValidationQuestions(long learnerId,
+			CourseConfiguration courseCongifuration, Course course, List<ValidationQuestion> lstValidationQuestion) {
+
+		LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfLearner = new LinkedHashMap<Object, Object>();
+		List<UniqueQuestionAnswerVO> uniqueValidationQuestionAnswers;
+
+		uniqueValidationQuestionAnswers = getUniqueValidationQuestionAnswers(learnerId, courseCongifuration,
+				lstValidationQuestion);
+
+		uniqueValidationQuestionAnswersOfLearner.put("courseName_" + course.getId(), course.getCourseTitle());
+
+		if (uniqueValidationQuestionAnswers != null && !uniqueValidationQuestionAnswers.isEmpty()) {
+			uniqueValidationQuestionAnswersOfLearner.put("questionanswerLst_" + course.getId(),
+					uniqueValidationQuestionAnswers);
+		}
+		return uniqueValidationQuestionAnswersOfLearner;
+	}
+	
+	private List<UniqueQuestionAnswerVO> getUniqueValidationQuestionAnswers(
+			long learnerId, CourseConfiguration courseCongifuration,
+			List<ValidationQuestion> lstValidationQuestion) {
+		List<LearnerValidationAnswers> lstAnswers;
+		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO;
+		lstAnswers = getLearnerUniqueQuestionsAnswers(
+				learnerId, courseCongifuration.getId());
+		if (lstAnswers != null && !lstAnswers.isEmpty()) {
+			lstuniqueQuestionAnswerVO = getLearnerUniqueQestionAvailableAnswers(
+					lstValidationQuestion, learnerId,
+					courseCongifuration.getId());
+		} else {
+			lstuniqueQuestionAnswerVO = getLearnerUniqueQestionNoAnswers(
+					lstValidationQuestion, learnerId);
+		}
+		return lstuniqueQuestionAnswerVO;
+	}
+	
+   public List<UniqueQuestionAnswerVO> getLearnerUniqueQestionAvailableAnswers(List<ValidationQuestion> lstValidationQuestion,long learnerId, long courseConfigurationId){
+
 		UniqueQuestionAnswerVO uniqueQuestionAnswerVO = null;
 		List<LearnerValidationAnswers> lstAnswers = null;
 		List<UniqueQuestionAnswerVO> lstuniqueQuestionAnswerVO = new ArrayList<>();
