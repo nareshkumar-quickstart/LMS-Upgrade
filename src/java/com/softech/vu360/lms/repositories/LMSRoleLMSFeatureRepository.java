@@ -1,13 +1,15 @@
 package com.softech.vu360.lms.repositories;
 
-import com.softech.vu360.lms.model.Customer;
-import com.softech.vu360.lms.model.LMSRoleLMSFeature;
+import java.util.Collection;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
+
+import com.softech.vu360.lms.model.Customer;
+import com.softech.vu360.lms.model.LMSRoleLMSFeature;
 
 /**
  * @author marium.saud
@@ -32,4 +34,7 @@ public interface LMSRoleLMSFeatureRepository extends
 	public List<LMSRoleLMSFeature> getAllPermissionsByRoleType(
 			@Param(value = "customer") Customer customer,
 			@Param(value = "roleType") String roleType);
+	
+	
+
 }
