@@ -72,7 +72,6 @@ public class AddLearnerGroupForm  implements ILMSBaseInterface{
 		return selectedLearners;
 	}
 	public void setSelectedLearners(List<LearnerItemForm> selectedLearners) {
-
 		this.selectedLearners = selectedLearners;
 	}
 	public String getLearnerGroupId() {

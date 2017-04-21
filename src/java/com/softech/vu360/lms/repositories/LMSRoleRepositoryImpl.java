@@ -1,6 +1,5 @@
 package com.softech.vu360.lms.repositories;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,16 +7,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.inject.Inject;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.LMSRole;
-import com.softech.vu360.lms.model.LMSRoleLMSFeature;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.VU360UserService;
-import org.apache.commons.collections.map.HashedMap;
 
 /*
  * @ author Kaunain Wajeeh
@@ -309,19 +308,4 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 	public void setVu360UserService(VU360UserService vu360UserService) {
 		this.vu360UserService = vu360UserService;
 	}
-
-
-    @Override
-    public Set<LMSRole> getRoleWithFeatures(Set<LMSRole> rolesList) {
-        EntityGraph lmsRoleGraph = this.entityManager.createEntityGraph(LMSRole.class);
-        Subgraph<LMSRoleLMSFeature> lmsRoleFeaturesGraph = lmsRoleGraph.addSubgraph("lmsPermissions");
-		lmsRoleFeaturesGraph.addAttributeNodes("lmsFeature");
-
-		Query query = this.entityManager.createQuery("SELECT LR FROM LMSRole LR WHERE LR IN (:roleIds)", LMSRole.class).
-														  setHint("javax.persistence.loadgraph", lmsRoleGraph);
-		query.setParameter("roleIds", rolesList);
-		List<LMSRole> roles = query.getResultList();
-
-        return new HashSet<>(roles);
-    }
 }

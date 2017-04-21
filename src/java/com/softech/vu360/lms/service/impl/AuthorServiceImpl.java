@@ -27,7 +27,6 @@ import com.softech.vu360.lms.repositories.AuthorRepository;
 import com.softech.vu360.lms.repositories.ContentOwnerRepository;
 import com.softech.vu360.lms.repositories.CustomerRepository;
 import com.softech.vu360.lms.repositories.DistributorRepository;
-import com.softech.vu360.lms.repositories.VU360UserRepository;
 import com.softech.vu360.lms.service.AuthorService;
 import com.softech.vu360.lms.web.controller.model.UserItemForm;
 import com.softech.vu360.util.Brander;
@@ -51,8 +50,6 @@ public class AuthorServiceImpl implements AuthorService{
 	private AuthorFeatureRepository authorFeatureRepository;
 	@Inject
 	private DistributorRepository distributorRepository;
-	@Inject
-	private VU360UserRepository vu360UserRepository;
     
     private static final Logger log = Logger.getLogger(AuthorServiceImpl.class.getName());
     
@@ -67,10 +64,8 @@ public class AuthorServiceImpl implements AuthorService{
     			for(UserItemForm usr : userForm){
     				VU360User currentUser = null;
     				try {
-    					currentUser = usr.getUser();
-    					// Modified By marium Saud : Loading vu360user from DB inorder to avoid Lazy No Session Issue
-	    				VU360User dbUser = vu360UserRepository.getUserById(currentUser.getId());
-	    				currentUser.setLearner(dbUser.getLearner());
+    					
+	    				currentUser = usr.getUser();
 	    				Author author = createAuthorForUser(currentUser, loggedInUser);
 	    				
 	    				if(author == null) {

@@ -330,8 +330,7 @@ public class EntitlementServiceImpl implements EntitlementService {
     /* LMS-14020 */
     public List<LearnerEnrollment> getFreshLearnerEnrollmentsForLearner(Learner l) {
         log.debug("looking for learnerEnrollments");
-        //Modified By Marium Saud : Method 'learnerEnrollmentRepository.findByLearnerId(l.getId())' has been replaced by new method inorder to avoid n+1 issue for LearnerEnrollment queries
-        List<LearnerEnrollment> enrollments = learnerEnrollmentRepository.getFreshLearnerEnrollmentsForLearner(l);
+        List<LearnerEnrollment> enrollments = learnerEnrollmentRepository.findByLearnerId(l.getId());
         return filterEnrollmentsByDate(enrollments);
     }
     

@@ -851,7 +851,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			return new ModelAndView(viewLearnerGroupMembersTemplate, "context", context);
 			
 		} catch (Exception e) {
-			log.error("exception", e);
+			log.debug("exception", e);
 		}
 		return new ModelAndView(viewLearnerGroupMembersTemplate);
 	}
