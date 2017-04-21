@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +43,7 @@ import com.softech.vu360.lms.model.CustomFieldValueChoice;
 import com.softech.vu360.lms.model.Document;
 import com.softech.vu360.lms.model.Instructor;
 import com.softech.vu360.lms.model.InstructorApproval;
+import com.softech.vu360.lms.model.Language;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerCourseStatistics;
 import com.softech.vu360.lms.model.LearnerProfile;
@@ -86,6 +85,7 @@ import com.softech.vu360.lms.repositories.CustomFieldValueRepository;
 import com.softech.vu360.lms.repositories.DocumentRepository;
 import com.softech.vu360.lms.repositories.InstructorApprovalRepository;
 import com.softech.vu360.lms.repositories.InstructorRepository;
+import com.softech.vu360.lms.repositories.LanguageRepository;
 import com.softech.vu360.lms.repositories.LearnerCourseStatisticsRepository;
 import com.softech.vu360.lms.repositories.LearningSessionRepository;
 import com.softech.vu360.lms.repositories.ModalityRepository;
@@ -189,7 +189,9 @@ public class AccreditationServiceImpl implements AccreditationService {
 	CustomFieldValueRepository customFieldValueRepository;
 	@Inject
 	ValidationQuestionRepository validationQuestionRepository;
-
+	@Inject
+	LanguageRepository languageRepository;
+	
 	private static final Logger log = Logger
 			.getLogger(AccreditationServiceImpl.class.getName());
 
@@ -2283,6 +2285,8 @@ public class AccreditationServiceImpl implements AccreditationService {
 	@Override
 	@Transactional
 	public ValidationQuestion saveValidationQuestion(ValidationQuestion validationQuestion) {
+		Language language = languageRepository.findByLanguage(validationQuestion.getCreatedBy().getLanguage().getLanguage());
+		validationQuestion.setLanguage(language);
 		return validationQuestionRepository.save(validationQuestion);
 	}
 

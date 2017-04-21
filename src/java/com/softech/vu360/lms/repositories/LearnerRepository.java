@@ -6,8 +6,8 @@ package com.softech.vu360.lms.repositories;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -15,6 +15,7 @@ import com.softech.vu360.lms.model.Distributor;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerCourseStatistics;
 import com.softech.vu360.lms.model.LearnerEnrollment;
+import com.softech.vu360.lms.model.LearnerValidationAnswers;
 
 /**
  * @author marium.saud
@@ -62,6 +63,21 @@ public interface LearnerRepository extends CrudRepository<Learner, Long>, Learne
 	
 	Learner findByVu360UserId(Long vu360UserId);
 	
-	@Query(value = "if exists(select le.course_id from LEARNERENROLLMENT le, learnercoursestatistics lcs, courseapproval ca, courseconfigurationtemplate cct, courseconfiguration cc where (le.learner_id = :learnerId and (le.enrollmentstatus = '"+ LearnerEnrollment.ACTIVE +"') and cast(le.enddate as date) >= cast(getdate() as date)) and lcs.learnerenrollment_id = le.ID and lcs.status in ('"+ LearnerCourseStatistics.IN_PROGRESS +"', '"+ LearnerCourseStatistics.IN_COMPLETE +"', '"+ LearnerCourseStatistics.LOCKED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.AFFIDAVIT_RECEIVED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_DISPUTED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT +"', '"+ LearnerCourseStatistics.REPORTED +"') and ca.course_id = le.course_id and cct.ID = ca.courseconfigurationtemplate_id and cc.courseconfigurationtemplate_id = cct.id and (cc.VALIDATION_REQUIREIDENTITYVALIDATION = 1 and cc.PROFILEBASED_VALIDATION_TF = 0 and cc.DEFINEUNIQUEQUESTION_VALIDATION_TF = 0)) select cast(1 as bit) else select cast(0 as bit) " , nativeQuery=true)
-	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(@Param("learnerId") long learnerId);
+	@Query(value = "if exists(select le.course_id, cc.courseconfigurationtemplate_id, lcs.status\n" + 
+    		"from LEARNERENROLLMENT le, learnercoursestatistics lcs, courseapproval ca, course co, courseconfigurationtemplate cct, courseconfiguration cc\n" + 
+    		"where (le.learner_id = ?1 and (le.enrollmentstatus = 'Active') and cast(le.enddate as date) >= cast(getdate() as date))\n" + 
+    		"and co.id = le.course_id\n" + 
+    		"and lcs.learnerenrollment_id = le.ID\n" + 
+    		"and lcs.status in " + "('"+ LearnerCourseStatistics.IN_PROGRESS +"', '"+ LearnerCourseStatistics.IN_COMPLETE +"', '"+ LearnerCourseStatistics.LOCKED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.AFFIDAVIT_RECEIVED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_DISPUTED +"', '"+ LearnerCourseStatistics.AFFIDAVIT_PENDING +"', '"+ LearnerCourseStatistics.USER_DECLINED_AFFIDAVIT +"', '"+ LearnerCourseStatistics.REPORTED +"') \n" + 
+    		"and (\n" + 
+    		"		(ca.course_id = co.id and cct.ID = ca.courseconfigurationtemplate_id and cc.courseconfigurationtemplate_id = cct.id) \n" + 
+    		"		or (cct.id = co.courseconfigurationtemplate_id and  cc.courseconfigurationtemplate_id = cct.id)\n" + 
+    		"	)\n" + 
+    		"and (cc.VALIDATION_REQUIREIDENTITYVALIDATION = 1 and isnull(cc.PROFILEBASED_VALIDATION_TF, 0) = 0 and  isnull(cc.DEFINEUNIQUEQUESTION_VALIDATION_TF, 0) = 0)) " +
+    		"select cast(1 as bit) else select cast(0 as bit) ", nativeQuery=true)
+	boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(@Param("learnerId") long learnerId);
+	
+	@Query(value= "select q from LearnerValidationAnswers q where q.questionId = ?1 and q.learner.id = ?2")
+	LearnerValidationAnswers getLearnerUniqueQuestionsAnswersByQuestion(Long questionId, Long learnerId);
+	
 }

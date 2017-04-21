@@ -1,6 +1,13 @@
 package com.softech.vu360.lms.repositories;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
 
 import javax.inject.Inject;
 import javax.persistence.*;
@@ -182,43 +189,96 @@ public class LMSRoleRepositoryImpl implements LMSRoleRepositoryCustom {
 		}
 	}
 
-	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
+	public String[] findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId,
 			Long customerId) {
 		
-		Map<String, String> disabledFeature = new HashMap<String, String>();
+		Query query;
+		List<Object[]> results;
+		String featureCodes, featureGroups;
+		String[] disabledFeatures = null;
 
-		StringBuilder builder = new StringBuilder("SELECT featuregroup, featurecode\n" + 
+		StringBuilder builder = new StringBuilder(
+				"declare @featurecode varchar(1000)\n" + 
+				"declare @featuregroup varchar(1000)\n" + 
+				"  \n" + 
+				"SELECT @featurecode = COALESCE(@featurecode + ',' + featurecode, featurecode)\n" + 
 				"FROM (\n" + 
-				"        (\n" + 
-				"          select distinct featuregroup, featurecode\n" + 
-				"          from DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
-				"          left outer join LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
-				"          where DISTRIBUTORLMSFEATURE.distributor_id= :distributorId\n" + 
-				"          and DISTRIBUTORLMSFEATURE.ENABLEDTF=0\n" + 
-				"        ) \n" + 
-				"        UNION \n" + 
-				"        (\n" + 
-				"          select distinct featuregroup, featurecode\n" + 
-				"          from CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
-				"          left outer join LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
-				"          where CUSTOMERLMSFEATURE.CUSTOMER_id= :customerId\n" + 
-				"          and CUSTOMERLMSFEATURE.ENABLEDTF=0\n" + 
-				"        )\n" + 
-				"      ) as disabledfeatures");
+				"  SELECT distinct featurecode\n" + 
+				"  FROM DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
+				"  LEFT OUTER JOIN LMSFEATURE LMSFEATURE on DISTRIBUTORLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"  WHERE DISTRIBUTORLMSFEATURE.distributor_id= :distributorId \n" + 
+				"  AND DISTRIBUTORLMSFEATURE.ENABLEDTF=0\n" + 
+				"\n" + 
+				"  UNION \n" + 
+				"\n" + 
+				"  SELECT distinct featurecode\n" + 
+				"  FROM CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
+				"  LEFT OUTER JOIN LMSFEATURE LMSFEATURE on CUSTOMERLMSFEATURE.LMSFEATURE_ID=LMSFEATURE.id \n" + 
+				"  WHERE CUSTOMERLMSFEATURE.CUSTOMER_id= :customerId \n" + 
+				"  AND CUSTOMERLMSFEATURE.ENABLEDTF=0\n" + 
+				") AS featurecode\n" + 
+				"       \n" + 
+				"\n" + 
+				"SELECT @featuregroup = COALESCE(@featuregroup + ',' + featuregroup, featuregroup)\n" + 
+				"FROM (\n" + 
+				"  \n" + 
+				"  SELECT FEATUREGROUP.ROLETYPE + ':' + FEATUREGROUP.FEATUREGROUP AS featuregroup FROM (\n" + 
+				"    SELECT LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE AS ROLETYPE, COUNT(LMSFEATURE.ID) AS FEATURESCOUNT\n" + 
+				"    FROM DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
+				"    INNER JOIN LMSFEATURE LMSFEATURE on LMSFEATURE.ID = DISTRIBUTORLMSFEATURE.LMSFEATURE_ID\n" + 
+				"    GROUP BY DISTRIBUTORLMSFEATURE.DISTRIBUTOR_ID, LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE\n" + 
+				"    HAVING DISTRIBUTORLMSFEATURE.DISTRIBUTOR_ID = :distributorId \n" + 
+				"  ) FEATUREGROUP, (\n" + 
+				"    SELECT LMSFEATURE.FEATUREGROUP AS DISABLEDFEATUREGROUP, LMSFEATURE.ROLETYPE AS ROLETYPE, COUNT(LMSFEATURE.ID) AS DISABLEDFEATURESCOUNT\n" + 
+				"    FROM DISTRIBUTORLMSFEATURE DISTRIBUTORLMSFEATURE \n" + 
+				"    INNER JOIN LMSFEATURE LMSFEATURE on LMSFEATURE.ID = DISTRIBUTORLMSFEATURE.LMSFEATURE_ID\n" + 
+				"    GROUP BY DISTRIBUTORLMSFEATURE.DISTRIBUTOR_ID, LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE, DISTRIBUTORLMSFEATURE.ENABLEDTF\n" + 
+				"    HAVING DISTRIBUTORLMSFEATURE.DISTRIBUTOR_ID = :distributorId \n" + 
+				"    AND DISTRIBUTORLMSFEATURE.ENABLEDTF = 0\n" + 
+				"  ) DISABLEDFEATUREGROUP  \n" + 
+				"  WHERE FEATUREGROUP.FEATUREGROUP = DISABLEDFEATUREGROUP.DISABLEDFEATUREGROUP\n" + 
+				"  AND FEATUREGROUP.ROLETYPE = DISABLEDFEATUREGROUP.ROLETYPE\n" + 
+				"  AND FEATUREGROUP.FEATURESCOUNT = DISABLEDFEATUREGROUP.DISABLEDFEATURESCOUNT\n" + 
+				"\n" + 
+				"  UNION \n" + 
+				"    \n" + 
+				"  SELECT FEATUREGROUP.ROLETYPE + ':' + FEATUREGROUP.FEATUREGROUP AS featuregroup FROM (\n" + 
+				"    SELECT LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE AS ROLETYPE, COUNT(LMSFEATURE.ID) AS FEATURESCOUNT\n" + 
+				"    FROM CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
+				"    INNER JOIN LMSFEATURE LMSFEATURE on LMSFEATURE.ID = CUSTOMERLMSFEATURE.LMSFEATURE_ID\n" + 
+				"    GROUP BY CUSTOMERLMSFEATURE.CUSTOMER_ID, LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE\n" + 
+				"    HAVING CUSTOMERLMSFEATURE.CUSTOMER_ID = :customerId \n" + 
+				"  ) FEATUREGROUP, (\n" + 
+				"    SELECT LMSFEATURE.FEATUREGROUP AS DISABLEDFEATUREGROUP, LMSFEATURE.ROLETYPE AS ROLETYPE, COUNT(LMSFEATURE.ID) AS DISABLEDFEATURESCOUNT\n" + 
+				"    FROM CUSTOMERLMSFEATURE CUSTOMERLMSFEATURE \n" + 
+				"    INNER JOIN LMSFEATURE LMSFEATURE on LMSFEATURE.ID = CUSTOMERLMSFEATURE.LMSFEATURE_ID\n" + 
+				"    GROUP BY CUSTOMERLMSFEATURE.CUSTOMER_ID, LMSFEATURE.FEATUREGROUP, LMSFEATURE.ROLETYPE, CUSTOMERLMSFEATURE.ENABLEDTF\n" + 
+				"    HAVING CUSTOMERLMSFEATURE.CUSTOMER_ID = :customerId \n" + 
+				"    AND CUSTOMERLMSFEATURE.ENABLEDTF = 0\n" + 
+				"  ) DISABLEDFEATUREGROUP  \n" + 
+				"  WHERE FEATUREGROUP.FEATUREGROUP = DISABLEDFEATUREGROUP.DISABLEDFEATUREGROUP\n" + 
+				"  AND FEATUREGROUP.ROLETYPE = DISABLEDFEATUREGROUP.ROLETYPE\n" + 
+				"  AND FEATUREGROUP.FEATURESCOUNT = DISABLEDFEATUREGROUP.DISABLEDFEATURESCOUNT\n" + 
+				" \n" + 
+				") AS featuregroup\n" + 
+				"\n" + 
+				"SELECT @featurecode as featurecodes, @featuregroup as featuregroups");
 
 		
-		Query query = entityManager.createNativeQuery(builder.toString());
+		query = entityManager.createNativeQuery(builder.toString());
 		query.setParameter("distributorId", distributorId);
 		query.setParameter("customerId", customerId);
-		List<Object[]> results = query.getResultList();
+		results = query.getResultList();
 		
-		if(results != null) {
-			results.forEach(r -> {
-				disabledFeature.put(r[0].toString(), r[1].toString());
-			});
+		if(results != null && !results.isEmpty() && results.get(0) != null) {
+			
+			featureCodes = results.get(0)[0] != null && !results.get(0)[0].toString().equals("") ? results.get(0)[0].toString() : "";
+			featureGroups = results.get(0)[1] != null && !results.get(0)[1].toString().equals("") ? results.get(0)[1].toString() : "";
+			
+			disabledFeatures = new String[] {featureCodes, featureGroups};
 		}
-		
-		return disabledFeature;
+
+		return disabledFeatures;
 	}
 
 	public Map<String, String> countLearnerByRoles(Long [] roleIds){
