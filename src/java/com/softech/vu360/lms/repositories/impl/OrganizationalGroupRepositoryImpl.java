@@ -17,7 +17,7 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 
 	@PersistenceContext
 	protected EntityManager entityManager;
-	
+
 	@Override
 	public List<OrganizationalGroup> findByLearnerIdOrderByOrgGrpNameAsc(Long learnerId) {
 		StringBuilder builder = new StringBuilder();
@@ -30,12 +30,12 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 
 	@Override
 	public List<OrganizationalGroup> findOrganizationGroupById(String[] orgGroupId) {
-		
+
 		//***************** This below Code is temporary Code, the idea is to fetch all records to avoid n+1 issue ***************
 		List<Long> orgGroupIdList = new ArrayList<>();
 		for (int i = 0; i < orgGroupId.length; i++) {
 			orgGroupIdList.add(new Long(orgGroupId[i]));
-			
+
 		}
 		String jpaQuery = " select p from OrganizationalGroup p "
 				+ "LEFT JOIN FETCH p.parentOrgGroup pg "
@@ -51,25 +51,26 @@ public class OrganizationalGroupRepositoryImpl implements OrganizationalGroupRep
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		String jpaQuery = " select p from TrainingAdministrator p "
 				+ "LEFT JOIN FETCH p.managedGroups mg "
+				+ "JOIN FETCH p.vu360User vu "
 				+ "WHERE p.id in (:trainingAdminstratorId)";
-		
+
 		Query query = entityManager.createQuery(jpaQuery, TrainingAdministrator.class);
 		query.setParameter("trainingAdminstratorId", trainingAdminstratorId);
 		List<TrainingAdministrator> taz = query.getResultList();
-		
+
 		List<OrganizationalGroup> orgGrps = new ArrayList<>();
-		
+
 		if(taz!=null){
 			orgGrps = taz.get(0).getManagedGroups();
 		}
-		
+
 		return orgGrps;
 	}
-	
+
 	// Method that will eagerly fetch parent and children Org Grp and used at Batch Import.
 	@Override
 	public OrganizationalGroup findOrganizationGroupById(Long orgGroupId) {
-		
+
 		OrganizationalGroup orgGrp = new OrganizationalGroup();
 		String jpaQuery = " select p from OrganizationalGroup p "
 				+ "LEFT JOIN FETCH p.parentOrgGroup pg "

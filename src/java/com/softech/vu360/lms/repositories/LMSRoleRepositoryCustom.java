@@ -2,6 +2,7 @@ package com.softech.vu360.lms.repositories;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.LMSFeature;
@@ -19,6 +20,9 @@ public interface LMSRoleRepositoryCustom {
 	public List<LMSRole> getSystemRolesByCustomer(Customer customer);
 	public List<LMSRole> findRolesByName( String name, Customer customer, VU360User loggedInUser);
 	public int checkNoOfBefaultReg(Customer customer);
+
 	public String[] findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
 	Map<String, String> countLearnerByRoles(Long [] roleIds);
+	public Set<LMSRole> getRoleWithFeatures(Set<LMSRole> rolesList);
+
 }

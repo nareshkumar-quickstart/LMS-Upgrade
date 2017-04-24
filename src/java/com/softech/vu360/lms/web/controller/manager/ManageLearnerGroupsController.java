@@ -78,8 +78,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	private static final String MANAGE_GROUP_ADD_LEARNERROUP_ACTION = "addLearner";
 	private static final String MANAGE_LEARNERGROUP_PAGING_ACTION = "paging";
 
-	
-	
+
+
 	private String manageLearnerGroupsTemplate=null;
 	private String addLearnerGroupTemplate=null;
 	private String addLearnerRedirectTemplate=null;
@@ -92,7 +92,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	private String updateLearnerGroupTemplate = null;
 	private String viewLearnerGroupCoursesTemplate = null;
 	private String addCourseTemplate = null;
-	
+
 	private OrgGroupLearnerGroupService orgGroupLearnerGroupService;
 	private LearnerService learnerService;
 	private EnrollmentService enrollmentService;
@@ -101,12 +101,12 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	private AsyncTaskExecutorWrapper asyncTaskExecutorWrapper;
 	private OrganizationalGroup orgGroup = null;
 	private VU360UserService vu360UserService;
-	
+
 	//Added By Noman
 	private CourseAndCourseGroupService courseAndCourseGroupService = null;
 	private EntitlementService entitlementService = null;
 	//--------------
-	
+
 	@SuppressWarnings("unchecked")
 	public ModelAndView displayLearnerGroups(HttpServletRequest request, HttpServletResponse response) {
 
@@ -133,12 +133,12 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		String sortColumnIndex = request.getParameter("sortColumnIndex");
 //		if( (StringUtils.isBlank(sortColumnIndex)) && session.getAttribute("sortColumnIndex") != null )
 //			 sortColumnIndex = session.getAttribute("sortColumnIndex").toString();
-		
+
 		if(StringUtils.isBlank(visited)){
-				sortDirection ="1";
-				sortColumnIndex ="0";
-			}	
-		
+			sortDirection ="1";
+			sortColumnIndex ="0";
+		}
+
 		if( action == null )
 			action = MANAGE_GROUP_SEARCH_LEARNERGROUP_ACTION;
 		context.put("showAll", showAll);
@@ -161,8 +161,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 
 					if( StringUtils.isNotBlank(learnerGroupID) ) {
 						learnerGroupIdArray[i]=Long.parseLong(selectedLearnerGroupValues[i]);
-					}	
-				}		
+					}
+				}
 				orgGroupLearnerGroupService.deleteLearnerGroups(learnerGroupIdArray);
 			}
 			return showLearnerGroups(request, context, PagerAttributeMap, customer, loggedInUser, sortColumnIndex, sortDirection);
@@ -170,7 +170,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			return showLearnerGroups(request, context, PagerAttributeMap, customer, loggedInUser, sortColumnIndex, sortDirection);
 		} else if(action.equalsIgnoreCase(MANAGE_LEARNERGROUP_PAGING_ACTION)) {
 			return showLearnerGroups(request, context, PagerAttributeMap, customer, loggedInUser, sortColumnIndex, sortDirection);
-		} 
+		}
 		context.put("userData", loggedInUser);
 		return new ModelAndView(manageLearnerGroupsTemplate, "context", context);
 	}
@@ -189,15 +189,15 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 
 
 
-	private ModelAndView showLearnerGroups(HttpServletRequest request, Map<Object, Object> context, 
-			Map<String, Object> PagerAttributeMap, Customer customer, VU360User loggedInUser, 
-			String sortColumnIndex, String sortDirection){
+	private ModelAndView showLearnerGroups(HttpServletRequest request, Map<Object, Object> context,
+										   Map<String, Object> PagerAttributeMap, Customer customer, VU360User loggedInUser,
+										   String sortColumnIndex, String sortDirection){
 //		HttpSession session = request.getSession();
 		String name = request.getParameter("name");
 		context.put("name", name);
 		context.put("userData", loggedInUser);
 		if( !vu360UserService.hasAdministratorRole(loggedInUser) &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
-			if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()==0 ) {				
+			if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()==0 ) {
 				return new ModelAndView(manageLearnerGroupsTemplate, "context", context);
 			}
 		}
@@ -250,7 +250,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 //					session.setAttribute("sortDirection", 1);
 //					session.setAttribute("sortColumnIndex", 0);
 				}
-				// sorting against number of learners	
+				// sorting against number of learners
 			} else if( sortColumnIndex.equalsIgnoreCase("1") ) {
 				if( sortDirection.equalsIgnoreCase("0") ) {
 					for( int i = 0 ; i < lnrGroups.size() ; i ++ ) {
@@ -259,7 +259,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 								LearnerGroup lnrGrp1 =  (LearnerGroup) lnrGroups.get(i);
 								LearnerGroup lnrGrp2 =  (LearnerGroup) lnrGroups.get(j);
 								if(learnerCountMap.get(lnrGrp1.getId())< learnerCountMap.get(lnrGrp2.getId())) {
-								//if( lnrGrp1.getLearners().size() > lnrGrp2.getLearners().size() ) {
+									//if( lnrGrp1.getLearners().size() > lnrGrp2.getLearners().size() ) {
 									LearnerGroup tempLG = lnrGroups.get(i);
 									lnrGroups.set(i, lnrGroups.get(j));
 									lnrGroups.set(j, tempLG);
@@ -278,7 +278,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 								LearnerGroup lnrGrp1 =  (LearnerGroup) lnrGroups.get(i);
 								LearnerGroup lnrGrp2 =  (LearnerGroup) lnrGroups.get(j);
 								if(learnerCountMap.get(lnrGrp1.getId())< learnerCountMap.get(lnrGrp2.getId())) {
-								//if( lnrGrp1.getLearners().size() < lnrGrp2.getLearners().size() ) {
+									//if( lnrGrp1.getLearners().size() < lnrGrp2.getLearners().size() ) {
 									LearnerGroup tempLG = lnrGroups.get(i);
 									lnrGroups.set(i, lnrGroups.get(j));
 									lnrGroups.set(j, tempLG);
@@ -291,7 +291,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 //					session.setAttribute("sortDirection", 1);
 //					session.setAttribute("sortColumnIndex", 1);
 				}
-				// sorting against organizational group name	
+				// sorting against organizational group name
 			} else if( sortColumnIndex.equalsIgnoreCase("2") ) {
 				if( sortDirection.equalsIgnoreCase("0") ) {
 					for( int i = 0 ; i < lnrGroups.size() ; i ++ ) {
@@ -334,16 +334,16 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		}
 		context.put("learnerGroups", lnrGroups);
 		context.put("learnerGroupCount", learnerCountMap); // LMS-6764
-		
+
 		return new ModelAndView(manageLearnerGroupsTemplate, "context", context);
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	public ModelAndView addLearnerGroup(HttpServletRequest request,
-			HttpServletResponse response) {
+										HttpServletResponse response) {
 
-		HttpSession session = request.getSession(); 
+		HttpSession session = request.getSession();
 		//VU360User loggedInUser = (VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 		Map<Object, Object> context = new HashMap<Object, Object>();
@@ -418,57 +418,57 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	}
 
 	public ModelAndView updateLearnerGroup(HttpServletRequest request,
-			HttpServletResponse response){
+										   HttpServletResponse response){
 		try {
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			Map<Object, Object> context = new HashMap<Object, Object>();
 
 			String learnerGroupId = request.getParameter("learnerGroupId");
-						
+
 			String action = request.getParameter("action");
-			
+
 			if(learnerGroupId==null){
 				return new ModelAndView(learnerGroupRedirectTemplate);
 			}
-			
+
 			Customer customer = null;
 			if (vu360UserService.hasAdministratorRole(loggedInUser))
 				customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			else
 				customer = loggedInUser.getLearner().getCustomer();
-						
-			//Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();			
+
+			//Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			//List<OrganizationalGroup> orgGroups = orgGroupLearnerGroupService.getOrgGroupsByCustomer(customer, loggedInUser);
 			OrganizationalGroup rootOrgGroup =  orgGroupLearnerGroupService.getRootOrgGroupForCustomer(customer.getId());
-			
+
 			//Noman, Get the Organization Group Hierarchy
 			//TODO
 			log.debug("updateLearnerGroup");
-						
+
 //			String[] orgGroupList = form.getGroups();
-//			
+//
 //			if( orgGroupList != null && orgGroupList.length > 0 ){
 //				for( String orgGroup : orgGroupList ){
 //					Long orgGroupId = Long.parseLong(orgGroup);
 //					orgGroupIdList.add(orgGroupId);
 //				}
 //			}
-			
+
 			if( action == null ) {
-				LearnerGroup learnerGroup =learnerService.getLearnerGroupById(Long.valueOf(learnerGroupId));//learnerService.loadForUpdateLearnerGroup(Long.parseLong(learnerGroupId)); no need to load for update to display only 
+				LearnerGroup learnerGroup =learnerService.getLearnerGroupById(Long.valueOf(learnerGroupId));//learnerService.loadForUpdateLearnerGroup(Long.parseLong(learnerGroupId)); no need to load for update to display only
 				if( learnerGroup != null ) {
 					if(learnerGroup.getCustomer().getId().equals(customer.getId())){
 						//Page load mode
 						List<Long> selectedOrgGroupIdList = new ArrayList<Long>();
-						
+
 						selectedOrgGroupIdList.add(learnerGroup.getOrganizationalGroup().getId());
-						
+
 						TreeNode orgGroupRoot = ArrangeOrgGroupTree.getOrgGroupTree(null, rootOrgGroup, selectedOrgGroupIdList,loggedInUser);
 						List<TreeNode> treeAsList = orgGroupRoot.bfs();
 //						for( TreeNode node : treeAsList )
-//							log.debug(node.toString());						
+//							log.debug(node.toString());
 						context.put("orgGroupTreeAsList", treeAsList);
-						
+
 						context.put("learnerGroup", learnerGroup);
 						return new ModelAndView(this.updateLearnerGroupTemplate, "context", context);
 					}
@@ -484,17 +484,17 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 						String learnerGroupName=request.getParameter("learnerGroupName");
 						//Get the selected Organization Group ID By request Parameter;
 						String selectedOrgGroupID = request.getParameter("groups");
-						
+
 						OrganizationalGroup selectedOrgGroup = null;
 						if(selectedOrgGroupID!=null){
 							Long orgGroupId = Long.parseLong(selectedOrgGroupID);
-							selectedOrgGroup = learnerService.loadForUpdateOrganizationalGroup(orgGroupId);							
+							selectedOrgGroup = learnerService.loadForUpdateOrganizationalGroup(orgGroupId);
 						}
 						learnerGroup.setOrganizationalGroup(selectedOrgGroup);
 						learnerGroup.setName(learnerGroupName);
 						if(validateEditData(learnerGroup,customer,context)){
 							//learnerGroup.setName(learnerGroupName);
-							
+
 
 							orgGroupLearnerGroupService.saveLearnerGroup(learnerGroup);
 							return new ModelAndView(learnerGroupRedirectTemplate);
@@ -506,7 +506,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 							List<TreeNode> treeAsList = orgGroupRoot.bfs();
 							context.put("orgGroupTreeAsList", treeAsList);
 							//--LMS-9672-----END
-							
+
 							context.put("learnerGroup", learnerGroup);
 							//return new ModelAndView(learnerGroupRedirectTemplate);
 							return new ModelAndView(this.updateLearnerGroupTemplate, "context", context);
@@ -545,11 +545,11 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 
 
 	public ModelAndView finishAddLearnerGroup(HttpServletRequest request,
-			HttpServletResponse response) {
+											  HttpServletResponse response) {
 		try {
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 			Map<Object, Object> context = new HashMap<Object, Object>();
-			HttpSession session = request.getSession(); 
+			HttpSession session = request.getSession();
 			context.put("groupName", session.getAttribute("addLGgroupName"));
 			context.put("selectedGroup",((OrganizationalGroup)session.getAttribute("addLGorganizationalGroup")).getName() );
 
@@ -610,7 +610,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	 * @author Saptarshi
 	 */
 	public void saveLearnerGroup(HttpServletRequest request,
-			HttpServletResponse response) {
+								 HttpServletResponse response) {
 		try {
 
 			LearnerGroup learnerGroup = new LearnerGroup();
@@ -657,28 +657,28 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	//Filters the learner by search call
 	private List<Learner> filterLearner(String firstName, String lastName, String emailAddress, List<Learner> allLearners) {
 		List<Learner> filteredLearner= new ArrayList<Learner>();
-		
-		if ((firstName == null || firstName.equals("")) 
-			&& (lastName == null || lastName.equals(""))
-			&& (emailAddress == null || emailAddress.equals(""))){
-		
+
+		if ((firstName == null || firstName.equals(""))
+				&& (lastName == null || lastName.equals(""))
+				&& (emailAddress == null || emailAddress.equals(""))){
+
 			//If no search entity is found then return original list
 			return allLearners;
 		}
-		
+
 		for (Learner learner : allLearners) {
-			if ( learner.getVu360User().getFirstName().toLowerCase().indexOf(firstName.toLowerCase())>=0 
-				&& learner.getVu360User().getLastName().toLowerCase().indexOf(lastName.toLowerCase())>=0  
-				&& learner.getVu360User().getEmailAddress().indexOf(emailAddress.toLowerCase())>=0 ) {
-				
+			if ( learner.getVu360User().getFirstName().toLowerCase().indexOf(firstName.toLowerCase())>=0
+					&& learner.getVu360User().getLastName().toLowerCase().indexOf(lastName.toLowerCase())>=0
+					&& learner.getVu360User().getEmailAddress().indexOf(emailAddress.toLowerCase())>=0 ) {
+
 				//if it is found
-				
+
 				filteredLearner.add(learner);
 			}
-			
+
 		}
 		return filteredLearner;
-		
+
 	}
 	public ModelAndView viewLearnerGroupMembers(HttpServletRequest request,	HttpServletResponse response) {
 		try {
@@ -686,11 +686,11 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			HttpSession session = request.getSession();
 
 			session.setAttribute("learnerGroupId",null);
-			
+
 			String firstName = request.getParameter("firstname");
 			String lastName = request.getParameter("lastname");
 			String emailAddress= request.getParameter("emailaddress");
-			
+
 			String learnerGroupId = request.getParameter("learnerGroupId");
 			String sortDirection = request.getParameter("sortDirection");
 			String sortBy = request.getParameter("sortBy");
@@ -698,13 +698,13 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			String searchType = request.getParameter("searchType");
 			String pageIndex = request.getParameter("pageIndex");
 			session.setAttribute("learnerGroupId",learnerGroupId);
-			
-			
+
+
 			context.put("firstName",firstName);
 			context.put("lastName",lastName);
 			context.put("emailAddress",emailAddress);
-			
-			
+
+
 			int pageNo = 0;
 			int recordShowing = 0;
 
@@ -719,7 +719,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				if( StringUtils.isNotBlank(action) ) {
 					List<Learner> listSelectedLearner = new ArrayList<Learner>();
 					if(action.equalsIgnoreCase(MANAGE_USER_DELETE_LEARNER_ACTION)){
-						
+
 						LearnerGroup learnerGroup = null;
 						String[] selectedLearnerValues = request.getParameterValues("learner");
 						if( selectedLearnerValues != null ){
@@ -731,11 +731,11 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 								String learnerID = selectedLearnerValues[i];
 								if( learnerID != null ) {
 									learnerIdArray[i] = Long.parseLong(selectedLearnerValues[i]);
-								}	
-							}		
+								}
+							}
 							orgGroupLearnerGroupService.deleteLearnersFromLearnerGroup(learnerIdArray, learnerGroup);
 						}
-						
+
 					}else if(action.equalsIgnoreCase(MANAGE_GROUP_ADD_LEARNERROUP_ACTION)){
 						String[] selectedLearnerValues = request.getParameterValues("learner");
 						if( selectedLearnerValues != null ){
@@ -744,8 +744,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 								if( LearnerID != null ) {
 									Learner learner = learnerService.getLearnerByID(Long.valueOf(LearnerID));
 									listSelectedLearner.add(learner);
-								}	
-							}		
+								}
+							}
 						}
 					}
 				}
@@ -757,7 +757,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				//LMS-6744
 				// Modified By MariumSaud : Replace method orgGroupLearnerGroupService.getLearnersByLearnerGroupId(learnerGroup.getId()); with orgGroupLearnerGroupService.getAllLearnersByLearnerGroupId(learnerGroup.getId())
 				// Reason : Previous method is making Bulk queries for Learner and then for each learner's user this is causing Proxy Error
-				// Resolution : New method will now Used Overlaoded Constructor to populate Learner with only required attributes. 
+				// Resolution : New method will now Used Overlaoded Constructor to populate Learner with only required attributes.
 				List<Learner> allLearners = orgGroupLearnerGroupService.getAllLearnersByLearnerGroupId(learnerGroup.getId());
 				List<Learner> learnerList = filterLearner(firstName, lastName, emailAddress, allLearners);
 				List<Learner> allLearnerList = learnerList;
@@ -765,7 +765,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				userSort.setSortBy(sortBy);
 				int totalRecord = 0;
 				totalRecord = learnerList.size();
-				
+
 				if ( searchType.equalsIgnoreCase(MANAGE_USER_SIMPLE_SEARCH_ACTION) ) {
 					pageNo = 0;
 					if(learnerList.size()<CHANGE_GROUP_PAGE_SIZE)
@@ -799,11 +799,11 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 						sortDirection = "0";
 					userSort.setSortDirection(Integer.parseInt(sortDirection));
 					Collections.sort(learnerList,userSort);
-					session.setAttribute("prevAction", "sort");	
+					session.setAttribute("prevAction", "sort");
 				}
 				if( action.equalsIgnoreCase("default") ) {
-					if( session.getAttribute("prevAction") != null && 
-						session.getAttribute("prevAction").toString().equalsIgnoreCase("sort") ) {
+					if( session.getAttribute("prevAction") != null &&
+							session.getAttribute("prevAction").toString().equalsIgnoreCase("sort") ) {
 						if( StringUtils.isNotBlank(sortDirection) && !sortDirection.isEmpty() ) {
 							userSort.setSortDirection(Integer.parseInt(sortDirection));
 							Collections.sort(learnerList,userSort);
@@ -814,7 +814,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					if(learnerList.size()<(pageNo+1)*CHANGE_GROUP_PAGE_SIZE){
 						recordShowing = learnerList.size();
 						learnerList = learnerList.subList(pageNo*CHANGE_GROUP_PAGE_SIZE ,learnerList.size());
-						//learnerList = learnerList.subList(0 ,learnerList.size());						
+						//learnerList = learnerList.subList(0 ,learnerList.size());
 					}else if(learnerList.size()<CHANGE_GROUP_PAGE_SIZE){
 						recordShowing = learnerList.size();
 						learnerList = learnerList.subList(0 ,learnerList.size());
@@ -849,53 +849,53 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				context.put("searchType", searchType);
 			}
 			return new ModelAndView(viewLearnerGroupMembersTemplate, "context", context);
-			
+
 		} catch (Exception e) {
-			log.debug("exception", e);
+			log.error("exception", e);
 		}
 		return new ModelAndView(viewLearnerGroupMembersTemplate);
 	}
-	
+
 	/**
 	 * This method will be shown Learner Group Courses association
-	 * Noman Azeem 
+	 * Noman Azeem
 	 */
 	@SuppressWarnings("unchecked")
 	/*public ModelAndView viewLearnerGroupCourses(HttpServletRequest request,	HttpServletResponse response)  {
-		
+
 		try
 		{
 			Map<String, Object> context = new HashMap<String, Object>();
 			String learnerGroupId = request.getParameter("learnerGroupId");
-			context.put("learnerGroupId", learnerGroupId);			
+			context.put("learnerGroupId", learnerGroupId);
 			LearnerGroup learnerGroup = learnerService.getLearnerGroupById(Long.valueOf(learnerGroupId));
-			
+
 			LearnerGroup learnerGroup = learnerService.loadForUpdateLearnerGroup(Long.valueOf(learnerGroupId));
 			if (learnerGroup == null){
 				return new ModelAndView(viewLearnerGroupMembersTemplate, "context", context);
 			}
-			
+
 			Long entId = Long.parseLong(request.getParameter("Id"));
 			CustomerEntitlement customerEntitlement = entitlementService.loadForUpdateCustomerEntitlement(entId);
-			
-			List<TreeNode> courseGroupTreeNodeList = new ArrayList<TreeNode>(); 
-			
+
+			List<TreeNode> courseGroupTreeNodeList = new ArrayList<TreeNode>();
+
 			if(customerEntitlement instanceof CourseGroupCustomerEntitlement) {
-				List<TreeNode> rootNodesReferences = new ArrayList<TreeNode>();			
+				List<TreeNode> rootNodesReferences = new ArrayList<TreeNode>();
 				CourseGroupCustomerEntitlement courseGroupCustomerEntitlement = (CourseGroupCustomerEntitlement)customerEntitlement;
 				List<CourseGroup> courseGroups = courseGroupCustomerEntitlement.getCourseGroups();
 				for(CourseGroup courseGroup : courseGroups){
 					CourseSort courseSort = new CourseSort();
 					List<Course> cgCourses = courseGroup.getCourses();
-					List<Course> publishedCourses = new ArrayList<Course>(); 
+					List<Course> publishedCourses = new ArrayList<Course>();
 					if (cgCourses != null && cgCourses.size() > 0) {
 						for (Course course : cgCourses) {
 							if (course.getCourseStatus().equalsIgnoreCase(Course.PUBLISHED)) {
 								publishedCourses.add(course);
 							}
 						}
-						
-						if (!publishedCourses.isEmpty()) {							
+
+						if (!publishedCourses.isEmpty()) {
 							Collections.sort(publishedCourses, courseSort);
 							courseGroup.setCourses(publishedCourses);
 						}
@@ -908,7 +908,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 							courseGroupAdded = true;
 							break;
 						}
-						
+
 						CourseGroup currentCourseGroup = courseGroup;
 						while (!courseGroupAdded && currentCourseGroup.getParentCourseGroup() != null) {
 							CourseGroup parentCourseGroup = currentCourseGroup.getParentCourseGroup();
@@ -926,17 +926,17 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					if (!courseGroupAdded) {
 						courseGroupCourseTreeNode = ArrangeCourseGroupTree.getCourseGroupTreeNodeForCourse(courseGroup, null);
 						rootNodesReferences.add(courseGroupCourseTreeNode);
-					}						
+					}
 				}
-				
-				boolean courseAdded = false;				
+
+				boolean courseAdded = false;
 				for (TreeNode rootTreeNode : rootNodesReferences) {
 					List<CourseGroup> childCourseGroups = new ArrayList<CourseGroup>();
 					if (ArrangeCourseGroupTree.traverseTreeToAddCourse(rootTreeNode, courseGroup, course, childCourseGroups)) {
 						courseAdded = true;
 						break;
 					}
-					
+
 					CourseGroup currentCourseGroup = courseGroup;
 					while (!courseAdded && currentCourseGroup.getParentCourseGroup() != null) {
 						CourseGroup parentCourseGroup = currentCourseGroup.getParentCourseGroup();
@@ -955,49 +955,49 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					rootNodesReferences.add(courseGroupCourseTreeNode);
 				}
 			}
-			
+
 			for (TreeNode rootTreeNode : rootNodesReferences) {
 				courseGroupTreeNodeList.addAll(rootTreeNode.bfs());
 			}
 			context.put("contractType", CustomerEntitlement.COURSE_ENROLLMENTTYPE);
 			context.put("treeAsList", courseGroupTreeNodeList);
 			context.put("learnerGroup",learnerGroup);
-			
+
 			return new ModelAndView(viewLearnerGroupCoursesTemplate, "context", context);
 		}
 		catch (Exception e) {
 			log.debug("exception", e);
-		}	
-		return new ModelAndView(viewLearnerGroupCoursesTemplate);		
+		}
+		return new ModelAndView(viewLearnerGroupCoursesTemplate);
 	}*/
-	
-	public ModelAndView viewLearnerGroupCourses(HttpServletRequest request, 
-			HttpServletResponse response){
-		
+
+	public ModelAndView viewLearnerGroupCourses(HttpServletRequest request,
+												HttpServletResponse response){
+
 		try {
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			List<TreeNode> treeAsList = null;//getEntitlementCourseGroupTreeNode(null);
 			String learnerGroupId = request.getParameter("learnerGroupId");
-			context.put("learnerGroupId", learnerGroupId);			
+			context.put("learnerGroupId", learnerGroupId);
 			LearnerGroup learnerGroup = learnerService.getLearnerGroupById(Long.valueOf(learnerGroupId));
-			
+
 			if (learnerGroup == null){
 				return new ModelAndView(viewLearnerGroupMembersTemplate, "context", context);
 			}
-				
+
 			treeAsList=this.getTreeForContract(learnerGroup);
-										
+
 			context.put("coursesTreeAsList", treeAsList);
 			context.put("contractType", CustomerEntitlement.COURSE_ENROLLMENTTYPE);
 			context.put("learnerGroupId", learnerGroupId);
-			
+
 			return new ModelAndView(viewLearnerGroupCoursesTemplate, "context", context);
 		} catch (Exception e) {
 			log.debug("exception", e);
 		}
 		return new ModelAndView(viewLearnerGroupCoursesTemplate);
 	}
-	
+
 	private TreeNode getOrgGroupTree( TreeNode parentNode, OrganizationalGroup orgGroup ) {
 
 		if( orgGroup != null ) {
@@ -1015,12 +1015,12 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		}
 		return null;
 	}
-	
-	
-	
+
+
+
 	@SuppressWarnings("unchecked")
 	public ModelAndView changeLearnerGroup(HttpServletRequest request,
-			HttpServletResponse response) {
+										   HttpServletResponse response) {
 		try {
 			//List<VU360User> resultList = new ArrayList<VU360User>();
 			Map<Object,Object> results = new HashMap<Object,Object>();
@@ -1030,10 +1030,10 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			 * Get logged in user
 			 */
 			VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
-			
+
 			boolean hasAdministratorRole = vu360UserService.hasAdministratorRole(loggedInUser);
 			boolean hasTrainingAdministratorRole = vu360UserService.hasTrainingAdministratorRole(loggedInUser);
-			
+
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			context.put("userData", loggedInUser);
 
@@ -1111,29 +1111,29 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				//}
 				log.debug("searchType="+action + " searchedSearchKey " + session.getAttribute("searchedSearchKey").toString() + "  direction " + direction + " pageIndex " + pageIndex + "   sortBy "+ firstName + "  sortDirection " + sortDirection);
 				session.setAttribute("pageNo",pageNo);
-				
+
 				if( !hasAdministratorRole &&  !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 					if (loggedInUser.getTrainingAdministrator().getManagedGroups().size()>0 ) {
-						
+
 						results=learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+								hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								pageNo,CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 
 						userList=(List<VU360User>)results.get("list");
 					}
-						
+
 				}else {
 					results=learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							pageNo,CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 
 					userList=(List<VU360User>)results.get("list");
 				}
-				
+
 
 			}else if(action.equalsIgnoreCase(CHANGE_GROUP_ADVANCED_SEARCH_ACTION)){
 				//resultList = learnerService.findLearner(firstName,lastName,emailAddress,loggedInUser);
@@ -1156,13 +1156,13 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					//resultList = learnerService.findLearner(searchKey,loggedInUser);
 
 				}
-				session.setAttribute("pageNo",pageNo);	
+				session.setAttribute("pageNo",pageNo);
 				/*results=orgGroupLearnerGroupService.findLearnerNotInLearnerGroup(objGroup,session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString()
 						,loggedInUser,pageNo,CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));*/
 
 				results=learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-						hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+						hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 				//recordShowing = ((Integer)resultList1.get("recordSize")>=CHANGE_GROUP_PAGE_SIZE*(pageNo+1))?
@@ -1178,11 +1178,11 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				session.setAttribute("searchType", CHANGE_GROUP_ALL_SEARCH_ACTION);
 				log.debug("searchType " + session.getAttribute("searchType" ));
 				pageNo=0;
-				session.setAttribute("pageNo",pageNo);	
+				session.setAttribute("pageNo",pageNo);
 				//	results=orgGroupLearnerGroupService.findAllLearnersNotInLearnerGroup(objGroup,"",loggedInUser,sortBy,Integer.parseInt(sortDirection));
 				results=learnerService.findAllLearners("",
-						hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+						hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),sortBy,Integer.parseInt(sortDirection));
 
 
@@ -1202,8 +1202,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					 */
 
 					results=learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 
@@ -1213,16 +1213,16 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 
 					//results=orgGroupLearnerGroupService.findAllLearnersNotInLearnerGroup(objGroup,"",loggedInUser,sortBy,Integer.parseInt(sortDirection));
 					results=learnerService.findAllLearners("",
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							sortBy,Integer.parseInt(sortDirection));
 					userList=(List<VU360User>)results.get("list");
 				}
 				else{
 					results=learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList=(List<VU360User>)results.get("list");
@@ -1239,8 +1239,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				if (session.getAttribute("searchType").toString().equalsIgnoreCase(CHANGE_GROUP_ADVANCED_SEARCH_ACTION)){
 
 					results=learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList=(List<VU360User>)results.get("list");
@@ -1248,16 +1248,16 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				}else if (session.getAttribute("searchType").toString().equalsIgnoreCase(CHANGE_GROUP_ALL_SEARCH_ACTION)){
 
 					results=learnerService.findAllLearners("",
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							sortBy,Integer.parseInt(sortDirection));
 					userList=(List<VU360User>)results.get("list");
 				}
 				else{
 					results=learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+							hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator().getId(),
+							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), loggedInUser.getTrainingAdministrator().getManagedGroups(),
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),CHANGE_GROUP_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList=(List<VU360User>)results.get("list");
@@ -1274,7 +1274,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				String[] selectedLearnerValues = request.getParameterValues("selectedLearner");
 				Long selectedLearners[] = new Long[selectedLearnerValues.length];
 				List<Long> learnerIds = new ArrayList<Long>(selectedLearnerValues.length);
-				
+
 				for(int i=0;i<selectedLearnerValues.length;i++){
 					if(StringUtils.isNotBlank(selectedLearnerValues[i])){
 						learnerIds.add(Long.valueOf(selectedLearnerValues[i]));
@@ -1300,31 +1300,31 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			//else
 			log.debug("before record showing " + results.isEmpty());
 			if (!results.isEmpty())
-				recordShowing = ((Integer)userList.size()<CHANGE_GROUP_PAGE_SIZE)?Integer.parseInt(results.get("recordSize").toString()):(Integer.parseInt(session.getAttribute("pageNo").toString())+1)*CHANGE_GROUP_PAGE_SIZE;		
-				//sortDirection = (sortDirection =="0")?"1":"0";
+				recordShowing = ((Integer)userList.size()<CHANGE_GROUP_PAGE_SIZE)?Integer.parseInt(results.get("recordSize").toString()):(Integer.parseInt(session.getAttribute("pageNo").toString())+1)*CHANGE_GROUP_PAGE_SIZE;
+			//sortDirection = (sortDirection =="0")?"1":"0";
 
-				if (session.getAttribute("searchType").toString().equalsIgnoreCase(CHANGE_GROUP_ALL_SEARCH_ACTION))
-					recordShowing=userList.size();
-				if (sortDirection.equalsIgnoreCase("0"))
-					sortDirection = "1";
-				else
-					sortDirection="0";
-				String totalRecord =	(results.isEmpty())?"0":results.get("recordSize").toString();
-				context.put("firstName", session.getAttribute("searchedFirstName"));
-				context.put("lastName", session.getAttribute("searchedLastName"));
-				context.put("emailAddress", session.getAttribute("searchedEmailAddress"));
-				context.put("searchKey", session.getAttribute("searchedSearchKey"));
-				context.put("searchType", session.getAttribute("searchType"));
-				context.put("direction", direction);
-				context.put("members", userList);
-				context.put("totalRecord", Integer.parseInt(totalRecord));
-				context.put("recordShowing", recordShowing);
-				context.put("pageNo", session.getAttribute("pageNo"));
-				context.put("sortDirection", sortDirection );
-				context.put("sortBy", sortBy);
+			if (session.getAttribute("searchType").toString().equalsIgnoreCase(CHANGE_GROUP_ALL_SEARCH_ACTION))
+				recordShowing=userList.size();
+			if (sortDirection.equalsIgnoreCase("0"))
+				sortDirection = "1";
+			else
+				sortDirection="0";
+			String totalRecord =	(results.isEmpty())?"0":results.get("recordSize").toString();
+			context.put("firstName", session.getAttribute("searchedFirstName"));
+			context.put("lastName", session.getAttribute("searchedLastName"));
+			context.put("emailAddress", session.getAttribute("searchedEmailAddress"));
+			context.put("searchKey", session.getAttribute("searchedSearchKey"));
+			context.put("searchType", session.getAttribute("searchType"));
+			context.put("direction", direction);
+			context.put("members", userList);
+			context.put("totalRecord", Integer.parseInt(totalRecord));
+			context.put("recordShowing", recordShowing);
+			context.put("pageNo", session.getAttribute("pageNo"));
+			context.put("sortDirection", sortDirection );
+			context.put("sortBy", sortBy);
 
-				return new ModelAndView(addMembersTemplate, "context", context);
-				
+			return new ModelAndView(addMembersTemplate, "context", context);
+
 		} catch (Exception e) {
 			log.debug("exception", e);
 		}
@@ -1332,13 +1332,13 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 	}
 
 	/**
-	 * Added by Dyutiman 
+	 * Added by Dyutiman
 	 * method required to create org group tree
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unused")
 	private TreeNode getOrgGroupTree(TreeNode parentNode, OrganizationalGroup orgGroup,
-			List<Long> selectedOrgGroups ){
+									 List<Long> selectedOrgGroups ){
 
 		if( orgGroup != null ) {
 			TreeNode node = new TreeNode(orgGroup);
@@ -1358,10 +1358,10 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		return null;
 	}
 
-	
-	public ModelAndView showAddCourses( HttpServletRequest request, 
-			HttpServletResponse response) {
-		
+
+	public ModelAndView showAddCourses( HttpServletRequest request,
+										HttpServletResponse response) {
+
 		Map<String, Object> context = new HashMap<String, Object>();
 		String learnerGroupId = request.getParameter("learnerGroupId");
 		context.put("learnerGroupId", learnerGroupId);
@@ -1372,17 +1372,17 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		return new ModelAndView(addCourseTemplate, "context", context);
 	}
 
-	
-	public ModelAndView searchCourses( HttpServletRequest request, 
-			HttpServletResponse response) {
-		
+
+	public ModelAndView searchCourses( HttpServletRequest request,
+									   HttpServletResponse response) {
+
 		String learnerGroupId = request.getParameter("learnerGroupId");
 		String keywords=request.getParameter("keywords");
 		String title=request.getParameter("title");
 		String id=request.getParameter("courseId");
-		
+
 		Map<String, Object> context = new HashMap<String, Object>();
-		List<TreeNode> courseGroupTree = getEntitlementCourseGroupTreeNode(null, title.trim(), id, keywords.trim(), context);		
+		List<TreeNode> courseGroupTree = getEntitlementCourseGroupTreeNode(null, title.trim(), id, keywords.trim(), context);
 		context.put("courseGroupTree", courseGroupTree);
 		if (courseGroupTree == null) {
 			String[] error = {"error.admin.customerEnt.course.errorMsg1"
@@ -1395,46 +1395,46 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		context.put("pageNo",0);
 		context.put("totalRecord", courseGroupTree.size());
 		context.put("recordShowing", courseGroupTree.size());
-		
-		return new ModelAndView(addCourseTemplate, "context", context);
-		
-	}	
 
-	
+		return new ModelAndView(addCourseTemplate, "context", context);
+
+	}
+
+
 	private List<TreeNode> getEntitlementCourseGroupTreeNode(Object object,
-			String title, String id, String keywords, Map<String, Object> context) {		
-		
+															 String title, String id, String keywords, Map<String, Object> context) {
+
 		List<TreeNode> treeNodesList = new ArrayList<TreeNode>();
 		Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
-		if (customer != null) {			
+		if (customer != null) {
 			title = !StringUtils.isBlank(title) ? title.trim() : "";
 			id = !StringUtils.isBlank(id) ? id.trim() : "";
 			keywords = !StringUtils.isBlank(keywords) ? keywords.trim() : "";
-			
+
 			HashMap<CourseGroup, List<Course>> resultMap = entitlementService.findCourseInCustomerEntitlementsBySearchCriteria(customer, title, id, keywords);
-						
+
 			List<TreeNode> rootNodesReferences = new ArrayList<TreeNode>();
 			TreeNode courseGroupCourseTreeNode = null;
 			Set<CourseGroup> courseGroups = resultMap.keySet();
-			for (CourseGroup courseGroup : courseGroups) {		
+			for (CourseGroup courseGroup : courseGroups) {
 				List<Course> courses = resultMap.get(courseGroup);
 				if(courses!=null) { //i.e. its not a blank search
 					CourseSort courseSort = new CourseSort();
-					
+
 					if (courses != null && courses.size() > 0) {
 						Collections.sort(courses, courseSort);
 					}
-					
+
 					for (Course course : courses) {
-							
-						boolean courseAdded = false;					
+
+						boolean courseAdded = false;
 						for (TreeNode rootTreeNode : rootNodesReferences) {
 							List<CourseGroup> childCourseGroups = new ArrayList<CourseGroup>();
 							if (ArrangeCourseGroupTree.traverseTreeToAddCourse(rootTreeNode, courseGroup, course, childCourseGroups)) {
 								courseAdded = true;
 								break;
 							}
-							
+
 							CourseGroup currentCourseGroup = courseGroup;
 							while (!courseAdded && currentCourseGroup.getParentCourseGroup() != null) {
 								CourseGroup parentCourseGroup = currentCourseGroup.getParentCourseGroup();
@@ -1445,7 +1445,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 								}
 								currentCourseGroup = parentCourseGroup;
 							}
-	
+
 							if (courseAdded)
 								break;
 						}
@@ -1461,21 +1461,21 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				treeNodesList.addAll(rootTreeNode.bfs());
 			}
 		}
-		
+
 		return treeNodesList;
-	}	
-	
+	}
+
 	/**
 	 * Courses which are not associated with any course group there course group will be null
-	 * Courses which are associated with Course Group should represent as Course Group items  
+	 * Courses which are associated with Course Group should represent as Course Group items
 	 */
-	public ModelAndView addCoursesInLearnerGroup( HttpServletRequest request, 
-			HttpServletResponse response) {
-		
+	public ModelAndView addCoursesInLearnerGroup( HttpServletRequest request,
+												  HttpServletResponse response) {
+
 		String learnerGroupId = request.getParameter("learnerGroupId");
 		LearnerGroup learnerGroup = learnerService.getLearnerGroupById(Long.valueOf(learnerGroupId));
 		String []strCourseIds = request.getParameterValues("courses");
-		
+
 		Set<LearnerGroupItem> newLearnerGroupItems = new HashSet<LearnerGroupItem>();
 		if(strCourseIds!=null) {
 			LearnerGroupItem item;
@@ -1483,14 +1483,14 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			for(int i=0;i<strCourseIds.length;i++) {
 				String []strArray=strCourseIds[i].split(":");
 				CourseGroup courseGroupSearch = courseAndCourseGroupService.getCourseGroupById(Long.parseLong(strArray[0])); //courseAndCourseGroupService.loadForUpdateCourseGroup(Long.parseLong(strArray[0]));//TODO why we need this loadForUpdate here?
-				
+
 				Course course = courseAndCourseGroupService.getCourseById(Long.valueOf(strArray[1]));
 //				Course course=new Course();
 //				course.setId(Long.valueOf(strArray[1]));
-				
+
 				item = new LearnerGroupItem();
 				item.setCourse(course);
-				
+
 				if(courseGroupSearch!=null) {
 					item.setCourseGroup(courseGroupSearch);
 				}else{
@@ -1500,7 +1500,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 				newLearnerGroupItems.add(item);
 			}
 		}
-		
+
 		if(!newLearnerGroupItems.isEmpty()) {
 			learnerService.saveLearnerGroupItems(newLearnerGroupItems);
 			learnerGroup.getLearnerGroupItems().addAll(newLearnerGroupItems);
@@ -1508,52 +1508,52 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			List<Learner> learners = orgGroupLearnerGroupService.getLearnersByLearnerGroupId(learnerGroup.getId());
 			enrollmentService.enrollLearnersInLearnerGroupCourses(learners, new ArrayList<LearnerGroupItem>(newLearnerGroupItems), brand);
 		}
-		
-		return viewLearnerGroupCourses(request, response);	
+
+		return viewLearnerGroupCourses(request, response);
 	}
-	
-	public ModelAndView removeCourseGroup( HttpServletRequest request, 
-			HttpServletResponse response) {
-		
+
+	public ModelAndView removeCourseGroup( HttpServletRequest request,
+										   HttpServletResponse response) {
+
 		Map<Object, Object> context = new HashMap<Object, Object>();
 		List<TreeNode> treeAsList = null;
-		
+
 		String learnerGroupId = request.getParameter("learnerGroupId");
 		LearnerGroup learnerGroup = learnerService.loadForUpdateLearnerGroup(Long.valueOf(learnerGroupId));
 		String []strCourseIds = request.getParameterValues("courses");
 		List<LearnerGroupItem> items=learnerService.getLearnerGroupItemsByLearnerGroupId(learnerGroup.getId());
 		learnerGroup.setLearnerGroupItems(items);
 		List<LearnerGroupItem> itemsToBeRemoved=new ArrayList<LearnerGroupItem>();
-		LearnerGroupItem item;		
-		for(int i=0;i<strCourseIds.length;i++){			
+		LearnerGroupItem item;
+		for(int i=0;i<strCourseIds.length;i++){
 			String []strArray=strCourseIds[i].split(":");
 			item = learnerGroup.findLearnerGroupItem (new Long(strArray[0]),new Long(strArray[1]));
-			
+
 			if(items.contains(item)){
 				items.remove(item);
 				itemsToBeRemoved.add(item);
 			}
 		}
-		
+
 		orgGroupLearnerGroupService.deleteLearnerGroupItems(itemsToBeRemoved);
 		learnerGroup = orgGroupLearnerGroupService.saveLearnerGroup(learnerGroup);
-		
+
 
 		treeAsList=this.getTreeForContract(learnerGroup);
-		
+
 		context.put("coursesTreeAsList", treeAsList);
 		context.put("contractType", CustomerEntitlement.COURSE_ENROLLMENTTYPE);
 		context.put("learnerGroupId", learnerGroupId);
-		
+
 		return new ModelAndView(viewLearnerGroupCoursesTemplate, "context", context);
 	}
-	
+
 	private List<TreeNode> getTreeForContract(LearnerGroup learnerGroup) {
-		List<TreeNode> treeNodesList = new ArrayList<TreeNode>();		
-		
+		List<TreeNode> treeNodesList = new ArrayList<TreeNode>();
+
 		List<TreeNode> rootNodesReferences = new ArrayList<TreeNode>();
 		TreeNode courseGroupCourseTreeNode = null;
-		
+
 		List<LearnerGroupItem> learnerGroupItems=learnerService.getLearnerGroupItemsByLearnerGroupId(learnerGroup.getId());
 		for(LearnerGroupItem learnerGroupItem : learnerGroupItems ) {
 			Course course = learnerGroupItem.getCourse();
@@ -1565,15 +1565,15 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 					courseGroup.setId(new Long((date.getHours()+ date.getMinutes() + date.getSeconds())*100));
 					courseGroup.setName("Miscellaneous");
 				}
-					
-				boolean courseAdded = false;					
+
+				boolean courseAdded = false;
 				for (TreeNode rootTreeNode : rootNodesReferences) {
 					List<CourseGroup> childCourseGroups = new ArrayList<CourseGroup>();
 					if (ArrangeCourseGroupTree.traverseTreeToAddCourse(rootTreeNode, courseGroup, course, childCourseGroups)) {
 						courseAdded = true;
 						break;
 					}
-					
+
 					CourseGroup currentCourseGroup = courseGroup;
 					while (!courseAdded && currentCourseGroup.getParentCourseGroup() != null) {
 						CourseGroup parentCourseGroup = currentCourseGroup.getParentCourseGroup();
@@ -1584,7 +1584,7 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 						}
 						currentCourseGroup = parentCourseGroup;
 					}
-	
+
 					if (courseAdded)
 						break;
 				}
@@ -1598,10 +1598,10 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 		for (TreeNode rootTreeNode : rootNodesReferences) {
 			treeNodesList.addAll(rootTreeNode.bfs());
 		}
-		
+
 		return treeNodesList;
 	}
-	
+
 	public String getAddCourseTemplate() {
 		return addCourseTemplate;
 	}
@@ -1720,8 +1720,8 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			String viewLearnerGroupCoursesTemplate) {
 		this.viewLearnerGroupCoursesTemplate = viewLearnerGroupCoursesTemplate;
 	}
-	
-	
+
+
 	//Added By Noman
 	public EntitlementService getEntitlementService() {
 		return entitlementService;
@@ -1773,5 +1773,5 @@ public class ManageLearnerGroupsController extends MultiActionController impleme
 			AsyncTaskExecutorWrapper asyncTaskExecutorWrapper) {
 		this.asyncTaskExecutorWrapper = asyncTaskExecutorWrapper;
 	}
-	
+
 }

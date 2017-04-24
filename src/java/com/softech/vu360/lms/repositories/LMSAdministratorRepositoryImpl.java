@@ -22,7 +22,7 @@ import com.softech.vu360.lms.model.LMSAdministratorAllowedDistributor;
 import com.softech.vu360.lms.model.VU360User;
 
 /**
- * 
+ *
  * @author haider.ali
  *
  */
@@ -54,7 +54,7 @@ public class LMSAdministratorRepositoryImpl implements LMSAdministratorRepositor
 
 	@Override
 	public List<LMSAdministrator> findLMSAdministrators(String firstName, String lastName, String email,
-			VU360User loggedInUser) {
+														VU360User loggedInUser) {
 
 		List<Distributor> ls = getAdminRestrictionExpression(loggedInUser);
 		List<LMSAdministrator> lmsAdministrator = null;
@@ -65,18 +65,18 @@ public class LMSAdministratorRepositoryImpl implements LMSAdministratorRepositor
 		else {
 			try {
 				StringBuilder queryString = new StringBuilder(
-						"SELECT p FROM LMSAdministrator p Where (p.globalAdministrator is null or p.globalAdministrator = FALSE) ");
+						"SELECT p FROM LMSAdministrator p JOIN FETCH p.vu360User vu Where (p.globalAdministrator is null or p.globalAdministrator = FALSE) ");
 
 				if (firstName != null) {
-					queryString.append(" AND p.vu360User.firstName LIKE :firstName ");
+					queryString.append(" AND vu.firstName LIKE :firstName ");
 				}
 
 				if (lastName != null) {
-					queryString.append(" AND p.vu360User.lastName LIKE :lastName ");
+					queryString.append(" AND vu.lastName LIKE :lastName ");
 				}
 
 				if (email != null) {
-					queryString.append(" AND p.vu360User.emailAddress LIKE :email ");
+					queryString.append(" AND vu.emailAddress LIKE :email ");
 				}
 
 				Query query = entityManager.createQuery(queryString.toString());
@@ -109,11 +109,11 @@ public class LMSAdministratorRepositoryImpl implements LMSAdministratorRepositor
 
 		/*
 		 * List<Distributor> distributorList = new ArrayList<Distributor>();
-		 * 
+		 *
 		 * if(!loggedInUser.getLmsAdministrator().isGlobalAdministrator()){
 		 * List<LMSAdministratorAllowedDistributor> lmsAdminAllowedDist=new
 		 * ArrayList<LMSAdministratorAllowedDistributor>();
-		 * 
+		 *
 		 * //TODO OPTIMIZE IT. Duplicate iteration for(DistributorGroup
 		 * distGroup :
 		 * loggedInUser.getLmsAdministrator().getDistributorGroups()){
@@ -122,19 +122,19 @@ public class LMSAdministratorRepositoryImpl implements LMSAdministratorRepositor
 		 * findByDistributorGroupIdAndLmsAdministratorId(distGroup.getId(),
 		 * loggedInUser.getLmsAdministrator().getId());
 		 * lmsAdminAllowedDist.addAll(allowedDistributors); }
-		 * 
+		 *
 		 * @SuppressWarnings("unchecked") Collection<Long> allowedDistIds =
 		 * CollectionUtils.collect(lmsAdminAllowedDist, new Transformer() {
 		 * public Long transform(Object o) { return
 		 * ((LMSAdministratorAllowedDistributor) o).getAllowedDistributorId(); }
 		 * });
-		 * 
+		 *
 		 * if(allowedDistIds!=null && allowedDistIds.size()>0){
-		 * 
+		 *
 		 * @SuppressWarnings({ "unchecked", "rawtypes" }) Set<Long> set = new
 		 * HashSet(allowedDistIds); distributorList = (List<Distributor>)
 		 * distributorRepository.findAll(set); }
-		 * 
+		 *
 		 * } return distributorList;
 		 */
 
