@@ -19,8 +19,10 @@ import com.softech.vu360.lms.model.VU360User;
  */
 public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU360UserRepositoryCustom , JpaRepository<VU360User, Long>, JpaSpecificationExecutor<VU360User>{
 
-	List<VU360User> findByUsernameIn(@Param("lstUserName") Collection<String> lstUserName);	
-	
+	List<VU360User> findByUsernameIn(@Param("lstUserName") Collection<String> lstUserName);
+
+	Object getIdByUserName(String userName);
+
 	public VU360User getUserById(Long id);
 	
 	public List<VU360User> findByLearnerIdIn(Long[] learnerId);

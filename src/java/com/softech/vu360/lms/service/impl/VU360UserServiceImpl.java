@@ -1,12 +1,11 @@
 package com.softech.vu360.lms.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.softech.vu360.lms.helpers.ProxyVOHelper;
+import com.softech.vu360.lms.model.*;
+import com.softech.vu360.lms.repositories.*;
+import com.softech.vu360.lms.service.ActiveDirectoryService;
+import com.softech.vu360.lms.service.VU360UserService;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -15,31 +14,17 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.softech.vu360.lms.helpers.ProxyVOHelper;
-import com.softech.vu360.lms.model.Customer;
-import com.softech.vu360.lms.model.LMSFeature;
-import com.softech.vu360.lms.model.LMSRole;
-import com.softech.vu360.lms.model.LearnerProfileStaticField;
-import com.softech.vu360.lms.model.OrganizationalGroup;
-import com.softech.vu360.lms.model.TrainingAdministrator;
-import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.repositories.LMSFeatureRepository;
-import com.softech.vu360.lms.repositories.LMSRoleRepository;
-import com.softech.vu360.lms.repositories.OrganizationalGroupRepository;
-import com.softech.vu360.lms.repositories.TrainingAdministratorRepository;
-import com.softech.vu360.lms.repositories.VU360UserRepository;
-import com.softech.vu360.lms.service.ActiveDirectoryService;
-import com.softech.vu360.lms.service.VU360UserService;
-import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
+import javax.inject.Inject;
+import java.util.*;
 
 /**
  * @author jason
  *
  */
 public class VU360UserServiceImpl implements VU360UserService {
-	
+
 	private static final Logger log = Logger.getLogger(VU360UserServiceImpl.class.getName());
-	
+
 	@Inject
 	private VU360UserRepository vu360UserRepository;
 	@Inject
@@ -50,11 +35,11 @@ public class VU360UserServiceImpl implements VU360UserService {
 	private TrainingAdministratorRepository trainingAdminstratorRepository;
 	@Inject
 	private OrganizationalGroupRepository organizationalGroupRepository;
-	
+
 	private PasswordEncoder passwordEncoder = null;
 	private SaltSource saltSource = null;
-	private ActiveDirectoryService activeDirectoryService = null;	
-	
+	private ActiveDirectoryService activeDirectoryService = null;
+
 	public ActiveDirectoryService getActiveDirectoryService() {
 		return activeDirectoryService;
 	}
@@ -62,26 +47,28 @@ public class VU360UserServiceImpl implements VU360UserService {
 			ActiveDirectoryService activeDirectoryService) {
 		this.activeDirectoryService = activeDirectoryService;
 	}
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		log.debug("called authentication:"+username);
 		VU360User user=getUserByUsernameAndDomain(username, null);
 		if(user==null)
 			throw new UsernameNotFoundException("No user detail found from DB Bad credentials");
-		user.setLmsRoles(user.getLmsRoles());
-				
+		Set<LMSRole> roles = lmsRoleRepository.getRoleWithFeatures(user.getLmsRoles());
+		user.setLmsRoles(roles);
+//		user.setLmsRoles( user.getLmsRoles());
+
 		log.debug("isEnabled:"+user.getEnabled());
 		log.debug("isCredentialNonExpired:"+user.isCredentialsNonExpired());
 		log.debug("isAccountNonLocked:"+user.getAccountNonLocked());
 		return ProxyVOHelper.setUserProxy(user);
 	}
-	
+
 	@Override
 	public void deleteLMSTrainingAdministrator(TrainingAdministrator trainingAdministrator){
 		vu360UserRepository.deleteLMSTrainingAdministrator(trainingAdministrator);
 	}
-	
+
 	@Override
 	public VU360User getUserByUsernameAndDomain(String username,String domain) {
 		List<VU360User> results = vu360UserRepository.getActiveUserByUsername(username);
@@ -90,21 +77,21 @@ public class VU360UserServiceImpl implements VU360UserService {
 			checkForPermission(user);
 			return user;
 		}
-		
+
 		throw new UsernameNotFoundException("FOUND NO SUCH USER NAME");
 	}
-	
+
 	@Override
 	public List<VU360User> getUserByEmailFirstNameLastName(String email,String firstName, String lastName){
 		List<VU360User> results = vu360UserRepository.getUserByEmailFirstNameLastName(email, firstName , lastName);
 		List<VU360User> vU360UserList = new ArrayList<VU360User>();
-		
+
 		for(VU360User vU360User:results) {
 			if(vU360User.getLmsRoles().isEmpty()) {
 				log.debug("Username :"+vU360User.getName()+" Roles not found");
 				continue;
 			}
-			
+
 			boolean hasPermission = false;
 			for( LMSRole role : vU360User.getLmsRoles() ) {
 				if(vu360UserRepository.hasAtLeastOnePermssionOfRoleEnabled(vU360User.getId(), role.getId()) ) {
@@ -119,18 +106,18 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}
 		return vU360UserList;
 	}
-	
+
 	@Override
 	public List<VU360User> getActiveUserByUsername(String username){
 		List<VU360User> results = vu360UserRepository.getActiveUserByUsername(username);
 		List<VU360User> vU360UserList = new ArrayList<VU360User>();
-		
+
 		for(VU360User vU360User:results) {
 			if(vU360User.getLmsRoles().isEmpty()) {
 				log.debug("Username :"+vU360User.getName()+" Roles not found");
 				continue;
 			}
-			
+
 			boolean hasPermission = false;
 			for( LMSRole role : vU360User.getLmsRoles() ) {
 				if(vu360UserRepository.hasAtLeastOnePermssionOfRoleEnabled(vU360User.getId(), role.getId())) {
@@ -145,12 +132,12 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}
 		return vU360UserList;
 	}
-	
+
 	@Override
 	public  LMSRole  loadForUpdateLMSRole(long id){
 		return lmsRoleRepository.findOne(id);
 	}
-	
+
 	@Override
 	public  VU360User  loadForUpdateVU360User(Long id){
 		return vu360UserRepository.findOne(id);
@@ -160,22 +147,22 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public List<VU360User> getUserByFirstNameAndLastName(Customer cust, String firstName, String lastName) {
 		return vu360UserRepository.getUserByFirstNameAndLastName(cust, firstName, lastName);
 	}
-	
+
 	@Override
 	public VU360User findUserByUserName(String username){
 		return vu360UserRepository.findUserByUserName(username);
 	}
-	
+
 	@Override
 	public VU360User getUserById(Long id) {
 		return vu360UserRepository.getUserById(id);
 	}
-	
+
 	@Override
 	public List<VU360User> getUsersByEmailAddress(String emailAddress) {
 		return vu360UserRepository.findUserByEmailAddress(emailAddress);
 	}
-	
+
 	@Override
 	public boolean isEmailAddressInUse(String emailAddress) {
 		List<VU360User> results = vu360UserRepository.findUserByEmailAddress(emailAddress);
@@ -184,8 +171,8 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}
 		return false;
 	}
-	
-	public VU360User changeUserPassword(long id, VU360User updatedUser) { 
+
+	public VU360User changeUserPassword(long id, VU360User updatedUser) {
 		String newPassword = updatedUser.getPassword();
 		//VU360User currUser = this.getUserById(id);
 		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(updatedUser);
@@ -196,90 +183,90 @@ public class VU360UserServiceImpl implements VU360UserService {
 		updatedUser.setPassword(encodedPassword);
 		//LMS-9318
 		updatedUser.setChangePasswordOnLogin(true);
-		
+
 		VU360User updatedUser2 = vu360UserRepository.updateUser(updatedUser);
-		
+
 		if (updatedUser != null && activeDirectoryService.isADIntegrationEnabled()){//if success and AD is enabled
 			updatedUser.setPassWordChanged(true);
 			updatedUser.setPassword(newPassword);// we require plain password in AD
 			activeDirectoryService.updateUser(updatedUser);//edit user to AD
 			updatedUser.setPassword(encodedPassword);// reset the password to encrypted
-		}	
-		
+		}
+
 		return updatedUser2;
 		//return vu360UserRepository.saveUser(currUser);
 	}
-	
+
 	public VU360User updateUser(long id, VU360User updatedUser) {
 		return vu360UserRepository.saveUser(updatedUser);
 	}
-	
+
 	public VU360User updateUser(VU360User updatedUser) {
 		return vu360UserRepository.updateUser(updatedUser);
 	}
-	
+
 	public VU360User updateNumLogons(VU360User updatedUser){
 		return vu360UserRepository.updateUser(updatedUser);
 	}
-	
+
 	public void deleteUserRole(Long roleIdArray[]){
 		List<LMSRole> roles=lmsRoleRepository.findByIdIn(roleIdArray);
 		lmsRoleRepository.delete(roles);
-		
+
 	}
-	
+
 	public List<LMSRole> getLMSRolesByUserById(long id){
 		return lmsRoleRepository.getLMSRolesByUserById(id);
 	}
-	
+
 	public LMSRole  getDefaultRole(Customer customer){
 		return lmsRoleRepository.getDefaultRole(customer);
-		
+
 	}
-	
+
 	public LMSRole getOptimizedBatchImportLearnerDefaultRole(Customer customer){
 		return lmsRoleRepository.getOptimizedBatchImportLearnerDefaultRole(customer);
-		
+
 	}
-	
+
 	public PasswordEncoder getPasswordEncoder() {
 		return passwordEncoder;
 	}
-	
+
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
 	}
-	
+
 	public SaltSource getSaltSource() {
 		return saltSource;
 	}
-	
+
 	public void setSaltSource(SaltSource saltSource) {
 		this.saltSource = saltSource;
 	}
-	
+
 	public List<LMSRole>  getRolesByRoleType(String roleType,Long customerId){
 		return lmsRoleRepository.findByRoleTypeAndOwnerId(roleType,customerId);
 	}
-	
+
 	public List<LMSRole>  getAllRoles(Customer customer,VU360User loggedInUser){
 		return lmsRoleRepository.getAllRoles(customer,loggedInUser);
 	}
-	
+
 	public List<LMSFeature>  getFeaturesByRoleType(String roleType){
 		return lmsFeatureRepository.findByRoleType(roleType);
 	}
-	
+
 	public LMSRole  getRoleByName(String roleName,Customer customer){
 		return lmsRoleRepository.findByRoleNameAndOwner(roleName, customer);
 	}
-	
+
 	public int checkNoOfBefaultReg(Customer customer){
 		return 0;//vu360UserRepository.checkNoOfBefaultReg(customer);
 	}
-	
+
 	/*
-	 * This service is responsible for adding following entities 
+	 * This service is responsible for adding following entities
 	 * VU360 User
 	 * LMSAdministrator (optional)
 	 * TrainingAdministrator (optional)
@@ -289,15 +276,15 @@ public class VU360UserServiceImpl implements VU360UserService {
 		VU360User addedUser = vu360UserRepository.saveUser(user);
 		if (addedUser!=null && activeDirectoryService.isADIntegrationEnabled()){//if success and AD is enabled
 			activeDirectoryService.addUser(user);//add user to AD
-		}			
+		}
 		return addedUser;
 	}
-	
+
 	public VU360User getUserByGUID(String userGUID) {
 		VU360User myUser=null;
 		try{
 			myUser = vu360UserRepository.findFirstByUserGUID(userGUID);
-	}
+		}
 		catch (ObjectRetrievalFailureException e) {
 			if (log.isDebugEnabled()) {
 				log.debug("user with userGUID: " + userGUID + "is not found");
@@ -305,46 +292,46 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}
 		return myUser;
 	}
-	
-	
+
+
 	public List<LMSRole> getSystemRolesByCustomer(Customer customer){
 		return lmsRoleRepository.getSystemRolesByCustomer(customer);
 	}
-	
-   public List<LMSRole> findRolesByName(String name, Customer customer, VU360User loggedInUser) {
-        return lmsRoleRepository.findRolesByName(name, customer, loggedInUser);
-    }
+
+	public List<LMSRole> findRolesByName(String name, Customer customer, VU360User loggedInUser) {
+		return lmsRoleRepository.findRolesByName(name, customer, loggedInUser);
+	}
 
 	@SuppressWarnings("unchecked")
 	public Map<Object,Object> findUsers(String firstName,String lastName,String email,VU360User loggedInUser,
-			int pageIndex,int pageSize,String sortBy,int sortDirection) {
-		
+										int pageIndex,int pageSize,String sortBy,int sortDirection) {
+
 		Map<Object,Object> results = new HashMap<Object,Object>();
 		results = vu360UserRepository.findUsers(firstName,lastName,email,loggedInUser, pageIndex, pageSize, sortBy, sortDirection);
 		return results;
 	}
- 
+
 	public Map<Object,Object> findAllLearners(String firstName,String lastName,String email,VU360User loggedInUser,String sortBy,int sortDirection){
 		Map<Object,Object> results = new HashMap<Object,Object>();
 		results = vu360UserRepository.findAllLearners(firstName,lastName,email,loggedInUser,  sortBy, sortDirection);
 		return results;
-	}	
-	
+	}
+
 	public List<VU360User> searchCustomerUsers(Customer customer, String firstName, String lastName,
-			String email, String sortBy, int sortDirection) {
+											   String email, String sortBy, int sortDirection) {
 		return vu360UserRepository.searchCustomerUsers(customer, firstName, lastName, email, sortBy, sortDirection);
 	}
-	
+
 	public Map<Object,Object> searchCustomerUsers(Customer customer, String firstName, String lastName,
-			String email, int pageIndex, int pageSize,
-			String sortBy, int sortDirection) {
+												  String email, int pageIndex, int pageSize,
+												  String sortBy, int sortDirection) {
 		Map<Object,Object> results = new HashMap<Object,Object>();
-		
+
 		results = vu360UserRepository.searchCustomerUsers(customer, firstName, lastName, email, pageIndex, pageSize, sortBy, sortDirection);
-		
+
 		return results;
 	}
-	
+
 	public String getValueForStaticReportingField(VU360User vu360User, String reportingField){
 		String returnValue= null;
 		if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.FIRST_NAME.toString())){
@@ -384,26 +371,26 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.ZIP_CODE_2.toString())){
 			returnValue= vu360User.getLearner().getLearnerProfile().getLearnerAddress2().getZipcode();
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.COUNTRY_2.toString())){
-			returnValue= vu360User.getLearner().getLearnerProfile().getLearnerAddress2().getCountry();			
-		}			
+			returnValue= vu360User.getLearner().getLearnerProfile().getLearnerAddress2().getCountry();
+		}
 		if(returnValue!=null && returnValue.trim().length()== 0 ){
 			returnValue= null;
-	    }
-	
-	 return returnValue; 
-	
+		}
+
+		return returnValue;
+
 	}
-	
+
 	public void setValueForStaticReportingField(VU360User vu360User, String reportingField,String value){
-		
+
 		if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.FIRST_NAME.toString())){
-			 vu360User.setFirstName(value);
+			vu360User.setFirstName(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.MIDDLE_NAME.toString())){
-			 vu360User.setMiddleName(value);
+			vu360User.setMiddleName(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.LAST_NAME.toString())){
-			 vu360User.setLastName(value);
+			vu360User.setLastName(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.EMAIL.toString())){
-			 vu360User.setEmailAddress(value);
+			vu360User.setEmailAddress(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.PHONE.toString())){
 			vu360User.getLearner().getLearnerProfile().setMobilePhone(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.OFFICE_PHONE.toString())){
@@ -421,7 +408,7 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.ZIP_CODE.toString())){
 			vu360User.getLearner().getLearnerProfile().getLearnerAddress().setZipcode(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.COUNTRY.toString())){
-			vu360User.getLearner().getLearnerProfile().getLearnerAddress().setCountry(value);			
+			vu360User.getLearner().getLearnerProfile().getLearnerAddress().setCountry(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.ADDRESS_2_LINE_1.toString())){
 			vu360User.getLearner().getLearnerProfile().getLearnerAddress2().setStreetAddress(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.ADDRESS_2_LINE_2.toString())){
@@ -433,20 +420,20 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.ZIP_CODE_2.toString())){
 			vu360User.getLearner().getLearnerProfile().getLearnerAddress2().setZipcode(value);
 		}else if(reportingField.trim().equalsIgnoreCase(LearnerProfileStaticField.COUNTRY_2.toString())){
-			vu360User.getLearner().getLearnerProfile().getLearnerAddress2().setCountry(value);			
-		}		
-		
+			vu360User.getLearner().getLearnerProfile().getLearnerAddress2().setCountry(value);
+		}
+
 	}
-	
+
 	/**
 	 * Called when it is required for new/re-initialize authentication details
 	 * @param {@link javax.servlet.http.HttpServletRequest}
 	 * @return {@link VU360UserAuthenticationDetails}
 	 * @author muhammad.javed
 	 */
-		
+
 	public LMSRole getDefaultSystemRole(Customer customer) throws Exception {
-		
+
 		LMSRole systemRole = getDefaultRole(customer);
 		if(systemRole == null) {
 			List<LMSRole> systemRoles = getSystemRolesByCustomer(customer);
@@ -471,18 +458,18 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public TrainingAdministrator findTrainingAdminstratorById(Long id) {
 		return trainingAdminstratorRepository.findOne(id);
 	}
-	
+
 	/** Added By Marium Saud
 	 * Method added for Validating Email Address field while adding Instructor .
 	 * New Method is added because previously all users for the given email Address has been fetched that results in number of queries which cause 'Server Error'.
 	 * Inorder toi avoid number of queries execution the validation is now performed by count Spring Data Marker method.
 	 */
-	
+
 	@Override
 	public int countUserByEmailAddress(String emailAddress) {
 		return vu360UserRepository.countByEmailAddress(emailAddress);
 	}
-	
+
 	@Override
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId) {
 		return organizationalGroupRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
@@ -505,62 +492,62 @@ public class VU360UserServiceImpl implements VU360UserService {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean hasLearnerRole(VU360User user) {
 		return vu360UserRepository.hasLearnerRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasProctorRole(VU360User user) {
 		return vu360UserRepository.hasProctorRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasAdministratorRole(VU360User user) {
 		return vu360UserRepository.hasAdministratorRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasTrainingAdministratorRole(VU360User user) {
 		return vu360UserRepository.hasTrainingAdministratorRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasRegulatoryAnalystRole(VU360User user) {
 		return vu360UserRepository.hasRegulatoryAnalystRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasInstructorRole(VU360User user) {
 		return vu360UserRepository.hasInstructorRole(user.getId());
 	}
-	
+
 	@Override
 	public boolean hasAccessToFeatureGroup(Long userId, String featureGroup) {
 		return lmsFeatureRepository.hasAccessToFeatureGroup(userId, featureGroup);
 	}
-	
+
 	@Override
 	public boolean hasAccessToFeatureCode(Long userId, String featureCode) {
 		return lmsFeatureRepository.hasAccessToFeatureCode(userId, featureCode);
 	}
-	
+
 	@Override
 	public boolean hasAccessToFeatureGroup(Long userId, Long roleId, String featureGroup) {
 		return lmsFeatureRepository.hasAccessToFeatureGroup(userId, featureGroup);
 	}
-	
+
 	@Override
 	public List<String> getEnabledFeatureGroups(Long userId, Long roleId) {
 		return lmsFeatureRepository.getEnabledFeatureGroups(userId, roleId);
 	}
-	
+
 	@Override
 	public List<String> getEnabledFeatureGroups(Long userId) {
 		return lmsFeatureRepository.getEnabledFeatureGroups(userId);
 	}
-	
+
 	@Override
 	public boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode) {
 		return lmsFeatureRepository.hasAccessToFeatureCode(userId, featureCode);

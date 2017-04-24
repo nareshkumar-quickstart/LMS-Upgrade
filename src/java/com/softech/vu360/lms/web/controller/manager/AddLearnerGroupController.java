@@ -46,11 +46,11 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 	private VelocityEngine velocityEngine;
 	private LearnersToBeMailedService learnersToBeMailedService;
 	private AsyncTaskExecutorWrapper asyncTaskExecutorWrapper;
-	
+
 	private String finishTemplate = null;
 	private String cancelTemplate = null;
-	
-	@Inject 
+
+	@Inject
 	private VU360UserService vu360UserService;
 
 	public AddLearnerGroupController() {
@@ -60,8 +60,8 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 		setSessionForm(true);
 		this.setBindOnNewForm(true);
 		setPages(new String[] {
-				"manager/addLearnerGroup/step1"
-				//, "manager/addLearnerGroup/step2"
+						"manager/addLearnerGroup/step1"
+						//, "manager/addLearnerGroup/step2"
 				}
 		);
 	}
@@ -77,39 +77,39 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 
 	@SuppressWarnings("unchecked")
 	protected Map<Object, Object> referenceData( HttpServletRequest request, Object command, Errors errors, int page) throws Exception {
-		
+
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
 		Map<Object, Object> context = new HashMap<Object, Object>();
 		log.debug("IN referenceData");
 
 		switch(page) {
 
-		case 0:
-			if(form.getAction().equalsIgnoreCase("search")){
-				request.setAttribute("newPage","true");
-			}
-			break;
-		case 1:
-			context.put("learners", form.getSelectedLearners());
-			return context;
-		default:
-			break;
+			case 0:
+				if(form.getAction().equalsIgnoreCase("search")){
+					request.setAttribute("newPage","true");
+				}
+				break;
+			case 1:
+				context.put("learners", form.getSelectedLearners());
+				return context;
+			default:
+				break;
 		}
 		return super.referenceData(request, page);
-	}	
+	}
 
-	protected void onBindAndValidate(HttpServletRequest request, Object command, BindException errors, 
-			int page) throws Exception {
+	protected void onBindAndValidate(HttpServletRequest request, Object command, BindException errors,
+									 int page) throws Exception {
 
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
 
-		//sync the learner list with the selected learner list 
-		if ((page == 0 
-				&& !StringUtils.isBlank(form.getAction()) 
+		//sync the learner list with the selected learner list
+		if ((page == 0
+				&& !StringUtils.isBlank(form.getAction())
 				&& form.getAction().equalsIgnoreCase("search"))
 				|| !StringUtils.isBlank(form.getAction()) && form.getAction().equalsIgnoreCase("finish")
 				||(this.getTargetPage(request, command, errors, 0)==1)
-		){
+				){
 
 			List<LearnerItemForm> learnerList = form.getLearners();
 			Collections.sort(learnerList);
@@ -144,25 +144,26 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 			for(;j<selectedLearnerList.size();j++){
 				selecteditem = selectedLearnerList.get(j);
 				mergedLearnerList.add(selecteditem);
+				selecteditem.getUser().getLearner().setLearnerGroup(selecteditem.getUser().getLearner().getLearnerGroup());
 			}
 			form.setSelectedLearners(mergedLearnerList);
 		}
 		super.onBindAndValidate(request, command, errors, page);
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	protected void postProcessPage(HttpServletRequest request, Object command,
-			Errors errors, int page) throws Exception {
+								   Errors errors, int page) throws Exception {
 
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
 
-		if( ( page == 0 
+		if( ( page == 0
 				&& ((!StringUtils.isBlank(form.getAction()) && form.getAction().equalsIgnoreCase("search"))
-						||(page == 1 && this.getTargetPage(request, command, errors, 0)==0)) ) ) {
+				||(page == 1 && this.getTargetPage(request, command, errors, 0)==0)) ) ) {
 
 			if( !StringUtils.isBlank(form.getSearchType()) ) {
-				
+
 				Map<Object,Object> results = new HashMap<Object,Object>();
 				//VU360User loggedInUser = VU360UserAuthenticationDetails.getCurrentUser();
 				com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -171,7 +172,7 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 				List<VU360User> userList = null;
 				String sortBy = form.getSortBy();
 				int sortDirection = form.getSortDirection();
-				
+
 				/*
 				 * simple search is no more used
 				 */
@@ -179,19 +180,19 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 					Integer totalResults = 0;
 					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 						if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
-							results = learnerService.findLearner1(form.getSearchKey(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+							results = learnerService.findLearner1(form.getSearchKey(),
+									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, 0);
 							totalResults = (Integer)results.get("recordSize");
 							userList = (List<VU360User>)results.get("list");
 						}
 					} else {
-						results = learnerService.findLearner1(form.getSearchKey(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+						results = learnerService.findLearner1(form.getSearchKey(),
+								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, 0);
 						totalResults = (Integer)results.get("recordSize");
 						userList = (List<VU360User>)results.get("list");
@@ -204,25 +205,25 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 				}
 				// advanced search...
 				else if( form.getSearchType().equalsIgnoreCase("advancesearch") ) {
-					
+
 					Integer totalResults = 0;
 					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if( tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
-							
-							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+
+							results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(),
+									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 									pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
 							totalResults = (Integer)results.get("recordSize");
 							userList = (List<VU360User>)results.get("list");
 						}
 					} else {
 
-						results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+						results = learnerService.findLearner1(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(),
+								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
 						totalResults = (Integer)results.get("recordSize");
 						userList = (List<VU360User>)results.get("list");
@@ -232,33 +233,33 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 					pagerAttributeMap.put("pageIndex", Integer.toString(form.getPageIndex()));
 					pagerAttributeMap.put("totalCount", totalResults.toString());
 					request.setAttribute("PagerAttributeMap", pagerAttributeMap);
-					
+
 				}else if( form.getSearchType().equalsIgnoreCase("allsearch") ) {
-					
+
 					if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups() ) {
 						if (tempManagedGroups!=null && tempManagedGroups.size() > 0 ) {
-							
+
 							/*
 							 * @added by Dyutiman :: new service is needed to search
 							 * all learners without pagination, & with search criteria.
 							 */
-							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+							results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(),
+									loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+									loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+									loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 									sortBy, sortDirection);
 							userList = (List<VU360User>)results.get("list");
 						}
 					} else {
 
-						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(), 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
-								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
+						results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName(),form.getSearchLastName(), form.getSearchEmailAddress(),
+								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(),
+								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups,
+								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								sortBy, sortDirection);
 						userList = (List<VU360User>)results.get("list");
 					}
-					
+
 					Map<String,String> pagerAttributeMap = new HashMap<String,String>();
 					pagerAttributeMap.put("pageIndex", Integer.toString(form.getPageIndex()));
 					pagerAttributeMap.put("totalCount", ((Integer)results.get("recordSize")).toString());
@@ -293,36 +294,36 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 	}
 
 	protected void validatePage(Object command, Errors errors, int page, boolean finish) {
-		
+
 		AssignLearnerGroupValidator validator = (AssignLearnerGroupValidator)this.getValidator();
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
 		log.debug("Page num --- "+page);
 		switch(page) {
-		
-		case 0:
-			if(!form.getAction().equalsIgnoreCase("search"))
-				validator.validateFirstPage(form, errors);
-			break;
-		case 1:
-			break;
-		default:
-			break;
+
+			case 0:
+				if(!form.getAction().equalsIgnoreCase("search"))
+					validator.validateFirstPage(form, errors);
+				break;
+			case 1:
+				break;
+			default:
+				break;
 		}
 		super.validatePage(command, errors, page, finish);
 	}
 
 	protected ModelAndView processCancel(HttpServletRequest request, HttpServletResponse response,
-			Object command, BindException error) throws Exception {
+										 Object command, BindException error) throws Exception {
 		log.debug("IN processCancel");
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
-		
+
 		Map<Object, Object> context = new HashMap<Object, Object>();
 		context.put("learnerGroupId", form.getLearnerGroupId());
 		return new ModelAndView(cancelTemplate, "context", context);
 	}
 
 	protected ModelAndView processFinish(HttpServletRequest request,
-			HttpServletResponse response, Object command, BindException error) throws Exception {
+										 HttpServletResponse response, Object command, BindException error) throws Exception {
 
 		log.debug("IN process processFinish *1");
 		AddLearnerGroupForm form = (AddLearnerGroupForm)command;
@@ -333,10 +334,10 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 		for(LearnerItemForm item:selectedLearnerList){
 			//TODO need to test if isSelected method being manipulated correctly
 			if(item.isSelected()){
-				selectedLearners.add(item.getUser().getLearner());
+				selectedLearners.add(vu360UserService.getUserById(item.getUser().getId()).getLearner());
 			}
 		}
-		
+
 		if (!selectedLearners.isEmpty()) {
 			log.debug("IN process addLearnersInLearnerGroup start *2  selectedLearners.size() "+selectedLearners.size());
 			learnerService.addLearnersInLearnerGroup(selectedLearners,learnerGroup);
@@ -344,18 +345,18 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 			log.debug("IN process addLearnersInLearnerGroup end *2 ");
 			enrollmentService.enrollLearnersInLearnerGroupCourses(selectedLearners, learnerGroup.getLearnerGroupItems(), brand);
 		}
-		
+
 		context.put("selectedLearners", form.getSelectedLearners().size());
 		context.put("addedLearners", selectedLearners.size());
 		context.put("learners", selectedLearners);
-		
+
 		context.put("learnerGroupName", learnerGroup.getName());
 		context.put("learnerGroupId", learnerGroup.getId().toString());
-		
-		//After saving control will be transfered to member page 
+
+		//After saving control will be transfered to member page
 		return new ModelAndView(cancelTemplate, "context", context);
 	}
-	
+
 	public LearnerService getLearnerService() {
 		return learnerService;
 	}
@@ -421,5 +422,5 @@ public class AddLearnerGroupController extends AbstractWizardFormController {
 			AsyncTaskExecutorWrapper asyncTaskExecutorWrapper) {
 		this.asyncTaskExecutorWrapper = asyncTaskExecutorWrapper;
 	}
-	
+
 }

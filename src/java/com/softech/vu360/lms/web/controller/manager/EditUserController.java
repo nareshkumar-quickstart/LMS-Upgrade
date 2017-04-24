@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.softech.vu360.lms.web.controller.manager;
 
@@ -91,8 +91,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 	private VelocityEngine velocityEngine;
 	private CustomFieldService customFieldService;
 	private ActiveDirectoryService activeDirectoryService;
-    private LearnerLicenseService learnerLicenseServices;
-   
+	private LearnerLicenseService learnerLicenseServices;
+
 	public ActiveDirectoryService getActiveDirectoryService() {
 		return activeDirectoryService;
 	}
@@ -101,7 +101,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 			ActiveDirectoryService activeDirectoryService) {
 		this.activeDirectoryService = activeDirectoryService;
 	}
-	
+
 
 	public EditUserController() {
 		super();
@@ -113,7 +113,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 	@Override
 	protected void onBind(HttpServletRequest request, Object command,
-			String methodName) throws Exception {
+						  String methodName) throws Exception {
 		UserForm form = (UserForm)command;
 		Long userId= ServletRequestUtils.getLongParameter(request, "userId");
 
@@ -131,7 +131,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 			if(vu360User !=null && vu360User.getLearner().getCustomer().getId().compareTo(customer.getId()) == 0){
 
 				form.setVu360User(vu360User);
-				
+
 				if (vu360User.getNotifyOnLicenseExpire()) {
 					form.setNotifyOnLicenseExpire(true);
 				} else {
@@ -144,58 +144,58 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 				List<LicenseOfLearner> list = learnerLicenseServices.getAllLicensesOfLearner(vu360User.getLearner().getId());
 				form.setLearnerOfLicense(list);
-				
+
 				Map<Long,List<CreditReportingFieldValueChoice>> existingCreditReportingFieldValueChoiceMap = new HashMap<Long,List<CreditReportingFieldValueChoice>>();
 
 				for(CreditReportingField creditReportingField : customFieldList){
-				  if(!(creditReportingField instanceof StaticCreditReportingField)){
-					if (creditReportingField instanceof SingleSelectCreditReportingField || 
-							creditReportingField instanceof MultiSelectCreditReportingField) {
+					if(!(creditReportingField instanceof StaticCreditReportingField)){
+						if (creditReportingField instanceof SingleSelectCreditReportingField ||
+								creditReportingField instanceof MultiSelectCreditReportingField) {
 
-						List<CreditReportingFieldValueChoice> creditReportingFieldValueOptionList = learnerService.getChoicesByCreditReportingField(creditReportingField);
+							List<CreditReportingFieldValueChoice> creditReportingFieldValueOptionList = learnerService.getChoicesByCreditReportingField(creditReportingField);
 
-						if(creditReportingField instanceof MultiSelectCreditReportingField){
-							CreditReportingFieldValue creditReportingFieldValue=this.getCreditReportingFieldValueByCreditReportingField(creditReportingField, customFieldValueList);
-							existingCreditReportingFieldValueChoiceMap.put(creditReportingField.getId(), creditReportingFieldValue.getCreditReportingValueChoices());
-							
-							//Sort the list selected values on top of list
-							List<CreditReportingFieldValueChoice> tempCreditReportingFieldValueOptionList = new ArrayList<CreditReportingFieldValueChoice>();
-							
-							for(CreditReportingFieldValueChoice fieldChoice: creditReportingFieldValue.getCreditReportingValueChoices()){
-								
-								for (Iterator iterator = creditReportingFieldValueOptionList.iterator(); iterator.hasNext();) {
-									CreditReportingFieldValueChoice fieldList = (CreditReportingFieldValueChoice) iterator.next();
-									
-									if(fieldChoice.getId() == fieldList.getId()){
-										iterator.remove();
-										tempCreditReportingFieldValueOptionList.add(0,fieldList);
-										
+							if(creditReportingField instanceof MultiSelectCreditReportingField){
+								CreditReportingFieldValue creditReportingFieldValue=this.getCreditReportingFieldValueByCreditReportingField(creditReportingField, customFieldValueList);
+								existingCreditReportingFieldValueChoiceMap.put(creditReportingField.getId(), creditReportingFieldValue.getCreditReportingValueChoices());
+
+								//Sort the list selected values on top of list
+								List<CreditReportingFieldValueChoice> tempCreditReportingFieldValueOptionList = new ArrayList<CreditReportingFieldValueChoice>();
+
+								for(CreditReportingFieldValueChoice fieldChoice: creditReportingFieldValue.getCreditReportingValueChoices()){
+
+									for (Iterator iterator = creditReportingFieldValueOptionList.iterator(); iterator.hasNext();) {
+										CreditReportingFieldValueChoice fieldList = (CreditReportingFieldValueChoice) iterator.next();
+
+										if(fieldChoice.getId() == fieldList.getId()){
+											iterator.remove();
+											tempCreditReportingFieldValueOptionList.add(0,fieldList);
+
+										}
 									}
 								}
-							}
-							
-							//Collections.sort(tempCreditReportingFieldValueOptionList, new ReportingFieldComparable());
-							//Collections.sort(creditReportingFieldValueOptionList, new ReportingFieldComparable());
+
+								//Collections.sort(tempCreditReportingFieldValueOptionList, new ReportingFieldComparable());
+								//Collections.sort(creditReportingFieldValueOptionList, new ReportingFieldComparable());
 							/*
 							for(CreditReportingFieldValueChoice tempChoiceToAdd:tempCreditReportingFieldValueOptionList){
 								creditReportingFieldValueOptionList.add(0, tempChoiceToAdd);
 							}
 							*/
-							for(int iCount = tempCreditReportingFieldValueOptionList.size(); iCount>0;iCount--)
-							{
-								int sortedItemsize = iCount - 1;
-								CreditReportingFieldValueChoice tempChoiceToAdd = tempCreditReportingFieldValueOptionList.get(sortedItemsize); 
-								creditReportingFieldValueOptionList.add(0, tempChoiceToAdd);
-							}
-							
-						}
-						
-						fieldBuilder.buildCreditReportingField(creditReportingField, 0, customFieldValueList,creditReportingFieldValueOptionList);
+								for(int iCount = tempCreditReportingFieldValueOptionList.size(); iCount>0;iCount--)
+								{
+									int sortedItemsize = iCount - 1;
+									CreditReportingFieldValueChoice tempChoiceToAdd = tempCreditReportingFieldValueOptionList.get(sortedItemsize);
+									creditReportingFieldValueOptionList.add(0, tempChoiceToAdd);
+								}
 
-					} else {
-						fieldBuilder.buildCreditReportingField(creditReportingField, 0, customFieldValueList);
+							}
+
+							fieldBuilder.buildCreditReportingField(creditReportingField, 0, customFieldValueList,creditReportingFieldValueOptionList);
+
+						} else {
+							fieldBuilder.buildCreditReportingField(creditReportingField, 0, customFieldValueList);
+						}
 					}
-				  }
 				}
 
 				List<com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingField> creditReportingFields = fieldBuilder.getCreditReportingFieldList();
@@ -217,20 +217,20 @@ public class EditUserController extends VU360BaseMultiActionController{
 					}
 				}
 				form.setCreditReportingFields(creditReportingFields);
-				customFieldService.createValueRecordForStaticReportingField(vu360User, customFieldList, customFieldValueList);				
+				customFieldService.createValueRecordForStaticReportingField(vu360User, customFieldList, customFieldValueList);
 				//for Custom Fields
-				
-				
+
+
 //				List<CustomField> distCustomFieldList=vu360User.getLearner().getCustomer().getDistributor().getCustomFields();
 //				List<CustomField> myCustomFieldList=vu360User.getLearner().getCustomer().getCustomFields();
 //				if(distCustomFieldList!=null)
 //					myCustomFieldList.addAll(vu360User.getLearner().getCustomer().getDistributor().getCustomFields());
-//				
+//
 //				List<CustomFieldValue> myCustomFieldValueList = vu360User.getLearner().getLearnerProfile().getCustomFieldValues();
 //
 //				Map<Long,List<CustomFieldValueChoice>> existingCustomerFieldValueChoiceMap = new HashMap<Long,List<CustomFieldValueChoice>>();
 
-				
+
 				List<CustomFieldValue> customFieldValues = new ArrayList<CustomFieldValue>();;//customer.getCustomFields();
 				List<CustomField> totalCustomFieldList = new ArrayList<CustomField>();
 				//customFieldValues = ;
@@ -240,7 +240,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 				customFieldValues = vu360User.getLearner().getLearnerProfile().getCustomFieldValues() ;
 				totalCustomFieldList.addAll(customer.getCustomFields());
 				totalCustomFieldList.addAll(reseller.getCustomFields());
-				
+
 				Map<Long,List<CustomFieldValueChoice>> existingCustomFieldValueChoiceMap = new HashMap<Long,List<CustomFieldValueChoice>>();
 
 				for(CustomField customField:totalCustomFieldList){
@@ -276,12 +276,12 @@ public class EditUserController extends VU360BaseMultiActionController{
 						}
 					}
 				}
-				
+
 				form.setCustomFields(customFieldList2);
-				
+
 				//End Custom Fields
-				
-				
+
+
 			}
 
 		}
@@ -295,20 +295,20 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 	@Override
 	protected void validate(HttpServletRequest request, Object command,
-			BindException errors, String methodName) throws Exception {
+							BindException errors, String methodName) throws Exception {
 		UserForm form = (UserForm)command;
 		UserValidator validator = (UserValidator)this.getValidator();
-		
+
 		if(methodName.equals("updateUser")){
 			if( form.getEventSource().equalsIgnoreCase("donotValidate"))
 				return ;
 			validator.validate(form, errors);
-			
-			VU360User usr=vu360UserService.findUserByUserName(form.getVu360User().getUsername()); 
+
+			VU360User usr=vu360UserService.findUserByUserName(form.getVu360User().getUsername());
 			if(!form.getVu360User().getUsername().trim().isEmpty()&& usr!=null && usr.getId().longValue()!=form.getVu360User().getId().longValue())
 			{
 				errors.rejectValue("vu360User.username", "error.addNewLearner.username.all.existUsername","");
-				
+
 			}
 			else if (!form.getVu360User().getUsername().trim().isEmpty()&& usr!=null && !usr.getUsername().equalsIgnoreCase(form.getVu360User().getUsername()) && activeDirectoryService.findADUser(form.getVu360User().getUsername())){
 				errors.rejectValue("vu360User.username", "error.addNewUser.AD.existUsername","");
@@ -319,7 +319,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 				}else if(!StringUtils.equals(ServletRequestUtils.getStringParameter(request, "password"), ServletRequestUtils.getStringParameter(request, "confirmpassword"))){
 					errors.rejectValue("vu360User.password", "error.password.matchPassword","");
 				}
-							}
+			}
 
 			String dateString = request.getParameter("expirationDate").trim();
 			if (dateString==null)dateString="";
@@ -346,15 +346,15 @@ public class EditUserController extends VU360BaseMultiActionController{
 				}
 
 			}
-		
-			
+
+
 			//Validate Custom Fields
-			
+
 			if(form.getCustomFields().size()>0){
 				this.validateMainCustomFields(form.getCustomFields(), errors);
 			}
 			//End Custom Fields Validation
-			
+
 			form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().setZipcode(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().getZipcode().trim());
 			form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().setZipcode(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().getZipcode().trim());
 			Brander brander=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());
@@ -365,27 +365,27 @@ public class EditUserController extends VU360BaseMultiActionController{
 				// -----------------------------------------------------------------------------
 				// 			for learner address 1 Zip Code   									//
 				// -----------------------------------------------------------------------------
-				
+
 				country = form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().getCountry();
 				zipCode = form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().getZipcode();
 
-	            if( ! ZipCodeValidator.isZipCodeValid(country, zipCode, brander, log) ) {
-	            	log.debug("ZIP CODE FAILED" );
-                	errors.rejectValue("vu360User.learner.learnerProfile.learnerAddress.zipcode", ZipCodeValidator.getCountryZipCodeError(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().getCountry(),brander),"");
-	            }				
-							
+				if( ! ZipCodeValidator.isZipCodeValid(country, zipCode, brander, log) ) {
+					log.debug("ZIP CODE FAILED" );
+					errors.rejectValue("vu360User.learner.learnerProfile.learnerAddress.zipcode", ZipCodeValidator.getCountryZipCodeError(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress().getCountry(),brander),"");
+				}
+
 				// -----------------------------------------------------------------------------
 				// 			for learner address 2 Zip Code   									//
 				// -----------------------------------------------------------------------------
 				country = form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().getCountry();
 				zipCode = form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().getZipcode();
 
-	            if( ! ZipCodeValidator.isZipCodeValid(country, zipCode, brander, log) ) {
-	            	log.debug("ZIP CODE FAILED" );
-                	errors.rejectValue("vu360User.learner.learnerProfile.learnerAddress2.zipcode", ZipCodeValidator.getCountryZipCodeError(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().getCountry(),brander),"");
-	            }	
+				if( ! ZipCodeValidator.isZipCodeValid(country, zipCode, brander, log) ) {
+					log.debug("ZIP CODE FAILED" );
+					errors.rejectValue("vu360User.learner.learnerProfile.learnerAddress2.zipcode", ZipCodeValidator.getCountryZipCodeError(form.getVu360User().getLearner().getLearnerProfile().getLearnerAddress2().getCountry(),brander),"");
+				}
 			}
-		}	
+		}
 	}
 
 	protected ModelAndView handleNoSuchRequestHandlingMethod(NoSuchRequestHandlingMethodException ex, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -396,15 +396,15 @@ public class EditUserController extends VU360BaseMultiActionController{
 	 * this method show User's profile data
 	 * @param request
 	 * @param response
-	 * @return ModelAndView object 
-	 */			
+	 * @return ModelAndView object
+	 */
 	public ModelAndView displayUser(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
 		return new ModelAndView(editUserTemplate);
 
 	}
 
 	private CreditReportingFieldValue getCreditReportingFieldValueByCreditReportingField(com.softech.vu360.lms.model.CreditReportingField creditReportingField,
-			List<CreditReportingFieldValue> creditReportingFieldValues){
+																						 List<CreditReportingFieldValue> creditReportingFieldValues){
 		if (creditReportingFieldValues != null){
 			for (CreditReportingFieldValue creditReportingFieldValue : creditReportingFieldValues){
 				if (creditReportingFieldValue.getReportingCustomField()!=null){
@@ -421,8 +421,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 	 * this method updates User's data
 	 * @param request
 	 * @param response
-	 * @return ModelAndView object 
-	 */			
+	 * @return ModelAndView object
+	 */
 	public ModelAndView updateUser(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
 		UserForm form = (UserForm)command;
 		VU360User frmUser = form.getVu360User();
@@ -438,7 +438,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 				List<CreditReportingFieldValue> customFieldValueList = new ArrayList<CreditReportingFieldValue>();
 
-				if (field.getCreditReportingFieldRef() instanceof SingleSelectCreditReportingField || 
+				if (field.getCreditReportingFieldRef() instanceof SingleSelectCreditReportingField ||
 						field.getCreditReportingFieldRef() instanceof MultiSelectCreditReportingField) {
 
 					customFieldValueList.add(field.getCreditReportingFieldValueRef());
@@ -478,54 +478,59 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 			return new ModelAndView(editUserTemplate);
 		}
-		
+
 		/**
-		 * In learnerProfile.vm, there is a condition that 
-		 * 
-		 * 		#if($userPermissionChecker.hasAccessToFeature("LMS-LRN-0013", $userData, $ssn))    
-            	#parse("learner/learnerProfileLicense.vm")
-				#end
-		 * 
-		 * means if condition is true then include "Notify me on License Expire check box" which is in 
+		 * In learnerProfile.vm, there is a condition that
+		 *
+		 * 		#if($userPermissionChecker.hasAccessToFeature("LMS-LRN-0013", $userData, $ssn))
+		 #parse("learner/learnerProfileLicense.vm")
+		 #end
+		 *
+		 * means if condition is true then include "Notify me on License Expire check box" which is in
 		 * learnerProfileLicense.vm. Here we have no way to determine whether check box is present on the page or not
 		 * because if check box is not present then we get null or if checkbox is present and unselected then we also get
 		 * null. So here we are putting this condition which means check box is not present on page.
-		 * 
+		 *
 		 */
 		// set LmsRoles into Form bean instance vu360User
 		if(frmUser.getId()!=null){
 			VU360User dbUsesr= vu360UserService.getUserById(frmUser.getId());
+			frmUser.setTrainingAdministrator(dbUsesr.getTrainingAdministrator());
+			frmUser.setLmsAdministrator(dbUsesr.getLmsAdministrator());
 			frmUser.setLmsRoles(dbUsesr.getLmsRoles());
+			frmUser.setInstructor(dbUsesr.getInstructor());
+			frmUser.setProctor(dbUsesr.getProctor());
+			frmUser.setRegulatoryAnalyst(dbUsesr.getRegulatoryAnalyst());
 		}
-		
+
 		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(frmUser);
 		if ( UserPermissionChecker.hasAccessToFeature("LMS-LRN-0013", voUser, request.getSession())) {
-			
+
 			boolean notifyOnLicenseExpire;
 			boolean licenseExpireChkBoxPreviousState;
 			boolean licenseExpireChkBoxCurrentState;
-			
-			
+
+
 			/**
 			 * <input type="checkbox" name="notifyOnLicenseExpire" value=$status.value #if($status.value) checked #end >
-			 * 
+			 *
 			 * if checkbox with name notifyOnLicenseExpire is checked then you get this condition true otherwise not.
 			 * if no value attribute is present and checkbox is checked then you get "on" as String value
-			 * 
+			 *
 			 * <input type="checkbox" name="notifyOnLicenseExpire" #if($status.value) checked #end >
 			 */
 			notifyOnLicenseExpire = (request.getParameter("notifyOnLicenseExpire") == null) ? false : true ;
-		
+
 			licenseExpireChkBoxPreviousState = frmUser.getNotifyOnLicenseExpire();
 			licenseExpireChkBoxCurrentState = notifyOnLicenseExpire;
-			
+
 			if (licenseExpireChkBoxPreviousState != licenseExpireChkBoxCurrentState) {
-				
+
 				form.setNotifyOnLicenseExpire(licenseExpireChkBoxCurrentState);
 				frmUser.setNotifyOnLicenseExpire(licenseExpireChkBoxCurrentState);
-				
+
 				Brander brander= VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());
-				
+
 				licenseExpireChkBoxPreviousState = licenseExpireChkBoxCurrentState;
 				String url = null;
 				String mySqlUrl = brander.getBrandElement("autoalerts.user.subscribe.mysql.url");
@@ -537,14 +542,14 @@ public class EditUserController extends VU360BaseMultiActionController{
 					String queryString = "?command=MySQL&opt=unsubscribe&usr=" + userGuid;
 					url = mySqlUrl + queryString;
 				}
-				
+
 				UpdateMySqlUser mySqlUser = new UpdateMySqlUser(url);
 				Thread UpdateMySqlUserThread = new Thread(mySqlUser);
 				UpdateMySqlUserThread.start();
-				
+
 			}
 		}
-		
+
 		if(StringUtils.isNotBlank(ServletRequestUtils.getStringParameter(request, "password"))){
 			frmUser.setPassWordChanged(Boolean.TRUE);
 			frmUser.setPassword(ServletRequestUtils.getStringParameter(request, "password"));
@@ -570,7 +575,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 		try {
 			VU360User savedUser = learnerService.saveUser(frmUser);
 			LearnerProfile dbProfile=savedUser.getLearner().getLearnerProfile();
-			//Send new password mail 
+			//Send new password mail
 			String newPassword=ServletRequestUtils.getStringParameter(request, "password");
 			if(StringUtils.isNotBlank(newPassword)){
 				try {
@@ -581,7 +586,7 @@ public class EditUserController extends VU360BaseMultiActionController{
 					model.put("loggedInUser", loggedInUser);
 					model.put("customerName", frmUser.getLearner().getCustomer().getName());
 					model.put("user", user);
-					
+
 					StringBuilder loginURL=new StringBuilder();
 					loginURL.append(request.getScheme());
 					loginURL.append("://");
@@ -592,8 +597,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 					}
 					loginURL.append(request.getContextPath());
 					model.put("url",loginURL.toString());
-					
-					Brander brander= VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());	
+
+					Brander brander= VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new Language());
 					String batchImportTemplatePath =  brander.getBrandElement("lms.email.resetPassWord.body");
 					String fromAddress =  brander.getBrandElement("lms.email.resetPassWord.fromAddress");
 					String fromCommonName =  brander.getBrandElement("lms.email.resetPassWord.fromCommonName");
@@ -606,27 +611,27 @@ public class EditUserController extends VU360BaseMultiActionController{
 					model.put("phone", phone);
 					model.put("brander", brander);
 					model.put("learnerPassword", user.getPassword());
-					
+
 					/*START- BRANDNG EMAIL WORK*/
-					String templateText =  brander.getBrandElement("lms.branding.email.passwordUpdated.templateText");						
-					String loginurl= lmsDomain.concat("/lms/login.do?brand=").concat(brander.getName());				
+					String templateText =  brander.getBrandElement("lms.branding.email.passwordUpdated.templateText");
+					String loginurl= lmsDomain.concat("/lms/login.do?brand=").concat(brander.getName());
 					templateText= templateText.replaceAll("&lt;firstname&gt;", frmUser.getFirstName());
-					templateText= templateText.replaceAll("&lt;lastname&gt;", frmUser.getLastName());						 						
+					templateText= templateText.replaceAll("&lt;lastname&gt;", frmUser.getLastName());
 					templateText= templateText.replaceAll("&lt;loginurl&gt;", loginurl);
 					templateText= templateText.replaceAll("&lt;phone&gt;", phone);
-					templateText= templateText.replaceAll("&lt;support&gt;", support);	
+					templateText= templateText.replaceAll("&lt;support&gt;", support);
 					templateText= templateText.replaceAll("&lt;customername&gt;", frmUser.getLearner().getCustomer().getName());
-					model.put("templateText", templateText);			
+					model.put("templateText", templateText);
 					/*END-BRANDING EMAIL WORK*/
-					
+
 					String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, batchImportTemplatePath, model);
-					SendMailService.sendSMTPMessage(user.getEmailAddress(),fromAddress,fromCommonName,subject,text);					 
-		
+					SendMailService.sendSMTPMessage(user.getEmailAddress(),fromAddress,fromCommonName,subject,text);
+
 				} catch( Exception e ) {
 					e.printStackTrace();
 				}
 			}
-	
+
 			Customer cust=frmUser.getLearner().getCustomer();
 			if(cust!=null && cust.getCustomerType().equals(Customer.B2C)){
 				transformAndUpdateProfile(cust, frmUser, request.getParameter("password"));
@@ -770,25 +775,25 @@ public class EditUserController extends VU360BaseMultiActionController{
 		msgAddress.setPhone( user.getLearner().getLearnerProfile().getOfficePhone() );
 
 		return msgAddress;
-	}  
-	
+	}
+
 	/**
 	 * this method show learner's profile data
 	 * @param request
 	 * @param response
-	 * @return ModelAndView object 
-	 */			
+	 * @return ModelAndView object
+	 */
 	public ModelAndView displayLearnerProfile(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors ) throws Exception {
-		
+
 		com.softech.vu360.lms.vo.VU360User vu360User = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		UserForm form = (UserForm)command;
 		Long userId= ServletRequestUtils.getLongParameter(request, "userId");
 		//LearnerProfileForm form = (LearnerProfileForm) command;
 		HttpSession session = request.getSession();
 		Map<Object,Object> context = new HashMap<Object,Object>();
-		
+
 		VU360User vu360SelectedUser = this.getVu360UserService().loadForUpdateVU360User(userId);
-		
+
 		List<LicenseOfLearner> list = learnerLicenseServices.getAllLicensesOfLearner(vu360SelectedUser.getLearner().getId());
 
 		//============================For Sorting============================
@@ -850,26 +855,26 @@ public class EditUserController extends VU360BaseMultiActionController{
 					context.put("sortDirection", 1);
 					context.put("sortColumnIndex", 1);
 				}
-			} 
+			}
 
-		}	
+		}
 		request.setAttribute("myPageSize", 5);
 		form.setLearnerOfLicense(list);
 
 		return new ModelAndView(editUserTemplate, "context", context);
 	}
 
-	
+
 	public class ReportingFieldComparable implements Comparator<CreditReportingFieldValueChoice>{
-		 
-	    @Override
-	    public int compare(CreditReportingFieldValueChoice o1, CreditReportingFieldValueChoice o2) {
-	    	 String s1 = o1.getValue().trim().toUpperCase();
-	    	    String s2 = o2.getValue().trim().toUpperCase();
-	    	    return s1.compareTo(s2);
-	    }
+
+		@Override
+		public int compare(CreditReportingFieldValueChoice o1, CreditReportingFieldValueChoice o2) {
+			String s1 = o1.getValue().trim().toUpperCase();
+			String s2 = o2.getValue().trim().toUpperCase();
+			return s1.compareTo(s2);
+		}
 	}
-	
+
 	/**
 	 * Setting the Address info
 	 * @param user
@@ -941,8 +946,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 
 	public void setCustomFieldService(CustomFieldService customFieldService) {
 		this.customFieldService = customFieldService;
-	} 
-	
+	}
+
 	private CustomFieldValue getCustomFieldValueByCustomField(com.softech.vu360.lms.model.CustomField customField,List<CustomFieldValue> customFieldValues){
 		if (customFieldValues != null){
 			for (CustomFieldValue customFieldValue : customFieldValues){
@@ -955,8 +960,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 		}
 		return new CustomFieldValue();
 	}
-	
-	
+
+
 	public void validateMainCustomFields( List<com.softech.vu360.lms.web.controller.model.customfield.CustomField> customFields, Errors errors ) {
 		int fieldindex = 0;
 		if ( customFields.size() > 0 ) {
