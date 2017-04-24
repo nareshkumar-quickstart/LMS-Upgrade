@@ -28,10 +28,10 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 	protected static final Logger log = Logger.getLogger(TrainingPlanWidgetLogic.class);
 	private static final String recentCoursesLink = "lrn_myCourses.do?method=&search=Search&show=recent";
 	private static final String enrolledCoursesLink = "lrn_myCourses.do?method=&search=Search&show=enrolled";
-
+	
 	protected EnrollmentService enrollmentService;
 	protected CourseAndCourseGroupService courseAndCourseGroupService;
-
+	
 	public CourseAndCourseGroupService getCourseAndCourseGroupService() {
 		return courseAndCourseGroupService;
 	}
@@ -53,28 +53,54 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 	public Collection<WidgetData> getWidgetDataList(VU360User vu360User, Map<String, Object> params, HttpServletRequest request) {
 		log.debug("in getWidgetDataList vu360User.id=" + vu360User.getId() + " vu360User.username=" + vu360User.getUsername() + " params=" + params);
 		List<WidgetData> datas = new ArrayList<WidgetData>();
-		String filter = (String) ((params.get("filter") != null) ? params.get("filter") : "all");
+		String filter = (String) ((params.get("filter")!=null) ? params.get("filter") : "all");
 		Map<Long, TrainingPlan> trainingPlanMap = new HashMap<Long, TrainingPlan>();
 		Map<Long, List<MyCoursesItem>> trainingPlanCoursesMap = new HashMap<Long, List<MyCoursesItem>>();
-
+		
 		//TODO: doesnt like the following code but have to depend on the existing services to collect the data :(
-		if (filter.compareTo("recent") == 0 || filter.compareTo("enrolled") == 0 || filter.compareTo("all") == 0) {
+		if(filter.compareTo("recent")==0 || filter.compareTo("all")==0) {
 			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
 			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
 			List sortedCourseGroups = new ArrayList();
 			String search = "Search";
 			Map map = enrollmentService.displayMyCourses(vu360User, null, courseGroups, filteredMyCourses, sortedCourseGroups, filter, search, true);
-			if (filter.compareTo("recent") == 0 || filter.compareTo("all") == 0) {
-				List myCourseItems = (List) map.get("myCourseItems");
-				for (Object item : myCourseItems) {
-					MyCoursesItem myCoursesItem = (MyCoursesItem) item;
+			List myCourseItems = (List) map.get("myCourseItems");
+			for (Object item : myCourseItems) {
+				MyCoursesItem myCoursesItem = (MyCoursesItem) item;
+				Long courseId = new Long(myCoursesItem.getCourseIdKey());
+				Course course = courseAndCourseGroupService.getCourseById(courseId);
+				TrainingPlan trainingPlan = courseAndCourseGroupService.getTrainingPlanByCourse(course, vu360User.getLearner().getCustomer());
+				if(trainingPlan!=null) {
+					trainingPlanMap.put(trainingPlan.getId(), trainingPlan);
+					List<MyCoursesItem> courses = trainingPlanCoursesMap.get(trainingPlan.getId());
+					if(courses == null) {
+						courses = new ArrayList<MyCoursesItem>();
+						trainingPlanCoursesMap.put(trainingPlan.getId(), courses);
+					}
+					courses.add(myCoursesItem);
+				}
+			}
+		}
+		
+		if(filter.compareTo("enrolled")==0 || filter.compareTo("all")==0) {
+			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
+			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
+			List sortedCourseGroups = new ArrayList();
+			String search = "Search";
+			Map map = enrollmentService.displayMyCourses(vu360User, null, courseGroups, filteredMyCourses, sortedCourseGroups, filter, search, true);
+			List myCourseGroups = (List) map.get("myCoursesCourseGroups");
+			for (Object item : myCourseGroups) {
+				MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
+				Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
+				while(iterator.hasNext()) {
+					MyCoursesItem myCoursesItem = iterator.next();
 					Long courseId = new Long(myCoursesItem.getCourseIdKey());
 					Course course = courseAndCourseGroupService.getCourseById(courseId);
 					TrainingPlan trainingPlan = courseAndCourseGroupService.getTrainingPlanByCourse(course, vu360User.getLearner().getCustomer());
-					if (trainingPlan != null) {
+					if(trainingPlan!=null) {
 						trainingPlanMap.put(trainingPlan.getId(), trainingPlan);
 						List<MyCoursesItem> courses = trainingPlanCoursesMap.get(trainingPlan.getId());
-						if (courses == null) {
+						if(courses == null) {
 							courses = new ArrayList<MyCoursesItem>();
 							trainingPlanCoursesMap.put(trainingPlan.getId(), courses);
 						}
@@ -82,33 +108,9 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 					}
 				}
 			}
-
-			if (filter.compareTo("enrolled") == 0 || filter.compareTo("all") == 0) {
-				List myCourseGroups = (List) map.get("myCoursesCourseGroups");
-				for (Object item : myCourseGroups) {
-					MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
-					Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
-					while (iterator.hasNext()) {
-						MyCoursesItem myCoursesItem = iterator.next();
-						Long courseId = new Long(myCoursesItem.getCourseIdKey());
-						Course course = courseAndCourseGroupService.getCourseById(courseId);
-						TrainingPlan trainingPlan = courseAndCourseGroupService.getTrainingPlanByCourse(course, vu360User.getLearner().getCustomer());
-						if (trainingPlan != null) {
-							trainingPlanMap.put(trainingPlan.getId(), trainingPlan);
-							List<MyCoursesItem> courses = trainingPlanCoursesMap.get(trainingPlan.getId());
-							if (courses == null) {
-								courses = new ArrayList<MyCoursesItem>();
-								trainingPlanCoursesMap.put(trainingPlan.getId(), courses);
-							}
-							courses.add(myCoursesItem);
-						}
-					}
-				}
-			}
 		}
-
-
-		if (filter.compareTo("completed") == 0 || filter.compareTo("all") == 0) {
+		
+		if(filter.compareTo("completed")==0 || filter.compareTo("all")==0) {
 			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
 			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
 			List sortedCourseGroups = new ArrayList();
@@ -118,15 +120,15 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 			for (Object item : myCourseGroups) {
 				MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
 				Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
-				while (iterator.hasNext()) {
+				while(iterator.hasNext()) {
 					MyCoursesItem myCoursesItem = iterator.next();
 					Long courseId = new Long(myCoursesItem.getCourseIdKey());
 					Course course = courseAndCourseGroupService.getCourseById(courseId);
 					TrainingPlan trainingPlan = courseAndCourseGroupService.getTrainingPlanByCourse(course, vu360User.getLearner().getCustomer());
-					if (trainingPlan != null) {
+					if(trainingPlan!=null) {
 						trainingPlanMap.put(trainingPlan.getId(), trainingPlan);
 						List<MyCoursesItem> courses = trainingPlanCoursesMap.get(trainingPlan.getId());
-						if (courses == null) {
+						if(courses == null) {
 							courses = new ArrayList<MyCoursesItem>();
 							trainingPlanCoursesMap.put(trainingPlan.getId(), courses);
 						}
@@ -135,8 +137,8 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 				}
 			}
 		}
-
-		if (filter.compareTo("expired") == 0 || filter.compareTo("all") == 0) {
+		
+		if(filter.compareTo("expired")==0 || filter.compareTo("all")==0) {
 			List<CourseGroupView> courseGroups = new ArrayList<CourseGroupView>();
 			List<MyCoursesItem> filteredMyCourses = new ArrayList<MyCoursesItem>();
 			List sortedCourseGroups = new ArrayList();
@@ -146,15 +148,15 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 			for (Object item : myCourseGroups) {
 				MyCoursesCourseGroup courseGroup = (MyCoursesCourseGroup) item;
 				Iterator<MyCoursesItem> iterator = courseGroup.getAllMyCoursesItems().iterator();
-				while (iterator.hasNext()) {
+				while(iterator.hasNext()) {
 					MyCoursesItem myCoursesItem = iterator.next();
 					Long courseId = new Long(myCoursesItem.getCourseIdKey());
 					Course course = courseAndCourseGroupService.getCourseById(courseId);
 					TrainingPlan trainingPlan = courseAndCourseGroupService.getTrainingPlanByCourse(course, vu360User.getLearner().getCustomer());
-					if (trainingPlan != null) {
+					if(trainingPlan!=null) {
 						trainingPlanMap.put(trainingPlan.getId(), trainingPlan);
 						List<MyCoursesItem> courses = trainingPlanCoursesMap.get(trainingPlan.getId());
-						if (courses == null) {
+						if(courses == null) {
 							courses = new ArrayList<MyCoursesItem>();
 							trainingPlanCoursesMap.put(trainingPlan.getId(), courses);
 						}
@@ -163,31 +165,31 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 				}
 			}
 		}
-
+		
 		Iterator<Long> trainingPlanIterator = trainingPlanMap.keySet().iterator();
-		while (trainingPlanIterator.hasNext()) {
-			TrainingPlan trainingPlan = trainingPlanMap.get((Long) trainingPlanIterator.next());
+		while(trainingPlanIterator.hasNext()) {
+			TrainingPlan trainingPlan = trainingPlanMap.get((Long)trainingPlanIterator.next()); 
 			WidgetData widgetData = new WidgetData();
 			Map<String, Object> data = widgetData.getDataMap();
-			widgetData.setId((long) datas.size());
-			data.put("trainingPlanId", trainingPlan.getId() + "");
+			widgetData.setId((long)datas.size());
+			data.put("trainingPlanId", trainingPlan.getId()+"");
 			data.put("name", trainingPlan.getName());
 			data.put("description", trainingPlan.getDescription());
-			if (trainingPlan.getStartdate() != null) {
-				data.put("startDate", trainingPlan.getStartdate().getMonth() + "/" + trainingPlan.getStartdate().getDate() + "/" + (trainingPlan.getStartdate().getYear() + 1900));
+			if(trainingPlan.getStartdate()!=null) {
+				data.put("startDate", trainingPlan.getStartdate().getMonth()+"/"+trainingPlan.getStartdate().getDate()+"/"+(trainingPlan.getStartdate().getYear()+1900));
 			}
-			if (trainingPlan.getEnddate() != null) {
-				data.put("endDate", trainingPlan.getEnddate().getMonth() + "/" + trainingPlan.getEnddate().getDate() + "/" + (trainingPlan.getEnddate().getYear() + 1900));
+			if(trainingPlan.getEnddate()!=null) {
+				data.put("endDate", trainingPlan.getEnddate().getMonth()+"/"+trainingPlan.getEnddate().getDate()+"/"+(trainingPlan.getEnddate().getYear()+1900));
 			}
 			boolean courseStarted = false;
-			List<MyCoursesItem> courses = (List<MyCoursesItem>) trainingPlanCoursesMap.get(trainingPlan.getId());
-			for (MyCoursesItem course : courses) {
-				if (!course.getCourseStatus().equalsIgnoreCase(LearnerCourseStatistics.NOT_STARTED)) {
+			List<MyCoursesItem> courses = (List<MyCoursesItem>)trainingPlanCoursesMap.get(trainingPlan.getId());
+			for(MyCoursesItem course:courses) {
+				if(!course.getCourseStatus().equalsIgnoreCase(LearnerCourseStatistics.NOT_STARTED)) {
 					courseStarted = true;
 					break;
 				}
 			}
-			if (courseStarted) {
+			if(courseStarted) {
 				/* If the course within Training Plan has already started then we should take the user to the “Recently Accessed Courses”
 				 */
 
@@ -196,9 +198,10 @@ public class TrainingPlanWidgetLogic implements WidgetLogic {
 				/* If the course within Training Plan has not been started then we should take the user to “Enrolled Courses” */
 				data.put("link", enrolledCoursesLink);
 			}
-			datas.add(widgetData);
+			datas.add(widgetData); 
 		}
-
+		
 		return datas;
 	}
+
 }

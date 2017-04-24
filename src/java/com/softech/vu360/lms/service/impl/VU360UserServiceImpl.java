@@ -1,11 +1,12 @@
 package com.softech.vu360.lms.service.impl;
 
-import com.softech.vu360.lms.helpers.ProxyVOHelper;
-import com.softech.vu360.lms.model.*;
-import com.softech.vu360.lms.repositories.*;
-import com.softech.vu360.lms.service.ActiveDirectoryService;
-import com.softech.vu360.lms.service.VU360UserService;
-import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -14,8 +15,22 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import javax.inject.Inject;
-import java.util.*;
+import com.softech.vu360.lms.helpers.ProxyVOHelper;
+import com.softech.vu360.lms.model.Customer;
+import com.softech.vu360.lms.model.LMSFeature;
+import com.softech.vu360.lms.model.LMSRole;
+import com.softech.vu360.lms.model.LearnerProfileStaticField;
+import com.softech.vu360.lms.model.OrganizationalGroup;
+import com.softech.vu360.lms.model.TrainingAdministrator;
+import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.repositories.LMSFeatureRepository;
+import com.softech.vu360.lms.repositories.LMSRoleRepository;
+import com.softech.vu360.lms.repositories.OrganizationalGroupRepository;
+import com.softech.vu360.lms.repositories.TrainingAdministratorRepository;
+import com.softech.vu360.lms.repositories.VU360UserRepository;
+import com.softech.vu360.lms.service.ActiveDirectoryService;
+import com.softech.vu360.lms.service.VU360UserService;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 
 /**
  * @author jason
@@ -54,10 +69,8 @@ public class VU360UserServiceImpl implements VU360UserService {
 		VU360User user=getUserByUsernameAndDomain(username, null);
 		if(user==null)
 			throw new UsernameNotFoundException("No user detail found from DB Bad credentials");
-        Set<LMSRole> roles = lmsRoleRepository.getRoleWithFeatures(user.getLmsRoles());
-        user.setLmsRoles(roles);
-//		user.setLmsRoles( user.getLmsRoles());
-
+		user.setLmsRoles(user.getLmsRoles());
+				
 		log.debug("isEnabled:"+user.getEnabled());
 		log.debug("isCredentialNonExpired:"+user.isCredentialsNonExpired());
 		log.debug("isAccountNonLocked:"+user.getAccountNonLocked());

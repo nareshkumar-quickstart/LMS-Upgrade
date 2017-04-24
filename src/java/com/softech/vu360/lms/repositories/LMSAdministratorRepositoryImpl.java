@@ -65,18 +65,18 @@ public class LMSAdministratorRepositoryImpl implements LMSAdministratorRepositor
 		else {
 			try {
 				StringBuilder queryString = new StringBuilder(
-						"SELECT p FROM LMSAdministrator p JOIN FETCH p.vu360User vu Where (p.globalAdministrator is null or p.globalAdministrator = FALSE) ");
+						"SELECT p FROM LMSAdministrator p Where (p.globalAdministrator is null or p.globalAdministrator = FALSE) ");
 
 				if (firstName != null) {
-					queryString.append(" AND vu.firstName LIKE :firstName ");
+					queryString.append(" AND p.vu360User.firstName LIKE :firstName ");
 				}
 
 				if (lastName != null) {
-					queryString.append(" AND vu.lastName LIKE :lastName ");
+					queryString.append(" AND p.vu360User.lastName LIKE :lastName ");
 				}
 
 				if (email != null) {
-					queryString.append(" AND vu.emailAddress LIKE :email ");
+					queryString.append(" AND p.vu360User.emailAddress LIKE :email ");
 				}
 
 				Query query = entityManager.createQuery(queryString.toString());
