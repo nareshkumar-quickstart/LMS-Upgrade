@@ -21,8 +21,6 @@ public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU
 
 	List<VU360User> findByUsernameIn(@Param("lstUserName") Collection<String> lstUserName);
 
-	Object getIdByUserName(String userName);
-
 	public VU360User getUserById(Long id);
 	
 	public List<VU360User> findByLearnerIdIn(Long[] learnerId);
