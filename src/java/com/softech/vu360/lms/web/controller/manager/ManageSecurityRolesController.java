@@ -532,7 +532,7 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 				count = (String)lstLearnerCounted.get(lmsRole.getId().toString());
 			}
 				
-		    if(roleId == lmsRole.getId() && roleType.equals(roleType)){ 
+		    if(roleId.equals(lmsRole.getId())){ 
 			  rolesToBeDeleted.add(lmsRole);				  
 			  if(Long.valueOf(count) > 0)
 			     rolesWithUsers.add(lmsRole);				     				    	 				     				     				  
@@ -576,9 +576,12 @@ public class ManageSecurityRolesController extends VU360BaseMultiActionControlle
 			int dropAllLearners= 1;			
 			String[] learnerRolesToDeleteValues = new String[1];
 			int learnersAlternativeRoleId= -1;									
-			if(request.getParameter("radioDropLearner")!=null)dropAllLearners= Integer.parseInt(request.getParameter("radioDropLearner"));										
-			if(request.getParameterValues("learnerRolesToDelete")!= null)learnerRolesToDeleteValues= request.getParameterValues("learnerRolesToDelete");						
-			if(dropAllLearners == 0 && request.getParameter("learnerAlternativeRole")!=null)	learnersAlternativeRoleId= Integer.parseInt(request.getParameter("learnerAlternativeRole"));
+			
+			if (request.getParameter("radioDropLearner") != null)
+				dropAllLearners = Integer.parseInt(request.getParameter("radioDropLearner"));
+			learnerRolesToDeleteValues = request.getParameterValues("learnerRolesToDelete") != null ? request.getParameterValues("learnerRolesToDelete") : new String[0];
+			if (dropAllLearners == 0 && request.getParameter("learnerAlternativeRole") != null)
+				learnersAlternativeRoleId = Integer.parseInt(request.getParameter("learnerAlternativeRole"));
 
 			int dropAllManagers= 1;
 			String[] managerRolesToDeleteValues = new String[1];
