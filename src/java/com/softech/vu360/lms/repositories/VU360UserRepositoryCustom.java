@@ -72,4 +72,5 @@ public interface VU360UserRepositoryCustom {
 			String searchCriteria, String firstName,String lastName, String email, Long[] idbucket, Boolean isProctorRole, Boolean notLmsRole, Boolean accountNonExpired, Boolean accountNonLocked,
 		Boolean enabled, String sortBy, int sortDirection);
 
+	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> users);
 }

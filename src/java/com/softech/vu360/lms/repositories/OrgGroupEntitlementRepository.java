@@ -32,5 +32,5 @@ public interface OrgGroupEntitlementRepository extends CrudRepository<OrgGroupEn
 	* @param orgGrpIds   orgGrpIds that are selected by user through Enrollment Method Organizational Group method.
 	* @return List<OrgGroupEntitlement>	List of OrgGroupEntitlement objects for the given Organization Group Id that are bound with the customer contract..
 	*/
-	public List<OrgGroupEntitlement> findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(Long orgGrpIds[], Long maxNumberSeatsGreaterThan);
+	public List<OrgGroupEntitlement> findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(Long orgGrpIds[], Integer maxNumberSeatsGreaterThan);
 }
