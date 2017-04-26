@@ -131,7 +131,7 @@ public interface SecurityAndRolesService {
 
 	public List<CustomerLMSFeature> getAllCustomerLMSFeatures (Customer customer);
 	public List<CustomerLMSFeature> getAllByCustomerAndEnabledTrue(Customer customer);
-	public Map<String, String> findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
+	public String[] findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(Long distributorId, Long customerId);
 	
 	List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType);
 	
