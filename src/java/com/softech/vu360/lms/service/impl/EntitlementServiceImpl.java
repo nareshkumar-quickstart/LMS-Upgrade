@@ -3211,7 +3211,7 @@ public class EntitlementServiceImpl implements EntitlementService {
 		orgGrpIdArray = orgGrpIds.toArray(orgGrpIdArray);
 
 		List<OrgGroupEntitlement> organizationEntitlement = new ArrayList<OrgGroupEntitlement>();
-		organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGrpIdArray,0L);
+		organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGrpIdArray,0);
 
 		Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
 		for(OrgGroupEntitlement orgGrpEntitlement : organizationEntitlement){
@@ -3242,7 +3242,7 @@ public class EntitlementServiceImpl implements EntitlementService {
 			count++;
 
 		}
-		List<OrgGroupEntitlement> results = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0L);
+		List<OrgGroupEntitlement> results = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0);
 
 		Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
 		for(OrgGroupEntitlement oge :results){
@@ -3276,7 +3276,7 @@ public class EntitlementServiceImpl implements EntitlementService {
 		}
 
 		List<OrgGroupEntitlement> organizationEntitlement = new ArrayList<OrgGroupEntitlement>();
-		organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0L);
+		organizationEntitlement = orgGroupEntitlementRepository.findDistinctByOrganizationalGroupIdInAndMaxNumberSeatsGreaterThanEqual(orgGroupIdArray,0);
 
 		Set<Long> customerEntitlementIds = new LinkedHashSet<Long>();
 		for(OrgGroupEntitlement orgGrpEntitlement : organizationEntitlement){
