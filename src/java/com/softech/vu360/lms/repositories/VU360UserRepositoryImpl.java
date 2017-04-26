@@ -827,4 +827,11 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
         results.stream().forEach((record) -> users.add(new VU360User(((BigInteger) record[0]).longValue(), (String) record[1], ((String) record[2]), (String) record[3], (String) record[4], ((Integer)record[5]),((BigInteger) record[6]).longValue(), record[7]==null?0:((BigInteger) record[7]).longValue(), record[8]==null?0:((BigInteger) record[8]).longValue(), record[9]==null?"":(String)record[9],record[10]==null?0:((BigInteger) record[10]).longValue())));
 		return users;
 	}
+
+	@Override
+	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> users) {
+		Query query = this.entityManager.createQuery("SELECT L.id FROM VU360User U JOIN U.learner L where U in :users");
+		query.setParameter("users", users);
+		return query.getResultList();
+	}
 }
