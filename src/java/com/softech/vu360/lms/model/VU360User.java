@@ -50,7 +50,7 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 	private static Logger log = Logger.getLogger(VU360User.class);
 
 	@Transient
-	private PersistentAttributeInterceptor interceptor;
+	private transient PersistentAttributeInterceptor interceptor;
 
 	@Id
 	@javax.persistence.TableGenerator(name = "VU360USER_ID", table = "VU360_SEQ", pkColumnName = "TABLE_NAME", valueColumnName = "NEXT_ID", pkColumnValue = "vu360user", allocationSize = 1)
