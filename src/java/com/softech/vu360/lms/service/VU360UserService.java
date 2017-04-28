@@ -31,6 +31,8 @@ public interface VU360UserService extends UserDetailsService {
 	public boolean isEmailAddressInUse(String emailAddress);
 	
 	public VU360User getUserById(Long id);
+
+	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> vu360Users);
 	
 	public List<VU360User> getUsersByEmailAddress(String emailAddress);
 	

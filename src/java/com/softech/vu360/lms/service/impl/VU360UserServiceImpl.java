@@ -553,4 +553,9 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return lmsFeatureRepository.hasAccessToFeatureCode(userId, featureCode);
 	}
 
+	@Override
+	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> vu360Users) {
+		List<Long> learnerIds = vu360UserRepository.findLearnerIdsByVu360UserIn(vu360Users);
+		return learnerIds;
+	}
 }
