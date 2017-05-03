@@ -359,6 +359,7 @@ class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@Transactional
 	public Customer addCustomer(Long userId, AddCustomerForm addCustomerForm) {
 
 		if ( addCustomerForm.getDistributors() == null ) {
@@ -376,6 +377,7 @@ class CustomerServiceImpl implements CustomerService {
 		}
 		return addCustomer(userId, dist, addCustomerForm);
 	}
+	@Transactional
 	public Customer addCustomer(Long userId, Distributor dist, AddCustomerForm addCustomerForm) {
 		Customer customer = addCustomer(true, userId,  dist,  addCustomerForm);
 		return customer;

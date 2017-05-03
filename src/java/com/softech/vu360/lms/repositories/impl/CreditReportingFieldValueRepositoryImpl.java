@@ -22,8 +22,8 @@ public class CreditReportingFieldValueRepositoryImpl implements CreditReportingF
 	@Override
 	public void storeEncryptedValue(CreditReportingFieldValue creditReportingfieldValue) {
 		StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery("CreditReportingFieldValue.storeEncryptedValue");
-		query.setParameter("CREDITREPORTINGFIELDVALUE_ID", creditReportingfieldValue.getId());
-		query.setParameter("CREDITREPORTINGFIELDVALUE_VALUE", creditReportingfieldValue.getValue());
+		query.setParameter("PARAM_CREDITREPORTINGVALUE_ID", creditReportingfieldValue.getId());
+		query.setParameter("PARAM_CREDITREPORTINGVALUE", creditReportingfieldValue.getValue());
 		query.execute();
 		
 	}
