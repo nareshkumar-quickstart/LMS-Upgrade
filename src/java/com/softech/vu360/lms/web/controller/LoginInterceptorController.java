@@ -152,10 +152,7 @@ public class LoginInterceptorController implements Controller {
 				userObj.setLmsRoles(userObj.getLmsRoles());
 				userObj = vu360UserService.updateNumLogons(userObj);
 
-				/**
-				 * LMS-8108 | S M Humayun | 12 Apr 2011
-				 */
-				this.setDisabledLmsFeatureCodesAndGroupsForUser(user, request.getSession());
+				UserPermissionChecker.setDisabledLmsFeatureCodesAndGroupsForUser(user, request.getSession());
 			}
 
 			// TODO:  use this as an opportunity to check for things like
@@ -304,66 +301,7 @@ public class LoginInterceptorController implements Controller {
 		return new ModelAndView(templateToBeRedirected , "context" , map);
 	}
 
-	/**
-	 * Set disabled feature codes and groups for logged in user
-	 *
-	 *
-	 * User having multiple roles, like Administrator, Manager & Learner
-	 * and those roles have a feature group with the same name. For instance,
-	 * 'Tools' feature group exists in both Administrator and Manager. If
-	 * all features of Tools disabled on Administrator-level, 'Tools'
-	 * remain accessible from Manager mode.
-	 *
-	 * Due to which feature groups are now kept along with role type.
-	 * For example, if a user has Administrator, Manager & Learner
-	 * roles (modes), when the user logs in all its disabled feature groups
-	 * are being kept in session and to distinguish which feature group
-	 * belongs to which role type each feature group is now being concatenate
-	 * with relevant role.
-	 *
-	 * If you debug and inspect session.getAttribute(DISABLED_FEATURE_CODES)
-	 * for disabled feature groups, you will find feature group concatenated
-	 * with role type, for example ROLE_LMSADMINISTRATOR:Tools,
-	 * ROLE_TRAININGADMINISTRATOR:Tools. This means the user has Tools
-	 * disabled on both Administrator and Manager mode.
-	 *
-	 * @param user
-	 * @param session
-	 * @author ramiz.uddin
-	 * @since 4/19/2017
-	 */
-
-	private void setDisabledLmsFeatureCodesAndGroupsForUser (com.softech.vu360.lms.vo.VU360User user, HttpSession session)
-	{
-		try {
-			log.info(" ---------- START - setDisabledLmsFeatureCodesAndGroupsForUser : " + this.getClass().getName()
-					+ " ---------- ");
-
-			String[] featureCodes, featureGroups;
-
-			featureCodes = new String[] {};
-			featureGroups = new String[] {};
-
-			String[] disabledFeatures = securityAndRolesService
-					.findDistinctEnabledFeatureFeatureGroupsForDistributorAndCustomer(
-							user.getLearner().getCustomer().getDistributor().getId(),
-							user.getLearner().getCustomer().getId());
-
-			if(disabledFeatures != null && disabledFeatures.length == 2) {
-
-				featureCodes = disabledFeatures[0].split(",");
-				featureGroups = disabledFeatures[1].split(",");
-			}
-
-			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_GROUPS, new HashSet<>(Arrays.asList(featureGroups)));
-			session.setAttribute(UserPermissionChecker.DISABLED_FEATURE_CODES, new HashSet<>(Arrays.asList(featureCodes)));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			log.info(" ---------- END - setDisabledLmsFeaturesForUser : " + this.getClass().getName() + " ---------- ");
-		}
-	}
+	
 
 	/**
 	 * The method returns Survey View (if applicable)

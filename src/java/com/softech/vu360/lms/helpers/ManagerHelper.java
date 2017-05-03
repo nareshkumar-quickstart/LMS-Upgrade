@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.service.SecurityAndRolesService;
+import com.softech.vu360.lms.util.UserPermissionChecker;
 
 @Component
 public class ManagerHelper {
@@ -26,9 +27,25 @@ public class ManagerHelper {
 	}
 	
 	public static String getManagerURL(HttpServletRequest request) {
+		
 		String redirectURL = null;
 		com.softech.vu360.lms.vo.VU360User user = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		List<String> disabledFeatureCodes = new ArrayList<>();
+
+		/*
+		 *
+		 * For users seamlessly landing from Cart (Storefront) 
+		 * to My Courses page are not getting through from
+		 * interceptor.do where disabled features are being
+		 * setting up in user session
+		 * 
+		 * In such case, an explicit call to get disabled
+		 * features is now being called here
+		 * 
+		 * */
+		if(request.getSession().getAttribute("DISABLED_FEATURE_CODES") == null)
+			UserPermissionChecker.setDisabledLmsFeatureCodesAndGroupsForUser(user, request.getSession());
+			
 		disabledFeatureCodes.addAll((Set<String>)request.getSession().getAttribute("DISABLED_FEATURE_CODES"));
 
 		String enabledFeatureCode = securityAndRoleService.getAnyEnabledFeatureCodeInDisplayOrderByRoleType(user.getId(), LMSRole.ROLE_TRAININGMANAGER, disabledFeatureCodes);
