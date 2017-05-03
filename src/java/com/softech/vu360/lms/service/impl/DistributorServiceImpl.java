@@ -740,6 +740,7 @@ public class DistributorServiceImpl implements DistributorService {
 	 * @param id
 	 *            Distributor id
 	 */
+	@Transactional
 	private boolean enableFeaturesForDistributor(Distributor distributor) {
 		// early return if id is not valid
 		if (distributor == null) {
