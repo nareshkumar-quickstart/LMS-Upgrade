@@ -179,7 +179,7 @@ public class CourseConfiguration implements SearchableKey {
 	private Boolean courseEvaluationSpecified = Boolean.FALSE;
 	
 	@Column(name = "COURSE_STRICLYENFORCEPOLICYTOBEUSED")
-	private Boolean courseStrictlyEnforcePolicyToBeUsed;
+	private Boolean courseStrictlyEnforcePolicyToBeUsed = Boolean.FALSE;
 	
 	@Column(name = "COURSECONFIGURATION_GUID")
 	private String guid;
@@ -312,34 +312,34 @@ public class CourseConfiguration implements SearchableKey {
 	// Proctor Policies and Learner Policies
 	
 	@Column(name = "REQUIRE_PROCTOR_VALIDATION_TF")
-	private Boolean requireProctorValidation;
+	private Boolean requireProctorValidation = Boolean.FALSE;
 	
 	@Column(name = "ANSI_VALIDATION_TF")
-	private Boolean requiredAnsi;
+	private Boolean requiredAnsi = Boolean.FALSE;
 	
 	@Column(name = "NY_VALIDATION_TF")
-	private Boolean requiredNyInsurance;
+	private Boolean requiredNyInsurance = Boolean.FALSE;
 	
 	@Column(name = "REQUIRE_LEARNER_VALIDATION_TF")
-	private Boolean requireLearnerValidation;
+	private Boolean requireLearnerValidation = Boolean.FALSE;
 	
 	@Column(name = "CA_VALIDATION_TF")
-	private Boolean caRealEstateCE;
+	private Boolean caRealEstateCE = Boolean.FALSE;
 	
 	@Column(name="RESTRICT_INCOMPLETE_JS_TEMPLATE")
-	private Boolean mustMasterAllLessonActivities;
+	private Boolean mustMasterAllLessonActivities = Boolean.FALSE;
 	
 	@Column(name="DEFINEUNIQUEQUESTION_VALIDATION_TF")
-	private Boolean requireDefineUniqueQuestionValidation;
+	private Boolean requireDefineUniqueQuestionValidation = Boolean.FALSE;
 	
 	@Column(name="SELF_REGISTRATION_PROCTOR_TF")
-	private Boolean requireSelfRegistrationProctor;
+	private Boolean requireSelfRegistrationProctor = Boolean.FALSE;
 	
 	@Column(name="PROFILEBASED_VALIDATION_TF")
-	private Boolean requireSmartProfileValidation;
+	private Boolean requireSmartProfileValidation = Boolean.FALSE;
 	
 	@Column(name = "ONLINE_PROCTORING_TF")
-	private Boolean requireOnlineProctoring;
+	private Boolean requireOnlineProctoring = Boolean.FALSE;
 	
 	//Learners Unique Questions
 	@Transient
@@ -1713,7 +1713,7 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setCourseStrictlyEnforcePolicyToBeUsed(
 			Boolean courseStrictlyEnforcePolicyToBeUsed) {
-		this.courseStrictlyEnforcePolicyToBeUsed = courseStrictlyEnforcePolicyToBeUsed;
+		this.courseStrictlyEnforcePolicyToBeUsed = courseStrictlyEnforcePolicyToBeUsed == null ? Boolean.FALSE : courseStrictlyEnforcePolicyToBeUsed;
 	}
 
 	public String getGuid() {
@@ -2381,7 +2381,7 @@ public class CourseConfiguration implements SearchableKey {
 	 * @param requiredProctorValidation the requiredProctorValidation to set
 	 */
 	public void setRequireProctorValidation(Boolean requireProctorValidation) {
-		this.requireProctorValidation = requireProctorValidation;
+		this.requireProctorValidation = requireProctorValidation == null ? Boolean.FALSE : requireProctorValidation;
 	}
 	
 	
@@ -2426,7 +2426,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public void setRequiredAnsi(Boolean requiredAnsi) {
-		this.requiredAnsi = requiredAnsi;
+		this.requiredAnsi = requiredAnsi == null ? Boolean.FALSE : requiredAnsi;
 	}
 
 	public Boolean isRequiredNyInsurance() {
@@ -2434,7 +2434,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public void setRequiredNyInsurance(Boolean requiredNyInsurance) {
-		this.requiredNyInsurance = requiredNyInsurance;
+		this.requiredNyInsurance = requiredNyInsurance == null ? Boolean.FALSE : requiredNyInsurance;
 	}
 
 	public Boolean isRequireLearnerValidation() {
@@ -2442,7 +2442,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public void setRequireLearnerValidation(Boolean requireLearnerValidation) {
-		this.requireLearnerValidation = requireLearnerValidation;
+		this.requireLearnerValidation = requireLearnerValidation == null ? Boolean.FALSE : requireLearnerValidation;
 	}
 
 	public Boolean isCaRealEstateCE() {
@@ -2450,7 +2450,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public void setCaRealEstateCE(Boolean caRealEstateCE) {
-		this.caRealEstateCE = caRealEstateCE;
+		this.caRealEstateCE = caRealEstateCE == null ? Boolean.FALSE : caRealEstateCE;
 	}
 
 	public void setAllowFaceook(Boolean allowFaceook) {
@@ -2670,7 +2670,7 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setMustMasterAllLessonActivities(
 			Boolean mustMasterAllLessonActivities) {
-		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities;
+		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
 	}
 
 	public Boolean isRequireDefineUniqueQuestionValidation() {
@@ -2679,7 +2679,7 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setRequireDefineUniqueQuestionValidation(
 			Boolean requireDefineUniqueQuestionValidation) {
-		this.requireDefineUniqueQuestionValidation = requireDefineUniqueQuestionValidation;
+		this.requireDefineUniqueQuestionValidation = requireDefineUniqueQuestionValidation == null ? Boolean.FALSE : requireDefineUniqueQuestionValidation;
 	}
 
 	public Boolean isRequireSelfRegistrationProctor() {
@@ -2688,7 +2688,7 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setRequireSelfRegistrationProctor(
 			Boolean requireSelfRegistrationProctor) {
-		this.requireSelfRegistrationProctor = requireSelfRegistrationProctor;
+		this.requireSelfRegistrationProctor = requireSelfRegistrationProctor == null ? Boolean.FALSE : requireSelfRegistrationProctor;
 	}
 
 	public Boolean isRequireSmartProfileValidation() {
@@ -2697,7 +2697,7 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setRequireSmartProfileValidation(
 			Boolean requireSmartProfileValidation) {
-		this.requireSmartProfileValidation = requireSmartProfileValidation;
+		this.requireSmartProfileValidation = requireSmartProfileValidation == null ? Boolean.FALSE : requireSmartProfileValidation;
 	}
 
 	public List<UniqueQuestionsVO> getLstUniqueQuestionsVO() {
@@ -2713,7 +2713,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public void setRequireOnlineProctoring(Boolean requireOnlineProctoring) {
-		this.requireOnlineProctoring = requireOnlineProctoring;
+		this.requireOnlineProctoring = requireOnlineProctoring == null ? Boolean.FALSE : requireOnlineProctoring;
 	}
 	
 	
