@@ -1708,7 +1708,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isCourseStrictlyEnforcePolicyToBeUsed() {
-		return courseStrictlyEnforcePolicyToBeUsed;
+		return courseStrictlyEnforcePolicyToBeUsed == null ? Boolean.FALSE : courseStrictlyEnforcePolicyToBeUsed;
 	}
 
 	public void setCourseStrictlyEnforcePolicyToBeUsed(
@@ -2374,7 +2374,7 @@ public class CourseConfiguration implements SearchableKey {
 	 * @return the requiredProctorValidation
 	 */
 	public Boolean isRequireProctorValidation() {
-		return requireProctorValidation;
+		return requireProctorValidation == null ? Boolean.FALSE : requireProctorValidation;
 	}
 
 	/**
@@ -2422,7 +2422,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequiredAnsi() {
-		return requiredAnsi;
+		return requiredAnsi == null ? Boolean.FALSE : requiredAnsi;
 	}
 
 	public void setRequiredAnsi(Boolean requiredAnsi) {
@@ -2430,7 +2430,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequiredNyInsurance() {
-		return requiredNyInsurance;
+		return requiredNyInsurance == null ? Boolean.FALSE : requiredNyInsurance;
 	}
 
 	public void setRequiredNyInsurance(Boolean requiredNyInsurance) {
@@ -2438,7 +2438,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequireLearnerValidation() {
-		return requireLearnerValidation;
+		return requireLearnerValidation == null ? Boolean.FALSE : requireLearnerValidation;
 	}
 
 	public void setRequireLearnerValidation(Boolean requireLearnerValidation) {
@@ -2446,7 +2446,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isCaRealEstateCE() {
-		return caRealEstateCE;
+		return caRealEstateCE == null ? Boolean.FALSE : caRealEstateCE;
 	}
 
 	public void setCaRealEstateCE(Boolean caRealEstateCE) {
@@ -2665,7 +2665,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isMustMasterAllLessonActivities() {
-		return mustMasterAllLessonActivities;
+		return mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
 	}
 
 	public void setMustMasterAllLessonActivities(
@@ -2674,7 +2674,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequireDefineUniqueQuestionValidation() {
-		return requireDefineUniqueQuestionValidation;
+		return requireDefineUniqueQuestionValidation == null ? Boolean.FALSE : requireDefineUniqueQuestionValidation;
 	}
 
 	public void setRequireDefineUniqueQuestionValidation(
@@ -2683,7 +2683,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequireSelfRegistrationProctor() {
-		return requireSelfRegistrationProctor;
+		return requireSelfRegistrationProctor == null ? Boolean.FALSE : requireSelfRegistrationProctor;
 	}
 
 	public void setRequireSelfRegistrationProctor(
@@ -2692,7 +2692,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequireSmartProfileValidation() {
-		return requireSmartProfileValidation;
+		return requireSmartProfileValidation == null ? Boolean.FALSE : requireSmartProfileValidation;
 	}
 
 	public void setRequireSmartProfileValidation(
@@ -2709,12 +2709,11 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isRequireOnlineProctoring() {
-		return requireOnlineProctoring;
+		return requireOnlineProctoring == null ? Boolean.FALSE : requireOnlineProctoring;
 	}
 
 	public void setRequireOnlineProctoring(Boolean requireOnlineProctoring) {
 		this.requireOnlineProctoring = requireOnlineProctoring == null ? Boolean.FALSE : requireOnlineProctoring;
 	}
-	
 	
 }
