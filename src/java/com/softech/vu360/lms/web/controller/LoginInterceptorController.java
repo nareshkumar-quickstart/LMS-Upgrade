@@ -146,11 +146,7 @@ public class LoginInterceptorController implements Controller {
 				//Changes made by Marium Saud inorder to by pass all delete queries executed while user login
 				user.setNumLogons(user.getNumLogons()+1);
 				user.setLastLogonDate(new Date());
-				userObj = vu360UserService.loadForUpdateVU360User(user.getId());
-				userObj.setNumLogons(user.getNumLogons());
-				userObj.setLastLogonDate(user.getLastLogonDate());
-				userObj.setLmsRoles(userObj.getLmsRoles());
-				userObj = vu360UserService.updateNumLogons(userObj);
+				vu360UserService.updateNumLogons(user);
 
 				UserPermissionChecker.setDisabledLmsFeatureCodesAndGroupsForUser(user, request.getSession());
 			}
