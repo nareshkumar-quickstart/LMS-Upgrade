@@ -1,7 +1,9 @@
 package com.softech.vu360.lms.helpers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -200,24 +202,30 @@ public class ProxyVOHelper {
 
 	private static List<com.softech.vu360.lms.vo.CustomField> createCustomFieldVOList(
 			List<CustomField> customFieldModelList) {
-
+		//@modified By Mairum saud: taking synchronized Collection List for custom field and iterating it in Synchronized block 
+		//to avoid deadLock and LazyInitialization Exception for Distributor --> CustomField
 		try{
-			if(customFieldModelList == null || customFieldModelList.size()==0){
+			if(customFieldModelList ==null){
 				return null;
 			}
+			else if(customFieldModelList.size()==0){
+					return null;
+			}
+			
 		} catch (LazyInitializationException lazyExc) {
 			log.info("LazyInitializationException ::: ignore this ----> customFieldList could not initialize");
 			return null;
 		}
 		
 		List<com.softech.vu360.lms.vo.CustomField> customFieldVOList = new ArrayList<com.softech.vu360.lms.vo.CustomField>();
-
-		customFieldModelList.forEach((customFieldModel) -> {
-
-			customFieldVOList.add(createCustomFieldVO(customFieldModel));
-
-		});
-
+		
+		List<CustomField> customFieldSyncList = Collections.synchronizedList(customFieldModelList);
+		synchronized (customFieldSyncList) {
+			Iterator<CustomField> iterator = customFieldSyncList.iterator();
+			while (iterator.hasNext()) {
+				customFieldVOList.add(createCustomFieldVO(iterator.next()));
+			}
+		}
 		return customFieldVOList;
 
 	}

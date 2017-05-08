@@ -671,7 +671,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 
 	public VU360User updateUser(VU360User user) {
-		return vu360UserRepository.updateUserWithLoad(user);
+		return vu360UserRepository.updateUser(user);
 	}
 
 	@Transactional

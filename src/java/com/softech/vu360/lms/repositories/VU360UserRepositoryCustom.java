@@ -36,8 +36,6 @@ public interface VU360UserRepositoryCustom {
 
 	public VU360User getUserByGUID(String userGUID);
 
-	public VU360User updateUserWithLoad(VU360User updatedUser);
-
 	public Map<Object, Object> findUsers(String firstName, String lastName, String email,
 			VU360User loggedInUser, int pageIndex, int pageSize, String sortBy,	int sortDirection);
 
@@ -77,7 +75,11 @@ public interface VU360UserRepositoryCustom {
 
 	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> users);
 
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO);
+
+
 	public List<VU360User> findByUsernameInForBatchImport(Collection<String> vList);
 
 	public VU360User saveUserForBatchImport(VU360User user);
+
 }

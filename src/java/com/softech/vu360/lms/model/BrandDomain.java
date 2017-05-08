@@ -5,8 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
@@ -16,9 +14,6 @@ import javax.persistence.Table;
  *  
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name="BrandDomain.findBrandByDomain",query="SELECT a FROM BrandDomain a WHERE a.domain like (:domain)")
-})
 @Table(name = "BRANDDOMAIN")
 public class BrandDomain {
 

@@ -481,11 +481,6 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		return userList;
 	}
 
-	@Override
-	public VU360User updateUserWithLoad(VU360User updatedUser) {
-		return entityManager.merge(updatedUser);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VU360User> getUserByIds(String[] idl) {
@@ -879,7 +874,16 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 
 	@Override
 	@Transactional
-	public List<VU360User> findByUsernameInForBatchImport(Collection<String> vList) {
+
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO) {
+		Query query = this.entityManager.createNativeQuery("update VU360USER set LASTLOGONDATE=:param1, NUMLOGONS=:param2 where ID=:param3");
+		query.setParameter("param1", userVO.getLastLogonDate());
+		query.setParameter("param2", userVO.getNumLogons());
+		query.setParameter("param3", userVO.getId());
+		int updateCount=query.executeUpdate();
+		log.debug("nativeUpdateUser="+updateCount);
+  }
+  public List<VU360User> findByUsernameInForBatchImport(Collection<String> vList) {
 		EntityGraph vu360UserGraph = this.entityManager.createEntityGraph(VU360User.class);
 		Subgraph<Learner> learnerGraph = vu360UserGraph.addSubgraph("learner");
 
