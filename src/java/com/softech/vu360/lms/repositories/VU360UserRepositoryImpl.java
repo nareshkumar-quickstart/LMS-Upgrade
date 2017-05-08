@@ -439,11 +439,6 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		return userList;
 	}
 
-	@Override
-	public VU360User updateUserWithLoad(VU360User updatedUser) {
-		return entityManager.merge(updatedUser);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VU360User> getUserByIds(String[] idl) {
@@ -833,5 +828,16 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		Query query = this.entityManager.createQuery("SELECT L.id FROM VU360User U JOIN U.learner L where U in :users");
 		query.setParameter("users", users);
 		return query.getResultList();
+	}
+
+	@Override
+	@Transactional
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO) {
+		Query query = this.entityManager.createNativeQuery("update VU360USER set LASTLOGONDATE=:param1, NUMLOGONS=:param2 where ID=:param3");
+		query.setParameter("param1", userVO.getLastLogonDate());
+		query.setParameter("param2", userVO.getNumLogons());
+		query.setParameter("param3", userVO.getId());
+		int updateCount=query.executeUpdate();
+		log.debug("nativeUpdateUser="+updateCount);
 	}
 }

@@ -831,6 +831,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 		return certificateBookmarkAssociationRepository.save(cba);
 	}
 
+	@Transactional
 	public CreditReportingFieldValueChoice saveChoice(
 			CreditReportingFieldValueChoice option) {
 		// return accreditationDAO.saveChoice(option);
