@@ -154,6 +154,17 @@ public class VU360UserServiceImpl implements VU360UserService {
 	}
 
 	@Override
+	public VU360User findByIdForBatchImport(Long userId){
+		return vu360UserRepository.findByIdForBatchImport(userId);
+	}
+
+	@Override
+	public VU360User loadUserForBatchImport(Long userId){
+		return vu360UserRepository.loadUserForBatchImport(userId);
+	}
+
+
+	@Override
 	public VU360User getUserById(Long id) {
 		return vu360UserRepository.getUserById(id);
 	}

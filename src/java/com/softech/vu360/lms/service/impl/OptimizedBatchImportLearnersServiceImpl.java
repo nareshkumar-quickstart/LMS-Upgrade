@@ -269,14 +269,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
     public Map<String, String[]> validateDataSize (String data, Brander brander,boolean firstRowHeader)
     {
-    	 
+
         Map<String, String[]> errors = null;
         try {
         	long timeStart = System.currentTimeMillis();
 			long numberOfRecords = countLines(data,firstRowHeader);
 			long timeEnd = System.currentTimeMillis();
 			log.debug("TOTAL TIME TAKEN IN Checking Number OF LINES  :: "+getTimeDifference(timeStart, timeEnd));
-			
+
 			if(numberOfRecords<1 || numberOfRecords > NUMBER_OF_ALLOWED_RECORDS )
 			{
 				log.error("ERROR : data size is greater than max size allowed");
@@ -288,27 +288,27 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-       
+
         return errors;
     }
-    
+
     public static long countLines(String file,boolean firstRowHeader) throws IOException
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(file.getBytes())));
-        
+
         long lineCount = 0;
         char[] buffer = new char[4096];
         while(reader.readLine()!=null)
         {
         	 lineCount++;
-             
+
         }
         reader.close();
 
 //        if header is no then should not subtract -1 becasue it is subtracting one for header
         if(firstRowHeader)
         	--lineCount;
-        	
+
         return lineCount;
     }
 
@@ -329,7 +329,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return errors;
     }
-    
+
     public boolean validDelimiters (String header, String delimiter)
     {
     	// Added by Dyutiman :: header.contains(delimiter) is not working in case of pipe(|)
@@ -454,7 +454,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         try
         {
             logMethod("importUsersFromBatchFile", true);
-
+            loggedInUser = vu360UserService.findByIdForBatchImport(loggedInUser.getId());
             Map<Object, Object> context = new HashMap<Object, Object>();
             Map<Object, Object>  errorMsg = new HashMap<Object, Object> ();
             OptimizedBatchImportLearnersSummary batchImportResultSummary = new OptimizedBatchImportLearnersSummary();
@@ -463,19 +463,19 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             	batchImportResultSummary.setUpdateExistingUser(true);
             else
             	batchImportResultSummary.setUpdateExistingUser(false);
-            
+
             //Pre-processing the data import to determine if NERC field import is required.
             //http://jira.360training.com/browse/LMS-10568
             CreditReportingField NERCField = NERCBatchImportUtil.getNERCFieldIfExist(accreditationService);
             //boolean NERCFieldIsReuired = (NERCField != null && NERCField.isActive() && NERCField.isFieldRequired());
-            
+
             //http://jira.360training.com/browse/LMS-12908
             // Objective of this field was to check if field is exists and 'Required' but
             // for ticket LMS-12908 restriction of Required is removed and now this field check existence
-            // field name is still same 'NERCFieldIsReuired' but its purpose is changed from Required to Existence   
+            // field name is still same 'NERCFieldIsReuired' but its purpose is changed from Required to Existence
             boolean NERCFieldIsReuired = isNERCFieldRequired(NERCField);
             int NERCFieldColumnIndex = -1;
-            
+
             List<OptimizedBatchImportLearnersErrors> batchImportErrors = new ArrayList<OptimizedBatchImportLearnersErrors>();
             OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext = new
             OptimizedBatchImportLearnersProcessorThreadSharedContext();
@@ -503,12 +503,12 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     String header = csvFileDataReader.readLine();
                     if(header != null)
                     		headerColumns=this.splitStringWithQuotes(header, delimiter);
-                    
+
 //                    if( NERCFieldIsReuired ) {
                     	NERCFieldColumnIndex = NERCBatchImportUtil.deteremineNERCColumnIndex(headerColumns, NERCField);
 //                    }
-                    
-                    
+
+
                     customFieldsWithIndicesInFileMap = getCustomFieldsWithIndicesInFile(headerColumns , allCustomFields);
                     context.put("customFieldHash", customFieldsWithIndicesInFileMap);
 
@@ -528,7 +528,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 timer("getRootOrgGroupForCustomer", true);
                 OrganizationalGroup rootOrgGroup = orgGroupService.getRootOrgGroupForCustomer(currentCustomer.getId());
 //              rootOrgGroup = orgGroupService.loadForUpdateOrganizationalGroup(rootOrgGroup.getId());
-                
+
                 //@MariumSaud : New Method was added to load Organization Group inorder to avoid 'Could not find Session - Lazy Initialization Exception'
         		rootOrgGroup = orgGroupService.getOrgGroupById(rootOrgGroup.getId());
                 Map<String, OrganizationalGroup> allOrganizationalGroups = new HashMap<String, OrganizationalGroup>();
@@ -578,10 +578,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 sharedContext.setDefaultLearnerRole(defaultLearnerRole);
                 LMSRole defaultManagerRole = vu360UserService.getRoleByName("MANAGER",currentCustomer);
                 sharedContext.setDefaultManagerRole(defaultManagerRole);
-                
+
                 int securityRoleColumnIndex = getColumnNameIndex(headerColumns, "Security Role");
                 sharedContext.setSecurityRoleColumnIndex(securityRoleColumnIndex);
-                
+
                 try
                 {
                     csvFileDataReader = new BufferedReader(new StringReader(csvFileData));
@@ -610,22 +610,22 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 batchImportResultSummary.setAddedLearners(sharedContext.getAddedLearners());
                 batchImportResultSummary.setNullFile(false);
                 batchImportResultSummary.setPasswords(sharedContext.getPasswords());
-            } 
+            }
             logDebug("notifyLearnerOnRegistration = " + notifyLearnerOnRegistration);
-            
+
             /**
              * LMS-7920
              * @author sultan.mubasher
              */
-             
+
             if(currentCustomer.getDistributor().getDistributorPreferences().isEnableRegistrationEmailsForNewCustomers()
             		&& currentCustomer.getCustomerPreferences().isEnableRegistrationEmailsForNewCustomers())
             	sendEmail( loggedInUser, brander, loginURL, velocityEngine, batchImportResultSummary, currentCustomer,notifyLearnerOnRegistration);
-             
+
             context.put("errorMsg", errorMsg);
             context.put("customFieldHeaders", allCustomFields);
             context.put("batchImportResultSummary", batchImportResultSummary);
-            
+
             // code to launch enrollment process of all learners specified in batch import file along leanrergroup
             timer("enrollLearnersToLearnerGroup", true);
             enrollLearnersToLearnerGroupCourses(sharedContext);
@@ -638,7 +638,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         finally
         {
-            logMethod("importUsersFromBatchFile", false);            
+            logMethod("importUsersFromBatchFile", false);
         }
     }
 
@@ -647,7 +647,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 	 * @return
 	 */
 	private boolean isNERCFieldRequired(CreditReportingField NERCField) {
-		return (NERCField != null && NERCField.isActive() && NERCField.isFieldRequired());		
+		return (NERCField != null && NERCField.isActive() && NERCField.isFieldRequired());
 	}
 
     public void processUsingMultipleThreads (
@@ -764,7 +764,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
     @Override
     @Transactional
-    public void run ()
+    public void run()
     {
         try
         {
@@ -773,26 +773,26 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     Thread.currentThread();
             BufferedReader csvDataChunkReader = new BufferedReader(new StringReader(thisThread.getLocalContext().
                     getCsvFileDataChunk()));
-            
+
             String rowLine, rowColumns[];
             int recordNumber = thisThread.getLocalContext().getRecordNumberOffset();
-            
+
             //ignoring first line, because its just an additional new line, added while spliting data chunk
             csvDataChunkReader.readLine();
-            
+
             VU360User newUser;
             Learner learner;
             VU360User existingUser = null;
             Set<OrganizationalGroup> setOfOrgGroups = null;
             Set<LearnerGroup> setOfLearnerGroups;
-            
+
             Learner updateableLearner = null;
 
             while((rowLine = csvDataChunkReader.readLine()) != null)
             {
             	Map <Object, Object> errorMsg = new HashMap<Object, Object>();
             	OptimizedBatchImportLearnersErrors errorsInRecord = new OptimizedBatchImportLearnersErrors();
-            	
+
                 recordNumber++;
                 rowColumns = this.splitStringWithQuotes(rowLine, thisThread.getSharedContext().getDelimiter());
                 for (int i = 0; i < rowColumns.length; i++)
@@ -804,31 +804,32 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 // populate custom field values in errorMsg
                 getCustomFieldRowValues(rowColumns, thisThread.getSharedContext().getAllCustomFields(), errorMsg,
                         thisThread.getSharedContext().getCustomFieldsWithIndicesInFileMap());
-                
+
                 //checkMissingUserName(rowColumns, errorMsg);
                 setOfOrgGroups=new HashSet<OrganizationalGroup>();
                 /**
 					  LMS-6774
-		              existing user was previously updated correctly but when one record is inserted if that record is 
-		              duplicate with any other record the data will be inserted twice because getExistingUserList is not updated 
+		              existing user was previously updated correctly but when one record is inserted if that record is
+		              duplicate with any other record the data will be inserted twice because getExistingUserList is not updated
 		              as the first record is inserted
                 **/
-                
+
                 existingUser = getExistingUser(thisThread.getSharedContext().getExistingUserList(), rowColumns);
-                 
-                if (isValidRecord(thisThread.getSharedContext(), rowColumns, errorsInRecord, setOfOrgGroups, thisThread.getSharedContext().getLoggedInUser()))
+                VU360User loggedInUser = vu360UserService.findByIdForBatchImport(thisThread.getSharedContext().getLoggedInUser().getId());
+
+                if (isValidRecord(thisThread.getSharedContext(), rowColumns, errorsInRecord, setOfOrgGroups, loggedInUser))
                 {
                     setOfLearnerGroups = checkMissingLearnerGroupsAndReturnLearnerGroups(rowColumns, thisThread.getSharedContext());
-                        
+
                     //Looking up NERC field to determine if NERC field needs to be handeled.
                     CreditReportingField NERCField = thisThread.getSharedContext().getNERCField();
-                    
+
 //                    boolean courseWithNERCFieldExists = NERCBatchImportUtil.courseWithNERCFieldExists(
 //                        setOfLearnerGroups, NERCField, accreditationService);
                     boolean NERCFieldRequired = thisThread.getSharedContext().isNERCFieldRequired();
                     int NERCFieldIndex = thisThread.getSharedContext().getNERCFieldIndex();
                     boolean isSourceNERCCreditReportingValid = false;
-                    
+
 //                    if(NERCFieldRequired && NERCFieldIndex > 0 && courseWithNERCFieldExists) {
                     if(NERCFieldRequired && NERCFieldIndex !=-1 ) {
                         //Validate the NERC field value from the imported source data.
@@ -836,24 +837,24 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                             NERCField, rowColumns, NERCFieldIndex);
                         log.debug("is NERC source data value valid? " + isSourceNERCCreditReportingValid);
                     }
-                        
+
 	                logDebug("existingUser = " + existingUser + ", actionOnDuplicateRecords = " +
 	                        thisThread.getSharedContext().getActionOnDuplicateRecords());
-	
+
 	                if(existingUser != null)
-	                {	                	
+	                {
                 		// load update-able learner from org group
-                    	VU360User updateableUser = vu360UserService.loadForUpdateVU360User(existingUser.getId());
-                    	updateableLearner = updateableUser.getLearner();//orgGroupService.findLearnerInOrgGroupHierarchy(thisThread.getSharedContext().getRootOrganizationalGroup(), existingUser.getLearner());	
+                    	VU360User updateableUser = vu360UserService.loadUserForBatchImport(existingUser.getId());
+                    	updateableLearner = updateableUser.getLearner();//orgGroupService.findLearnerInOrgGroupHierarchy(thisThread.getSharedContext().getRootOrganizationalGroup(), existingUser.getLearner());
                         learner = updateableLearner;
-                        
+
                         if( isSourceNERCCreditReportingValid ){
                             log.debug("Importing data row with NERC credit reporting field.");
-                            updateUser(updateableUser, 
-                                errorMsg, 
-                                thisThread.getSharedContext(), 
-                                setOfOrgGroups, 
-                                setOfLearnerGroups, 
+                            updateUser(updateableUser,
+                                errorMsg,
+                                thisThread.getSharedContext(),
+                                setOfOrgGroups,
+                                setOfLearnerGroups,
                                 NERCField,
                                 NERCFieldIndex,
                                 rowColumns);
@@ -874,25 +875,25 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 	                {
                             if( isSourceNERCCreditReportingValid ){
                                 log.debug("Importing data row with NERC credit reporting field.");
-                                newUser = addUser(rowColumns, 
-                                    setOfOrgGroups, 
+                                newUser = addUser(rowColumns,
+                                    setOfOrgGroups,
                                     setOfLearnerGroups,
-                                    thisThread.getSharedContext(), 
-                                    NERCField, 
+                                    thisThread.getSharedContext(),
+                                    NERCField,
                                     NERCFieldIndex,
                                     errorMsg);
                             }else{
                                 log.debug("Importing data row without NERC credit reporting field.");
                                 newUser = addUser(rowColumns, setOfOrgGroups, setOfLearnerGroups,thisThread.getSharedContext(),errorMsg);
                             }
-                            
+
 	                    thisThread.getSharedContext().getExistingUserList().add(newUser);
 	                    //synchronized (thisThread.getSharedContext().getNumberOfImportedUsers())
 	                    //{
 	                        thisThread.getSharedContext().setNumberOfImportedUsers(
 	                                thisThread.getSharedContext().getNumberOfImportedUsers() + 1);
 	                    //}
-	                    thisThread.getSharedContext().getAddedLearners().add(newUser.getLearner());                    
+	                    thisThread.getSharedContext().getAddedLearners().add(newUser.getLearner());
 	                    logDebug(" ##### ADDED => " + newUser.getFirstName());
 	                }
                 }
@@ -902,7 +903,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     	thisThread.getSharedContext().getBatchImportErrors().add(errorsInRecord);
                     }
                 }
-                
+
                 logDebug("Added : " + thisThread.getSharedContext().getNumberOfImportedUsers() + ", " +
                         "Updated : " + thisThread.getSharedContext().getUpdatedLearners());
 
@@ -920,9 +921,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logMethod("run (" + Thread.currentThread().getName() + ")", false);
         }
     }
-    
-    private boolean isValidRecord(OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, 
-    		String[] rowColumns, OptimizedBatchImportLearnersErrors errorsInRecord, 
+
+    private boolean isValidRecord(OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext,
+    		String[] rowColumns, OptimizedBatchImportLearnersErrors errorsInRecord,
     		Set<OrganizationalGroup> setOfOrgGroups, VU360User existingUser){
     	//existingUser = getExistingUser(sharedContext.getExistingUserList(), rowColumns);
     	if (existingUser != null) {
@@ -936,14 +937,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 	    	errorsInRecord.setLastName(rowColumns[COL_LAST_NAME]);
 	    	errorsInRecord.setEmailAddress(rowColumns[COL_EMAIL]);
 	    	errorsInRecord.setUserName(rowColumns[COL_USERNAME]);
-	    	 
+
 	    	if(((sharedContext.getActionOnDuplicateRecords() != null &&
-	                !sharedContext.getActionOnDuplicateRecords().equalsIgnoreCase("update")) 
+	                !sharedContext.getActionOnDuplicateRecords().equalsIgnoreCase("update"))
 	                || sharedContext.getActionOnDuplicateRecords() == null)){
 	    		errorsInRecord.setUserAlreadyExists(true);
 	    		return false;
 	    	}
-	    	
+
 	    	else if (sharedContext.getActionOnDuplicateRecords() != null &&
 	                sharedContext.getActionOnDuplicateRecords().equalsIgnoreCase("update")) {
 	    		if(!currentCustomerUser) {
@@ -952,12 +953,12 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 	    		}
 	    	}
     	}
-    	  
-    	Map <Object, Object> errorMsg = new HashMap<Object, Object>();	
+
+    	Map <Object, Object> errorMsg = new HashMap<Object, Object>();
     	validateAddress(rowColumns, sharedContext.getBrander(), errorMsg);
 		if (errorMsg.get("invalidZip") != null) {
 			String invalid = (String)errorMsg.get("invalidZip");
-			
+
 			if (invalid.equals("invalidZip")){
 				errorsInRecord.setInvalidZip(true);
 			}
@@ -969,33 +970,34 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 			}
 			return false;
 		}
-		
+
         setOfOrgGroups.addAll(checkMissingOrgGroupsAndReturnOrgGroups(errorMsg, rowColumns,sharedContext,existingUser));
-        
+
         if(setOfOrgGroups.isEmpty()) {
         	errorsInRecord.setOrgGroupMissing(true);
         	return false;
         }
-        
+
         if (activeDirectoryService.findADUser(rowColumns[COL_USERNAME]) && vu360UserService.findUserByUserName(rowColumns[COL_USERNAME]) == null){
     		errorsInRecord.setUserAlreadyExistsInAD(true);
     		return false;
     	}
-        
+
         return true;
     }
-    
-    private boolean isCurrentCustomerUser(VU360User existingUser, String[] rowColumns, 
+
+    private boolean isCurrentCustomerUser(VU360User existingUser, String[] rowColumns,
     		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext){
 
         //long fileCustomerId = existingUser.getLearner().getCustomer().getId();
        //long currentCustomerId = sharedContext.getCurrentCustomer().getId();
-    	
-    	//Added by Faisal.Pathan for ticket ENGSUP-32354  	
+
+    	//Added by Faisal.Pathan for ticket ENGSUP-32354
     	if( rowColumns!=null && rowColumns[COL_USERNAME]!=null && !rowColumns[COL_USERNAME].isEmpty()){
 	    	List<VU360User> existingUserList =sharedContext.getExistingUserList();
 			if (existingUserList != null && !existingUserList.isEmpty()) {
 				for (VU360User user : existingUserList) {
+				    user = vu360UserService.findByIdForBatchImport(user.getId());
 					if (user!=null && user.getUsername()!=null && user.getUsername().equals(rowColumns[COL_USERNAME])) {
 						if (!isCustomersSame(existingUser, user)) {
 							logDebug("USERNAME ALREADY EXISTS ON ANOTHER CUSTOMER");
@@ -1009,66 +1011,66 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     	logDebug("ERROR: NO DATA PRESENT ON CURRENT USER");
         return false;
     }
-    
 
-    
+
+
     /**
-     * <p>To validate if learner's customer is the same as the customer of the logged in user during Batch import.</p>  
+     * <p>To validate if learner's customer is the same as the customer of the logged in user during Batch import.</p>
      * @author faisal.pathan
-     * @param existingUser 
+     * @param existingUser
      * @param sharedContext
      * @return boolean
      * @RelatedTickets ENGSUP-32354
      */
 	private boolean isCustomersSame(VU360User existingUser,VU360User user) {
-		
+
 		if (existingUser != null && user!=null) {
-			
+
 			/**
-			 * 
-		
+			 *
+
 			Customer loggedInUserCustomer = null;
 			Customer loggedInUserLearnerCustomer = null;
 			Customer userCustomer = null;
-			
+
 			LMSRole loggedInUserLmsRole = existingUser.getLogInAsManagerRole();
 			Learner loggedInUserLearner = existingUser.getLearner();
 			Learner userLearner = user.getLearner();
-			
+
 			if (loggedInUserLmsRole != null) {
 				loggedInUserCustomer = loggedInUserLmsRole.getOwner();
 			}
-			
+
 			if (loggedInUserLearner != null) {
 				loggedInUserLearnerCustomer = loggedInUserLearner.getCustomer();
 			}
-			
+
 			if (userLearner != null) {
 				userCustomer = userLearner.getCustomer();
 			}
-			
+
 			if (userCustomer != null) {
-				//If an Administrator logged in to customer's Manager mode uses the batch import   
+				//If an Administrator logged in to customer's Manager mode uses the batch import
 				if (loggedInUserCustomer != null) {
 					if (!(loggedInUserCustomer.getId().equals(userCustomer.getId()))) {
 						return false;
 					}
-						
+
 				//If customer is using batch import through its own Manager mode
 				}else if (loggedInUserLearnerCustomer !=null){
 					if (!(loggedInUserLearnerCustomer.getId().equals(userCustomer.getId())))
 						return false;
 				}
 			}
-			
+
 			 */
-			 
-			//If an Administrator logged in to customer's Manager mode uses the batch import   
+
+			//If an Administrator logged in to customer's Manager mode uses the batch import
 			if (existingUser.getLogInAsManagerRole() != null && existingUser.getLogInAsManagerRole().getOwner() != null) {
-				
+
 				// Fix by technical services
 				if (!(existingUser.getLogInAsManagerRole().getOwner().getId().equals(user.getLearner().getCustomer().getId())))
-			    
+
 				//if (existingUser.getLogInAsManagerRole().getOwner().getId() != user.getLearner().getCustomer().getId())
 					return false;
 			//If customer is using batch import through its own Manager mode
@@ -1078,16 +1080,16 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 					//if (existingUser.getLearner().getCustomer().getId() != user.getLearner().getCustomer().getId())
 					return false;
 			}
-			
+
 		}
 		return true;
 	}
-	
+
     private void assignTrainingManager(VU360User updateableUser,String[] rowColumns,
     	    OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext,
     		LMSRole managerRole
     ){
-    	
+
         StringTokenizer managedOrgGroupTokenizer = new StringTokenizer(rowColumns[sharedContext.getManagerOrgGroupIndex()],
                 ":");
         String orgGroupHierarchy;
@@ -1095,14 +1097,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         Map<String,OrganizationalGroup> allOrgGroups = sharedContext.getAllOrganizationalGroups();
         while( managedOrgGroupTokenizer.hasMoreTokens() )
         {
-            // getting the organizational group path 
+            // getting the organizational group path
             orgGroupHierarchy = managedOrgGroupTokenizer.nextToken().trim();
             OrganizationalGroup organizationalGroup = allOrgGroups.get(orgGroupHierarchy.toUpperCase());
             orgGroups2Manage.add(organizationalGroup);
         }
 //        if(!updateableUser.getLmsRoles().contains(managerRole))//safety check
         	updateableUser.addLmsRole(managerRole);
-        
+
         TrainingAdministrator trainingAdministrator = updateableUser.getTrainingAdministrator();
         if(trainingAdministrator == null)
         {
@@ -1165,7 +1167,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         setAccountLocked(newUser, accountLockedIndex, rowColumns, accountLocked);
         // checking if user account is visible on reports
         setAccountVisibleOnReport(newUser, accountVisibleOnReportIndex, rowColumns, accountVisible);
-        
+
         newUser.setAcceptedEULA(false);
         newUser.setNewUser(true);
         newUser.setChangePasswordOnLogin( changePasswordOnLogin );  // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
@@ -1195,8 +1197,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         setAccountLocked(user, accountLockedIndex, rowColumns, accountLocked);
         // checking if user account is visible on reports
         setAccountVisibleOnReport(user, accountVisibleOnReportIndex, rowColumns, accountVisible);
-    
-        /* 
+
+        /*
          * Update LearnerProfile properties by the values of batch file
          */
         LearnerProfile profile = user.getLearner().getLearnerProfile();
@@ -1216,9 +1218,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         a1.setState(rowColumns[COL_STATE]);
         a1.setZipcode(rowColumns[COL_ZIPCODE]);
         a1.setCountry(rowColumns[COL_COUNTRY]);
-        
+
         user.getLearner().setLearnerProfile(profile);
-        
+
     }
     private void setAccountLocked(VU360User user, int accountLockedIndex, String[] rowColumns,boolean accountLocked){
         if(accountLockedIndex!=-1 && rowColumns.length > accountLockedIndex && StringUtils.isNotBlank(rowColumns[accountLockedIndex]))
@@ -1230,7 +1232,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             	accountLocked = false;//override value passed in argument
             }else{
             	log.error("Invalid value specified for Account Lockeed = "+ rowColumns[accountLockedIndex]);
-            }            
+            }
             logDebug("Account Locked = " + accountLocked);
         }
         user.setAccountNonLocked(!accountLocked);
@@ -1257,10 +1259,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             int recordNumber,
             String[] rowColumns,
             List<CustomField> allCustomFields,
-            Brander brander, 
+            Brander brander,
             OptimizedBatchImportLearnersErrors batchImportError,
             CreditReportingField nercField,
-            int nercFieldColumnIndex 
+            int nercFieldColumnIndex
     )
     {
     	batchImportError.setRecordNumber(recordNumber);
@@ -1306,7 +1308,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             if( isValidRecord.get("invalidEmailAddress") ) {
                 batchImportError.setInvalidEmailAddress(true);
             }
-            
+
             /*Setting up values */
             	batchImportError.setFirstName(errorMsg.get("firstName").toString());
             	batchImportError.setLastName(errorMsg.get("lastName").toString());
@@ -1315,10 +1317,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             	batchImportError.setCountry(errorMsg.get("country").toString());
             	batchImportError.setState(errorMsg.get("state").toString());
             	batchImportError.setZip(errorMsg.get("zip").toString());
-            
-            
+
+
             /* End setting up values */
-            
+
             if(allCustomFields != null)
                 for(CustomField cf : allCustomFields )
                 {
@@ -1346,7 +1348,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     	batchImportError.getCustomFields().put(cf.getFieldLabel(),
                     			cf.getFieldLabel() + " : " +brander.getBrandElement("lms.batchImportUsers.MultiSelectRequired"));
                 }
-            
+
             if(nercFieldColumnIndex>0 && nercField !=null){
             	if(nercField instanceof TelephoneNumberCreditReportingField){
             		if(isValidRecord.get(nercField.getFieldLabel()+"-telephoneNumberRequiredError") !=null){
@@ -1356,7 +1358,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             		else if(isValidRecord.get(nercField.getFieldLabel()+"-telephoneNumberValidationError") !=null){
             			batchImportError.getReportingFields().put(nercField.getFieldLabel(),
                     			nercField.getFieldLabel() + " : " +brander.getBrandElement("lms.batchImportUsers.TelephoneNumberInvalid"));
-            		}            		
+            		}
             	}
             }
         }
@@ -1379,7 +1381,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             learner.setCustomer(sharedContext.getCurrentCustomer());
             learner.setVu360User(newUser);
             newUser.setLearner(learner);
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
             setUserProperties(newUser, rowColumns, sharedContext.isAccountLocked(),
             		sharedContext.isAccountVisible(),sharedContext.getAccountLockedIndex(),sharedContext.getAccountVisibleOnReportIndex(), sharedContext.isChangePasswordOnLogin());
@@ -1391,9 +1393,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             setLearnerAndLearnerProfileProperties(learner, learnerProfile, rowColumns,
             		sharedContext.getCustomFieldsWithIndicesInFileMap(), addresses,
             		sharedContext.getCurrentCustomer());
-            
+
             /**
-             * 
+             *
              INT-3460
             newUser.addLmsRole(sharedContext.getDefaultLearnerRole());
             // Manage Org Group Functionality
@@ -1405,8 +1407,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 }
             }
             */
-            
-            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex(); 
+
+            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex();
             if(securityRoleColumnIndex > 0 ) {   // Security Role column exist
             	  try {
                   	boolean securityRoleResult =  processSecurityRoles(newUser, sharedContext, rowColumns);
@@ -1415,10 +1417,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                   	String errorMessage = e.getMessage();
                   	logDebug("Error in assigning security Role: " + errorMessage);
                   }
-            } 
-            
+            }
+
             /**
-             * If no role is present in Security Role column while creating new user then default learner role is 
+             * If no role is present in Security Role column while creating new user then default learner role is
              * assigned to user. If no role is present in Security Role column then we get lmsRoles set null or empty.
              */
             Set<LMSRole> lmsRoles = newUser.getLmsRoles();
@@ -1434,7 +1436,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
             this.updateAssociationOfOrgGroupsAndLearnerGroups(learner, setOfOrgGroups, setOfLearnerGroups,sharedContext, true);
             logMethod("addUser", true);
-            
+
             // For Enrolling Learner into Courses
             // List<Learner> learners = new ArrayList<Learner>();
             // learners.add(learner);
@@ -1447,7 +1449,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logMethod("addUser", false);
         }
     }
-    
+
     private VU360User addUser (
             String[] rowColumns,
             Set<OrganizationalGroup> setOfOrgGroups,
@@ -1467,7 +1469,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             learner.setCustomer(sharedContext.getCurrentCustomer());
             learner.setVu360User(newUser);
             newUser.setLearner(learner);
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
             setUserProperties(newUser, rowColumns, sharedContext.isAccountLocked(),
             		sharedContext.isAccountVisible(),sharedContext.getAccountLockedIndex(),sharedContext.getAccountVisibleOnReportIndex(), sharedContext.isChangePasswordOnLogin());
@@ -1479,9 +1481,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             setLearnerAndLearnerProfileProperties(learner, learnerProfile, rowColumns,
             		sharedContext.getCustomFieldsWithIndicesInFileMap(), addresses,
             		sharedContext.getCurrentCustomer());
-            
+
             /**
-             * 
+             *
              INT-3460
             newUser.addLmsRole(sharedContext.getDefaultLearnerRole());
             // Manage Org Group Functionality
@@ -1493,8 +1495,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 }
             }
             */
-            
-            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex(); 
+
+            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex();
             if(securityRoleColumnIndex > 0 ) {   // Security Role column exist
             	  try {
                   	boolean securityRoleResult =  processSecurityRoles(newUser, sharedContext, rowColumns);
@@ -1503,8 +1505,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                   	String errorMessage = e.getMessage();
                   	logDebug("Error in assigning security Role: " + errorMessage);
                   }
-            } 
-            
+            }
+
             Set<LMSRole> lmsRoles = newUser.getLmsRoles();
             if (CollectionUtils.isEmpty(lmsRoles) || !isRoleTypeExist(lmsRoles, LMSRole.ROLE_LEARNER)) {
             	newUser.addLmsRole(sharedContext.getDefaultLearnerRole());
@@ -1518,20 +1520,20 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
             this.updateAssociationOfOrgGroupsAndLearnerGroups(learner, setOfOrgGroups, setOfLearnerGroups,sharedContext, true);
             logMethod("addUser", true);
-            
+
             if(NERCFieldIndex > -1) {
             	String NERCValue = rowColumns[NERCFieldIndex];
-                
+
                 NERCBatchImportUtil.saveNERCFieldValue(learnerProfile, NERCField, NERCValue, learnerService);
             }
-            
+
             sharedContext.updateLearnerGroupMap(learner, setOfLearnerGroups);
-                
+
             // For Enrolling Learner into Courses
             // List<Learner> learners = new ArrayList<Learner>();
             // learners.add(learner);
             // enrollLearnersToLearnerGroupCourses(learners,setOfLearnerGroups, sharedContext.getBrander(), sharedContext.getLoggedInUser(),sharedContext.getCurrentCustomer(),sharedContext.getVelocityEngine());
-            
+
 			return learner.getVu360User();
         }
         finally
@@ -1539,7 +1541,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logMethod("addUser", false);
         }
     }
-    
+
     private void updateUser (
             VU360User updateableUser,
             Map<Object, Object> errorMsg,
@@ -1553,26 +1555,26 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         {
             logMethod("updateUser", true);
             errorMsg.put("updateLearner", "true");
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
-        	// update user, learner profile, address properties from batch file values  	
+        	// update user, learner profile, address properties from batch file values
         	setUserPropertiesForExistingRecord(updateableUser, rowColumns, sharedContext.isAccountLocked(),
         			sharedContext.isAccountVisible(),sharedContext.getAccountLockedIndex(),sharedContext.getAccountVisibleOnReportIndex(), sharedContext.isChangePasswordOnLogin());
-        	// update custom field values in learner profile 
-        	setCustomFieldValuesInLearnerProfile(rowColumns, sharedContext.getCustomFieldsWithIndicesInFileMap(), updateableUser.getLearner().getLearnerProfile());	
-            
+        	// update custom field values in learner profile
+        	setCustomFieldValuesInLearnerProfile(rowColumns, sharedContext.getCustomFieldsWithIndicesInFileMap(), updateableUser.getLearner().getLearnerProfile());
+
             this.setAccountLocked(updateableUser, sharedContext.getAccountLockedIndex(), rowColumns, sharedContext.isAccountLocked());
             this.setAccountVisibleOnReport(updateableUser, sharedContext.getAccountVisibleOnReportIndex(), rowColumns, sharedContext.isAccountVisible());
             updateableUser.setPassWordChanged(true);
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
             updateableUser.setChangePasswordOnLogin( sharedContext.isChangePasswordOnLogin() );
-            
-            //Update Profile before Remove Training Manger since it generate exception after removal. 
+
+            //Update Profile before Remove Training Manger since it generate exception after removal.
             learnerService.updateLearnerProfile(updateableUser.getLearner().getLearnerProfile());
-            
+
             /**
-             * 
+             *
              INT-3460
             if(sharedContext.getManagerOrgGroupIndex()!=-1 && rowColumns.length > sharedContext.getManagerOrgGroupIndex())
             {
@@ -1587,8 +1589,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 }
             }
             */
-            
-            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex(); 
+
+            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex();
             if(securityRoleColumnIndex > 0 ) {   // Security Role column exist
             	try {
                   	boolean securityRoleResult =  processSecurityRoles(updateableUser, sharedContext, rowColumns);
@@ -1602,21 +1604,21 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logDebug("updating learner having id = "+updateableUser.getLearner().getId()+" profile id = "+
             		updateableUser.getLearner().getLearnerProfile().getId() +" address id = "+
             		updateableUser.getLearner().getLearnerProfile().getLearnerAddress().getId()+" user id = "+updateableUser.getId());
-           
+
             VU360User updatedUser = learnerService.updateUserFromBatchFile(updateableUser);
-           
-            
+
+
             //learnerService.updateLearnerProfile(updateableUser.getLearner().getLearnerProfile());
-            Learner updatedLearner = updatedUser.getLearner(); 
+            Learner updatedLearner = updatedUser.getLearner();
             logDebug("learner updated.");
-            
+
             /*this.updateAssociationOfOrgGroupsAndLearnerGroups(updateableUser.getLearner(), setOfOrgGroups, setOfLearnerGroups,
                     sharedContext, false);*/
             this.updateAssociationOfOrgGroupsAndLearnerGroups(updatedLearner, setOfOrgGroups, setOfLearnerGroups,
                     sharedContext, false);
-            
-            
-          
+
+
+
             //For Enrolling Learner into Courses
 //            List<Learner> learners = new ArrayList<Learner>();
 //			learners.add(updateableUser.getLearner());
@@ -1644,27 +1646,27 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         {
             logMethod("updateUser", true);
             errorMsg.put("updateLearner", "true");
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
-        	// update user, learner profile, address properties from batch file values  	
+        	// update user, learner profile, address properties from batch file values
         	setUserPropertiesForExistingRecord(updateableUser, rowColumns, sharedContext.isAccountLocked(),
         			sharedContext.isAccountVisible(),sharedContext.getAccountLockedIndex(),sharedContext.getAccountVisibleOnReportIndex(), sharedContext.isChangePasswordOnLogin());
-        	// update custom field values in learner profile 
-        	setCustomFieldValuesInLearnerProfile(rowColumns, sharedContext.getCustomFieldsWithIndicesInFileMap(), updateableUser.getLearner().getLearnerProfile());	
+        	// update custom field values in learner profile
+        	setCustomFieldValuesInLearnerProfile(rowColumns, sharedContext.getCustomFieldsWithIndicesInFileMap(), updateableUser.getLearner().getLearnerProfile());
 
             this.setAccountLocked(updateableUser, sharedContext.getAccountLockedIndex(), rowColumns, sharedContext.isAccountLocked());
             this.setAccountVisibleOnReport(updateableUser, sharedContext.getAccountVisibleOnReportIndex(), rowColumns, sharedContext.isAccountVisible());
             updateableUser.setPassWordChanged(true);
-            
+
             // [9/23/2010] LMS-4958 :: Manager Mode > Batch Import: Option to Change Password on Next Login
             updateableUser.setChangePasswordOnLogin( sharedContext.isChangePasswordOnLogin() );
-            
-            
-            //Update Profile before Remove Training Manger since it generate exception after removal. 
+
+
+            //Update Profile before Remove Training Manger since it generate exception after removal.
             learnerService.updateLearnerProfile(updateableUser.getLearner().getLearnerProfile());
-            
+
             /**
-             * 
+             *
              INT-3460
             if(sharedContext.getManagerOrgGroupIndex()!=-1 && rowColumns.length > sharedContext.getManagerOrgGroupIndex())
             {
@@ -1679,8 +1681,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 }
             }
             */
-            
-            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex(); 
+
+            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex();
             if(securityRoleColumnIndex > 0 ) {   // Security Role column exist
             	try {
                   	boolean securityRoleResult =  processSecurityRoles(updateableUser, sharedContext, rowColumns);
@@ -1694,25 +1696,25 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logDebug("updating learner having id = "+updateableUser.getLearner().getId()+" profile id = "+
             		updateableUser.getLearner().getLearnerProfile().getId() +" address id = "+
             		updateableUser.getLearner().getLearnerProfile().getLearnerAddress().getId()+" user id = "+updateableUser.getId());
-           
+
             VU360User updatedUser = learnerService.updateUserFromBatchFile(updateableUser);
-           
-            
+
+
             //learnerService.updateLearnerProfile(updateableUser.getLearner().getLearnerProfile());
-            Learner updatedLearner = updatedUser.getLearner(); 
+            Learner updatedLearner = updatedUser.getLearner();
             logDebug("learner updated.");
-            
+
             this.updateAssociationOfOrgGroupsAndLearnerGroups(updateableUser.getLearner(), setOfOrgGroups, setOfLearnerGroups,
                     sharedContext, false);
 
             NERCBatchImportUtil.updateNERCCreditFieldValue(
-                setOfLearnerGroups, 
-                NERCCreditReportingField, 
-                rowColumns[NERCColumnIndex], 
+                setOfLearnerGroups,
+                NERCCreditReportingField,
+                rowColumns[NERCColumnIndex],
                 updatedLearner.getLearnerProfile(),
                 accreditationService,
                 learnerService);
-          
+
             //For Enrolling Learner into Courses
 //            List<Learner> learners = new ArrayList<Learner>();
 //			learners.add(updateableUser.getLearner());
@@ -1792,7 +1794,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 {
                     learnerGroupName = learnerGroupTokenizer.nextToken().trim();
                     logDebug("learnerGroupName = " + learnerGroupName);
-                    
+
                     synchronized (sharedContext.getAllLearnerGroups())
                     {
                         LearnerGroup learnerGroup = sharedContext.getAllLearnerGroups().
@@ -1849,13 +1851,13 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 while( orgGroupTokenizer.hasMoreTokens() )
                 {
                     orgGroupHierarchy = orgGroupTokenizer.nextToken().trim();
-                    logDebug("orgGroupHierarchy = " + orgGroupHierarchy);                    
+                    logDebug("orgGroupHierarchy = " + orgGroupHierarchy);
                  // remove white spaces before and after >
                     String hierarchy = "";
                     String[] groupNames = orgGroupHierarchy.split(GROUP_SPLITTER);
                     for(String orgGroupName : groupNames)
                     {
-                    	if(hierarchy=="")            		
+                    	if(hierarchy=="")
                     		hierarchy=orgGroupName.trim();
                     	else
                     		hierarchy=hierarchy+">"+orgGroupName.trim();
@@ -1864,23 +1866,23 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     //True if Organization exists
                     Boolean isOrgExists=false;
             		Map<String,OrganizationalGroup> managedGroupsMap=new HashMap<String, OrganizationalGroup>();
-            		
+
             		if(loggedInUser.getTrainingAdministrator()!=null && !loggedInUser.getTrainingAdministrator().getManagedGroups().isEmpty()){
             			for(OrganizationalGroup managedGroups : loggedInUser.getTrainingAdministrator().getManagedGroups()){
             				managedGroupsMap.put(managedGroups.getName().toUpperCase(), managedGroups);
             			}
             		}
-            		
+
             		OrganizationalGroup organizationalGroup = null;
             		String[] orgInBatchFile=orgGroupHierarchy.split(">");
-            		            		
+
             		for(int i=0;i <orgInBatchFile.length ; i++){
             				if(managedGroupsMap.containsKey(orgInBatchFile[i].toUpperCase())){
             					isOrgExists=true;
             					organizationalGroup=managedGroupsMap.get(orgInBatchFile[i].toUpperCase());
             				}
             		}
-            		
+
 //                  if organization is not available then create it
                     if(!isOrgExists)
                     {
@@ -1905,7 +1907,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     {
 	                        setOfOrgGroups.add(organizationalGroup);
 	                        logDebug("orgGroup found in shared context");
-                    	
+
                     }
                 }
             }
@@ -1957,7 +1959,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     log.info("hierarchy = " + hierarchy);
                 }
                 else
-                    log.info("found");                
+                    log.info("found");
                 log.info("hierarchy.length() = "  + hierarchy.length());
                 log.info("organizationalGroup = " + organizationalGroup);
             }
@@ -2074,9 +2076,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         errorMsg.put("country", rowColumns[COL_COUNTRY]);
         errorMsg.put("state", rowColumns[COL_STATE]);
         errorMsg.put("zip", rowColumns[COL_ZIPCODE]);
-        
-        
-        
+
+
+
         String shownPassword = "";
         for( int passwordLength = 0; passwordLength < rowColumns[COL_PASSWORD].length(); passwordLength ++ )
             shownPassword = shownPassword + "*";
@@ -2191,7 +2193,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return lmsRole;
     }
-    
+
     /*
      * This method being used in iteration and fetch default role for every single learner.
      * default role is by customer and enough to be fetched at once before Iteration of records in batch file.
@@ -2222,7 +2224,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 					}
 				}
 				if(!found){
-					profileValues.add(value);	
+					profileValues.add(value);
 				}
 			}
 			profileValues.removeAll(list2Remove);
@@ -2235,7 +2237,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
 	private void setCustomFieldValuesInLearnerProfile (
             String[] rowColumns,
-            Map<Integer, CustomField> customFieldsWithIndicesInFileMap, 
+            Map<Integer, CustomField> customFieldsWithIndicesInFileMap,
             LearnerProfile learnerProfile)
     {
         List<CustomFieldValue> customFieldValueList = new ArrayList<CustomFieldValue>();
@@ -2267,12 +2269,12 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             List<CustomField> allCustomFields,
             Brander brander,
             Set<Integer> invalidRecordLineNumbers,
-            int[] totalRecordCount, 
-            List<OptimizedBatchImportLearnersErrors> batchImportErrors, 
+            int[] totalRecordCount,
+            List<OptimizedBatchImportLearnersErrors> batchImportErrors,
             Customer currentCustomer,
             VU360User loggedInUser,
             CreditReportingField nercField,
-            int nercFieldColumnIndex            
+            int nercFieldColumnIndex
     ) throws IOException
     {
         try
@@ -2288,12 +2290,12 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             Map <Object, Object> errorMsg;
             int recordNumber = 0;
             String rootOrgGroupName = orgGroupService.getRootOrgGroupForCustomer(currentCustomer.getId()).getName();
-            
+
             while((rowLine = csvFileDataReader.readLine()) != null)
             {
                 recordNumber++;
                 rowColumns = this.splitStringWithQuotes(rowLine, delimiter);
-                
+
                 isValidRecord = isValidRow(rowColumns, customFieldsWithIndicesInFileMap, customFieldValueChoices, rootOrgGroupName,loggedInUser,nercField, nercFieldColumnIndex);
                 if(!isValidRecord.get("invalidRecord"))
                 {
@@ -2351,7 +2353,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             logMethod("fetchUserFromDB", true);
             userNameList.addAll(userNameSet);
             logDebug("finding all system learners with given user names...");
-            existingUserList.addAll(learnerService.findAllSystemLearners(userNameList));
+            existingUserList.addAll(learnerService.findAllSystemLearnersForBatchImport(userNameList));
             logDebug("done. existingUserList size is now " + existingUserList.size());
             userNameList.clear();
             masterUserNameSet.addAll(userNameSet);
@@ -2545,8 +2547,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             Map<Integer, CustomField> customFieldsWithIndicesInFileMap,
             Map<CustomField, List<CustomFieldValueChoice>> customFieldChoicesMap, String rootOrgGroupName,VU360User loggedInUser,
             CreditReportingField nercField,
-            int nercFieldColumnIndex            
-    ) 
+            int nercFieldColumnIndex
+    )
     {
             int column_count = 0;
 
@@ -2564,7 +2566,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             validRecord.put("missingUserGroup", false);
             validRecord.put("missingOrgGroup", false);
             validRecord.put("missingCountry", false);
-            
+
             for (String rec : record)
             {
                 column_count++;
@@ -2600,7 +2602,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                         validRecord.put("shortPassword", true);
                         validRecord.put("invalidRecord", true);
                 }
-                //TODO Learner group is not required field.. need to double check with new required	
+                //TODO Learner group is not required field.. need to double check with new required
 //                if(column_count == 15 && rec.equalsIgnoreCase("")){
 //                	validRecord.put("missingLearnerGroup", true);
 //                    validRecord.put("invalidRecord", true);
@@ -2610,7 +2612,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 	validRecord.put("missingOrgGroup", true);
                     validRecord.put("invalidRecord", true);
                 }
-//                 any restriction on user that the org group which he is entering should 
+//                 any restriction on user that the org group which he is entering should
                 if(column_count == 16 && !rec.equalsIgnoreCase("")){
                 	String rootOrgInFile = splitStringWithQuotes(rec, ":")[0];
                 	if(hasManagerSecurityRightsForOrganization(loggedInUser,rootOrgInFile)){
@@ -2692,7 +2694,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                     }
                 }
             }
-            
+
             if(nercFieldColumnIndex>0 && nercField !=null){
             	String nercData = record[nercFieldColumnIndex].trim();
             	if(nercField instanceof TelephoneNumberCreditReportingField){
@@ -2706,16 +2708,16 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             		}
             	}
             }
-            
+
             return validRecord;
     }
 
     @Transactional
 	private Boolean hasManagerSecurityRightsForOrganization(
 			VU360User loggedInUser,	String rootOrgInFile) {
- 
+
 		Map<String,String> managedGroupsMap=new HashMap<String, String>();
-		
+
 		List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 		loggedInUser.getTrainingAdministrator().setManagedGroups(tempManagedGroups);
 		if(loggedInUser.getTrainingAdministrator()!=null && !loggedInUser.getTrainingAdministrator().getManagedGroups().isEmpty()){
@@ -2807,15 +2809,15 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 	log.debug("CURRENT USER PASSWORD :: "+user.getPassword());
                     model.put("user", user);
                     /*START-BRANDING EMAILTEMPLATE WORK*/
-        			String templateText=brander.getBrandElement("lms.branding.email.accountDetails.templateText");			                            
+        			String templateText=brander.getBrandElement("lms.branding.email.accountDetails.templateText");
         			String loginUrl=lmsDomain.concat("/lms/login.do?brand=").concat(brander.getName());
-        			
-        			templateText=templateText.replaceAll("&lt;firstname&gt;",user.getFirstName());			                
+
+        			templateText=templateText.replaceAll("&lt;firstname&gt;",user.getFirstName());
                     templateText=templateText.replaceAll("&lt;lastname&gt;",user.getLastName());
                     templateText=templateText.replaceAll("&lt;username&gt;",user.getUsername());
-                    templateText=templateText.replaceAll("&lt;password&gt;",user.getPassword());            			                            
-                    templateText=templateText.replaceAll("&lt;loginurl&gt;", loginUrl);                                                
-                    
+                    templateText=templateText.replaceAll("&lt;password&gt;",user.getPassword());
+                    templateText=templateText.replaceAll("&lt;loginurl&gt;", loginUrl);
+
                     model.put("templateText", templateText);
         			/*END BRANDING EMAIL TEMPLATE WORK*/
                     mailCounter++;
@@ -2837,7 +2839,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             model.put("loggedInUser", loggedInUser);
             model.put("url", loginURL);
             model.put("brander", brander);
-            
+
             lmsDomain=FormUtil.getInstance().getLMSDomain(brander);
             model.put("lmsDomain",lmsDomain);
             model.put("batchImportResultSummary", batchImportResultSummary);
@@ -2866,7 +2868,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             log.error(e.getMessage(), e);
         }
     }
-    
+
     // deprecated
     private List<OrganizationalGroup> getOrgGroupToManage(String orgGroupColumnVal, Customer customer)
     {
@@ -2882,7 +2884,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     private Map<String, OrganizationalGroup> getOrganizationalGroupMap (Map<String, OrganizationalGroup> orgGroupMap, OrganizationalGroup orgGroup)
     {
     	//orgGroup = orgGroupService.loadForUpdateOrganizationalGroup(orgGroup.getId());
-    	
+
     	//@MariumSaud : New Method was added to load Organization Group inorder to avoid 'Could not find Session - Lazy Initialization Exception'
     	// occured when orgGroup.getChildrenOrgGroups() is called.
     	orgGroup = orgGroupService.getOrgGroupById(orgGroup.getId());
@@ -2894,7 +2896,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 orgGroupMap = this.getOrganizationalGroupMap(orgGroupMap, childOrgGroup);
         return orgGroupMap;
     }
-    
+
     synchronized private Map<String, LearnerGroup> getLearnerGroupsMap (Map<String, LearnerGroup> learnerGroupMap, OrganizationalGroup rootOrgGroup)
     {
 
@@ -2916,7 +2918,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     			for(LearnerGroup lg:learnerGroups){
     				if(learnerGroupMap.get(lg.getName().trim().toUpperCase())== null){
         				logDebug("setting LearnerGroup :"+lg.getName().trim().toUpperCase());
-        				learnerGroupMap.put(lg.getName().trim().toUpperCase(), lg);			
+        				learnerGroupMap.put(lg.getName().trim().toUpperCase(), lg);
     				}
     			}
     		}
@@ -2927,9 +2929,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     	}
     	return learnerGroupMap;
     }
-    
 
-    
+
+
     private Map<String, LearnerGroup> getLearnerGroupMap (Map<String, LearnerGroup> learnerGroupMap, OrganizationalGroup orgGroup)
     {
         if(orgGroup != null)
@@ -2945,7 +2947,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return learnerGroupMap;
     }
-    
+
     //TODO take better decisions on existing and new memeberships..
     @Transactional
     private void updateAssociationOfOrgGroupsAndLearnerGroups (
@@ -2956,22 +2958,22 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         logDebug("updating associations of learner groups...");
         orgGroupService.addRemoveLearnerGroupsForLearner(learner, setOfLearnerGroups);
         orgGroupService.addRemoveOrgGroupsForLearner(learner, setOfOrgGroups);
-        
+
     }
-    
+
 //    public OrganizationalGroup addLearnerInOrgGroups(OrganizationalGroup root,List<OrganizationalGroup> list, Learner learner){
 //    	Stack<OrganizationalGroup> orgStack = new Stack<OrganizationalGroup>();
 //    	orgStack.add(root);
-//    	
+//
 ////    	if(root.getChildrenOrgGroups()!=null || root.getChildrenOrgGroups().size()>0)
 ////    		orgStack.addAll(root.getChildrenOrgGroups());
-//    	
+//
 //    	OrganizationalGroup temp = null;
 //    	while(!orgStack.isEmpty()){
 //    		temp = orgStack.pop();
 //    		if(temp.getChildrenOrgGroups()!=null || temp.getChildrenOrgGroups().size()>0)
 //        		orgStack.addAll(temp.getChildrenOrgGroups());
-//    		
+//
 //    		for(OrganizationalGroup og:list){
 //    			if(og.getId().longValue()== temp.getId().longValue()){
 //    				if(!temp.getMembers().contains(learner))
@@ -2981,35 +2983,35 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 //       	}
 //    	return root;
 //    }
-//    
+//
     private void printOrgGroup(OrganizationalGroup og){
     	logDebug("\n" + og.toString());
     	for(OrganizationalGroup orgGroup : og.getChildrenOrgGroups())
     		printOrgGroup (orgGroup);
     }
-    
-       
-    public static boolean isEmailValid(String email){  
-    	boolean isValid = false;  
-       
-    	//	Initialize reg ex for email.  
-    	String expression = "^[\'\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";  
-    	CharSequence inputStr = email;  
-    //	Make the comparison case-insensitive.  
-    	Pattern pattern = Pattern.compile(expression,Pattern.CASE_INSENSITIVE);  
-    	Matcher matcher = pattern.matcher(inputStr);  
-    	if(matcher.matches()){  
-    		isValid = true;  
-    	}  
-    	return isValid;  
+
+
+    public static boolean isEmailValid(String email){
+    	boolean isValid = false;
+
+    	//	Initialize reg ex for email.
+    	String expression = "^[\'\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+    	CharSequence inputStr = email;
+    //	Make the comparison case-insensitive.
+    	Pattern pattern = Pattern.compile(expression,Pattern.CASE_INSENSITIVE);
+    	Matcher matcher = pattern.matcher(inputStr);
+    	if(matcher.matches()){
+    		isValid = true;
+    	}
+    	return isValid;
     }
-    
+
 	/**
 	 * Enroll learners for batch import
 	 * @param sharedContext
 	 */
     private void enrollLearnersToLearnerGroupCourses(
-    		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext) 
+    		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext)
     {
 		List<LearnerGroupItem> learnerGroupCourses = null;
 		Map<Long,LearnerGroup> uniqueLearnersLearnerGroups=new HashMap<Long,LearnerGroup>();
@@ -3017,14 +3019,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 		List<LearnerGroup> listLearnerGroup=new ArrayList<LearnerGroup>();//list of LearnerGroups in which learners are to be enrolled
 		Long[] learnerGroupCourseIds = null;
 		int counter = 0;
-		
+
 		//Creating list of LearnerGroups in which learners are to be enrolled not learnerGroups in which are learner are not enrolled
 		List<Long> learnerGroupId=sharedContext.getLearnerGroupIdsInWhichToEnrollLearner();
 		for(Long idlearnerGroup : learnerGroupId){
 			listLearnerGroup.add(learnerService.loadForUpdateLearnerGroup(idlearnerGroup));
 		}
-		
-		enrollLearnersWhichAreDuplicateInLearnerGroup(sharedContext,uniqueLearnersLearnerGroups, learnersToEnroll, listLearnerGroup);		
+
+		enrollLearnersWhichAreDuplicateInLearnerGroup(sharedContext,uniqueLearnersLearnerGroups, learnersToEnroll, listLearnerGroup);
 
 		// Job for those learners which are not duplicate in other Learner groups and only enrolled in one learner group
 		for(LearnerGroup lg:listLearnerGroup){
@@ -3039,26 +3041,26 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 				for(LearnerGroupItem item:learnerGroupCourses){
 					learnerGroupCourseIds[counter++]=item.getCourse().getId();
 				}*/
-				
+
 				//enrollmentService.enrollLearnersInCourses(learners, learnerGroupCourseIds, sharedContext.getLoggedInUser(), sharedContext.getCurrentCustomer(), sharedContext.getBrander());
 				enrollmentService.enrollLearnersInCoursesViaUserGroup(learners, lg.getLearnerGroupItems(), sharedContext.getLoggedInUser(), sharedContext.getCurrentCustomer(), sharedContext.getBrander());
 			}
 		}
-		
+
     }
 
 	private void enrollLearnersWhichAreDuplicateInLearnerGroup(
 			OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext,
 			Map<Long, LearnerGroup> uniqueLearnersLearnerGroups,
 			List<Learner> learnersToEnroll, List<LearnerGroup> listLearnerGroup) {
-		
+
 		Iterator<Learner> iterLearner=null;
 		Learner learnerOne=null;
 		for(LearnerGroup learnerGroup:listLearnerGroup){
 			iterLearner=sharedContext.getLearnersByLearnerGroup(learnerGroup).iterator();
 			while(iterLearner.hasNext()){
 				learnerOne=iterLearner.next();
-				
+
 				//[LMS-14829] - comments out incorrect loop
 				//for(LearnerGroup learnerGroupInner:listLearnerGroup){//have to check this learnerOne in other LearnerGroups for duplicate
 				//	if(learnerGroupInner.getId().equals(learnerGroup.getId())){// have to check for other learner groups that it exists in other or not
@@ -3080,9 +3082,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 				//}
 			}
 		}
-		
-		// Job For those records which where duplicate in other LearnerGroups and will be enrolled separately 
-		for(Learner learnersToEnrollInlearneGroups:learnersToEnroll) { 
+
+		// Job For those records which where duplicate in other LearnerGroups and will be enrolled separately
+		for(Learner learnersToEnrollInlearneGroups:learnersToEnroll) {
 			List<LearnerGroup> learnerGroupForLearner=new ArrayList<LearnerGroup>();
 			for(LearnerGroup learnerGroup:listLearnerGroup) {
 				if(learnerGroup != null){
@@ -3090,7 +3092,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 					if(uniqueLearnersLearnerGroups.get(Long.valueOf(learnersToEnrollInlearneGroups.getId()+""+learnerGroup.getId()))!=null)
 						learnerGroupForLearner.add((uniqueLearnersLearnerGroups.get(Long.valueOf(learnersToEnrollInlearneGroups.getId()+""+learnerGroup.getId()))));
 				}
-				
+
 			}
 			try{
 				enrollmentService.enrollLearnerInLearnerGroupsCourses(sharedContext.getLoggedInUser(), sharedContext.getCurrentCustomer(), learnersToEnrollInlearneGroups,learnerGroupForLearner , sharedContext.getBrander());
@@ -3100,8 +3102,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 			}
 		}
 	}
-    
-	
+
+
 	private boolean checkIflearnerExistInlearnersToEnrolllist(List<Learner> learnersToEnrollList, Learner learnerToAdd){
 		boolean alreadyExist = false;
 		if(learnerToAdd != null && learnersToEnrollList != null && learnersToEnrollList.size() > 0)	{
@@ -3113,7 +3115,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 		}
 		return alreadyExist;
 	}
-	
+
     public EntitlementService getEntitlementService() {
 		return entitlementService;
 	}
@@ -3147,7 +3149,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 			AsyncTaskExecutorWrapper asyncTaskExecutorWrapper) {
 		this.asyncTaskExecutorWrapper = asyncTaskExecutorWrapper;
 	}
-	
+
 	public LearnersToBeMailedService getLearnersToBeMailedService() {
 		return learnersToBeMailedService;
 	}
@@ -3156,7 +3158,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 			LearnersToBeMailedService learnersToBeMailedService) {
 		this.learnersToBeMailedService = learnersToBeMailedService;
 	}
-	
+
     /**
      * @param accreditationService the accreditationService to set
      */
@@ -3170,68 +3172,68 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
     @Override
     public Map<Object, Object> importUsersFromBatchFile(BatchImportData batchImportData) throws Exception {
         return importUsersFromBatchFile(
-                batchImportData.getCustomer(), 
-                batchImportData.getFile(), 
-                batchImportData.getDelimiter(), 
-                batchImportData.getActionOnDuplicateRecords(), 
-                batchImportData.isAccVisible(), 
-                batchImportData.isAccLocked(), 
-                batchImportData.isFirstRowHeader(), 
-                batchImportData.notifyLearnerOnRegistration(), 
-                batchImportData.getLoginURL(), 
+                batchImportData.getCustomer(),
+                batchImportData.getFile(),
+                batchImportData.getDelimiter(),
+                batchImportData.getActionOnDuplicateRecords(),
+                batchImportData.isAccVisible(),
+                batchImportData.isAccLocked(),
+                batchImportData.isFirstRowHeader(),
+                batchImportData.notifyLearnerOnRegistration(),
+                batchImportData.getLoginURL(),
                 batchImportData.getLoggedInUser(),
-                batchImportData.getVelocityEngine(), 
-                batchImportData.getAllCustomFields(), 
-                batchImportData.getBrander(), 
+                batchImportData.getVelocityEngine(),
+                batchImportData.getAllCustomFields(),
+                batchImportData.getBrander(),
                 batchImportData.changePasswordOnLogin());
     }
-        
+
     private int getColumnNameIndex(String[] headerColumns, String columnName) {
-    		
+
         for(int i=0; i<headerColumns.length; i++) {
         	String column = headerColumns[i].trim();
         	if (column.equals(columnName.trim())) {
-        		return i;	
+        		return i;
         	}
         }
-        return -1;	
+        return -1;
     } //end of getColumnNameIndex()
-            
+
     private LMSRole getLmsRoleByName(String securityRoleName, Customer customer) {
         LMSRole lmsRole = null;
         lmsRole = vu360UserService.getRoleByName(securityRoleName, customer);
         return lmsRole;
     }
-            
+
     private boolean isRoleTypeManager(LMSRole lmsRole) {
-        	
+
         if (lmsRole.getRoleType().equalsIgnoreCase(LMSRole.ROLE_TRAININGMANAGER)) {
         	return true;
         }
-        return false;  		
+        return false;
     } //end of isRoleTypeManager()
-        
+
     private boolean isRoleTypeLearner(LMSRole lmsRole) {
-        	
+
         if (lmsRole.getRoleType().equalsIgnoreCase(LMSRole.ROLE_LEARNER)) {
             return true;
         }
-        return false;   		
+        return false;
     } //end of isRoleTypeManager()
-        
-    private boolean processSecurityRoles(VU360User user, 
+
+    private boolean processSecurityRoles(VU360User user,
     		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, String[] rowColumns) throws Exception {
-        	
+
         try {
-        		
+
         	// Check Security Role Column Exist
-            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex(); 
+            int securityRoleColumnIndex = sharedContext.getSecurityRoleColumnIndex();
             if(securityRoleColumnIndex > 0 ) {
-                	
+
                 // find security role column value
-                String securityRoleColumnValue = rowColumns[securityRoleColumnIndex]; 
+                String securityRoleColumnValue = rowColumns[securityRoleColumnIndex];
                 if (StringUtils.isNotEmpty(securityRoleColumnValue) && StringUtils.isNotBlank(securityRoleColumnValue)) {
-                		
+
                 	Customer currentCustomer = sharedContext.getCurrentCustomer();
                 	Map<String, List<?>> securityRoleTypeMap = getSecurityRoleTypeMap(currentCustomer, securityRoleColumnValue);
                 	boolean result = processSecurityRoleTypeMap(user, sharedContext, rowColumns, securityRoleTypeMap);
@@ -3249,23 +3251,23 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-            
+
     private Map<String, List<?>> getSecurityRoleTypeMap(Customer customer, String securityRoleColumnValue) throws Exception {
-            
+
         if (StringUtils.isEmpty(securityRoleColumnValue) || StringUtils.isBlank(securityRoleColumnValue)) {
         	String errorMessage = "Security Role column value is null or blank";
         	throwException(errorMessage);
         }
-        	
+
         if (customer == null) {
         	String errorMessage = "Customer is mandotory to find LMSRole";
         	throwException(errorMessage);
         }
-        	
+
         Map<String, List<?>> securityRoleTypeMap = new HashMap<String, List<?>>();
         List<LMSRole> learnerRoleTypeList = new ArrayList<LMSRole>();
         List<LMSRole> managerRoleTypeList = new ArrayList<LMSRole>();
-        		
+
         try {
         	// multiple security role can provided with colon
             String[] securityRoleNames = securityRoleColumnValue.split(":");
@@ -3273,7 +3275,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             	for (String securityRoleName : securityRoleNames) {
                 	if (StringUtils.isNotEmpty(securityRoleName) && StringUtils.isNotBlank(securityRoleName)) {
                 		String securityRole = securityRoleName.trim();
-                	    	
+
                 	    // get Lms Role
                 		LMSRole lmsRole = getLmsRoleByName(securityRole, customer);
                 		if (lmsRole != null) {
@@ -3282,10 +3284,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
                 			} else if (isRoleTypeLearner(lmsRole)) {
                 				learnerRoleTypeList.add(lmsRole);
                 			}
-                		}	
+                		}
                 	}
                 } //end of for
-            } 
+            }
             securityRoleTypeMap.put("learnerRoleTypeList", learnerRoleTypeList);
             securityRoleTypeMap.put("managerRoleTypeList", managerRoleTypeList);
             return securityRoleTypeMap;
@@ -3293,28 +3295,28 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         	String errorMessage = e.getMessage();
         	throwException(errorMessage);
         }
-        return null;		  	
+        return null;
     }
-        
-    private boolean processSecurityRoleTypeMap(VU360User user, 
-    		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, String[] rowColumns, 
-        		
+
+    private boolean processSecurityRoleTypeMap(VU360User user,
+    		OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, String[] rowColumns,
+
     	Map<String, List<?>> securityRoleTypeMap) throws Exception {
-        	
+
         if (securityRoleTypeMap == null || securityRoleTypeMap.isEmpty()) {
         	String errorMessage = "Security Role Type Map is empty or null";
         	throwException(errorMessage);
         }
-        	
+
         try {
-        	
+
         	List<LMSRole> learnerRoleTypeList = (List<LMSRole>)securityRoleTypeMap.get("learnerRoleTypeList");
             List<LMSRole> managerRoleTypeList = (List<LMSRole>)securityRoleTypeMap.get("managerRoleTypeList");
-            	
+
             if (!learnerRoleTypeList.isEmpty()) {
             	unassignLmsRolesAndAddLmsRolesToUser(user, learnerRoleTypeList);
             }
-            	
+
             if ( !managerRoleTypeList.isEmpty()) {
             	processManagerRoleTypeList(user, sharedContext, rowColumns, managerRoleTypeList);
             } else {
@@ -3342,11 +3344,11 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-        
-    private boolean processManagerRoleTypeList(VU360User user, 
-        	OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, String[] rowColumns, 
+
+    private boolean processManagerRoleTypeList(VU360User user,
+        	OptimizedBatchImportLearnersProcessorThreadSharedContext sharedContext, String[] rowColumns,
         	List<LMSRole> lmsRoleTypeList) throws Exception {
-        
+
         try {
         	int managerOrgGroupIndex = sharedContext.getManagerOrgGroupIndex();
         	String managerOrgGroup = rowColumns[managerOrgGroupIndex];
@@ -3355,14 +3357,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 				unassignLmsRolesAndAddLmsRolesToUser(user, lmsRoleTypeList);
         		if(StringUtils.isNotBlank(managerOrgGroup)) {
         			assignTrainingManagerToUser(user, managerOrgGroup, allOrgGroups);
-        		} else { 
-					      
+        		} else {
+
         			// If Manger Org group value is empty then it should associate to Root group. Tyler suggestion
         			Customer currentCustomer = sharedContext.getCurrentCustomer();
 					OrganizationalGroup rootOrgGroup = orgGroupService.getRootOrgGroupForCustomer(currentCustomer.getId());
 					String rootOrgGroupName = rootOrgGroup.getName();
 					assignTrainingManagerToUser(user, rootOrgGroupName, allOrgGroups);
-        		}	
+        		}
         	}
         } catch (Exception e) {
         	String errorMessage = e.getMessage();
@@ -3370,12 +3372,12 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-        
-    private boolean assignTrainingManagerToUser(VU360User user, String managerOrgGroup, 
+
+    private boolean assignTrainingManagerToUser(VU360User user, String managerOrgGroup,
     		Map<String,OrganizationalGroup> allOrgGroups) throws Exception {
-        	
+
         try {
-        		
+
             List<OrganizationalGroup> orgGroups2Manage = getOrganizationalGroupListFromManagerOrgGroup(managerOrgGroup, allOrgGroups);
         	TrainingAdministrator trainingAdministrator = getUserTrainingAdministrator(user);
         	trainingAdministrator.setManagedGroups(orgGroups2Manage);
@@ -3385,14 +3387,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-        
+
     private boolean unassignLmsRolesAndAddLmsRolesToUser(VU360User user, List<LMSRole> lmsRolesList) throws Exception {
-        	
+
         try {
         	if (user != null && lmsRolesList != null && !lmsRolesList.isEmpty()) {
         		Set<String> roleTypeSet = getLmsRolesTypeSet(lmsRolesList);
         		unAssignUserFromAllLmsRolesOfTypeInSet(user, roleTypeSet);
-            	addLmsRolesToUser(user, lmsRolesList);    
+            	addLmsRolesToUser(user, lmsRolesList);
         	} else {
         		logDebug("User is null or LMS roles list is empty or null. Returning without unassigning and assigning lms roles.");
         	}
@@ -3402,13 +3404,13 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-        
+
     private Set<String> getLmsRolesTypeSet(List<LMSRole> roleList) {
-        	
+
         if (roleList == null || roleList.isEmpty()) {
         	return null;
         }
-        	
+
         Set<String> roleTypeSet = new HashSet<String>();
         for (LMSRole lmsRole : roleList) {
         	if (lmsRole != null) {
@@ -3420,18 +3422,18 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return roleTypeSet;
     }
-        
+
     private boolean unAssignUserFromAllLmsRolesOfTypeInSet(VU360User user, Set<String> roleTypeSet) throws Exception {
-        	
+
         if (roleTypeSet == null || roleTypeSet.isEmpty()) {
         	return false;
         }
         if (user == null) {
         	return false;
         }
-        	
+
         if (user.getId() != null) {    // If this is new user then we get id = null
-        		
+
         	Set<LMSRole> roles = user.getLmsRoles();
             Set<LMSRole> roles2Remove = new HashSet<LMSRole>();
         	try {
@@ -3443,8 +3445,8 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             	        	}
             	        }
             		}
-            	} 
-                	
+            	}
+
                 if(CollectionUtils.isNotEmpty(roles2Remove)){
                 	roles.removeAll(roles2Remove);
                 }
@@ -3456,23 +3458,23 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return true;
     }
-        
+
     private boolean addLmsRolesToUser(VU360User user, List<LMSRole> lmsRolesList) throws Exception {
-        	
+
         if (user == null) {
         	String errorMessage = "user is null. Unable to add lms roles to null user";
         	throwException(errorMessage);
         }
-        	
+
         if (lmsRolesList == null || lmsRolesList.isEmpty()) {
         	String errorMessage = "Lms roles list is empty or null. No lms roles are present to add in user.";
         	throwException(errorMessage);
         }
-        	
+
         /**
-         * we can assign only one role to learner. Suppose user give three Security Roles like 
+         * we can assign only one role to learner. Suppose user give three Security Roles like
          * LearnerRoleTypeTest1:LearnerRoleTypeTest2:LearnerRoleTypeTest3. We assign only first role to learner
-         * because in our LMS system, if we assign LearnerRoleTypeTest1 to learner and then assign 
+         * because in our LMS system, if we assign LearnerRoleTypeTest1 to learner and then assign
          * LearnerRoleTypeTest2 to same learner then learner remove from the first role i.e., LearnerRoleTypeTest1.
          * If we do not put break then all LearnerRoleTypeTest1:LearnerRoleTypeTest2:LearnerRoleTypeTest3 assign
          * to learner which is not right.
@@ -3484,18 +3486,18 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         	} catch (Exception e) {
         		String errorMessage = e.getMessage();
             	throwException(errorMessage);
-        	}	
+        	}
         }
         return true;
     }
-        
+
     private boolean addLmsRoleToUser(VU360User user, LMSRole lmsRole) throws Exception {
-        	
+
         if (user == null) {
         	String errorMessage = "user is null. Unable to add lms role to null user";
         	throwException(errorMessage);
         }
-        	
+
         if (lmsRole == null) {
         	String errorMessage = "LMS role is null. Unable to add null role to user";
         	throwException(errorMessage);
@@ -3503,14 +3505,14 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         user.addLmsRole(lmsRole);
         return true;
     }
-        
+
     private TrainingAdministrator getUserTrainingAdministrator(VU360User user) throws Exception {
-        	
+
         if (user == null) {
         	String errorMessage = "user is null while getting user training administrator";
         	throwException(errorMessage);
         }
-        	
+
         try {
         	TrainingAdministrator trainingAdministrator = user.getTrainingAdministrator();
             if(trainingAdministrator == null) {
@@ -3527,22 +3529,22 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return null;
     }
-        
-    private List<OrganizationalGroup> getOrganizationalGroupListFromManagerOrgGroup(String managerOrgGroup, 
+
+    private List<OrganizationalGroup> getOrganizationalGroupListFromManagerOrgGroup(String managerOrgGroup,
         	Map<String,OrganizationalGroup> allOrgGroups) throws Exception {
-        	
+
         try {
         	StringTokenizer managedOrgGroupTokenizer = new StringTokenizer(managerOrgGroup, ":");
-                
+
             String orgGroupHierarchy;
             List<OrganizationalGroup> orgGroups2Manage = new ArrayList<OrganizationalGroup>();
-              
+
             while( managedOrgGroupTokenizer.hasMoreTokens()) {
-                // getting the organizational group path 
+                // getting the organizational group path
                 orgGroupHierarchy = managedOrgGroupTokenizer.nextToken().trim();
                 OrganizationalGroup organizationalGroup = allOrgGroups.get(orgGroupHierarchy.toUpperCase());
                 if(organizationalGroup !=null){
-                    orgGroups2Manage.add(organizationalGroup);	
+                    orgGroups2Manage.add(organizationalGroup);
                 }
             }
             return orgGroups2Manage;
@@ -3552,13 +3554,13 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return null;
     }
-        
+
     private boolean isRoleTypeExist(Set<LMSRole> lmsRoles, String roleType) {
-        	
+
         if (CollectionUtils.isEmpty(lmsRoles) || StringUtils.isBlank(roleType)) {
         	return false;
         }
-        	
+
         for (LMSRole lmsRole : lmsRoles) {
         	if (lmsRole != null) {
         		if (roleType.equalsIgnoreCase(LMSRole.ROLE_LEARNER)) {
@@ -3574,9 +3576,9 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
         }
         return false;
     }
-        
+
     private void throwException(String error) throws Exception {
-    	logDebug(error);   
+    	logDebug(error);
     	throw new Exception(error);
     }
 }

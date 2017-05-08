@@ -21,6 +21,9 @@ public interface VU360UserRepositoryCustom {
 
 	public VU360User findUserByUserName(String username);
 
+	public VU360User findByIdForBatchImport(Long userId);
+	public VU360User loadUserForBatchImport(Long userId);
+
 	public VU360User saveUser(VU360User user);
 
 	public VU360User updateUser(VU360User updatedUser);
@@ -73,4 +76,8 @@ public interface VU360UserRepositoryCustom {
 		Boolean enabled, String sortBy, int sortDirection);
 
 	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> users);
+
+	public List<VU360User> findByUsernameInForBatchImport(Collection<String> vList);
+
+	public VU360User saveUserForBatchImport(VU360User user);
 }
