@@ -1,6 +1,7 @@
 package com.softech.vu360.lms.service.impl;
 
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 /**
  * @author S M Humayun

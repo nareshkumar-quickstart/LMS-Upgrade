@@ -329,6 +329,15 @@ public class LearnerServiceImpl implements LearnerService {
 		return results;
 	}
 
+	public List<VU360User> findAllSystemLearnersForBatchImport(Collection<String> vList) {
+		List<VU360User> results = null;
+		if (vList.size() > 0) {
+			results = vu360UserRepository.findByUsernameInForBatchImport(vList);
+		}
+
+		return results;
+	}
+
 	public List<VU360User> findAllLearner(String firstName, String lastName, String email,
 										  boolean isLMSAdministrator, boolean isTrainingAdministrator, Long trainingAdministratorId,
 										  boolean trainingAdmin_isManagesAllOrganizationalGroups, List<OrganizationalGroup> managedGroups, Long customerId, Long userId,
@@ -665,6 +674,7 @@ public class LearnerServiceImpl implements LearnerService {
 		return vu360UserRepository.updateUser(user);
 	}
 
+	@Transactional
 	public VU360User updateUserFromBatchFile(VU360User updatedUser) {
 		String newPassword = "", encodedPassword = "";
 		if (updatedUser.isPassWordChanged()) {
@@ -685,7 +695,7 @@ public class LearnerServiceImpl implements LearnerService {
 			updatedUser.setPassword(encodedPassword);
 		}
 
-		VU360User updatedUserForAD = vu360UserRepository.save(updatedUser);
+		VU360User updatedUserForAD = vu360UserRepository.saveUserForBatchImport(updatedUser);
 
 		if (updatedUserForAD != null
 				&& activeDirectoryService.isADIntegrationEnabled()) {// if

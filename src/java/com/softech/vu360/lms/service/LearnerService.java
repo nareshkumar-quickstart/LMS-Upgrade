@@ -179,7 +179,7 @@ public interface LearnerService {
 	
 	// searching for all learners with having the same email addresses
 	public List<VU360User> findAllSystemLearners(Collection<String> vList);
-
+	public List<VU360User> findAllSystemLearnersForBatchImport(Collection<String> vList);
 	public LMSRole addRole(LMSRole role, Customer customer);
 
 	public LMSRole updateRole(LMSRole role,Customer customer);
