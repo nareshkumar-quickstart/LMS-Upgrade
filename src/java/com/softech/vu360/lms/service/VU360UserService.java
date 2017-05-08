@@ -22,8 +22,9 @@ import com.softech.vu360.lms.model.VU360User;
 public interface VU360UserService extends UserDetailsService {
 	
 	public void deleteLMSTrainingAdministrator(TrainingAdministrator trainingAdministrator);
-	public VU360User findUserByUserName(String username); 
-	
+	public VU360User findUserByUserName(String username);
+	public VU360User findByIdForBatchImport(Long userId);
+	public VU360User loadUserForBatchImport(Long userId);
 	public boolean isEmailAddressInUse(String emailAddress);
 	
 	public VU360User getUserById(Long id);
