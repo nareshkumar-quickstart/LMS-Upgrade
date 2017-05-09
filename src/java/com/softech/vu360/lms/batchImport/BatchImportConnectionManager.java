@@ -43,7 +43,7 @@ public class BatchImportConnectionManager {
         String hostname;
 		
 		try{
-			ip = InetAddress.getByName("10.0.100.83");
+			ip = InetAddress.getLocalHost();
 	        hostname = ip.getHostAddress();
 			if(hostname.equals(AMQ_SERVER_IP) && BatchImportConnectionManager.consumer==null){
 				BatchImportConnectionManager.consumer = getSession().createConsumer(getQueue());
