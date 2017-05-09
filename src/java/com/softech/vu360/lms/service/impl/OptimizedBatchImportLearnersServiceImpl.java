@@ -2290,7 +2290,6 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             Map <Object, Object> errorMsg;
             int recordNumber = 0;
             String rootOrgGroupName = orgGroupService.getRootOrgGroupForCustomer(currentCustomer.getId()).getName();
-
             while((rowLine = csvFileDataReader.readLine()) != null)
             {
                 recordNumber++;
