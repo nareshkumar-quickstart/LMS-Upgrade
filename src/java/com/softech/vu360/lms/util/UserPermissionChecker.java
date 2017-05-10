@@ -174,7 +174,7 @@ public class UserPermissionChecker {
 			return hasAccess;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 			return true;
 		}
 		finally

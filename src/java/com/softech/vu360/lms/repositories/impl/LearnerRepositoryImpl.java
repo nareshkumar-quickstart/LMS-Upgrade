@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
+import javax.persistence.*;
 
 import com.softech.vu360.lms.model.Learner;
+import com.softech.vu360.lms.model.LearnerPreferences;
+import com.softech.vu360.lms.model.LearnerProfile;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.repositories.LearnerRepositoryCustom;
 
@@ -57,4 +56,23 @@ public class LearnerRepositoryImpl implements LearnerRepositoryCustom {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Learner> findLearnersByVU360UserIn(List<VU360User> users) {
+
+		//TODO - Remove extra entity graph once Learner entity is configured for lazyInitialization.
+		/////////////////////////////////////////////////////////////////////////////
+		//By Sajjad - Following code is not needed here but since Learner entity is not lazily configured, we have to do that to avoid extra queries.
+		// With/Without the following code, 4/34 queries were generated for 10 users respectively.
+		EntityGraph<Learner> learnerEntityGraph = this.entityManager.createEntityGraph(Learner.class);
+		Subgraph<LearnerProfile> learnerProfileSubgraph =  learnerEntityGraph.addSubgraph("learnerProfile");
+		learnerProfileSubgraph.addAttributeNodes("learnerAddress");
+		learnerProfileSubgraph.addAttributeNodes("learnerAddress2");
+		Subgraph<LearnerPreferences> learnerPreferencesSubgraph =  learnerEntityGraph.addSubgraph("preference");
+		///////////////////////////////////////////////////////////////////////////////
+
+		Query query = this.entityManager.createQuery("SELECT L FROM Learner L join fetch L.vu360User U WHERE U in (:users)", Learner.class)
+														.setHint("javax.persistence.loadgraph", learnerEntityGraph);
+		query.setParameter("users", users);
+		return query.getResultList();
+	}
 }
