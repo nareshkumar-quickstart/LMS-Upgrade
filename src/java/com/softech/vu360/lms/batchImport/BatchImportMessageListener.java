@@ -16,6 +16,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import com.softech.vu360.lms.service.impl.OptimizedBatchImportLearnersProcessorThread;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -100,7 +101,7 @@ public class BatchImportMessageListener implements MessageListener {
 			String customerGuid = null;
 			boolean sendCustomEmail = bp.isSendCustomEmail();
 			boolean readCsvFileContent = bp.isReadCsvFileContent();
-			
+
 			try {
 				if (customer != null) {
 					customerGuid = customer.getCustomerGUID();

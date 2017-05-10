@@ -12,29 +12,19 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.StoredProcedureQuery;
+import javax.persistence.*;
 
+import com.softech.vu360.lms.model.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
-import com.softech.vu360.lms.model.Customer;
-import com.softech.vu360.lms.model.Distributor;
-import com.softech.vu360.lms.model.DistributorGroup;
-import com.softech.vu360.lms.model.LMSAdministrator;
-import com.softech.vu360.lms.model.LMSAdministratorAllowedDistributor;
-import com.softech.vu360.lms.model.LMSRole;
-import com.softech.vu360.lms.model.TrainingAdministrator;
-import com.softech.vu360.lms.model.VU360User;
-import com.softech.vu360.lms.model.VU360UserAudit;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.ProctorStatusEnum;
 
@@ -50,7 +40,10 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 	DistributorRepository distributorRepository; 	
 	@Inject
 	VU360UserRepository vU360UserRepository; 	
-	
+
+	@Inject
+	private LMSRoleRepository lmsRoleRepository;
+
 	@PersistenceContext
 	protected EntityManager entityManager;
 
@@ -108,6 +101,55 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 	}
 
 	@Override
+	@Transactional
+	public VU360User findByIdForBatchImport(Long userId) {
+		VU360User user = null;
+		try{
+			String jpq = "SELECT p FROM VU360User p WHERE p.id = :userId";
+			Query query = entityManager.createQuery(jpq, VU360User.class);
+			query.setParameter("userId", userId);
+			user = (VU360User) query.getSingleResult();
+			if(user != null) {
+				Hibernate.initialize(user.getLearner());
+				Hibernate.initialize(user.getTrainingAdministrator());
+				if (user.getTrainingAdministrator() != null)
+					Hibernate.initialize(user.getTrainingAdministrator().getManagedGroups());
+			}
+		}catch(Exception e){
+			log.error(e.getMessage(), e);
+		}
+		return user;
+	}
+
+	@Override
+	@Transactional
+	public VU360User loadUserForBatchImport(Long userId) {
+		VU360User user = null;
+		try{
+			String jpq = "SELECT p FROM VU360User p WHERE p.id = :userId";
+			Query query = entityManager.createQuery(jpq);
+			query.setParameter("userId", userId);
+			user = (VU360User) query.getSingleResult();
+			if(user != null) {
+				Hibernate.initialize(user.getLearner());
+				Hibernate.initialize(user.getTrainingAdministrator());
+				if (user.getTrainingAdministrator() != null)
+					Hibernate.initialize(user.getTrainingAdministrator().getManagedGroups());
+				Set<LMSRole> roles = lmsRoleRepository.getRoleWithFeatures(user.getLmsRoles());
+				user.setLmsRoles(roles);
+				Hibernate.initialize(user.getInstructor());
+				Hibernate.initialize(user.getProctor());
+				Hibernate.initialize(user.getRegulatoryAnalyst());
+				Hibernate.initialize(user.getLmsAdministrator());
+			}
+		}catch(Exception e){
+			log.error(e.getMessage(), e);
+		}
+		return user;
+	}
+
+	@Override
+	@Transactional
 	public VU360User saveUser(VU360User user) {
 		VU360User attachedUser=new VU360User();
 		try {
@@ -437,11 +479,6 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 
 		userList = query.getResultList();
 		return userList;
-	}
-
-	@Override
-	public VU360User updateUserWithLoad(VU360User updatedUser) {
-		return entityManager.merge(updatedUser);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -833,5 +870,34 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		Query query = this.entityManager.createQuery("SELECT L.id FROM VU360User U JOIN U.learner L where U in :users");
 		query.setParameter("users", users);
 		return query.getResultList();
+	}
+
+	@Override
+	@Transactional
+
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO) {
+		Query query = this.entityManager.createNativeQuery("update VU360USER set LASTLOGONDATE=:param1, NUMLOGONS=:param2 where ID=:param3");
+		query.setParameter("param1", userVO.getLastLogonDate());
+		query.setParameter("param2", userVO.getNumLogons());
+		query.setParameter("param3", userVO.getId());
+		int updateCount=query.executeUpdate();
+		log.debug("nativeUpdateUser="+updateCount);
+  }
+  public List<VU360User> findByUsernameInForBatchImport(Collection<String> vList) {
+		EntityGraph vu360UserGraph = this.entityManager.createEntityGraph(VU360User.class);
+		Subgraph<Learner> learnerGraph = vu360UserGraph.addSubgraph("learner");
+
+		Query query = this.entityManager.createQuery("SELECT U FROM VU360User U WHERE U.username IN (:userNames)", VU360User.class).
+				setHint("javax.persistence.loadgraph", vu360UserGraph);
+		query.setParameter("userNames", vList);
+		List<VU360User> users = query.getResultList();
+		return users;
+	}
+
+	@Override
+	@Transactional
+	public VU360User saveUserForBatchImport(VU360User user) {
+		VU360User updatedUser = saveUser(user);
+		return updatedUser;
 	}
 }

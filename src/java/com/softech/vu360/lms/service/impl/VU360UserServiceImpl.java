@@ -1,11 +1,13 @@
 package com.softech.vu360.lms.service.impl;
 
-import com.softech.vu360.lms.helpers.ProxyVOHelper;
-import com.softech.vu360.lms.model.*;
-import com.softech.vu360.lms.repositories.*;
-import com.softech.vu360.lms.service.ActiveDirectoryService;
-import com.softech.vu360.lms.service.VU360UserService;
-import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.ObjectRetrievalFailureException;
@@ -14,8 +16,22 @@ import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import javax.inject.Inject;
-import java.util.*;
+import com.softech.vu360.lms.helpers.ProxyVOHelper;
+import com.softech.vu360.lms.model.Customer;
+import com.softech.vu360.lms.model.LMSFeature;
+import com.softech.vu360.lms.model.LMSRole;
+import com.softech.vu360.lms.model.LearnerProfileStaticField;
+import com.softech.vu360.lms.model.OrganizationalGroup;
+import com.softech.vu360.lms.model.TrainingAdministrator;
+import com.softech.vu360.lms.model.VU360User;
+import com.softech.vu360.lms.repositories.LMSFeatureRepository;
+import com.softech.vu360.lms.repositories.LMSRoleRepository;
+import com.softech.vu360.lms.repositories.OrganizationalGroupRepository;
+import com.softech.vu360.lms.repositories.TrainingAdministratorRepository;
+import com.softech.vu360.lms.repositories.VU360UserRepository;
+import com.softech.vu360.lms.service.ActiveDirectoryService;
+import com.softech.vu360.lms.service.VU360UserService;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 
 /**
  * @author jason
@@ -56,8 +72,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 			throw new UsernameNotFoundException("No user detail found from DB Bad credentials");
 		Set<LMSRole> roles = lmsRoleRepository.getRoleWithFeatures(user.getLmsRoles());
 		user.setLmsRoles(roles);
-//		user.setLmsRoles( user.getLmsRoles());
-
 		log.debug("isEnabled:"+user.getEnabled());
 		log.debug("isCredentialNonExpired:"+user.isCredentialsNonExpired());
 		log.debug("isAccountNonLocked:"+user.getAccountNonLocked());
@@ -154,6 +168,17 @@ public class VU360UserServiceImpl implements VU360UserService {
 	}
 
 	@Override
+	public VU360User findByIdForBatchImport(Long userId){
+		return vu360UserRepository.findByIdForBatchImport(userId);
+	}
+
+	@Override
+	public VU360User loadUserForBatchImport(Long userId){
+		return vu360UserRepository.loadUserForBatchImport(userId);
+	}
+
+
+	@Override
 	public VU360User getUserById(Long id) {
 		return vu360UserRepository.getUserById(id);
 	}
@@ -174,12 +199,9 @@ public class VU360UserServiceImpl implements VU360UserService {
 
 	public VU360User changeUserPassword(long id, VU360User updatedUser) {
 		String newPassword = updatedUser.getPassword();
-		//VU360User currUser = this.getUserById(id);
 		com.softech.vu360.lms.vo.VU360User voUser = ProxyVOHelper.setUserProxy(updatedUser);
 		Object salt = saltSource.getSalt(voUser);
 		String encodedPassword = passwordEncoder.encodePassword(newPassword, salt);
-		//log.debug("Given Password = "+newPassword+ "| Encoded Password = "+encodedPassword);
-		//currUser.setPassword(updatedUser.getPassword());
 		updatedUser.setPassword(encodedPassword);
 		//LMS-9318
 		updatedUser.setChangePasswordOnLogin(true);
@@ -194,7 +216,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 		}
 
 		return updatedUser2;
-		//return vu360UserRepository.saveUser(currUser);
 	}
 
 	public VU360User updateUser(long id, VU360User updatedUser) {
@@ -202,10 +223,6 @@ public class VU360UserServiceImpl implements VU360UserService {
 	}
 
 	public VU360User updateUser(VU360User updatedUser) {
-		return vu360UserRepository.updateUser(updatedUser);
-	}
-
-	public VU360User updateNumLogons(VU360User updatedUser){
 		return vu360UserRepository.updateUser(updatedUser);
 	}
 
@@ -557,5 +574,10 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> vu360Users) {
 		List<Long> learnerIds = vu360UserRepository.findLearnerIdsByVu360UserIn(vu360Users);
 		return learnerIds;
+	}
+	
+	@Override
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO) {
+		vu360UserRepository.updateNumLogons(userVO);
 	}
 }
