@@ -33,38 +33,38 @@ public class ManageUserStatusServiceImpl implements ManageUserStatusService {
 				Object [] objArr=list.get(i);
 				Integer k=0;
 				ManageUserStatus manageUserStatus = new ManageUserStatus();
-				manageUserStatus.setLearnerId( ((BigInteger) objArr[k++]).longValueExact());//1
-				manageUserStatus.setCardMailingStatus(StringUtils.upperCase((String) objArr[k++])); //2
-				if(objArr[3] != null){
-					String dtCardMailingDate = dateFormat.format((Date) objArr[3]); //3
+				manageUserStatus.setLearnerId( ((BigInteger) objArr[++k]).longValueExact());//1
+				manageUserStatus.setCardMailingStatus(StringUtils.upperCase((String) objArr[++k])); //2
+				if(objArr[++k] != null){ //3
+					String dtCardMailingDate = dateFormat.format((Date) objArr[k]); //3
 					manageUserStatus.setCardMailingDate(dtCardMailingDate) ;        //3
 					
 				}
 				else {
 					manageUserStatus.setCardMailingDate(null);
 				}
-				manageUserStatus.setReportingStatus(StringUtils.upperCase((String) objArr[k++])); //4
-				if(objArr[k++] != null){
-					String dtReportingDate = dateFormat.format((Date) objArr[k++]); //5
+				manageUserStatus.setReportingStatus(StringUtils.upperCase((String) objArr[++k])); //4
+				if(objArr[++k] != null){ //5
+					String dtReportingDate = dateFormat.format((Date) objArr[k]); //5
 					manageUserStatus.setReportingDate(dtReportingDate) ;
 					
 				}
 				else {
 					manageUserStatus.setReportingDate(null);
 				}
-				manageUserStatus.setLearnerEnrollmentId( ((BigInteger) objArr[k++]).longValueExact());//6
-				manageUserStatus.setFirstName((String) objArr[k++]);//7
-				manageUserStatus.setLastName((String) objArr[k++]);//8
-				manageUserStatus.setEmailAddress((String) objArr[k++]);//9
-				manageUserStatus.setPhoneNumber(nullConv((String) objArr[k++]));//10
-				manageUserStatus.setCourseName( (String)  objArr[k++]);//11
-				manageUserStatus.setCourseId( (String)  objArr[k++]);//12
+				manageUserStatus.setLearnerEnrollmentId( ((BigInteger) objArr[++k]).longValueExact());//6
+				manageUserStatus.setFirstName((String) objArr[++k]);//7
+				manageUserStatus.setLastName((String) objArr[++k]);//8
+				manageUserStatus.setEmailAddress((String) objArr[++k]);//9
+				manageUserStatus.setPhoneNumber(nullConv((String) objArr[++k]));//10
+				manageUserStatus.setCourseName( (String)  objArr[++k]);//11
+				manageUserStatus.setCourseId( (String)  objArr[++k]);//12
 				//manageUserStatus.setAffidavitLink((String) map.get(  StringUtils.upperCase("affidavitLink")));
 				
 				//see document 3.5.3 session
-				Integer courseType1 = (Integer) objArr[k++];//13
-				Integer courseType2 = (Integer) objArr[k++];//14
-				Integer courseType3 = (Integer) objArr[k++];//15
+				Integer courseType1 = (Integer) objArr[++k];//13
+				Integer courseType2 = (Integer) objArr[++k];//14
+				Integer courseType3 = (Integer) objArr[++k];//15
 
 				if(  (courseType1!=null) && courseType1.intValue()==1){
 					manageUserStatus.setCourseType(ManageUserStatus.COURSE_TYPE_AFFIDAVIT_WITH_REPORTING);
@@ -80,24 +80,24 @@ public class ManageUserStatusServiceImpl implements ManageUserStatusService {
 				}
 				manageUserStatus.setCourseType (nullConv(manageUserStatus.getCourseType()));
 				
-				manageUserStatus.setAddress1(nullConv( (String) objArr[k++]));//16
-				manageUserStatus.setCity( nullConv((String) objArr[k++]));//17
-				manageUserStatus.setState( nullConv( (String) objArr[k++]));//18
-				manageUserStatus.setZipCode( nullConv((String) objArr[k++]));//19
-				manageUserStatus.setCourseStatus(StringUtils.upperCase((String) objArr[k++])); //20
-				manageUserStatus.setCompleteDate(DateUtil.getStringDate((Date) objArr[k++] ));//21	
-				manageUserStatus.setEnrollmentDate(DateUtil.getStringDate((Date) objArr[k++]) );//22
-				manageUserStatus.setFirstAccessDate(DateUtil.getStringDate((Date) objArr[k++]) );//23
-				manageUserStatus.setLastUserStatusChangeDate( DateUtil.getStringDate((Date) objArr[k++]) );//24
-				manageUserStatus.setCourseSatisticsId( ((BigInteger)objArr[k++]).longValueExact());//25
-				manageUserStatus.setCourseApprovalId( ((BigInteger) objArr[k++]).longValueExact());//26
-				manageUserStatus.setHoldingRegulatorName( (String) objArr[k++]);//27
-				manageUserStatus.setRegulatoryCategory((String) objArr[k++]);//28
+				manageUserStatus.setAddress1(nullConv( (String) objArr[++k]));//16
+				manageUserStatus.setCity( nullConv((String) objArr[++k]));//17
+				manageUserStatus.setState( nullConv( (String) objArr[++k]));//18
+				manageUserStatus.setZipCode( nullConv((String) objArr[++k]));//19
+				manageUserStatus.setCourseStatus(StringUtils.upperCase((String) objArr[++k])); //20
+				manageUserStatus.setCompleteDate(DateUtil.getStringDate((Date) objArr[++k] ));//21	
+				manageUserStatus.setEnrollmentDate(DateUtil.getStringDate((Date) objArr[++k]) );//22
+				manageUserStatus.setFirstAccessDate(DateUtil.getStringDate((Date) objArr[++k]) );//23
+				manageUserStatus.setLastUserStatusChangeDate( DateUtil.getStringDate((Date) objArr[++k]) );//24
+				manageUserStatus.setCourseSatisticsId( ((BigInteger)objArr[++k]).longValueExact());//25
+				manageUserStatus.setCourseApprovalId( ((BigInteger) objArr[++k]).longValueExact());//26
+				manageUserStatus.setHoldingRegulatorName( (String) objArr[++k]);//27
+				manageUserStatus.setRegulatoryCategory((String) objArr[++k]);//28
 				k++;// Index 29 is missing i-e:- AFFADAVIT_ID 
-				manageUserStatus.setAffidavitType( nullConv( (String) objArr[k++]) );//30
-				manageUserStatus.setLastUserAffidavitUpload( nullConv( (String) objArr[k++]));//31
-				manageUserStatus.setLastUserAffidavitUploadDate( DateUtil.getStringDate((Date) objArr[k++]) );//32
-				manageUserStatus.setLastUserStatusChange(nullConv((String) objArr[k++]));//33
+				manageUserStatus.setAffidavitType( nullConv( (String) objArr[++k]) );//30
+				manageUserStatus.setLastUserAffidavitUpload( nullConv( (String) objArr[++k]));//31
+				manageUserStatus.setLastUserAffidavitUploadDate( DateUtil.getStringDate((Date) objArr[++k]) );//32
+				manageUserStatus.setLastUserStatusChange(nullConv((String) objArr[++k]));//33
 				listUserStatus.add(manageUserStatus);
 			}
 		}
