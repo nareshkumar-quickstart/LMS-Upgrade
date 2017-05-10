@@ -976,7 +976,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 		    Customer customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 		    log.debug("IN process enrollLearnersInCoursesViaUserGroup start *5 ");
-		    enrollLearnersInCoursesViaUserGroup(learners, items, user, customer, brand);
+		    if(items != null) {
+		    	enrollLearnersInCoursesViaUserGroup(learners, items, user, customer, brand);
+		    }
 		    log.debug("IN process enrollLearnersInCoursesViaUserGroup end *5 ");
 		    log.debug("IN process enrollLearnersInLearnerGroupCourses end *4 ");
 		}
