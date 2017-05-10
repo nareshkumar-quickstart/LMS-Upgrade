@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.web.controller.administrator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -228,10 +229,17 @@ public class ManageAndEditDistributorContractController extends VU360BaseMultiAc
         
         String keywords = request.getParameter("keywords").trim();
         String title = request.getParameter("title").trim();
-        String entityId = request.getParameter("courseGroupID").trim();
-
+        title = title.replaceAll("%", "");
         Map context = new HashMap();
-        List<TreeNode> courseGroupTree = entitlementService.searchCourseGroups(
+        List<TreeNode> courseGroupTree = new ArrayList<TreeNode>();
+        String entityId = request.getParameter("courseGroupID").trim();
+        
+        //@MariumSaud : LMS-22222 Limit the Course Group Name search to minimum to 2 char to avoid Proxy Error and Internal Server Error
+        if(title.length()<2){
+        	context.put("error", "error.admin.customerEnt.search.courseGroupName");
+        }
+        else{
+        courseGroupTree = entitlementService.searchCourseGroups(
                 title, entityId, keywords);
 
         context.put("courseGroupTree", courseGroupTree);
@@ -239,7 +247,7 @@ public class ManageAndEditDistributorContractController extends VU360BaseMultiAc
             String[] error = {"error.admin.customerEnt.course.errorMsg1", "error.admin.customerEnt.course.errorMsg2", "error.admin.customerEnt.course.errorMsg3"};
             context.put("error", error);
         }
-
+        }
         context.put("callMacroForChildren", "false");
         context.put("contractType", "CourseGroup");
         context.put("contractId", entitlement.getId());
