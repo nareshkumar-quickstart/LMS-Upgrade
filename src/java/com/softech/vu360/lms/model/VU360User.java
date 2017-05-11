@@ -715,7 +715,7 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 		this.setVissibleOnReport(user.getVissibleOnReport());
 		this.setUserGUID(user.getUserGUID());
 		this.setShowGuidedTourScreenOnLogin(user.getShowGuidedTourScreenOnLogin());
-		this.setLmsRoles(user.getLmsRoles());
+//		this.setLmsRoles(user.getLmsRoles());
 	}
 
 	// [2/24/2011] LMS-9120 :: Centralized the method to fetch the User's
