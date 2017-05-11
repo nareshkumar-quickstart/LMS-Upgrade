@@ -743,6 +743,7 @@ public class LearnerServiceImpl implements LearnerService {
 		boolean isEmailChanged = false;
 		VU360User dbUser = vu360UserRepository.findOne(userToSave.getId());
 		dbUser.shallowCopy(userToSave);
+		dbUser.setLmsRoles(dbUser.getLmsRoles());
 
 		LearnerProfile profile=dbUser.getLearner().getLearnerProfile();
 		profile.setLearnerAddress(userToSave.getLearner().getLearnerProfile().getLearnerAddress());
@@ -763,7 +764,7 @@ public class LearnerServiceImpl implements LearnerService {
 		}
 
 		isEmailChanged = !userToSave.getEmailAddress().equalsIgnoreCase(dbUser.getEmailAddress());
-		userToSave.setLmsRoles(userToSave.getLmsRoles());
+//		userToSave.setLmsRoles(userToSave.getLmsRoles());
 		// if name (first name OR last name) is changed. Then only, audit the change
 		if (!userToSave.getLastName().equalsIgnoreCase(dbUser.getLastName())
 				|| !userToSave.getFirstName().equalsIgnoreCase(dbUser.getFirstName())) {
