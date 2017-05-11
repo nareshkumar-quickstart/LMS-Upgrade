@@ -56,7 +56,6 @@ public class LearnerRepositoryImpl implements LearnerRepositoryCustom {
 		return query.getResultList();
 	}
 
-	@Override
 	public List<Learner> findLearnersByVU360UserIn(List<VU360User> users) {
 
 		//TODO - Remove extra entity graph once Learner entity is configured for lazyInitialization.

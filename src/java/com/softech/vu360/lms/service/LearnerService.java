@@ -294,5 +294,6 @@ public interface LearnerService {
 	public void setIdentityValidationQuestions(long learnerId,
 			LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfCoursesOfLearner,
 			boolean[] hasValidationQuestion);
+	public List<Learner> findByVu360UserIdIn(Long[] userIds);
 	
 }
