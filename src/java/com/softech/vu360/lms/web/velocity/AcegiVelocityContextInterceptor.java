@@ -117,14 +117,16 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 		log.debug("Inside AcegiVelocityContextInterceptor.afterCompletion()");
 		super.afterCompletion(request, response, handler, ex);
 	}
-	
+
 	@Override
 	public void postHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		log.debug("Inside AcegiVelocityContextInterceptor.postHandle()");
 		HttpSession menuSession = request.getSession(true);
-
+		if(request.getRequestURI().indexOf("login.do") > -1){
+			request.getSession().setAttribute("initedClustered", null);
+		}
 		if (modelAndView != null) {
 			Authentication auth = SecurityContextHolder.getContext()
 					.getAuthentication();
