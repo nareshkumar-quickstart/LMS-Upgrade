@@ -57,4 +57,13 @@ public class LearnerRepositoryImpl implements LearnerRepositoryCustom {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Learner> findByVu360UserIdIn(Long[] userIds) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SELECT l from Learner l JOIN VU360User VU on l.vu360User.id=VU.id JOIN Customer C on l.customer.id=C.id where VU.id IN (:userIds)");
+		Query query = entityManager.createQuery(builder.toString());
+		query.setParameter("userIds", Arrays.asList(userIds));
+		return query.getResultList();
+	}
+
 }

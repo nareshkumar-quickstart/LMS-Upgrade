@@ -16,4 +16,5 @@ public interface LearnerRepositoryCustom {
 	public List<Learner> getFilteredRecipientsByAlert(Long alertId);
 	public List<Learner> getLearnerByOrganizationalGroups(Long orgGroupIdArray[]);
 	public List<Learner> findLearnerByLearnerGroupID(Long learnerGroupId);
+	public List<Learner> findByVu360UserIdIn(Long[] userIds);
 }
