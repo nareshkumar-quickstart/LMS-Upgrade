@@ -2934,6 +2934,7 @@ public class LearnerServiceImpl implements LearnerService {
 		user.setFirstName(sfContact.getFirstName());
 		user.setLastName(sfContact.getLastName());
 		user.setLastUpdatedDate(Calendar.getInstance().getTime());
+		user.setLmsRoles(user.getLmsRoles());
 		Address billingAddress = learner.getLearnerProfile()
 				.getLearnerAddress();
 		Address shippingaddress = learner.getLearnerProfile()
