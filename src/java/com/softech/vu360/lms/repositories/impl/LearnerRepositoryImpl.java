@@ -74,5 +74,4 @@ public class LearnerRepositoryImpl implements LearnerRepositoryCustom {
 		query.setParameter("users", users);
 		return query.getResultList();
 	}
-
 }
