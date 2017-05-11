@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,6 +23,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
+import com.softech.vu360.lms.model.Author;
 import com.softech.vu360.lms.model.Certificate;
 import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.CourseApproval;
@@ -30,6 +32,7 @@ import com.softech.vu360.lms.model.CourseConfigurationTemplate;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.service.AccreditationService;
+import com.softech.vu360.lms.service.AuthorService;
 import com.softech.vu360.lms.service.CourseAndCourseGroupService;
 import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.VU360BaseMultiActionController;
@@ -54,6 +57,8 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 	private final String ONLINE_PROCTORING = "ONLINEPROCTORING";
 	private AccreditationService accreditationService;
 	private CourseAndCourseGroupService courseAndCourseGroupService;
+	@Inject
+	private AuthorService authorService;
 
 	private String searchCourseConfigTemplate = null;
 	private String editCourseConfigTemplate = null;
@@ -654,6 +659,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
+		Author author = authorService.getAuthorByUsername(VU360User.getUsername());
 		
 		final int MAX_PRE_POST_QUIZ_ATTEMPT = 9999999; 
 		
@@ -1199,14 +1205,14 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 					else if(uniqueQuestionsVO.getQuestionType().equals("Qtype_1")){
 					     validationQuestion.setQuestionType("True False");
 					}
-                    validationQuestion.setModifiedBy(VU360User);
+                    validationQuestion.setModifiedBy(author);
 					validationQuestion.setModifiedDate(new Date());
 					
 					if(StringUtils.isEmpty(uniqueQuestionsVO.getId())){
 						validationQuestion.setLanguage(VU360User.getLanguage());
 						validationQuestion.setIsActive(true);
 						validationQuestion.setCourseConfiguration(mycourseConfiguration);
-						validationQuestion.setCreatedBy(VU360User);
+						validationQuestion.setCreatedBy(author);
 						validationQuestion.setCreatedDate(new Date());
 						accreditationService.saveValidationQuestion(validationQuestion);
 						uniqueQuestionsVO.setId(validationQuestion.getId().toString());
@@ -1225,7 +1231,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 						else if(uniqueQuestionsVO.getQuestionType().equals("Qtype_1")){
 							updatedvalidationQuestion.setQuestionType("True False");
 						}
-						updatedvalidationQuestion.setModifiedBy(VU360User);
+						updatedvalidationQuestion.setModifiedBy(author);
 						updatedvalidationQuestion.setModifiedDate(new Date());
 						
 						updatedvalidationQuestion.setAnswerQuery("SELECT ANSWER AS ANSWERTEXT FROM dbo.VALIDATIONQUESTION AS VQ INNER JOIN dbo.LEARNERVALIDATIONANSWERS AS LVA ON VQ.ID = LVA.QUESTION_ID WHERE LVA.LEARNER_ID= @LEARNER_ID AND VQ.ID = " + updatedvalidationQuestion.getId());

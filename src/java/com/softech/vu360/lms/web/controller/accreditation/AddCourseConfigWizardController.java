@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,6 +19,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.softech.vu360.lms.model.Author;
 import com.softech.vu360.lms.model.Certificate;
 import com.softech.vu360.lms.model.ContentOwner;
 import com.softech.vu360.lms.model.CourseConfiguration;
@@ -25,6 +27,7 @@ import com.softech.vu360.lms.model.CourseConfigurationTemplate;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.ValidationQuestion;
 import com.softech.vu360.lms.service.AccreditationService;
+import com.softech.vu360.lms.service.AuthorService;
 import com.softech.vu360.lms.vo.UniqueQuestionsVO;
 import com.softech.vu360.lms.web.controller.AbstractWizardFormController;
 import com.softech.vu360.lms.web.controller.model.accreditation.CourseConfigForm;
@@ -43,6 +46,8 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 	private static final Logger log = Logger.getLogger(AddRegulatorWizardController.class.getName());
 
 	private AccreditationService accreditationService;
+	@Inject
+	private AuthorService authorService;
 	private String cancelTemplate = null;
 	private String finishTemplate = null;
 	private String selectCertificateController = null;
@@ -230,6 +235,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 		getPrincipal();
 		
 		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
+		Author author = authorService.getAuthorByUsername(VU360User.getUsername());
 		ContentOwner contentOwner = null;
 		if( loggedInUser.getRegulatoryAnalyst() != null )
 
@@ -648,9 +654,9 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 						validationQuestion.setCourseConfiguration(courseConfiguration);
 						validationQuestion.setLanguage(VU360User.getLanguage());
 						validationQuestion.setIsActive(true);
-						validationQuestion.setCreatedBy(VU360User);
+						validationQuestion.setCreatedBy(author);
 						validationQuestion.setCreatedDate(new Date());
-						validationQuestion.setModifiedBy(VU360User);
+						validationQuestion.setModifiedBy(author);
 						validationQuestion.setModifiedDate(new Date());
 						
 						accreditationService.saveValidationQuestion(validationQuestion);

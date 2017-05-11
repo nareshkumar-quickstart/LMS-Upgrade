@@ -288,6 +288,7 @@ public interface LearnerService {
 	public Address updateAddress(Address address);
 	
 	public Learner getLearnerByVU360UserId(VU360User user);
+	public List<Learner> getLearnersByVU360UserIn(List<VU360User> users);
 	public List<OrganizationalGroup> findAllManagedGroupsByTrainingAdministratorId(Long trainingAdminstratorId);
 
 	public void setIdentityValidationQuestions(long learnerId,

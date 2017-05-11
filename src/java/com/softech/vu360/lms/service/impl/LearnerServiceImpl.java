@@ -3210,4 +3210,8 @@ public class LearnerServiceImpl implements LearnerService {
 		this.enrollmentService = enrollmentService;
 	}
 
+	@Override
+	public List<Learner> getLearnersByVU360UserIn(List<VU360User> users) {
+		return learnerRepository.findLearnersByVU360UserIn(users);
+	}
 }
