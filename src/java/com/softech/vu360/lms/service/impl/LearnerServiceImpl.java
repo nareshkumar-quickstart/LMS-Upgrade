@@ -3194,10 +3194,6 @@ public class LearnerServiceImpl implements LearnerService {
 		return organizationalGrpRepository.findAllManagedGroupsByTrainingAdministratorId(trainingAdminstratorId);
 	}
 
-	@Override
-	public List<Learner> findByVu360UserIdIn(Long[] userIds){
-		return learnerRepository.findByVu360UserIdIn(userIds);
-	}
 	public boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(long learnerId) {
 		return learnerRepository.hasAnyInProgressEnrollmentOfStandardValidationQuestions(learnerId);
 	}
@@ -3214,4 +3210,5 @@ public class LearnerServiceImpl implements LearnerService {
 	public List<Learner> getLearnersByVU360UserIn(List<VU360User> users) {
 		return learnerRepository.findLearnersByVU360UserIn(users);
 	}
+	
 }
