@@ -922,17 +922,13 @@ public class AssignSurveyController extends AbstractWizardFormController{
 		String enrollmentMethod = form.getEnrollmentMethod();
 		List<Learner> learnersToBeEnrolled = new ArrayList<Learner>();
 		if (enrollmentMethod.equalsIgnoreCase(SURVEY_METHOD_LEARNER)) {
-			
 			if (form.getLearners()!=null && form.getLearners().size()>0){
-				
 				//Modified By MariumSaud : LMS-22236 : Fix Lazy Initialization Exception for VU360User-->Learner ; arises due to Lazy Loading of VU360User.java
 				List<LearnerItemForm> learnerItemForm = form.getSelectedLearners();
 				List<VU360User> userList = new ArrayList<VU360User>();
-				
 				for(LearnerItemForm learner:learnerItemForm){
 					userList.add(learner.getUser());
 				}
-			
 				learnersToBeEnrolled = learnerService.getLearnersByVU360UserIn(userList);
 			}
 		} else if (enrollmentMethod.equalsIgnoreCase(SURVEY_METHOD_ORGGROUP)) {

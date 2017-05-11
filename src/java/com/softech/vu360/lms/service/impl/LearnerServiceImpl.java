@@ -3210,4 +3210,5 @@ public class LearnerServiceImpl implements LearnerService {
 	public List<Learner> getLearnersByVU360UserIn(List<VU360User> users) {
 		return learnerRepository.findLearnersByVU360UserIn(users);
 	}
+	
 }
