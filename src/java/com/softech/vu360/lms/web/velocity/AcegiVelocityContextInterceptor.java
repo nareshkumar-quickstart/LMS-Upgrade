@@ -124,6 +124,8 @@ public class AcegiVelocityContextInterceptor extends HandlerInterceptorAdapter {
 			ModelAndView modelAndView) throws Exception {
 		log.debug("Inside AcegiVelocityContextInterceptor.postHandle()");
 		HttpSession menuSession = request.getSession(true);
+		//Sajjad - initedClustered was not getting deleted from session when user goto login page without logout
+		// This causes user's currentMode set to null  - LMS-22257
 		if(request.getRequestURI().indexOf("login.do") > -1){
 			request.getSession().setAttribute("initedClustered", null);
 		}
