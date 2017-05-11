@@ -177,5 +177,17 @@ public class AuthorRepositoryImpl implements AuthorRepositoryCustom {
 		}
 		return val;
 	}
+	
+	public Author getAuthorByUsername(String userName) {
+		Query query = entityManager.createNamedQuery("Author.isAuthor");
+		query.setParameter("userId", userName);
+		
+		List<Author> authorList = query.getResultList();
+		if(authorList!=null && authorList.size()>0)
+			return authorList.get(0);
+		else
+			return null;
+	}
+
 
 }
