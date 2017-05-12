@@ -10,5 +10,5 @@ public interface AuthorRepositoryCustom {
 	public boolean isAuthor(Long userId);
 	boolean isThisAuthor(String userName);
 	List<Object[]> getUserStatus(ManageUserStatus criteria);
-	Author getAuthorByUsername(String userName);
+	Author getAuthorByVU360UserID(Long userID);
 }

@@ -659,7 +659,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
-		Author author = authorService.getAuthorByUsername(VU360User.getUsername());
+		Author author = authorService.getAuthorByVU360UserID(VU360User.getId());
 		
 		final int MAX_PRE_POST_QUIZ_ATTEMPT = 9999999; 
 		
