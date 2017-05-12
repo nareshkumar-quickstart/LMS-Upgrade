@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
 /**
@@ -56,10 +58,12 @@ public class ValidationQuestion implements SearchableKey{
 	
 	@OneToOne
     @JoinColumn(name="CREATED_BY")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Author createdBy=null;
 	
 	@OneToOne
     @JoinColumn(name="MODIFIED_BY")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Author modifiedBy=null;
 	
 	@Column(name="CREATED_DATE")
