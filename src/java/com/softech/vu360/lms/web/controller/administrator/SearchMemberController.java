@@ -874,7 +874,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// Check for Distributor Constrained Search
 		if (constrainedCustomerSearch) {
 			List<Customer> customers = customerService
-					.findCustomersWithEntitlementByDistributor(distributor,
+					.findCustomersWithEntitlementByDistributor(distributor, searchedCustomerName, searchedCustomerEmailAddress,
 							pageIndex, retrieveRowCount, resultSet,
 							AdminSearchMemberEnum.CUSTOMER
 									.getSortBy(sortColumnIndex), sortDirection);
@@ -947,7 +947,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// to distributor
 		if (constrainedCustomerSearch) {
 			List<Customer> customers = customerService
-					.findCustomersWithEntitlementByDistributor(distributor,
+					.findCustomersWithEntitlementByDistributor(distributor, searchedCustomerName, searchedCustomerEmailAddress,
 							pageIndex, retrieveRowCount, resultSet,
 							AdminSearchMemberEnum.CUSTOMER
 									.getSortBy(sortColumnIndex), sortDirection);

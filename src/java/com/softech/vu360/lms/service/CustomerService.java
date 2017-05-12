@@ -40,7 +40,7 @@ public interface CustomerService {
 	public List<CustomerEntitlement> findCustomerEntitlementByCustomerId(Long customerId);
 
 	
-	public List<Customer> findCustomersWithEntitlementByDistributor(Distributor dist, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,int sortDirection);
+	public List<Customer> findCustomersWithEntitlementByDistributor(Distributor dist, String customerName, String emailAddress, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,int sortDirection);
 		
 	public Customer getCustomerById(long id);
 	public Customer loadForUpdateCustomer(long customerId);
