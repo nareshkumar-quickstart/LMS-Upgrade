@@ -152,9 +152,14 @@ public class VU360UserServiceImpl implements VU360UserService {
 		return lmsRoleRepository.findOne(id);
 	}
 
+//	@Override
+//	public  VU360User  loadForUpdateVU360User(Long id){
+//		return vu360UserRepository.findOne(id);
+//	}
+
 	@Override
 	public  VU360User  loadForUpdateVU360User(Long id){
-		return vu360UserRepository.findOne(id);
+		return vu360UserRepository.loadForUpdateVU360User(id);
 	}
 
 	@Override
