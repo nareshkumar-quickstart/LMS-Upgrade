@@ -861,7 +861,7 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		Query query = entityManager.createNativeQuery(builder.toString());
 		List<Object[]> results = query.getResultList();  
 		List<VU360User> users = new ArrayList<>(results.size());
-        results.stream().forEach((record) -> users.add(new VU360User(((BigInteger) record[0]).longValue(), (String) record[1], ((String) record[2]), (String) record[3], (String) record[4], ((Integer)record[5]),((BigInteger) record[6]).longValue(), record[7]==null?0:((BigInteger) record[7]).longValue(), record[8]==null?0:((BigInteger) record[8]).longValue(), record[9]==null?"":(String)record[9],record[10]==null?0:((BigInteger) record[10]).longValue())));
+        results.stream().forEach((record) -> users.add(new VU360User(((BigInteger) record[0]).longValue(), (String) record[1], ((String) record[2]), (String) record[3], (String) record[4], ((Integer)record[5]==null?0:(Integer)record[5]),((BigInteger) record[6]).longValue(), record[7]==null?0:((BigInteger) record[7]).longValue(), record[8]==null?0:((BigInteger) record[8]).longValue(), record[9]==null?"":(String)record[9],record[10]==null?0:((BigInteger) record[10]).longValue())));
 		return users;
 	}
 

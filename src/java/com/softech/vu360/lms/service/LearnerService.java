@@ -294,5 +294,4 @@ public interface LearnerService {
 	public void setIdentityValidationQuestions(long learnerId,
 			LinkedHashMap<Object, Object> uniqueValidationQuestionAnswersOfCoursesOfLearner,
 			boolean[] hasValidationQuestion);
-	
 }

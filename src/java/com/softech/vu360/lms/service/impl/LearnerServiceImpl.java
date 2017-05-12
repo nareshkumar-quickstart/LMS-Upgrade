@@ -2935,6 +2935,7 @@ public class LearnerServiceImpl implements LearnerService {
 		user.setFirstName(sfContact.getFirstName());
 		user.setLastName(sfContact.getLastName());
 		user.setLastUpdatedDate(Calendar.getInstance().getTime());
+		user.setLmsRoles(user.getLmsRoles());
 		Address billingAddress = learner.getLearnerProfile()
 				.getLearnerAddress();
 		Address shippingaddress = learner.getLearnerProfile()
@@ -3211,4 +3212,5 @@ public class LearnerServiceImpl implements LearnerService {
 	public List<Learner> getLearnersByVU360UserIn(List<VU360User> users) {
 		return learnerRepository.findLearnersByVU360UserIn(users);
 	}
+	
 }

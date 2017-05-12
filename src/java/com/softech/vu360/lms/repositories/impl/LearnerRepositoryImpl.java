@@ -50,13 +50,12 @@ public class LearnerRepositoryImpl implements LearnerRepositoryCustom {
 	@Override
 	public List<Learner> getLearnerByOrganizationalGroups(Long[] orgGroupIdArray) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("SELECT new Learner(ogm.learner.id,ogm.learner.vu360User.id,ogm.learner.vu360User.accountNonExpired,learner.vu360User.accountNonLocked,learner.vu360User.enabled,learner.vu360User.expirationDate,learner.vu360User.firstName,learner.vu360User.lastName,learner.vu360User.emailAddress,learner.customer.name,learner.customer.customerType,learner.customer.distributor.name) from OrganizationalGroupMember ogm where ogm.organizationalGroup.id IN (:orgGroupIdArray)");
+		builder.append("SELECT new Learner(ogm.learner.id,ogm.learner.vu360User.id,ogm.learner.vu360User.accountNonExpired,learner.vu360User.accountNonLocked,learner.vu360User.enabled,learner.vu360User.expirationDate,learner.vu360User.firstName,learner.vu360User.lastName,learner.vu360User.emailAddress,learner.customer.id,learner.customer.name,learner.customer.customerType,learner.customer.distributor.id,learner.customer.distributor.name) from OrganizationalGroupMember ogm where ogm.organizationalGroup.id IN (:orgGroupIdArray)");
 		Query query = entityManager.createQuery(builder.toString());
 		query.setParameter("orgGroupIdArray", Arrays.asList(orgGroupIdArray));
 		return query.getResultList();
 	}
 
-	@Override
 	public List<Learner> findLearnersByVU360UserIn(List<VU360User> users) {
 
 		//TODO - Remove extra entity graph once Learner entity is configured for lazyInitialization.

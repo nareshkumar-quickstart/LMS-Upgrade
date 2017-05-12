@@ -250,7 +250,7 @@ public class Learner implements SearchableKey {
 	public Learner(Long learnerId, Long userID, Boolean accountNonExpired,
 			Boolean accountNonLocked, Boolean enabled, Date expirationDate,
 			String userFirstName, String userLastName, String userEmailAddress,
-			String customerName, String customerType, String distributorName) {
+			Long customerID, String customerName, String customerType, Long distributorID, String distributorName) {
 		this.id = learnerId;
 
 		VU360User user = new VU360User();
@@ -279,9 +279,11 @@ public class Learner implements SearchableKey {
 		user.setEmailAddress(userEmailAddress);
 
 		Customer customer = new Customer();
+		customer.setId(customerID);
 		customer.setName(customerName);
 		customer.setCustomerType(customerType);
 		Distributor distributor = new Distributor();
+		distributor.setId(distributorID);
 		distributor.setName(distributorName);
 		customer.setDistributor(distributor);
 

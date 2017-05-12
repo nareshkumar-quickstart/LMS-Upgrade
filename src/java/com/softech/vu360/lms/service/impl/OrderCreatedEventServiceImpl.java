@@ -639,6 +639,7 @@ public class OrderCreatedEventServiceImpl implements OrderCreatedEventService {
 		user.setFirstName(sfContact.getFirstName());
 		user.setLastName(sfContact.getLastName());
 		user.setLastUpdatedDate(Calendar.getInstance().getTime());
+		user.setLmsRoles(user.getLmsRoles());
 		Address billingAddress = learner.getLearnerProfile().getLearnerAddress();
 		Address shippingaddress = learner.getLearnerProfile().getLearnerAddress2();
 		if(billingAddress !=null)
