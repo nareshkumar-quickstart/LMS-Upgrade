@@ -82,4 +82,5 @@ public interface VU360UserRepositoryCustom {
 
 	public VU360User saveUserForBatchImport(VU360User user);
 
+	public VU360User loadForUpdateVU360User(Long userId);
 }

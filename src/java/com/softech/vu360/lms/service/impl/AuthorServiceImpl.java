@@ -346,8 +346,8 @@ public class AuthorServiceImpl implements AuthorService{
 		return authorRepository.isThisAuthor(user.getUsername());
 	}
 	
-	public Author getAuthorByUsername(String username) {
-		return authorRepository.getAuthorByUsername(username);
+	public Author getAuthorByVU360UserID(Long userID) {
+		return authorRepository.getAuthorByVU360UserID(userID);
 	}
 
 }

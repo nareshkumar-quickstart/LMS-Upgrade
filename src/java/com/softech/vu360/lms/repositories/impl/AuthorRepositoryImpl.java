@@ -178,9 +178,9 @@ public class AuthorRepositoryImpl implements AuthorRepositoryCustom {
 		return val;
 	}
 	
-	public Author getAuthorByUsername(String userName) {
+	public Author getAuthorByVU360UserID(Long userID) {
 		Query query = entityManager.createNamedQuery("Author.isAuthor");
-		query.setParameter("userId", userName);
+		query.setParameter("userId", userID);
 		
 		List<Author> authorList = query.getResultList();
 		if(authorList!=null && authorList.size()>0)
@@ -188,6 +188,5 @@ public class AuthorRepositoryImpl implements AuthorRepositoryCustom {
 		else
 			return null;
 	}
-
 
 }
