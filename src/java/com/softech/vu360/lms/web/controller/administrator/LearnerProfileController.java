@@ -583,6 +583,7 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 			customer = usr.getLearner().getCustomer();
 			if(customer != null) distributor = customer.getDistributor();
 			if(distributor != null && distributor.getDistributorCode() != null) distributorCode = distributor.getDistributorCode().trim();
+			
 			if(customer!=null && customer.getCustomerType().equals(Customer.B2C) && (!distributorCode.isEmpty())){
 				transformAndUpdateProfile(customer, vu360User, request.getParameter("password"));
 			}
