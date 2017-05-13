@@ -1407,7 +1407,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 										if(creditReportingFieldValueList!=null && !creditReportingFieldValueList.isEmpty()){
 										    for (CreditReportingFieldValue value : creditReportingFieldValueList) {
 											    valueFound = value.getReportingCustomField().getId().longValue() == field.getId().longValue();
-											    //continue CHK_ALL_REPORTING_FIELDS_LOOP;
+											    continue CHK_ALL_REPORTING_FIELDS_LOOP;
 										    }
 										    /* check for static field values */ 
 										    if("STATICCREDITREPORTINGFIELD".equals(field.getFieldType())) {
