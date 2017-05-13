@@ -576,8 +576,14 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		}
 		
 		try {
-			Customer customer=usr.getLearner().getCustomer();
-			if(customer!=null && customer.getCustomerType().equals(Customer.B2C)){
+			Customer customer= null;
+			Distributor distributor = null;
+			String distributorCode = "";
+			
+			customer = usr.getLearner().getCustomer();
+			if(customer != null) distributor = customer.getDistributor();
+			if(distributor != null && distributor.getDistributorCode() != null) distributorCode = distributor.getDistributorCode().trim();
+			if(customer!=null && customer.getCustomerType().equals(Customer.B2C) && (!distributorCode.isEmpty())){
 				transformAndUpdateProfile(customer, vu360User, request.getParameter("password"));
 			}
 		} catch( Exception ex ) {
