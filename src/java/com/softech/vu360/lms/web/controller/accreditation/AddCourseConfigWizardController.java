@@ -235,7 +235,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 		getPrincipal();
 		
 		VU360User VU360User =  VU360UserAuthenticationDetails.getCurrentUser();
-		Author author = authorService.getAuthorByUsername(VU360User.getUsername());
+		Author author = authorService.getAuthorByVU360UserID(VU360User.getId());
 		ContentOwner contentOwner = null;
 		if( loggedInUser.getRegulatoryAnalyst() != null )
 
