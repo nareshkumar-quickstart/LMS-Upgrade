@@ -54,10 +54,13 @@ public class PrintCertificate {
 			response = new ResponseEntity<byte[]>(baos.toByteArray(), header, HttpStatus.OK);
 		} 
 		finally {
-			baos.close();
-			baos.reset();
-			baos = null;
-			header = null;
+			if(null != baos) {
+				baos.close();
+				baos.reset();
+				baos = null;
+			}
+			if(null != header)
+				header = null;
 		}
 		
 		return response;
