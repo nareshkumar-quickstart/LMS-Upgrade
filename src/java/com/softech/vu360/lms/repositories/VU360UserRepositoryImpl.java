@@ -905,6 +905,9 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 	public VU360User loadForUpdateVU360User(Long userId) {
 		Query query = this.entityManager.createQuery("SELECT U FROM VU360User U JOIN FETCH U.lmsRoles WHERE U.id=:userId");
 		query.setParameter("userId", userId);
-		return (VU360User) query.getSingleResult();
+		
+		VU360User v = (VU360User) query.getSingleResult();  
+		v.setLmsRoles(v.getLmsRoles());
+		return v;
 	}
 }
