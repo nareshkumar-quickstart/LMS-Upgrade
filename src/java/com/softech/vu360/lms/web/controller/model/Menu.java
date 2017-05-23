@@ -305,19 +305,19 @@ public class Menu implements ILMSBaseInterface {
 	{
 		boolean setupResult=false;
 		/*****************************For MyCourse ************************************/
-		if (UserPermissionChecker.hasAccessToFeatureGroup("My Dashboard", user, request.getSession(true))) {
-			this.featureGroup = "My Dashboard";
-			this.feature="LMS-LRN-0007";
-			this.url = "lms_handleMenu.do?featureGroup=My%20Dashboard&feature=LMS-LRN-0007&actionUrl=lrn_widgetDashboard.do";
-			setupResult=true;
-		} else
-		/*****************************For MyCourse ************************************/
 		if (UserPermissionChecker.hasAccessToFeatureGroup("My Courses", user, request.getSession(true))) {
 			this.featureGroup = "My Courses";
 			this.feature="LMS-LRN-0001";
 			this.url = "lms_handleMenu.do?featureGroup=ShopCatalog&feature=ShopCatalog&actionUrl=lrn_myCourses.do";
 			setupResult=true;
 		}
+		/*****************************For My Dashboard ************************************/
+		 else if (UserPermissionChecker.hasAccessToFeatureGroup("My Dashboard", user, request.getSession(true))) {
+				this.featureGroup = "My Dashboard";
+				this.feature="LMS-LRN-0007";
+				this.url = "lms_handleMenu.do?featureGroup=My%20Dashboard&feature=LMS-LRN-0007&actionUrl=lrn_widgetDashboard.do";
+				setupResult=true;
+			}
 		/*****************************For Learner Reports************************************/
 		else if (UserPermissionChecker.hasAccessToFeatureGroup("My Transcripts", user, request.getSession(true))) {
 			this.featureGroup = "My Transcripts";
