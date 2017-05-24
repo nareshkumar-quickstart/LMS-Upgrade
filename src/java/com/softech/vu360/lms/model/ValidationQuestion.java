@@ -12,6 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 
 /**
@@ -56,11 +58,13 @@ public class ValidationQuestion implements SearchableKey{
 	
 	@OneToOne
     @JoinColumn(name="CREATED_BY")
-	private VU360User createdBy=null;
+	@NotFound(action = NotFoundAction.IGNORE)
+	private Author createdBy=null;
 	
 	@OneToOne
     @JoinColumn(name="MODIFIED_BY")
-	private VU360User modifiedBy=null;
+	@NotFound(action = NotFoundAction.IGNORE)
+	private Author modifiedBy=null;
 	
 	@Column(name="CREATED_DATE")
 	private Date createdDate=null;
@@ -130,19 +134,19 @@ public class ValidationQuestion implements SearchableKey{
 		this.isActive = isActive;
 	}
 
-	public VU360User getCreatedBy() {
+	public Author getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(VU360User createdBy) {
+	public void setCreatedBy(Author createdBy) {
 		this.createdBy = createdBy;
 	}
 
-	public VU360User getModifiedBy() {
+	public Author getModifiedBy() {
 		return modifiedBy;
 	}
 
-	public void setModifiedBy(VU360User modifiedBy) {
+	public void setModifiedBy(Author modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
 

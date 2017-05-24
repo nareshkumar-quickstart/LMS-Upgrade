@@ -304,6 +304,7 @@ public class CourseGroup implements SearchableKey, SearchableCourses {
 	}
 	public Set<CourseGroup> getAllChildrenInHierarchy(){
 		Stack<CourseGroup> stack = new Stack<CourseGroup>();
+		Long parentCourseGroupID = this.getId();
 		List<CourseGroup> children = this.getChildrenCourseGroups();
 		stack.addAll(children);
 		Set<CourseGroup> cgSet = new HashSet<CourseGroup>();
@@ -311,13 +312,16 @@ public class CourseGroup implements SearchableKey, SearchableCourses {
 		CourseGroup cg = null;
 		while(!stack.isEmpty()){
 			cg = stack.pop();
-			children = cg.getChildrenCourseGroups();
-			if(CollectionUtils.isNotEmpty(children)){
-				cgSet.addAll(children);
-				stack.addAll(children);	
+			// @MariumSaud : LMS-22222 Optimize the code to not fetch children if Given Parent ID is the children ID ; in order to avoid recursion.
+			if(!parentCourseGroupID.equals(cg.getId())){
+				children = cg.getChildrenCourseGroups();
+				if(CollectionUtils.isNotEmpty(children)){
+					cgSet.addAll(children);
+					stack.addAll(children);	
+				}
 			}
 		}
-		return cgSet;
+		return cgSet; 
 	}
 
 	/**

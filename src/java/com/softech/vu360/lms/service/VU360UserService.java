@@ -6,10 +6,7 @@ package com.softech.vu360.lms.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.LMSFeature;
@@ -24,13 +21,15 @@ import com.softech.vu360.lms.model.VU360User;
  */
 public interface VU360UserService extends UserDetailsService {
 	
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException;
 	public void deleteLMSTrainingAdministrator(TrainingAdministrator trainingAdministrator);
-	public VU360User findUserByUserName(String username); 
-	
+	public VU360User findUserByUserName(String username);
+	public VU360User findByIdForBatchImport(Long userId);
+	public VU360User loadUserForBatchImport(Long userId);
 	public boolean isEmailAddressInUse(String emailAddress);
 	
 	public VU360User getUserById(Long id);
+
+	public List<Long> findLearnerIdsByVu360UserIn(List<VU360User> vu360Users);
 	
 	public List<VU360User> getUsersByEmailAddress(String emailAddress);
 	
@@ -79,7 +78,6 @@ public interface VU360UserService extends UserDetailsService {
 	public  VU360User  loadForUpdateVU360User(Long id);
 	public String getValueForStaticReportingField(VU360User vu360User, String reportingField);
 	public void setValueForStaticReportingField(VU360User vu360User, String reportingField,String value);
-	public VU360User updateNumLogons(VU360User updatedUser);
 	public LMSRole getDefaultSystemRole(Customer customer) throws Exception;
 	public TrainingAdministrator findTrainingAdminstratorById(Long id);
 	//Added By Marium Saud
@@ -98,4 +96,5 @@ public interface VU360UserService extends UserDetailsService {
 	boolean hasAccessToFeatureCode(Long userId, Long roleId, String featureCode);
 	List<String> getEnabledFeatureGroups(Long userId, Long roleId);
 	List<String> getEnabledFeatureGroups(Long userId);
+	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO);
 }

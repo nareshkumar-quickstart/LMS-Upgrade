@@ -197,156 +197,151 @@ public class CertificateServiceImpl implements CertificateService {
 	public ByteArrayOutputStream generateCertificate(LearnerEnrollment le)throws URISyntaxException, DocumentException,IOException,NoCertificateNumberFoundException {
 		return generateCertificate(le, true);
 	}
+	
 	public ByteArrayOutputStream generateCertificate(LearnerEnrollment le, boolean isSelfReported)throws URISyntaxException, DocumentException,IOException,NoCertificateNumberFoundException {		
 		
- 		Brander brander = VU360Branding.getInstance().getBranderByUser(null, le.getLearner().getVu360User());								 
- 		LearnerCourseStatistics lcs=statisticsService.loadForUpdateLearnerCourseStatistics(le.getCourseStatistics().getId());		
- 		Long courseApprovalId = statisticsService.getLearnerSelectedCourseApprovalByEnrollmentId(le.getId());
-  		CourseApproval courseApproval = null;
-		
- 		if(courseApprovalId != null && courseApprovalId.longValue() > 0){
- 			courseApproval=accreditationService.loadForUpdateCourseApproval(courseApprovalId);	
-		}
-		
-		
-		List<CreditReportingField> creditReportingFieldList= new ArrayList<CreditReportingField>(accreditationService.getCreditReportingFieldsByCourse(le.getCourse()));
- 		List<CreditReportingFieldValue> creditReportingFieldValues= accreditationService.getCreditReportingFieldValue(le.getLearner().getLearnerProfile());
-		customFieldService.createValueRecordForStaticReportingField(le.getLearner().getVu360User(), creditReportingFieldList, creditReportingFieldValues);
-		//String tempCertificateLocation= null; 
-		/*START-SAVE CERTIFICATE DETAILS*/	
-		if(isSelfReported)
-			this.assignCompletionCertificateNo(lcs,courseApproval);
-		
-		this.updateCertificateIssueDate(lcs);
-		/*END-SAVE CERTIFICATE DETAILS*/
-		  
-		
-		/*String firstName = user.getFirstName();
-    	String lastName = user.getLastName();
-    	String courseName = le.getCourse().getCourseTitle();
-    	String creditHours=le.getCourse().getCredithour();    	
-    	SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");*/
-    	Date completionDate = lcs.getCompletionDate();
-    	if(le.getCourse() instanceof SynchronousCourse || le.getCourse() instanceof WebinarCourse)
-    	{
-    		if(completionDate == null)
-    			completionDate = le.getSynchronousClass().getClassEndDate();
-    	}    	    	    	
-    	    	
-    	StringBuffer filePath = new StringBuffer();
-    	String completionCertURI = null;    	
-    	PdfReader reader = null;
-//    	boolean showDefaultCert = false;
-    	
-    	//check course type is self paced course otherwise default certificate will be shown
-   	
-    	if(courseApproval!=null && courseApproval.getCertificate()!=null){
-    		
-    		filePath.append(AssetUtil.getAssetFilePath(courseApproval.getCertificate()));    		
-    	
-    	}else if(courseApproval != null && courseApproval.getTemplate() != null){
-    		
-    		CourseConfiguration courseConfiguration = accreditationService.getCourseConfigurationByTemplateId(courseApproval.getTemplate().getId(), true);
-    		
-    		if(courseConfiguration.isCertificateEnabled()!=null && courseConfiguration.isCertificateEnabled()){
-    			
-	    		if(courseConfiguration.getCompletionCertificate() != null){
-	        		filePath.append(AssetUtil.getAssetFilePath(courseConfiguration.getCompletionCertificate()));
-	    		}else{
-//	    			showDefaultCert = true;
-	    		}
-    		}
-    	}else if(le.getCourse().getCourseConfigTemplate() != null){
-    		
-    		CourseConfiguration courseConfiguration = accreditationService.getCourseConfigurationByTemplateId(le.getCourse().getCourseConfigTemplate().getId(), true);
-    		
-    		if(courseConfiguration.isCertificateEnabled()){
-    			
-	    		if(courseConfiguration.getCompletionCertificate() != null){
-	        		filePath.append(AssetUtil.getAssetFilePath(courseConfiguration.getCompletionCertificate()));
-	    		}else{
-//	    			showDefaultCert = true;
-	    		}
-    		}    		
-    	}else{
-    		
-    	}
+		Brander brander = VU360Branding.getInstance().getBranderByUser(null, le.getLearner().getVu360User());
+		LearnerCourseStatistics lcs = statisticsService
+				.loadForUpdateLearnerCourseStatistics(le.getCourseStatistics().getId());
+		Long courseApprovalId = statisticsService.getLearnerSelectedCourseApprovalByEnrollmentId(le.getId());
+		CourseApproval courseApproval = null;
 
-    	InputStream certificateIO = null;
-    	
-    	if(filePath.length() == 0){
-        	
-    		filePath.append(VU360Properties.getVU360Property("brands.basefolder"));			
+		if (courseApprovalId != null && courseApprovalId.longValue() > 0) {
+			courseApproval = accreditationService.loadForUpdateCourseApproval(courseApprovalId);
+		}
+
+		List<CreditReportingField> creditReportingFieldList = new ArrayList<CreditReportingField>(
+				accreditationService.getCreditReportingFieldsByCourse(le.getCourse()));
+		List<CreditReportingFieldValue> creditReportingFieldValues = accreditationService
+				.getCreditReportingFieldValue(le.getLearner().getLearnerProfile());
+		customFieldService.createValueRecordForStaticReportingField(le.getLearner().getVu360User(),
+				creditReportingFieldList, creditReportingFieldValues);
+		
+		// String tempCertificateLocation= null;
+		/* START-SAVE CERTIFICATE DETAILS */
+		if (isSelfReported)
+			this.assignCompletionCertificateNo(lcs, courseApproval);
+
+		this.updateCertificateIssueDate(lcs);
+		/* END-SAVE CERTIFICATE DETAILS */
+
+		Date completionDate = lcs.getCompletionDate();
+		if (le.getCourse() instanceof SynchronousCourse || le.getCourse() instanceof WebinarCourse) {
+			if (completionDate == null)
+				completionDate = le.getSynchronousClass().getClassEndDate();
+		}
+
+		StringBuffer filePath = new StringBuffer();
+		String completionCertURI = null;
+		PdfReader reader = null;
+
+		if (courseApproval != null && courseApproval.getCertificate() != null) {
+
+			filePath.append(AssetUtil.getAssetFilePath(courseApproval.getCertificate()));
+
+		} else if (courseApproval != null && courseApproval.getTemplate() != null) {
+
+			CourseConfiguration courseConfiguration = accreditationService
+					.getCourseConfigurationByTemplateId(courseApproval.getTemplate().getId(), true);
+
+			if (courseConfiguration.isCertificateEnabled() != null && courseConfiguration.isCertificateEnabled()) {
+
+				if (courseConfiguration.getCompletionCertificate() != null) {
+					filePath.append(AssetUtil.getAssetFilePath(courseConfiguration.getCompletionCertificate()));
+				} else {
+					// showDefaultCert = true;
+				}
+			}
+		} else if (le.getCourse().getCourseConfigTemplate() != null) {
+
+			CourseConfiguration courseConfiguration = accreditationService
+					.getCourseConfigurationByTemplateId(le.getCourse().getCourseConfigTemplate().getId(), true);
+
+			if (courseConfiguration.isCertificateEnabled()) {
+
+				if (courseConfiguration.getCompletionCertificate() != null) {
+					filePath.append(AssetUtil.getAssetFilePath(courseConfiguration.getCompletionCertificate()));
+				} else {
+					// showDefaultCert = true;
+				}
+			}
+		} else {
+
+		}
+
+		InputStream certificateIO = null;
+
+		if (filePath.length() == 0) {
+
+			filePath.append(VU360Properties.getVU360Property("brands.basefolder"));
 			completionCertURI = brander.getBrandElement("lms.completionCertificateUrl");
 			filePath.append(completionCertURI);
 			certificateIO = new FileInputStream(new File(filePath.toString()));
-			
-    	}else{
-    		
-    		URL url = AssetUtil.getEncodedURL(filePath.toString());	
-    		certificateIO = url.openStream();
-    		
-    	}
-    	
-    	
-    	    	
-    	
-    	if(certificateIO == null){
-    		return null;
-    	}
-    	
-    	String password=VU360Properties.getVU360Property("lms.server.certificate.SecurityKey");
-     	reader = new PdfReader(certificateIO);
-        
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-          PdfStamper stamp2 = new PdfStamper(reader, baos);
-        
-        stamp2.setEncryption(null, password.getBytes(), PdfWriter.ALLOW_PRINTING, PdfWriter.ENCRYPTION_AES_128);
-        
-        // filling in the form
-        AcroFields formField = stamp2.getAcroFields();
-        
-         List<CustomFieldValue> customFieldValues= le.getLearner().getLearnerProfile().getCustomFieldValues();
-        /*POPULATE CUSTOM FIELDS DEFAULT*/
-         if(customFieldValues!=null ){
-         	fillCustomFieldValues(le.getLearner(),customFieldValues,formField);
-        }
-        
-        //POPULATE MANUALLY ASSOCIATED CUSTOM FIELDS
-        List<CertificateBookmarkAssociation> associatedCustomFieldList = accreditationService.getCertBookMarkAssociations(PdfFieldsEnum.CUSTOMFIELDS);                         	      	
-          if(associatedCustomFieldList != null && associatedCustomFieldList.size() > 0){        
-        	fillManuallyMappedCustomFieldValues(le,courseApproval,associatedCustomFieldList,formField);
-        }
-        
-        //List<CreditReportingFieldValue> creditReportingFieldValues= accreditationService.getCreditReportingFieldValue(le.getLearner().getLearnerProfile());
-        /*POPULATE REPORTING FIELDS DEFAULT*/
-         if(creditReportingFieldValues!=null ){
-         	fillCreditReportingFieldValues(le.getLearner(),creditReportingFieldValues,formField);
-        }
-                          	
-        //POPULATE MANUALLY ASSOCIATED LMS FIELDS
-         List<CertificateBookmarkAssociation> associatedLMSFieldList = accreditationService.getCertBookMarkAssociations(PdfFieldsEnum.LMSFIELDS);
-        if(associatedLMSFieldList != null && associatedLMSFieldList.size() > 0)
-        {
-         	fillLMSFieldValues(lcs,le,courseApproval,associatedLMSFieldList,formField);
-        }
-                
-        
-        //POPULATE MANUALLY ASSOCIATED REPORTING FIELDS
-        List<CertificateBookmarkAssociation> associatedCRFList = accreditationService.getCertBookMarkAssociations(PdfFieldsEnum.REPORTINGFIELDS);                         	      	
-        if(associatedCRFList != null && associatedCRFList.size() > 0)
-        {
-        	fillManuallyMappedCreditReportingFieldValues(le,courseApproval,associatedCRFList,formField);
-        }
-        
-        stamp2.setFormFlattening(true);
-        stamp2.close();
-        
-        if(certificateIO != null){
-        	certificateIO.close();
-        	reader.close();
-        }
-        return baos;                                
+
+		} else {
+
+			URL url = AssetUtil.getEncodedURL(filePath.toString());
+			certificateIO = url.openStream();
+
+		}
+
+		if (certificateIO == null) {
+			return null;
+		}
+
+		String password = VU360Properties.getVU360Property("lms.server.certificate.SecurityKey");
+		reader = new PdfReader(certificateIO);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfStamper stamp2 = new PdfStamper(reader, baos);
+
+		stamp2.setEncryption(null, password.getBytes(), PdfWriter.ALLOW_PRINTING, PdfWriter.ENCRYPTION_AES_128);
+
+		// filling in the form
+		AcroFields formField = stamp2.getAcroFields();
+
+		List<CustomFieldValue> customFieldValues = le.getLearner().getLearnerProfile().getCustomFieldValues();
+		/* POPULATE CUSTOM FIELDS DEFAULT */
+		if (customFieldValues != null) {
+			fillCustomFieldValues(le.getLearner(), customFieldValues, formField);
+		}
+
+		// POPULATE MANUALLY ASSOCIATED CUSTOM FIELDS
+		List<CertificateBookmarkAssociation> associatedCustomFieldList = accreditationService
+				.getCertBookMarkAssociations(PdfFieldsEnum.CUSTOMFIELDS);
+		if (associatedCustomFieldList != null && associatedCustomFieldList.size() > 0) {
+			fillManuallyMappedCustomFieldValues(le, courseApproval, associatedCustomFieldList, formField);
+		}
+
+		// List<CreditReportingFieldValue> creditReportingFieldValues=
+		// accreditationService.getCreditReportingFieldValue(le.getLearner().getLearnerProfile());
+		/* POPULATE REPORTING FIELDS DEFAULT */
+		if (creditReportingFieldValues != null) {
+			fillCreditReportingFieldValues(le.getLearner(), creditReportingFieldValues, formField);
+		}
+
+		// POPULATE MANUALLY ASSOCIATED LMS FIELDS
+		List<CertificateBookmarkAssociation> associatedLMSFieldList = accreditationService
+				.getCertBookMarkAssociations(PdfFieldsEnum.LMSFIELDS);
+		if (associatedLMSFieldList != null && associatedLMSFieldList.size() > 0) {
+			fillLMSFieldValues(lcs, le, courseApproval, associatedLMSFieldList, formField);
+		}
+
+		// POPULATE MANUALLY ASSOCIATED REPORTING FIELDS
+		List<CertificateBookmarkAssociation> associatedCRFList = accreditationService
+				.getCertBookMarkAssociations(PdfFieldsEnum.REPORTINGFIELDS);
+		if (associatedCRFList != null && associatedCRFList.size() > 0) {
+			fillManuallyMappedCreditReportingFieldValues(le, courseApproval, associatedCRFList, formField);
+		}
+
+		stamp2.setFormFlattening(true);
+		stamp2.close();
+
+		if (certificateIO != null) {
+			certificateIO.close();
+			reader.close();
+		}
+		return baos;                              
 	}
 	
 	private void fillCreditReportingFieldValues(Learner learner,List<CreditReportingFieldValue> creditReportingFieldValues, AcroFields formField) throws IOException, DocumentException{		

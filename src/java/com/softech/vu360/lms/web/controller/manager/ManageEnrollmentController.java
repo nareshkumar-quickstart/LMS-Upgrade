@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
@@ -1176,9 +1177,13 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
     	if(enrollmentMethod.equals(ENROLLMENT_METHOD_LEARNER)){
     		Long selectedLearnerId[]=new Long[form.getSelectedLearners().size()];
 			if(!form.getSelectedLearners().isEmpty()){
+				List<VU360User> userList = new ArrayList<>();
 				for(int i=0;i<form.getSelectedLearners().size();i++){
-					selectedLearnerId[i] = form.getSelectedLearners().get(i).getUser().getLearner().getId(); 
+//					selectedLearnerId[i] = form.getSelectedLearners().get(i).getUser().getLearner().getId();
+					userList.add(form.getSelectedLearners().get(i).getUser());
 				}
+				List<Long> learnerIds = vu360UserService.findLearnerIdsByVu360UserIn(userList);
+				selectedLearnerId = ArrayUtils.toObject(learnerIds.stream().mapToLong(l -> l).toArray());
 				customerEntitlementIds = entitlementService.getCustomerEntitlementForOrgGroupEntitlementsByLearnerIds(selectedLearnerId);
 			}
     	}

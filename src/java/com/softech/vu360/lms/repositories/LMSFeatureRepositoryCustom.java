@@ -14,4 +14,5 @@ import com.softech.vu360.lms.model.LMSFeature;
 public interface LMSFeatureRepositoryCustom {
 
 	List<LMSFeature> findAllActiveLMSFeaturesByUser(Long loggedInUserId, Long customerId, String roleType);
+	String getAnyEnabledFeatureCodeInDisplayOrderByRoleType(Long userId, String roleType, List<String> disabledFeatureCode);
 }

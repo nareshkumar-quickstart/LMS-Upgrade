@@ -38,14 +38,17 @@ public class BatchImportConnectionManager {
 
 
 	public void startListening(){
-		
+		log.debug("\n\nInside ActiveMQ startListening Method\n\n");
 		InetAddress ip;
         String hostname;
 		
 		try{
 			ip = InetAddress.getLocalHost();
 	        hostname = ip.getHostAddress();
+			log.debug("Host Name is ------------> " + hostname);
+			log.debug("ActiveMQ Server IP is ------------------> " + AMQ_SERVER_IP);
 			if(hostname.equals(AMQ_SERVER_IP) && BatchImportConnectionManager.consumer==null){
+				log.debug("\nAttempting to start Listener for ActiveMQ\n");
 				BatchImportConnectionManager.consumer = getSession().createConsumer(getQueue());
 				BatchImportConnectionManager.consumer.setMessageListener((MessageListener)getBatchImportMessageListener());
 				log.info("##- Message receiving has now been started.");

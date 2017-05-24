@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  - Application context containing authentication, channel
-  - security and web URI beans.
-  -
-  - Only used by "filter" artifact.
-  -
-  - $Id: applicationContext-acegi-security.xml 1425 2006-04-28 06:43:50Z benalex $
-  -->
 
 <b:beans xmlns="http://www.springframework.org/schema/security"
     xmlns:b="http://www.springframework.org/schema/beans"
@@ -14,11 +6,6 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-
-
-	<!-- https://dzone.com/articles/upgrading-appfuse-spring -->
-	<http pattern="/restful/**" security="none"/>
-	<http pattern="/rest/**" security="none"/>
 	<http pattern="/brands/**" security="none"/>
 	<http pattern="/javascript/**" security="none"/>
     <http pattern="/css/**" security="none"/>
@@ -26,40 +13,30 @@
     <http pattern="/bandwidth/**" security="none"/>
     <http pattern="/flash/**" security="none"/>
     <http pattern="/ssrsImages/**" security="none"/>
-    
-    <!-- 
-		<intercept-url pattern="/brands/**" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
-        <intercept-url pattern="/javascript/**" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
-            	360-TechnologyStack-Migration:
-    	Remove property 'access-denied-page' and 'session-fixation-protection'
-    	Add property 'disable-url-rewriting' and 'use-expressions'
-    	<http auto-config="false" access-denied-page="/login.do" session-fixation-protection="none"  realm="VU360 LMS Realm" entry-point-ref="authenticationProcessingFilterEntryPoint">
-    	
-    	Remove the following and define separtely
-    	<intercept-url pattern="/restful/**" filters="none"/>
-		<intercept-url pattern="/rest/**" filters="none"/>
-    -->
-    
+    <http pattern="/login.do" security="none"/>
+    <http pattern="/index.html" security="none"/>
+   	<http pattern="/restful/**" security="none"/>
+	<http pattern="/rest/**" security="none"/>
     
     <http auto-config="false" disable-url-rewriting="false" use-expressions="false" realm="VU360 LMS Realm" entry-point-ref="authenticationProcessingFilterEntryPoint">
-		<!-- access denied page -->
 		<access-denied-handler error-page="/login.do" />
         
         <intercept-url pattern="/" access="ROLE_ANONYMOUS"/>
-		<intercept-url pattern="/login.do" access="ROLE_ANONYMOUS"/>
-        
         <intercept-url pattern="/ins_addActivity.do" access="ROLE_ANONYMOUS"/>
         <intercept-url pattern="/*.launch" access="ROLE_ANONYMOUS, ROLE_LEARNER" />
         
         <intercept-url pattern="/mgr_uploadScormPackge.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/footerLinks.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+        <intercept-url pattern="/scorm.do" access="ROLE_LEARNER"/>
+        <intercept-url pattern="/interceptor.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+		<intercept-url pattern="/lms_handleMenu.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
+		<intercept-url pattern="/dashboard.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/admSelectCustomer.do" access="ROLE_LMSADMINISTRATOR"/>
         <intercept-url pattern="/admDeselectCustomer.do" access="ROLE_LMSADMINISTRATOR"/>
         <intercept-url pattern="/switchuser.do" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_LEARNER"/>
         <intercept-url pattern="/switchexituser.do" access="ROLE_TRAININGADMINISTRATOR, ROLE_PREVIOUS_ADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_LEARNER"/>
         <intercept-url pattern="/easysignup.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/ce_planner.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
-        <intercept-url pattern="/index.html" access="ROLE_ANONYMOUS"/>
         <intercept-url pattern="/selfRegistration.do" access="ROLE_ANONYMOUS"/>
         <intercept-url pattern="/forgetPassword.do" access="ROLE_ANONYMOUS"/>
         <intercept-url pattern="/aicc.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
@@ -68,12 +45,10 @@
         <intercept-url pattern="/admSwitchManagerMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/lrnSwitchBackAccreditationMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/learnerRegistration.do" access="ROLE_ANONYMOUS"/>
-        <intercept-url pattern="/scorm.do" access="ROLE_LEARNER"/>
         <intercept-url pattern="/completionCertificate.pdf" access="ROLE_LEARNER"/>
         <intercept-url pattern="/printProctorCompletionCertificate.pdf" access="ROLE_PROCTOR"/>        
 		<intercept-url pattern="/printCertificate.do" access="ROLE_ANONYMOUS, ROLE_LEARNER, ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/aiccCourse.do" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
-        <intercept-url pattern="/hello*.do" access="ROLE_ANONYMOUS"/>
         <intercept-url pattern="/lrn*.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/mgr*.do" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR"/>
         <intercept-url pattern="/mgr*.jason" access="ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR"/>
@@ -82,30 +57,18 @@
         <intercept-url pattern="/service/**" access="ROLE_ANONYMOUS, ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
         <intercept-url pattern="/ins*.do" access="ROLE_INSTRUCTOR"/>
 		<intercept-url pattern="/*SwitchLearnerMode.do" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
-        <intercept-url pattern="/**" access="ROLE_LEARNER,ROLE_TRAININGADMINISTRATOR,ROLE_LMSADMINISTRATOR,ROLE_REGULATORYANALYST,ROLE_INSTRUCTOR"/>
 		<intercept-url pattern="/legacy/generateCertificate.do" access="ROLE_LEARNER"/>
+
         <headers>
 			<cache-control />
-			
 			<!-- Use for frame uploading affidavit in accreditation mode(Dialog box was not popping up) -->
 			<frame-options policy="SAMEORIGIN" />
 			
 			<!-- Instructs the browser what to do when a XSS attack is detected -->
 			<xss-protection block="false"/>
-			
 		</headers>
 
-        
-        <!--
-        <form-login login-page="/login.do" 
-                    default-target-url="/interceptor.do" 
-                    authentication-failure-url="/login.do"
-                   
-        /> 
-        -->
-        <!-- -->
         <logout logout-url="/j_spring_security_logout"  invalidate-session="true" logout-success-url="/login.do"/>
-        
         
         <custom-filter before="LOGOUT_FILTER" ref="logoutFilter" /> <!-- we may replace 'position' with 'before' (To Do) -->
 		<custom-filter position="PRE_AUTH_FILTER" ref="siteminderFilter"/> <!-- Ref. Example: http://stackoverflow.com/questions/12478589/springsecurity-custom-automatic-authentication -->
@@ -120,11 +83,6 @@
 		<csrf disabled="true"/>
     </http>
 
-	
-	
-	
-	
-    
 	<!--
 		Entry Point of the http
 		*********************** 
@@ -209,11 +167,6 @@
     <!-- Custom Filter #4: (FILTER_SECURITY_INTERCEPTOR -->
     <!-- ********************************************** -->
  
-
-
-
-
-
  	<!-- 
     	In Spring Security 3, all AuthenticationProvider elements must be the children of <authentication-manager> element
     	Reference: https://www.packtpub.com/books/content/migration-spring-security-3
@@ -224,27 +177,12 @@
 				  <security:custom-authentication-provider/>
 				  <property name="userDetailsService" ref="userDetailsService"/>
 				</bean>    		
-
-
 				<authentication-provider ref="signedRequestAuthenticationProvider"/>    	
     -->
     <authentication-manager alias='authenticationManagerAlias'>
-    	<!-- 
-    	<authentication-provider>
-    		<jdbc-user-service data-source-ref="dataSource"/>
-  		</authentication-provider>
-  		
-  		<ldap-authentication-provider server-ref="ldap://localhost:10389/"/>
-  		 -->
   		<authentication-provider ref="preauthAuthProvider" /> <!-- For pre-auth-filter implementation --> 
   		<authentication-provider ref="ldapAuthenticationProvider"/>
-  		
-  		<!-- <authentication-provider user-service-ref="userDetailsService"/> -->
-  		
-  		
     </authentication-manager>
- 
-
 
     <!-- 
 	    <b:bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
@@ -306,7 +244,7 @@
 		<!-- 
 		<b:property name="adminSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
 		-->
-		<b:property name="adminSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="adminSwitchLearnerModeTargetURL" value="/lrn_MyCourses.do"/>
 		<b:property name="adminSwitchLearnerModeFailureURL" value="/adm_searchMember.do"/>
 		<b:property name="adminSwitchBackFromManagerURL" value="/adm_editlearner.do"/>
 		
@@ -324,38 +262,25 @@
 		<b:property name="adminSwitchBackTargetURL" value="/adm_searchMember.do"/>
 
 		<b:property name="managerSwitchLearnerModeURL" value="/mgrSwitchLearnerMode.do"/>
-		<!-- 
-		<b:property name="managerSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
-		-->
-		<b:property name="managerSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="managerSwitchLearnerModeTargetURL" value="/lrn_MyCourses.do"/>
 		<b:property name="managerSwitchBackFromLearnerModeURL" value="/lrnSwitchBackManagerMode.do"/>
 		<b:property name="managerSwitchBackFromLearnerModeTargetURL" value="/mgr_manageLearners.do"/>
 
 		<b:property name="managerSwitchURL" value="/switchuser.do"/>
-		<!-- 
-		<b:property name="managerSwitchTargetURL" value="/lrn_myCourses.do"/>
-		-->
 		<b:property name="managerSwitchTargetURL" value="/lrn_widgetDashboard.do"/>
 		<b:property name="managerSwitchBackURL" value="/switchexituser.do"/>
 		<b:property name="managerSwitchBackTargetURL" value="/mgr_editlearner.do"/>
 		
 		<!-- This will used for accreditation mode -->
 		<b:property name="accreditationSwitchLearnerModeURL" value="/accSwitchLearnerMode.do"/>
-		<!-- 
-		<b:property name="accreditationSwitchLearnerModeTargetURL" value="/lrn_myCourses.do"/>
-		-->
-		<b:property name="accreditationSwitchLearnerModeTargetURL" value="/lrn_widgetDashboard.do"/>
+		<b:property name="accreditationSwitchLearnerModeTargetURL" value="/lrn_MyCourses.do"/>
 		<b:property name="accreditationSwitchBackFromLearnerModeURL" value="/lrnSwitchBackAccreditationMode.do"/>
 		<b:property name="accreditationSwitchBackFromLearnerModeTargetURL" value="/acc_search.do"/>
 		
 		<b:property name="accreditationSwitchURL" value="/switchuser.do"/>
-		<!-- 
-		<b:property name="accreditationSwitchTargetURL" value="/lrn_myCourses.do"/>
-		-->
 		<b:property name="accreditationSwitchTargetURL" value="/lrn_widgetDashboard.do"/>
 		
 		<b:property name="securityService" ref="securityAndRolesService" />
-		<!--   This will used for accreditation mode  -->
 		<b:property name="userDetailsService" ref="userDetailsService" />
 		<b:property name="learnerService" ref="learnerService" />
 		<b:property  name="vu360UserService" ref="userDetailsService"/>

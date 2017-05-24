@@ -140,7 +140,7 @@ class CustomerServiceImpl implements CustomerService {
 		return customerEntitlementRepository.findByCustomerId(customerId);
 	}
 	
-	public List<Customer> findCustomersWithEntitlementByDistributor(Distributor dist, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,int sortDirection){
+	public List<Customer> findCustomersWithEntitlementByDistributor(Distributor dist, String customerName, String emailAddress, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,int sortDirection){
 		List<Customer> lstCustomer=new ArrayList<Customer>();
 		Distributor currentDistributor=((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentDistributor();
 		if(currentDistributor==null){
@@ -149,6 +149,12 @@ class CustomerServiceImpl implements CustomerService {
 		Long distributorId = currentDistributor.getId();
 		RepositorySpecificationsBuilder<Customer> sb_customer=new RepositorySpecificationsBuilder<Customer>();
 		sb_customer.with("distributor_id", sb_customer.JOIN_EQUALS, distributorId, "AND");
+		if(!StringUtils.isBlank(customerName)) {
+			sb_customer.with("name", sb_customer.LIKE_IGNORE_CASE, customerName, "AND");
+		}
+		if(!StringUtils.isBlank(emailAddress)) {
+			sb_customer.with("email", sb_customer.LIKE_IGNORE_CASE, emailAddress, "AND");
+		}
 
 		PageRequest pageRequest = null;
 		if (retrieveRowCount != -1 && pageIndex >= 0) {
@@ -359,6 +365,7 @@ class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@Transactional
 	public Customer addCustomer(Long userId, AddCustomerForm addCustomerForm) {
 
 		if ( addCustomerForm.getDistributors() == null ) {
@@ -376,6 +383,7 @@ class CustomerServiceImpl implements CustomerService {
 		}
 		return addCustomer(userId, dist, addCustomerForm);
 	}
+	@Transactional
 	public Customer addCustomer(Long userId, Distributor dist, AddCustomerForm addCustomerForm) {
 		Customer customer = addCustomer(true, userId,  dist,  addCustomerForm);
 		return customer;

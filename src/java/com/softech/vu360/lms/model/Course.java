@@ -23,6 +23,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.Parameter;
 /**
  * 
@@ -216,6 +218,7 @@ public class Course implements Serializable {
     private String businessUnitName = null;
 	
     @OneToOne(fetch=FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "COURSECONFIGURATIONTEMPLATE_ID")
     private CourseConfigurationTemplate courseConfigTemplate = null;
 	   

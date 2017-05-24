@@ -511,14 +511,17 @@ public class ManageSubscriptionEnrollmentController extends AbstractWizardFormCo
              // Update the remaining count of Subscription
              entitlementService.updateSeatsUsed(subscription.getCustomerEntitlement(), null, seatsEnrolled);
             }
-            
-            for(LearnerItemForm learneritemform : form.getSelectedLearners())
-         {
-       if(!isalreadypresent(lstmailLearner,learneritemform.getUser().getLearner().getId())) {
-        lstmailLearner.add(learneritemform.getUser().getLearner());
-       }
+            List<VU360User> selectedUsers = new ArrayList<>();
+            for(LearnerItemForm learneritemform : form.getSelectedLearners()){
+                selectedUsers.add(learneritemform.getUser() );
             }
-             
+            List<Learner> selectedLearners = learnerService.getLearnersByVU360UserIn(selectedUsers);
+            for(Learner learner : selectedLearners) {
+                if(!isalreadypresent(lstmailLearner,learner.getId())) {
+                    lstmailLearner.add(learner);
+                }
+            }
+
             for(Learner learner: lstmailLearner)
             {
               log.debug("Leaener Email list Count " + lstmailLearner.size());

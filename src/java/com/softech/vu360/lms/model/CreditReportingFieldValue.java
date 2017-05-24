@@ -33,8 +33,8 @@ import com.softech.vu360.util.SecurityUtil;
 		 name = "CreditReportingFieldValue.storeEncryptedValue",
 		 procedureName = "LMS_CREDIT_REPORTING_VALUE_ENCRYPTION",
 		 parameters = {
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class, name = "CREDITREPORTINGFIELDVALUE_ID"),
-				@StoredProcedureParameter(mode = ParameterMode.IN, type = String.class, name = "CREDITREPORTINGFIELDVALUE_VALUE")
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = Long.class, name = "PARAM_CREDITREPORTINGVALUE_ID"),
+				@StoredProcedureParameter(mode = ParameterMode.IN, type = String.class, name = "PARAM_CREDITREPORTINGVALUE")
 		 }
 		)
 @Table(name = "CREDITREPORTINGFIELDVALUE")

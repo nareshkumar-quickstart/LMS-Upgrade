@@ -29,6 +29,7 @@ public interface AuthorService {
 	public Distributor getDistributorByContentOwner(ContentOwner contentOwner);
 	public boolean isAuthor(long userId);
 	public boolean isAuthor(VU360User VU360User);
+	public Author getAuthorByVU360UserID(Long userID);
 
 	
 }

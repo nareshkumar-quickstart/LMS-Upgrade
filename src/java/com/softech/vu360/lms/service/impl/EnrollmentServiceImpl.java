@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -73,6 +73,7 @@ import com.softech.vu360.lms.model.SubscriptionCustomerEntitlement;
 import com.softech.vu360.lms.model.SynchronousClass;
 import com.softech.vu360.lms.model.SynchronousCourse;
 import com.softech.vu360.lms.model.SynchronousSession;
+import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.model.TrainingPlan;
 import com.softech.vu360.lms.model.TrainingPlanAssignment;
 import com.softech.vu360.lms.model.VU360User;
@@ -101,7 +102,6 @@ import com.softech.vu360.lms.util.ORMUtils;
 import com.softech.vu360.lms.vo.EnrollmentVO;
 import com.softech.vu360.lms.vo.MarketoPacketSerialized;
 import com.softech.vu360.lms.vo.SaveEnrollmentParam;
-import com.softech.vu360.lms.model.TimeZone;
 import com.softech.vu360.lms.web.controller.model.AvailableCoursesTree;
 import com.softech.vu360.lms.web.controller.model.CourseGroupView;
 import com.softech.vu360.lms.web.controller.model.CourseView;
@@ -116,6 +116,7 @@ import com.softech.vu360.util.EnrollLearnerAsyncTask;
 import com.softech.vu360.util.FieldsValidation;
 import com.softech.vu360.util.FormUtil;
 import com.softech.vu360.util.LearnersToBeMailedService;
+import com.softech.vu360.util.VU360Properties;
 
 import net.sf.json.JSONObject;
 
@@ -166,6 +167,14 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     private VU360UserService userService;
     private SubscriptionService subscriptionService;
     private JmsTemplate marketoJMSTemplate = null;
+    private boolean isMarketoEnabled = false;
+    
+	public EnrollmentServiceImpl() {
+
+		super();
+		isMarketoEnabled = Boolean.parseBoolean((String) VU360Properties.getVU360Property("marketo.enabled"));
+
+	}
     
     public List<LearnerEnrollment> addEnrollments(List<LearnerEnrollment> enrollments) {
 		List<LearnerEnrollment> les = new ArrayList<LearnerEnrollment>();
@@ -967,7 +976,9 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			VU360User user = VU360UserAuthenticationDetails.getCurrentUser();
 		    Customer customer = ((VU360UserAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 		    log.debug("IN process enrollLearnersInCoursesViaUserGroup start *5 ");
-		    enrollLearnersInCoursesViaUserGroup(learners, items, user, customer, brand);
+		    if(items != null) {
+		    	enrollLearnersInCoursesViaUserGroup(learners, items, user, customer, brand);
+		    }
 		    log.debug("IN process enrollLearnersInCoursesViaUserGroup end *5 ");
 		    log.debug("IN process enrollLearnersInLearnerGroupCourses end *4 ");
 		}
@@ -1396,7 +1407,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 										if(creditReportingFieldValueList!=null && !creditReportingFieldValueList.isEmpty()){
 										    for (CreditReportingFieldValue value : creditReportingFieldValueList) {
 											    valueFound = value.getReportingCustomField().getId().longValue() == field.getId().longValue();
-											    //continue CHK_ALL_REPORTING_FIELDS_LOOP;
+											    continue CHK_ALL_REPORTING_FIELDS_LOOP;
 										    }
 										    /* check for static field values */ 
 										    if("STATICCREDITREPORTINGFIELD".equals(field.getFieldType())) {
@@ -2517,37 +2528,39 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     
     @Override
     public void marketoPacket(LearnerEnrollment le, String eventName){
-    	try{
-			final String firstName = le.getLearner().getVu360User().getFirstName();
-			final String lastName = le.getLearner().getVu360User().getLastName();
-			final String emailAddress = le.getLearner().getVu360User().getEmailAddress();
-			final String company = le.getLearner().getCustomer().getName();
-			final String courseName = le.getCourse().getCourseTitle();
-			final String storeName = le.getLearner().getCustomer().getDistributor().getName();
-			final String event = eventName;
-			final String customerType = le.getLearner().getCustomer().getCustomerType();
-			String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-			final String eventDate = simpleDateFormat.format(new Date());
-			
-	   		if((emailAddress!=null) && (emailAddress.length() > 0) && (FieldsValidation.isEmailValid(emailAddress))){
-	   		  marketoJMSTemplate.send(new MessageCreator() {
-	                 public TextMessage createMessage(Session session) throws JMSException {
-	              	  TextMessage message = session.createTextMessage();
-	               	  
-	               	  JSONObject jsonObj = JSONObject.fromObject(new MarketoPacketSerialized(firstName,lastName,emailAddress,company,courseName,storeName,event,eventDate,customerType));
-	               	  message.setText(jsonObj.toString());
-	                     return message;
-	                 }
-	             });
-	   		  
-	   		}
-	   		else if((emailAddress!=null) && (emailAddress.length() > 0)){
-			  log.debug("Invalid Marketo Email address" + emailAddress);
+    	if(isMarketoEnabled){
+	    	try {
+				final String firstName = le.getLearner().getVu360User().getFirstName();
+				final String lastName = le.getLearner().getVu360User().getLastName();
+				final String emailAddress = le.getLearner().getVu360User().getEmailAddress();
+				final String company = le.getLearner().getCustomer().getName();
+				final String courseName = le.getCourse().getCourseTitle();
+				final String storeName = le.getLearner().getCustomer().getDistributor().getName();
+				final String event = eventName;
+				final String customerType = le.getLearner().getCustomer().getCustomerType();
+				String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+				final String eventDate = simpleDateFormat.format(new Date());
+				
+		   		if((emailAddress!=null) && (emailAddress.length() > 0) && (FieldsValidation.isEmailValid(emailAddress))){
+		   		  marketoJMSTemplate.send(new MessageCreator() {
+		                 public TextMessage createMessage(Session session) throws JMSException {
+		              	  TextMessage message = session.createTextMessage();
+		               	  
+		               	  JSONObject jsonObj = JSONObject.fromObject(new MarketoPacketSerialized(firstName,lastName,emailAddress,company,courseName,storeName,event,eventDate,customerType));
+		               	  message.setText(jsonObj.toString());
+		                     return message;
+		                 }
+		             });
+		   		  
+		   		}
+		   		else if((emailAddress!=null) && (emailAddress.length() > 0)){
+				  log.debug("Invalid Marketo Email address" + emailAddress);
+				}
+			} catch (Exception e) {
+				log.error(e);
 			}
-		} catch (Exception e) {
-			log.error(e);
-		}
+    	}
      }
 	
 	@Override
@@ -2845,5 +2858,11 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			}
 			return null;
 	    }
+
+	@Override
+	public List<LearnerEnrollment> findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(long learnerId,
+			String status, Set<String> courseStatisticsStatuses) {
+		return learnerEnrollmentRepository.findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(learnerId, status, courseStatisticsStatuses);
+	}
 
 }

@@ -102,9 +102,9 @@ public class LearningSessionServiceImpl implements LearningSessionService{
 			}
 			 
 			if(sendMail){
-				if(courseApproval!=null && !courseApproval.getSelfReported())
-					learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollmentId, false);
-				else
+				//if(courseApproval!=null && !courseApproval.getSelfReported())
+				//	learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollmentId, false);
+				//else
 					learnersToBeMailedService.emailCourseCompletionCertificate(learnerEnrollmentId, true);
 			}
 			
@@ -224,7 +224,7 @@ public class LearningSessionServiceImpl implements LearningSessionService{
 					if(courseApprovalId != null && courseApprovalId.longValue() > 0){
 						courseApproval=accreditationService.loadForUpdateCourseApproval(courseApprovalId);	
 					}
-					if(courseApproval != null && courseApproval.getSelfReported()) {
+					if(courseApproval != null /* && courseApproval.getSelfReported() */) {
 						if(StringUtils.isBlank(courseStats.getCertificateNumber())) {
 							certificateService.assignCompletionCertificateNo(courseStats,courseApproval);
 						}
