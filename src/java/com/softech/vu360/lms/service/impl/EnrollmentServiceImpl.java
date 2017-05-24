@@ -1391,8 +1391,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			for (MyCoursesCourseGroup d : filteredCourseGroups) {
 			    for (MyCoursesItem mci : d.getCurrentMyCoursesItems("enrolled")) {
 			    	// Checking Missing Reporting Field - Start
+					CourseApproval courseApproval = accreditationService.getCourseApprovalByCourse(mci.getEnrollment().getCourse());
+
 			    	try{
-			    		Long courseApprovalId = accreditationService.getCourseApprovalSelected(mci.getEnrollment().getId(), mci.getEnrollment().getLearner().getId(), mci.getEnrollment().getCourse().getCourseGUID());
+			    		Long courseApprovalId = null;
+			    		if(courseApproval != null)
+			    			courseApprovalId = courseApproval.getId();
+//			    		Long courseApprovalId = accreditationService.getCourseApprovalSelected(mci.getEnrollment().getId(), mci.getEnrollment().getLearner().getId(), mci.getEnrollment().getCourse().getCourseGUID());
 		    			if(courseApprovalId !=null && courseApprovalId >0)
 		    			{
 		    				List<CreditReportingField> creditReportingFieldList= new ArrayList<CreditReportingField>(accreditationService.getCreditReportingFieldsByCourseApproval(courseApprovalId));
@@ -1457,7 +1462,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 						}
 					}
 					
-					CourseApproval courseApproval = accreditationService.getCourseApprovalByCourse(learnerEnrollment.getCourse());
+//					CourseApproval courseApproval = accreditationService.getCourseApprovalByCourse(learnerEnrollment.getCourse());
 					if(courseApproval!=null){
 						CourseConfigurationTemplate courseConfigurationTemplate = courseApproval.getTemplate();
 						  if(courseConfigurationTemplate!=null){

@@ -49,8 +49,7 @@ public interface LearnerEnrollmentRepository extends CrudRepository<LearnerEnrol
 	@Query("SELECT le FROM  LearnerEnrollment le WHERE le.learner.id = :learnerId and (le.enrollmentStatus = :enrollmentStatusExpired or le.enrollmentStatus = :enrollmentStatusActive) and (le.course.courseTitle LIKE %:search% or le.course.description LIKE %:search% or le.course.keywords LIKE %:search%)")
 	public List<LearnerEnrollment> findbyLearnerIdandEnrollmentStatusandCourseTitleorDescorKeywords(@Param("learnerId") Long learnerId,@Param("enrollmentStatusExpired") String enrollmentStatusExpired, @Param("enrollmentStatusActive") String enrollmentStatusActive,@Param("search") String search);
 
-	
-	@EntityGraph(value = "LearnerEnrollment.findEnrollmentByLearnerAndEnrollmentStatus" , type = EntityGraphType.FETCH)
+	@EntityGraph(value = "LearnerEnrollment.findEnrollmentByLearnerAndEnrollmentStatus" , type = EntityGraphType.FETCH)	
 	@Query("SELECT le FROM  LearnerEnrollment le WHERE le.learner.id = :learnerId and (le.enrollmentStatus = :expiredEnrollmentStatus or le.enrollmentStatus = :activeEnrollmentStatus)")
 	public List<LearnerEnrollment> findbyLearnerIdandEnrollmentStatus(@Param("learnerId") Long learnerId,@Param("expiredEnrollmentStatus") String expiredEnrollmentStatus,@Param("activeEnrollmentStatus") String activeEnrollmentStatus);
 
@@ -68,7 +67,7 @@ public interface LearnerEnrollmentRepository extends CrudRepository<LearnerEnrol
 	
 	public Long countByCustomerEntitlementId(Long customerEntitlementId);
 
-	@Query("SELECT le FROM  LearnerEnrollment le WHERE le.learner.id = :learnerId AND le.course.courseType IS NOT NULL AND ( le.course.courseType='Classroom Course' OR le.course.courseType='Webinar Course') AND le.synchronousClass.id IS NOT NULL")
+	@Query("SELECT le FROM  LearnerEnrollment le LEFT JOIN FETCH le.courseStatistics LEFT JOIN FETCH le.synchronousClass WHERE le.learner.id = :learnerId AND le.course.courseType IS NOT NULL AND ( le.course.courseType='Classroom Course' OR le.course.courseType='Webinar Course') AND le.synchronousClass.id IS NOT NULL")
 	List<LearnerEnrollment> findByLearnerIdAndCourseType(@Param("learnerId") Long learnerId);
 	
 	@EntityGraph(value = "LearnerEnrollment.findEnrollmentByLearnerAndEnrollmentStatus" , type = EntityGraphType.FETCH)
