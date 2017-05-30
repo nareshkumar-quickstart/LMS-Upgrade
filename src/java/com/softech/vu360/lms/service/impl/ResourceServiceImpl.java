@@ -224,12 +224,14 @@ public class ResourceServiceImpl implements ResourceService{
 		
 		List<InstructorSynchronousClass> objs = instructorSynchronousClassRepository.findByInstructorId(instructorId);
 		
-		List<Long> synchronousClasses = new ArrayList();
-		for(InstructorSynchronousClass obj : objs){
-			synchronousClasses.add(obj.getSynchronousClass().getId());
-			
+		List<Long> synchronousClasses = null;
+		if(objs != null && !objs.isEmpty()) {
+			synchronousClasses = new ArrayList<>();
+			for (InstructorSynchronousClass obj : objs) {
+				synchronousClasses.add(obj.getSynchronousClass().getId());
+			}
 		}
-		
+
 		List<LearnerEnrollment> enrollments = leanrEnrollmentRepository.findSynchronousClassIdsInandfirstNameandLastNameandEmailAddress(synchronousClasses,firstName, lastName, email);//instructorDAO.findLearnersByInstructor(firstName, lastName, email, instructorId);
 		HashSet<VU360User> searchedUsers = new HashSet<VU360User>();
 		if( enrollments != null ) {
