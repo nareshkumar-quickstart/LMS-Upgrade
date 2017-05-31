@@ -159,7 +159,7 @@ public class EditSelfRegistrationInvitationController extends VU360BaseMultiActi
 		}
 	
 
-		if (registrationForm.getSelectedLearnerGroups() != null ) {
+		if (registrationForm.getSelectedLearnerGroups() != null && registrationForm.getSelectedLearnerGroups().length > 0 ) {
 			List<LearnerGroup> learnerGroupList = new ArrayList<LearnerGroup>();
 			for(int i=0; i<registrationForm.getSelectedLearnerGroups().length;i++) {
 				learnerGroupList.add(learnerService.getLearnerGroupById(Long.valueOf(registrationForm.getSelectedLearnerGroups()[i])));

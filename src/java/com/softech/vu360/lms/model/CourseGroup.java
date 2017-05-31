@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.Parameter;
@@ -63,6 +64,7 @@ public class CourseGroup implements SearchableKey, SearchableCourses {
 	private String guid = null;
 	
 	@OneToMany(mappedBy="parentCourseGroup" )
+	@BatchSize(size = 100)
 	private List<CourseGroup> childrenCourseGroups = new ArrayList<CourseGroup>();
 	
 	@ManyToMany
