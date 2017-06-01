@@ -716,7 +716,8 @@ public class EditUserController extends VU360BaseMultiActionController{
 				}
 			}
 			//assign it to learner profile & save
-			dbProfile.setCustomFieldValues(myCustomFieldValues);
+			if(myCustomFieldValues != null && myCustomFieldValues.size() > 0)
+				dbProfile.setCustomFieldValues(myCustomFieldValues);
 			learnerService.updateLearnerProfile(dbProfile);
 			Customer customer=((VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails()).getCurrentCustomer();
 			//TODO TEMP logic should be removed after R&D why Reseller Custom Fields being inserted on customer_customfield table
