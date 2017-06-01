@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+
 /**
  * 
  * @author muhammad.saleem
@@ -56,6 +58,7 @@ public class OrganizationalGroup implements SearchableKey,Comparable<Organizatio
 	// @MariumSaud : Remove fetch=EAGER and handled it via JPQL for Batch Import
     @OneToMany(cascade={CascadeType.MERGE, CascadeType.REMOVE})
     @JoinColumn(name="PARENTORGGROUP_ID")
+    @BatchSize(size = 100)
     //@LazyCollection(LazyCollectionOption.FALSE)
 	private List<OrganizationalGroup> childrenOrgGroups = new ArrayList<OrganizationalGroup>();
 	
