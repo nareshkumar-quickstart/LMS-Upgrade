@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -325,65 +326,42 @@ public class DistributorServiceImpl implements DistributorService {
 	private Collection<String> getAdminRestrictionExpression(
 			VU360User loggedInUser) {
 
-		List<Distributor> distributorList = new ArrayList<Distributor>();
 		Collection<String> distIds=new ArrayList<String>();
+		Set<DistributorGroup> uniqueDistributorGroups = null;
 
 		// Highly optimized
-		if (loggedInUser.getLmsAdministrator() != null
-				&& !loggedInUser.getLmsAdministrator().isGlobalAdministrator()) {
+		if (loggedInUser.getLmsAdministrator() != null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()) {
+		
+			List<DistributorGroup> ls = loggedInUser.getLmsAdministrator().getDistributorGroups();
+			Long lmsAdministratorID= loggedInUser.getLmsAdministrator().getId();
+		
+				if(!ls.isEmpty()){
+			
+					uniqueDistributorGroups = new HashSet<DistributorGroup>(ls);
+			
+					// get id from collection.
+					Collection<Long> dgIds = ls.stream().map(x -> x.getId()).collect(Collectors.toList());
 
-			List<DistributorGroup> ls = loggedInUser.getLmsAdministrator()
-					.getDistributorGroups();
-			Set<DistributorGroup> uniqueDistributorGroups = null;
+					List<LMSAdministratorAllowedDistributor> allowedDistributors = lMSAdministratorAllowedDistributorRepository
+						.findByDistributorGroupIdInAndLmsAdministratorId(dgIds, 
+								lmsAdministratorID);
 
-			if(ls!=null){
-				uniqueDistributorGroups = new HashSet<DistributorGroup>(ls);
-			}
-			else{
+					// get id from collection.
+					Collection<String> ids = allowedDistributors.stream().map(x -> x.getAllowedDistributorId().toString()).collect(Collectors.toList());
+
+					if (ids != null && !ids.isEmpty()) {
+						return distIds=ids;
+					}
+					else{
+						// If the user is Admin (Not Global Admin) and is not associated with any reseller group then default distributor id will be set to '-1' inorder to prevent user
+						// to view all reseller
+						distIds = Arrays.asList("-1");
+					}
+				}
+				else{
 				uniqueDistributorGroups = new HashSet<DistributorGroup>();
-			}
-
-			// get id from collection.
-			Collection<Long> dgIds = Collections2.transform(
-					uniqueDistributorGroups,
-					new Function<DistributorGroup, Long>() {
-						public Long apply(DistributorGroup arg0) {
-							return Long.parseLong(arg0.getId().toString());
-						}
-					});
-
-			List<LMSAdministratorAllowedDistributor> allowedDistributors = lMSAdministratorAllowedDistributorRepository
-					.findByDistributorGroupIdInAndLmsAdministratorId(dgIds,
-							loggedInUser.getLmsAdministrator().getId());
-
-			// get id from collection.
-			Collection<Long> ids = Collections2.transform(allowedDistributors,
-					new Function<LMSAdministratorAllowedDistributor, Long>() {
-						public Long apply(
-								LMSAdministratorAllowedDistributor arg0) {
-							return Long.parseLong(arg0
-									.getAllowedDistributorId().toString());
-						}
-					});
-
-			if (ids != null && !ids.isEmpty()) {
-				Set<Long> uniqueIds = new HashSet<Long>(ids);
-				distributorList = (List<Distributor>) distributorRepository
-						.findAll(uniqueIds);
-				
-				// get id from collection.
-				distIds = Collections2.transform(distributorList,
-						new Function<Distributor, String>() {
-							public String apply(Distributor arg0) {
-								return String.valueOf(arg0.getId());
-							}
-						});
-			}
-			else{
-				// If the user is Admin (Not Global Admin) and is not associated with any reseller group then default distributor id will be set to '-1' inorder to prevent user
-				// to view all reseller
 				distIds = Arrays.asList("-1");
-			}
+				}
 		}
 		return distIds;
 	}
