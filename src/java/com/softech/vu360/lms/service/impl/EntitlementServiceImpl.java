@@ -192,7 +192,20 @@ public class EntitlementServiceImpl implements EntitlementService {
 		}
 		Collection<CourseCustomerEntitlement> courseContracts = map.values();
 		if(CollectionUtils.isNotEmpty(courseContracts)){
-			return (CustomerEntitlement)courseContracts.toArray()[0];
+			//return (CustomerEntitlement)courseContracts.toArray()[0];   
+			//LMS-22068
+			 for(CourseCustomerEntitlement courseContract:courseContracts){  
+	  		if(courseContract.getEndDate()==null){
+				  Date expireDate = new Date(courseContract.getStartDate().getTime() + TimeUnit.DAYS.toMillis(courseContract.getDefaultTermOfServiceInDays()));
+				    if(expireDate.compareTo(new Date(System.currentTimeMillis()))>=0){
+		        			return courseContract;
+		        		}
+				}
+				else{
+				 return courseContract;
+				}
+	        }			
+		  	
 		}else{
 			try {
 				Date curDate = new Date( System.currentTimeMillis() );
@@ -206,7 +219,17 @@ public class EntitlementServiceImpl implements EntitlementService {
 				}
 				groupContracts = map2.values();
 				if(CollectionUtils.isNotEmpty(groupContracts)){
-					return (CustomerEntitlement)groupContracts.toArray()[0];
+					for(CourseGroupCustomerEntitlement groupContract:groupContracts){
+			  		      if(groupContract.getEndDate()==null){
+						        Date expireDate = new Date(groupContract.getStartDate().getTime() + TimeUnit.DAYS.toMillis(groupContract.getDefaultTermOfServiceInDays()));
+						           if(expireDate.compareTo(new Date(System.currentTimeMillis()))>=0){
+				        			return groupContract;
+				        		}
+						     }
+						       else{
+						          return groupContract;
+						       }
+					}
 				}
 			} catch (Exception e) {
 				log.debug("Error occurred while fetching Active Contracts for Customer:"+ customer.getId());
@@ -214,7 +237,7 @@ public class EntitlementServiceImpl implements EntitlementService {
 		}
 		return null;
 	}
-
+	
 	public LearnerEnrollment getLearnerEnrollmentById(Long id) {
 		return learnerEnrollmentRepository.findOne(id);
 	}
