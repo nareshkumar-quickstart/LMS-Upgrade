@@ -58,7 +58,23 @@
  
      function FormSubmit(buttonclick) {
          document.getElementById('action').value=buttonclick;
-         document.searchManageForm.submit();
+         
+         //Added By MariumSaud: Limit search to 2 char for firstName,LastName and emailAddress
+         var firstName = document.searchManageForm.firstname.value ;
+ 		 var lastName = document.searchManageForm.lastname.value;
+		 var email= document.searchManageForm.emailaddress.value;
+			
+		
+		 firstName = firstName.replace(/\%/gi, "");
+ 		 lastName = lastName.replace(/\%/gi, "");
+ 		 email = email.replace(/\%/gi, "");
+ 		 	
+		 if(firstName.length < 2 && lastName.length < 2 && email.length < 2){
+		 	$("#message_box").css("display","block");
+		 	$("#scrollable").find("#errMsg").html("Please Provide Search criteria minimum of 2 characters");
+			return false;
+		 }
+		 document.searchManageForm.submit();
      }
  
      function deleteLearners(){
@@ -156,7 +172,15 @@
 				</td>
 				
 				<TD id="content" >
-					<div id="scrollable">
+				<div id="scrollable">
+				<div id="message_box" style="display:none;"><!-- message_box -->
+                    <img id="close_message" style="float:right;cursor:pointer" src="$brander.getBrandElement("lms.errorMessage.pixel.12-em-cross.png")" />
+					
+                    <div class="width40pct">
+                        <div class="message_box_align"><img src="$brander.getBrandElement("lms.errorMessage.pixel.addLearner_06.gif")" width="14" height="14" alt="" /></div>
+                    	<div class="message_box_align"><div id="errMsg"></div></div> 
+                    </div>
+                </div><!-- message_box -->
 					#set($totCount=$context.members.size())
 
 					 <!-- Logo+Manage-User -->
@@ -175,7 +199,7 @@
 						</table>
 					 
           				 <!-- Logo+Manage-User-end -->
-
+						
           				 <div id="resultBox" class="content-Block-new"><!-- Search resultBox -->
              				 <div id="searchBox" class="visible"><!-- Search input window -->
 						<form name="searchManageForm" id="searchManageForm" method="post" action="mgr_manageLearners.do">
