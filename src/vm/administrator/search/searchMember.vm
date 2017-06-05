@@ -40,6 +40,22 @@
                 }, "slow", "linear", function(){$("#message_box").hide();} );
             });
            
+           $("#resultSizeDropDown").change(function () {
+        		var end = this.value;
+        		var searchType = $('#selectedSearchType').val();
+        		if(searchType == 'distributorSearch'){
+        			doSearchDistributor();
+        		}
+        		else if(searchType == 'customerSearch'){
+        			doSearchCustomer('searchCustomerForm');
+        		}
+        		else if(searchType == 'advanceCustomerSearch'){
+        			doSearchCustomer('advanceSearchCustomerForm');
+        		}
+        		else if(searchType == 'learnerSearch'){
+        			doSearchLearner();
+        		}
+   			 });
         });
         
        
@@ -618,6 +634,7 @@
                             #set($sortColumnIndex = $adminSearchForm.sortColumnIndex)
                             #set($sortDirection = $adminSearchForm.sortDirection)
                             #set($selectedResultSize = $adminSearchForm.selectedResultSize)
+                            #set($selectedSearchType = $adminSearchForm.searchType)
                         #else
                             #set($pageFirstIndex = 0)
                             #set($pageLastIndex = 0)
@@ -662,15 +679,17 @@
 								<input type="hidden" id="sortIndex" name="sortIndex" value="$sortIndex" />
                                 <input type="hidden" id="direction" name="direction" value="$direction" />
                                 <input type="hidden" id="selectedResultSize" name="selectedResultSize" value="$selectedResultSize" />
+                                <input type="hidden" id="selectedSearchType" name="selectedSearchType" value="$selectedSearchType" />
                                 
                                 <!-- Custom DropDown For Selecting PageSize -->
-                                <select class="searchadmin-dropdown" name="resultSizeDropDown" id="resultSizeDropDown">   
+                                <div class="searchadmin-dropdown">Page-Size Count : <select size=[0] name="resultSizeDropDown" id="resultSizeDropDown">   
                                 <option value="10" #if($!{context.resultSize} == "10" ) selected #end>10</option>                            
                             	<option value="20"  #if($!{context.resultSize} == "20" ) selected #end>20</option>
                             	<option value="30"  #if($!{context.resultSize} == "30" ) selected #end>30</option> 
                             	<option value="40"  #if($!{context.resultSize} == "40" ) selected #end>40</option> 
                             	<option value="50"  #if($!{context.resultSize} == "50" ) selected #end>50</option>                                        
                             	</select>
+                            	</div>
                             </div>
                         </form>
 
