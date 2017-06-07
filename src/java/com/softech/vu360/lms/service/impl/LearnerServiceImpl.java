@@ -1947,7 +1947,7 @@ public class LearnerServiceImpl implements LearnerService {
 
 
 	// Modified By Marium.Saud
-	@Transactional
+//	@Transactional
 	public CreditReportingFieldValue saveCreditReportingfieldValue(
 			CreditReportingFieldValue creditReportingfieldValue) {
 
