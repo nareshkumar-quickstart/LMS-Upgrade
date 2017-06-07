@@ -19,4 +19,8 @@ public class OrganizationalGroupMemberRepositoryImpl implements OrganizationalGr
 		ogm = entityManager.merge(ogm);
 		return ogm;
 	}
+
+	public void deleteByLearnerIdSql(Long learnerId) {
+		entityManager.createNativeQuery("Delete from LEARNER_ORGANIZATIONALGROUP where learner_id = " + learnerId);
+	}
 }

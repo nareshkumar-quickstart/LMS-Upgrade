@@ -9,5 +9,7 @@ import com.softech.vu360.lms.model.OrganizationalGroupMember;
 public interface OrganizationalGroupMemberRepositoryCustom {
 	//void deleteOGM(OrganizationalGroupMember ogm);
 	OrganizationalGroupMember saveOGM(OrganizationalGroupMember ogm);/**/
+	public void deleteByLearnerIdSql(Long learnerId);
+
 	//void updateLearner(Long learnerId, Long orgId, Long oldlearnerId);
 }
