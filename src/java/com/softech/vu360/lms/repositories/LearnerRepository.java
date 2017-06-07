@@ -63,7 +63,7 @@ public interface LearnerRepository extends CrudRepository<Learner, Long>, Learne
 	
 	Learner findByVu360UserId(Long vu360UserId);
 	
-	@Query(value = "if exists(select le.course_id, cc.courseconfigurationtemplate_id, lcs.status\n" + 
+	/*@Query(value = "if exists(select le.course_id, cc.courseconfigurationtemplate_id, lcs.status\n" + 
     		"from LEARNERENROLLMENT le, learnercoursestatistics lcs, courseapproval ca, course co, courseconfigurationtemplate cct, courseconfiguration cc\n" + 
     		"where (le.learner_id = ?1 and (le.enrollmentstatus = 'Active') and cast(le.enddate as date) >= cast(getdate() as date))\n" + 
     		"and co.id = le.course_id\n" + 
@@ -74,7 +74,68 @@ public interface LearnerRepository extends CrudRepository<Learner, Long>, Learne
     		"		or (cct.id = co.courseconfigurationtemplate_id and  cc.courseconfigurationtemplate_id = cct.id)\n" + 
     		"	)\n" + 
     		"and (cc.VALIDATION_REQUIREIDENTITYVALIDATION = 1 and isnull(cc.PROFILEBASED_VALIDATION_TF, 0) = 0 and  isnull(cc.DEFINEUNIQUEQUESTION_VALIDATION_TF, 0) = 0)) " +
-    		"select cast(1 as bit) else select cast(0 as bit) ", nativeQuery=true)
+    		"select cast(1 as bit) else select cast(0 as bit) ", nativeQuery=true)*/
+	@Query(value="IF EXISTS\n" + 
+	    "(\n" + 
+	    "   SELECT\n" + 
+	    "      le.course_id,\n" + 
+	    "      cc.courseconfigurationtemplate_id,\n" + 
+	    "      lcs.status \n" + 
+	    "   FROM\n" + 
+	    "      learnerenrollment le \n" + 
+	    "      INNER JOIN\n" + 
+	    "         learnercoursestatistics lcs \n" + 
+	    "         ON lcs.learnerenrollment_id = le.id \n" + 
+	    "      INNER JOIN\n" + 
+	    "         course co \n" + 
+	    "         ON co.id = le.course_id \n" + 
+	    "      LEFT OUTER JOIN\n" + 
+	    "         courseapproval ca \n" + 
+	    "         ON ca.course_id = co.id \n" + 
+	    "      LEFT OUTER JOIN\n" + 
+	    "         courseconfigurationtemplate cct \n" + 
+	    "         ON cct.id = ca.courseconfigurationtemplate_id \n" + 
+	    "      LEFT OUTER JOIN\n" + 
+	    "         courseconfiguration cc \n" + 
+	    "         ON cc.courseconfigurationtemplate_id = cct.id \n" + 
+	    "      LEFT OUTER JOIN\n" + 
+	    "         courseconfigurationtemplate cct2 \n" + 
+	    "         ON cct2.id = co.courseconfigurationtemplate_id \n" + 
+	    "      LEFT OUTER JOIN\n" + 
+	    "         courseconfiguration cc2 \n" + 
+	    "         ON cc2.courseconfigurationtemplate_id = cct2.id \n" + 
+	    "   WHERE\n" + 
+	    "      (\n" + 
+	    "         le.learner_id = ?1 \n" + 
+	    "         AND \n" + 
+	    "         (\n" + 
+	    "            le.enrollmentstatus = '" + LearnerEnrollment.ACTIVE + "' \n" + 
+	    "         )\n" + 
+	    "         AND Cast(le.enddate AS DATE) >= Cast(Getdate() AS DATE) \n" + 
+	    "      )\n" + 
+	    "      AND LOWER(lcs.status) NOT IN \n" + 
+	    "      (\n" + 
+	    "         '" + LearnerCourseStatistics.COMPLETED + "',\n" + 
+	    "         '" + LearnerCourseStatistics.NOT_STARTED + "' \n" + 
+	    "      )\n" + 
+	    "      AND \n" + 
+	    "      (\n" + 
+	    "( cc.validation_requireidentityvalidation = 1 \n" + 
+	    "         AND Isnull(cc.profilebased_validation_tf, 0) = 0 \n" + 
+	    "         AND Isnull(cc.defineuniquequestion_validation_tf, 0) = 0 ) \n" + 
+	    "         OR \n" + 
+	    "         (\n" + 
+	    "            cc2.validation_requireidentityvalidation = 1 \n" + 
+	    "            AND Isnull(cc2.profilebased_validation_tf, 0) = 0 \n" + 
+	    "            AND Isnull(cc2.defineuniquequestion_validation_tf, 0) = 0 \n" + 
+	    "         )\n" + 
+	    "      )\n" + 
+	    ")\n" + 
+	    "SELECT\n" + 
+	    "   Cast(1 AS BIT) \n" + 
+	    "   ELSE\n" + 
+	    "      SELECT\n" + 
+	    "         Cast(0 AS BIT)", nativeQuery=true)
 	boolean hasAnyInProgressEnrollmentOfStandardValidationQuestions(@Param("learnerId") long learnerId);
 	
 	@Query(value= "select q from LearnerValidationAnswers q where q.questionId = ?1 and q.learner.id = ?2")
