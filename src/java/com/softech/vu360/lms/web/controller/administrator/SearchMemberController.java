@@ -285,7 +285,14 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// On search box, following options starts to appear:
 		// (x) Limit search to selected reseller
 		// to limit search
-		constrainedCustomerSearch = form.isConstrainedCustomerSearch();
+		
+		//Added By MariumSaud : LMS-22376 : Keeping the track of 'Limit Customer Search' checkbox with PageCount dropdown 
+		if(request.getParameter("isConstrainedCustomerSearch")!=null){
+			constrainedCustomerSearch = request.getParameter("isConstrainedCustomerSearch")==""?false:Boolean.parseBoolean(request.getParameter("isConstrainedCustomerSearch").toString());
+		}
+		else{
+			constrainedCustomerSearch = form.isConstrainedCustomerSearch();
+		}
 
 		// If a distributor or reseller or customer is selected
 		// On search box, following options starts to appear:
@@ -293,8 +300,15 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// or ...
 		// (x) Limit search to selected customer
 		// to limit search
-		constrainedLearnerSearch = form.isConstrainedLearnerSearch();
-
+		
+		//Added By MariumSaud : LMS-22376 : Keeping the track of 'Limit Learner Search' checkbox with PageCount dropdown 
+		if(request.getParameter("isConstrainedLearnerSearch")!=null){
+			constrainedLearnerSearch = request.getParameter("isConstrainedLearnerSearch")==""?false:Boolean.parseBoolean(request.getParameter("isConstrainedLearnerSearch").toString());
+		}
+		else{
+			constrainedLearnerSearch = form.isConstrainedLearnerSearch();
+		}
+		
 		// Validation status?
 		hasValidationErrors = errors.hasErrors();
 
@@ -324,6 +338,10 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		
 		// Added By MariumSaud LMS-22148: Form Attribute that will hold the value of selected Page Size and is used when Next and Prev Button is clicked
 		form.setSelectedResultSize(Integer.parseInt(selectedResultSize));
+		
+		//Added By MariumSaud : LMS-22376- Holding constrain Search value for Customer and Learner to implement it with Page Size count
+		form.setConstrainedCustomerSearch(constrainedCustomerSearch);
+		form.setConstrainedLearnerSearch(constrainedLearnerSearch);
 		
 		context.put("selectedResultSize", selectedResultSize);
 		context.put("resultSize", selectedResultSize);
@@ -1166,7 +1184,14 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// On search box, following options starts to appear:
 		// (x) Limit search to selected reseller
 		// to limit search
-		constrainedCustomerSearch = form.isConstrainedCustomerSearch();
+		
+		//Added By MariumSaud : LMS-22376 : Keeping the track of 'Limit Customer Search' checkbox with PageCount dropdown 
+		if(request.getParameter("isConstrainedCustomerSearch")!=null){
+			constrainedCustomerSearch = request.getParameter("isConstrainedCustomerSearch")==""?false:Boolean.parseBoolean(request.getParameter("isConstrainedCustomerSearch").toString());
+		}
+		else{
+			constrainedCustomerSearch = form.isConstrainedCustomerSearch();
+		}
 
 		// If a distributor or reseller or customer is selected
 		// On search box, following options starts to appear:
@@ -1174,7 +1199,14 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		// or ...
 		// (x) Limit search to selected customer
 		// to limit search
-		constrainedLearnerSearch = form.isConstrainedLearnerSearch();
+		
+		//Added By MariumSaud : LMS-22376 : Keeping the track of 'Limit Learner Search' checkbox with PageCount dropdown 
+		if(request.getParameter("isConstrainedLearnerSearch")!=null){
+			constrainedLearnerSearch = request.getParameter("isConstrainedLearnerSearch")==""?false:Boolean.parseBoolean(request.getParameter("isConstrainedLearnerSearch").toString());
+		}
+		else{
+			constrainedLearnerSearch = form.isConstrainedLearnerSearch();
+		}
 
 		// Validation status?
 		hasValidationErrors = errors.hasErrors();
@@ -1221,6 +1253,10 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		
 		// Added By MariumSaud LMS-22148: Form Attribute that will hold the value of selected Page Size and is used when Next and Prev Button is clicked
 		form.setSelectedResultSize(Integer.parseInt(selectedResultSize));
+		
+		//Added By MariumSaud : LMS-22376- Holding constrain Search value for Customer and Learner to implement it with Page Size count
+		form.setConstrainedCustomerSearch(constrainedCustomerSearch);
+		form.setConstrainedLearnerSearch(constrainedLearnerSearch);
 		
 		context.put("selectedResultSize", selectedResultSize);
 		context.put("resultSize", selectedResultSize);
