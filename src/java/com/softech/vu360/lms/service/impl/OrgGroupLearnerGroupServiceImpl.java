@@ -135,7 +135,7 @@ public class OrgGroupLearnerGroupServiceImpl implements OrgGroupLearnerGroupServ
 	
 	@Transactional
 	public List<OrganizationalGroupMember> addRemoveOrgGroupsForLearner(Learner learner, Set<OrganizationalGroup> orgGroups){
-		organizationalGroupMemberRepository.deleteByLearnerId(learner.getId());
+		organizationalGroupMemberRepository.deleteByLearnerIdSql(learner.getId());
 		
 		OrganizationalGroupMember member = null;
 		List<OrganizationalGroupMember> addedSuccssfully = new ArrayList<OrganizationalGroupMember>();
