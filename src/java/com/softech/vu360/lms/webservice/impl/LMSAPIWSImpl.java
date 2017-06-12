@@ -3810,7 +3810,7 @@ public class LMSAPIWSImpl implements LMSAPIWS {
 	} //end of assignTrainingPlan()
 	
 	private GregorianCalendar getTodayDate() {
-		
+		////add whole day of today date,  adding hours and minutes.
 		GregorianCalendar todayDate =new GregorianCalendar();
 		todayDate.setTime(new Date());
 		todayDate.set(GregorianCalendar.HOUR_OF_DAY,0);
