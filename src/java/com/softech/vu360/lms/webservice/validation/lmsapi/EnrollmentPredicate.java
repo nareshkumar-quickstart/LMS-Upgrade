@@ -61,6 +61,9 @@ public class EnrollmentPredicate {
 		boolean afterMaxEndDate = false;
 		if (!CollectionUtils.isEmpty(entitlementEndDates)) {
 			Date maxEndDate = Collections.max(entitlementEndDates);
+			maxEndDate.setHours(23);
+			maxEndDate.setMinutes(59);
+			maxEndDate.setSeconds(59);
 			if (enrollmentEndDate.after(maxEndDate) ) {
 				afterMaxEndDate = true;
 			}
