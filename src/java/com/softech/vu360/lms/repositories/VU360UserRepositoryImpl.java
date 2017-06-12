@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.persistence.*;
 
 import com.softech.vu360.lms.model.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.softech.vu360.lms.util.ResultSet;
 import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.ProctorStatusEnum;
 
@@ -542,58 +544,62 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		return userAudit;
 	}
 
+	//Modified By MariumSaud : LMS-22390 - Change the Search JPQL Query to Native Query and eliminating the IN clause that is causing high weightage and made use of 
+	//                         Global Temp table that will be created and dropped at run time and pull distributor Ids from there in case if the user is not global admin.
 	@Override
-	public List<VU360User> getAllLearners(String firstName, String lastName, String email, String searchCriteria, VU360User loggedInUser) {
-		StringBuilder queryString = new StringBuilder("SELECT u FROM VU360User u Join u.learner l where l.id>1 ");
+	public List<VU360User> getAllLearners(String firstName, String lastName,String email, String searchCriteria, VU360User loggedInUser,int pageIndex, int retrieveRowCount, String sortBy, int sortDirection,ResultSet resultSet) {
+		List<VU360User> userList=new ArrayList<VU360User>();
+		Boolean notGlobalAdmin= false;
 		
-		if (!StringUtils.isBlank(searchCriteria)) {
-			queryString.append("and u.firstName like :firstName Or u.lastName like :lastName or u.emailAddress like :emailAddress ");
-		}else{
-			if ( !StringUtils.isBlank(firstName) ) {
-				queryString.append(" and u.firstName like :firstName ");
-			}
-			if ( !StringUtils.isBlank(lastName) ) {
-				queryString.append(" and u.lastName like :lastName ");
-			}
-			if ( !StringUtils.isBlank(email) ) {
-				queryString.append(" and u.emailAddress like :emailAddress ");
-			}
-		}
-		
+		StringBuilder queryString = new StringBuilder("SELECT u.* FROM VU360User u LEFT JOIN LEARNER l on u.ID = l.VU360USER_ID");
 		//LMS-14184
-		if(!loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
-			queryString.append(" and l.customer.distributor.id in :distributors ");
+		if(loggedInUser.getLmsAdministrator()!=null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
+			queryString.append(" LEFT JOIN CUSTOMER c on l.CUSTOMER_ID = c.ID");
+			queryString.append(" LEFT JOIN DISTRIBUTOR d on c.DISTRIBUTOR_ID = d.ID");
+			notGlobalAdmin = true;
 		}
-		Query query = entityManager.createQuery(queryString.toString());
+		
+		queryString.append(" WHERE l.ID > = -1 ");
 		
 		if (!StringUtils.isBlank(searchCriteria)) {
-			query.setParameter("firstName", firstName+"%");
-			query.setParameter("lastName", lastName+"%");
-			query.setParameter("emailAddress", email+"%");
+			queryString.append(" and LOWER(u.firstName) like ").append("'%"+firstName.toLowerCase()+"%'").append(" Or LOWER(u.lastName) like ").append("'%"+lastName.toLowerCase()+"%'").append(" or LOWER(u.emailAddress) like ").append("'%"+email.toLowerCase()+"%'");
 		}else{
 			if ( !StringUtils.isBlank(firstName) ) {
-				query.setParameter("firstName", firstName+"%");
+				queryString.append(" and LOWER(u.firstName) like ").append("'%"+firstName.toLowerCase()+"%'");
 			}
 			if ( !StringUtils.isBlank(lastName) ) {
-				query.setParameter("lastName", lastName+"%");
+				queryString.append(" and LOWER(u.lastName) like ").append("'%"+lastName.toLowerCase()+"%'");
 			}
 			if ( !StringUtils.isBlank(email) ) {
-				query.setParameter("emailAddress", email+"%");
+				queryString.append(" and LOWER(u.emailAddress) like ").append("'%"+email.toLowerCase()+"%'");
 			}
 		}
 		
-		if(!loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
-			List<Distributor> distributors = getAdminRestrictionExpression(loggedInUser);
-			
-			@SuppressWarnings("unchecked")
-			Collection<Long> distributorIds = CollectionUtils.collect(distributors, new Transformer() {
-			      public Long transform(Object o) {
-			          return ((Distributor) o).getId();
-			      }
-			  });
-			query.setParameter("distributors", distributorIds);
+		if(notGlobalAdmin) {
+			queryString.append(" and EXISTS (SELECT temp_dist.ID FROM ##TEMP_DISTRIBUTOR_ID temp_dist WHERE temp_dist.id=d.ID) ");
 		}
-		return query.getResultList(); 
+		
+		//Setting count query before 'order by' clause (SQL limitation)
+		String countSql="select count(1) from (" + queryString + ") a";
+		StringBuilder countString = new StringBuilder(countSql);
+		Query count = entityManager.createNativeQuery(countString.toString());
+				
+		if (sortDirection == 0)
+			queryString.append(" ORDER BY u.").append(sortBy).append(" ASC");
+		else {
+			queryString.append(" ORDER BY u.").append(sortBy).append(" DESC");
+		}
+		
+		Query query = entityManager.createNativeQuery(queryString.toString(),VU360User.class);
+				
+		if (retrieveRowCount != -1 && pageIndex >= 0) {
+			query.setFirstResult(pageIndex);
+			query.setMaxResults(retrieveRowCount);
+		}
+
+		userList = (List<VU360User>)query.getResultList(); 
+		resultSet.total = (int) count.getSingleResult();
+		return userList; 
 	}
 	
 	@Override

@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.repositories;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,7 +8,12 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.StoredProcedureQuery;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -85,6 +91,14 @@ public class DistributorRepositoryImpl implements DistributorRepositoryCustom {
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+
+
+	@Override
+	public void insertIDsINDistributorTempTable(String distributorIds) {
+		StoredProcedureQuery query = entityManager.createNamedStoredProcedureQuery("Distributor.insertDistribiutorIDsInTmpTbl");
+		query.setParameter("IDS", distributorIds);
+		query.execute();
 	}
 
 
