@@ -70,8 +70,6 @@ public interface DistributorService {
 			VU360User loggedInUser, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,
 			int sortDirection);
 
-	public List<VU360User> getAllLearners(String firstName, String lastName, String email, String searchCriteria);
-
 	public List<LMSAdministrator> getLMSAdministratorsByDistributorGroupId(long distributorGroupId);
 
 	public void assignLMSAdministratorsToDistributorGroup(Long[] lmsAdministratorIdArray, Long distributorGroupId,

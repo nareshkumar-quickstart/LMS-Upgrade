@@ -1239,13 +1239,14 @@ public class DistributorServiceImpl implements DistributorService {
 
 	}
 
+	//Modified By MariumSaud : LMS-22390 - Change the Search JPQL Query to Native Query and eliminating the IN clause that is causing high weightage and made use of 
+	//                         Global Temp table that will be created and dropped at run time and pull distributor Ids from there in case if the user is not global admin.
 	public List<VU360User> getAllLearners(String firstName, String lastName,
 			String email, String searchCriteria, VU360User loggedInUser,
 			int pageIndex, int retrieveRowCount, ResultSet resultSet,
 			String sortBy, int sortDirection) {
 
 		List<VU360User> userList = new ArrayList<VU360User>();
-		RepositorySpecificationsBuilder<VU360User> sb_VU360User = new RepositorySpecificationsBuilder<VU360User>();
 		
 		firstName = firstName.replaceAll("%", "");
 		lastName = lastName.replaceAll("%", "");
@@ -1255,45 +1256,11 @@ public class DistributorServiceImpl implements DistributorService {
 			if(loggedInUser.getLmsAdministrator()!=null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
 				
 				Collection<String> distributorIds = getAdminRestrictionExpression(loggedInUser);
-
-				sb_VU360User.with("learner_customer_distributor_id",
-						sb_VU360User.JOIN_IN, distributorIds.toArray(), "AND");
+				String ids = String.join(",", distributorIds).toString();
+				insertIDsINDistributorTempTable(ids);
 			}
-
-			if (!StringUtils.isBlank(searchCriteria)) {
-				sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
-						searchCriteria, "OR");
-				sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
-						searchCriteria, "OR");
-				sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
-						searchCriteria, "OR");
-			} else {
-				sb_VU360User.with("firstName", sb_VU360User.LIKE_IGNORE_CASE,
-						firstName, "AND");
-				sb_VU360User.with("lastName", sb_VU360User.LIKE_IGNORE_CASE,
-						lastName, "AND");
-				sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
-						email, "AND");
-			}
-
-			sb_VU360User.with("learner_id",
-					sb_VU360User.JOIN_GREATER_THAN_EQUALS_TO, -1, "AND");
-
-			Sort sortSpec = orderBy(sortDirection, sortBy);
-
-			PageRequest pageRequest = null;
-			if (retrieveRowCount != -1 && pageIndex >= 0) {
-				pageRequest = new PageRequest(pageIndex / retrieveRowCount,
-						retrieveRowCount, sortSpec);
-				Page<VU360User> page = vU360UserRepository.findAll(
-						sb_VU360User.build(), pageRequest);
-				resultSet.total = ((int) (long) page.getTotalElements());
-				userList = page.getContent();
-			} else {
-				userList = vU360UserRepository.findAll(sb_VU360User.build(),
-						sortSpec);
-				resultSet.total = userList.size();
-			}
+			
+			userList = vU360UserRepository.getAllLearners(firstName,lastName, email, searchCriteria, loggedInUser, pageIndex, retrieveRowCount, sortBy, sortDirection, resultSet);
 			return userList;
 		}
 		else{
@@ -1302,15 +1269,10 @@ public class DistributorServiceImpl implements DistributorService {
 		}
 	}
 
-	public List<VU360User> getAllLearners(String firstName, String lastName,
-			String email, String searchCriteria) {
-
-		List<VU360User> ls = vU360UserRepository.getAllLearners(firstName,
-				lastName, email, null, null);
-		return ls;
-
+	public void insertIDsINDistributorTempTable(String distributorIds){
+		distributorRepository.insertIDsINDistributorTempTable(distributorIds);
 	}
-
+	
 	public List<DistributorLMSFeature> getDefaultEnablePermissions(
 			Distributor distributor, String roleType) {
 		List<DistributorLMSFeature> dlfList = distributorLMSFeatureRepository

@@ -10,6 +10,7 @@ import com.softech.vu360.lms.model.LMSRole;
 import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.model.VU360UserAudit;
+import com.softech.vu360.lms.util.ResultSet;
 
 public interface VU360UserRepositoryCustom {
 
@@ -62,7 +63,10 @@ public interface VU360UserRepositoryCustom {
 			Long modifingUser);
 	
 	
-	public List<VU360User> getAllLearners(String firstName,String lastName,String email,String searchCriteria, VU360User loggedInUser);
+	public List<VU360User> getAllLearners(String firstName, String lastName,
+			String email, String searchCriteria, VU360User loggedInUser,
+			int pageIndex, int retrieveRowCount,
+			String sortBy, int sortDirection,ResultSet resultSet);
 	public List<VU360User> findBylearnerIn(Collection<Long> ids);
 	public Set<Long> getOrganizational_Group_Members(Long userId,Long customerId);
 	
