@@ -3813,8 +3813,8 @@ public class LMSAPIWSImpl implements LMSAPIWS {
 		////add whole day of today date,  adding hours and minutes.
 		GregorianCalendar todayDate =new GregorianCalendar();
 		todayDate.setTime(new Date());
-		todayDate.set(GregorianCalendar.HOUR_OF_DAY,23);
-		todayDate.set(GregorianCalendar.MINUTE,59);
+		todayDate.set(GregorianCalendar.HOUR_OF_DAY,0);
+		todayDate.set(GregorianCalendar.MINUTE,0);
 		todayDate.set(GregorianCalendar.SECOND,0);
 		todayDate.set(GregorianCalendar.MILLISECOND,0);
 		
