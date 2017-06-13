@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.repositories;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -19,8 +20,5 @@ public interface DistributorRepositoryCustom {
 	public void deleteDistributorByGroupIdAndAdministratorIdAndAllowedDistributorId(String groupId, String administratorId, String allowedDistributorId);
 	
 	public Page<Distributor> findDistributorsByName(RepositorySpecificationsBuilder<Distributor> repositorySpecificationsBuilder, PageRequest pageRequest);
-	
-
-	
-
+	public void insertIDsINDistributorTempTable(String distributorIds);
 }

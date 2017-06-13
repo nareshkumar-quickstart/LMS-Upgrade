@@ -12,7 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedStoredProcedureQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureParameter;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -27,6 +30,11 @@ import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "DISTRIBUTOR")
+@NamedStoredProcedureQuery(name = "Distributor.insertDistribiutorIDsInTmpTbl", procedureName = "INSERT_TEMP_DISTRIBUTOR_ID"
+, parameters = {
+		  @StoredProcedureParameter(mode = ParameterMode.IN, name = "IDS", type = String.class)
+		  }
+)
 public class Distributor extends Owner implements SearchableKey {
 
 	private static final long serialVersionUID = 2518171447836672166L;
