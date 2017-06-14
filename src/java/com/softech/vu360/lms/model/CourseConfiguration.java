@@ -2667,6 +2667,10 @@ public class CourseConfiguration implements SearchableKey {
 	public Boolean isMustMasterAllLessonActivities() {
 		return mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
 	}
+	
+	public Boolean getMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
+	}
 
 	public void setMustMasterAllLessonActivities(
 			Boolean mustMasterAllLessonActivities) {
