@@ -149,7 +149,6 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 					form.getCourseConfiguration().setAcknowledgeText(
 							acknowledgeText);
 				}
-	
 				break;
 			case 3:
 				break;

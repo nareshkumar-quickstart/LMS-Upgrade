@@ -253,6 +253,7 @@ public class CourseConfigForm implements ILMSBaseInterface{
 	private String proctorValidatorName;
 	private boolean requireLearnerValidation;
 	private boolean caRealEstateCE;
+	private boolean mustMasterAllLessonActivities;
 	
 	//Learners Unique Questions
 	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
@@ -1859,14 +1860,26 @@ public class CourseConfigForm implements ILMSBaseInterface{
 		this.requireLearnerValidation = requireLearnerValidation;
 	}
 
+	public boolean isMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities;
+	}
+
+	public boolean getMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities;
+	}
+	
+	public void setMustMasterAllLessonActivities(boolean mustMasterAllLessonActivities) {
+		this.mustMasterAllLessonActivities = mustMasterAllLessonActivities;
+	}
+
 	public boolean isCaRealEstateCE() {
 		return caRealEstateCE;
 	}
 
 	public void setCaRealEstateCE(boolean caRealEstateCE) {
 		this.caRealEstateCE = caRealEstateCE;
-	}
-
+	}	
+	
 	public boolean isProctorEnableAllowed(){
 		return true;
 		//return (!this.isPreAllowPauseResumeAssessment() && !this.isQuizAllowPauseResumeAssessment() && !this.isPostAllowPauseResumeAssessment());
