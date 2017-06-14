@@ -219,6 +219,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 				form.setMustDemonstratePostAssessmentMastery(form.getCourseConfiguration().getMustDemonstratePostAssessmentMastery());
 				form.setMustDemonstratePreAssessmentMastery(form.getCourseConfiguration().getMustDemonstratePreAssessmentMastery());
 				form.setMustDemonstrateQuizAssessmentMastery(form.getCourseConfiguration().getMustDemonstrateQuizMastery());
+				form.setMustMasterAllLessonActivities(form.getCourseConfiguration().isMustMasterAllLessonActivities());
 				form.setMustCompleteAnySurveys(form.getCourseConfiguration().getMustCompleteAnySurveys());
 				form.setMustViewEverySceneInTheCourse(form.getCourseConfiguration().getMustViewEverySceneInTheCourse());
 				form.setCanOnlyBeCompleteAfterNumberOfCourseLaunches(form.getCourseConfiguration().getCanOnlyBeCompleteAfterNumberOfCourseLaunches());
@@ -446,7 +447,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 					Boolean isCaRealEstateCE = form.getCourseConfiguration().isCaRealEstateCE();
 					if (isCaRealEstateCE != null) {
 						form.setCaRealEstateCE(isCaRealEstateCE);
-					}	
+					}
 				}
 			}
 		}	
@@ -853,6 +854,7 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		mycourseConfiguration.setMustDemonstratePostAssessmentMastery(form.isMustDemonstratePostAssessmentMastery());
 		mycourseConfiguration.setMustDemonstratePreAssessmentMastery(form.isMustDemonstratePreAssessmentMastery());
 		mycourseConfiguration.setMustDemonstrateQuizMastery(form.isMustDemonstrateQuizAssessmentMastery());
+		mycourseConfiguration.setMustMasterAllLessonActivities(form.isMustMasterAllLessonActivities());
 		mycourseConfiguration.setDaysOfRegistraion(Integer.parseInt(form.getDaysOfRegistraion()));
 		mycourseConfiguration.setMustCompleteAnySurveys(form.isMustCompleteAnySurveys());
 		mycourseConfiguration.setMustViewEverySceneInTheCourse(form.isMustViewEverySceneInTheCourse());
