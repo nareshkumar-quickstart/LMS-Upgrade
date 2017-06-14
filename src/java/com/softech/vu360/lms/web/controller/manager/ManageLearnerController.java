@@ -29,6 +29,7 @@ import com.softech.vu360.lms.model.Customer;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerGroup;
 import com.softech.vu360.lms.model.OrganizationalGroup;
+import com.softech.vu360.lms.model.TrainingAdministrator;
 import com.softech.vu360.lms.model.VU360User;
 import com.softech.vu360.lms.service.EnrollmentService;
 import com.softech.vu360.lms.service.EntitlementService;
@@ -203,10 +204,21 @@ public class ManageLearnerController extends MultiActionController implements In
 					pageNo = (pageNo<0)?0:pageNo+1;
 				}
 				session.setAttribute("pageNo", pageNo);
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				
+				
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
+				
 				results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(), 
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+						tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
 				userList = (List<VU360User>)results.get("list");
@@ -234,7 +246,17 @@ public class ManageLearnerController extends MultiActionController implements In
 					session.setAttribute("prevAction","paging");
 				}
 				session.setAttribute("pageNo", pageNo);
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
+				
 				if( !loggedInUser.isLMSAdministrator() && !loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups()) {
 					if( tempManagedGroups==null || (tempManagedGroups!=null &&  tempManagedGroups.size() == 0) ) {
 						return new ModelAndView(redirectToSearchPageTemplate, "context", context);
@@ -242,8 +264,8 @@ public class ManageLearnerController extends MultiActionController implements In
 				}
 				results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+						tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 						pageNo,MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(prevSortDirection));
 
@@ -260,12 +282,21 @@ public class ManageLearnerController extends MultiActionController implements In
 				sortDirection = prevSortDirection;
 				pageNo = 0;
 				session.setAttribute("pageNo",pageNo);
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
 				
 				results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 						session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+						loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+						tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						sortBy, Integer.parseInt(prevSortDirection));
 				//results = learnerService.findAllLearners("",loggedInUser,sortBy,Integer.parseInt(sortDirection));
@@ -274,7 +305,15 @@ public class ManageLearnerController extends MultiActionController implements In
 
 			}else if( action.equalsIgnoreCase(MANAGE_USER_SORT_LEARNER_ACTION) ) {
 				
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
 
 				if( session.getAttribute("prevAction") != null && ( session.getAttribute("prevAction").toString().equalsIgnoreCase("paging")
 						|| session.getAttribute("prevAction").toString().equalsIgnoreCase("all") )) {
@@ -290,8 +329,8 @@ public class ManageLearnerController extends MultiActionController implements In
 
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList = (List<VU360User>)results.get("list");
@@ -300,8 +339,8 @@ public class ManageLearnerController extends MultiActionController implements In
 
 					results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							sortBy, Integer.parseInt(sortDirection));
 					//results = learnerService.findAllLearners("",loggedInUser,sortBy,Integer.parseInt(sortDirection));
@@ -309,8 +348,8 @@ public class ManageLearnerController extends MultiActionController implements In
 					
 				}else{
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList = (List<VU360User>)results.get("list");
@@ -323,7 +362,16 @@ public class ManageLearnerController extends MultiActionController implements In
 			}else if( action.equalsIgnoreCase(MANAGE_USER_DELETE_LEARNER_ACTION) ) {
 
 				String[] selectedUserValues = request.getParameterValues("selectedLearners");
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
 				
 				if( selectedUserValues != null ) {
 					long userIdArray[] = new long[selectedUserValues.length];
@@ -342,8 +390,8 @@ public class ManageLearnerController extends MultiActionController implements In
 						}
 					}
 					results = learnerService.findLearner1(session.getAttribute("searchedFirstName").toString(),session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList = (List<VU360User>)results.get("list");
@@ -356,8 +404,8 @@ public class ManageLearnerController extends MultiActionController implements In
 					}
 					results = learnerService.findAllLearnersWithCriteria(session.getAttribute("searchedFirstName").toString(),
 							session.getAttribute("searchedLastName").toString(),session.getAttribute("searchedEmailAddress").toString(), 
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							sortBy, Integer.parseInt(prevSortDirection));
 					//results = learnerService.findAllLearners("",loggedInUser,sortBy,Integer.parseInt(sortDirection));
@@ -370,8 +418,8 @@ public class ManageLearnerController extends MultiActionController implements In
 						}
 					}
 					results = learnerService.findLearner1(session.getAttribute("searchedSearchKey").toString(),
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 							Integer.parseInt(session.getAttribute("pageNo").toString()),MANAGE_USER_PAGE_SIZE,sortBy,Integer.parseInt(sortDirection));
 					userList = (List<VU360User>)results.get("list");
@@ -383,7 +431,15 @@ public class ManageLearnerController extends MultiActionController implements In
 
 			}else if( action.equalsIgnoreCase(MANAGE_USER_DEFAULT_ACTION) ) {
 				
-				List tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List tempManagedGroups = null;
+				Long tAdminID=null;
+				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
 				
 				sortDirection = "1";
 				pageNo = 0;
@@ -393,8 +449,8 @@ public class ManageLearnerController extends MultiActionController implements In
 					VU360UserAuthenticationDetails det = (VU360UserAuthenticationDetails)auth.getDetails();
 					if(det.getCurrentCustomer().getCustomerType().equalsIgnoreCase("b2c")){
 						results =learnerService.findAllLearners("", 
-								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-								loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+								loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+								tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(),
 								"firstName",5);
 						userList = (List<VU360User>)results.get("list");
