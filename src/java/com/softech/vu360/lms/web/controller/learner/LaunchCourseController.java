@@ -682,9 +682,6 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
     			}
     		    }
     		    
-    		    ///LMS-22392
-    		    Collections.sort(creditReportingFields);
-    		    
     		    form.setCreditReportingFields(creditReportingFields);
     		    Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new com.softech.vu360.lms.vo.Language());
     		    
