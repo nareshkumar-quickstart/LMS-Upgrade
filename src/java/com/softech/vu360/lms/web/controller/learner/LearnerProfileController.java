@@ -217,6 +217,8 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 						}
 					}
 				}
+				//LMS-22392
+				Collections.sort(creditReportingFields);
 				form.setCreditReportingFields(creditReportingFields);
 				customFieldService.createValueRecordForStaticReportingField(loggedInUser, customFieldList, customFieldValueList);
 				/* ================================================================================ */
