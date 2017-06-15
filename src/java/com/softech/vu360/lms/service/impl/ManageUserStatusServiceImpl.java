@@ -84,7 +84,7 @@ public class ManageUserStatusServiceImpl implements ManageUserStatusService {
 				manageUserStatus.setCity( nullConv((String) objArr[++k]));//17
 				manageUserStatus.setState( nullConv( (String) objArr[++k]));//18
 				manageUserStatus.setZipCode( nullConv((String) objArr[++k]));//19
-				manageUserStatus.setCourseStatus(StringUtils.upperCase((String) objArr[++k])); //20
+				manageUserStatus.setCourseStatus((String) objArr[++k]); //20
 				manageUserStatus.setCompleteDate(DateUtil.getStringDate((Date) objArr[++k] ));//21	
 				manageUserStatus.setEnrollmentDate(DateUtil.getStringDate((Date) objArr[++k]) );//22
 				manageUserStatus.setFirstAccessDate(DateUtil.getStringDate((Date) objArr[++k]) );//23
