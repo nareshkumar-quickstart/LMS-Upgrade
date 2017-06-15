@@ -209,7 +209,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
@@ -250,7 +250,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
@@ -286,7 +286,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
@@ -308,7 +308,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
@@ -366,7 +366,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
@@ -434,7 +434,7 @@ public class ManageLearnerController extends MultiActionController implements In
 				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
 				List tempManagedGroups = null;
 				Long tAdminID=null;
-				Boolean tAdminisManagesAllOrganizationalGroups = null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
 				if(!loggedInUser.isLMSAdministrator()){
 					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
 					tAdminID = loggedInUser.getTrainingAdministrator().getId();
