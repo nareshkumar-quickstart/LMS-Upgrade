@@ -668,7 +668,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 		    } else {
 				results = learnerService.findLearner1(form.getSearchKey().trim(), 
 						hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
+						loggedInUser.getTrainingAdministrator()==null?true:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
 						loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE,
@@ -703,8 +703,8 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 			    results = learnerService
 					    .findActiveLearners(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form.getSearchEmailAddress().trim(), 
 					    		hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getId(), 
-					    		loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
-					    				loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getManagedGroups(), 
+					    		loggedInUser.getTrainingAdministrator()==null?true:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
+					    		loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 								loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 								ACCOUNT_NON_EXPIRED , ACCOUNT_NON_LOCKED, ENABLED, pageNo, VelocityPagerTool.DEFAULT_PAGE_SIZE, sortBy, sortDirection);
 				totalResults = (Integer) results.get("recordSize");
@@ -733,7 +733,7 @@ public class ManageEnrollmentController extends AbstractWizardFormController {
 				results = learnerService.findAllLearnersWithCriteria(form.getSearchFirstName().trim(), form.getSearchLastName().trim(), form
 					.getSearchEmailAddress().trim(), 
 					hasAdministratorRole, hasTrainingAdministratorRole, loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getId(), 
-					loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
+					loggedInUser.getTrainingAdministrator()==null?true:loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), 
 					loggedInUser.getTrainingAdministrator()==null?null:loggedInUser.getTrainingAdministrator().getManagedGroups(), 
 					loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 					sortBy, sortDirection);
