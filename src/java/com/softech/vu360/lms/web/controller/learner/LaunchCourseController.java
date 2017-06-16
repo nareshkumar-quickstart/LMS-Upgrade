@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -680,6 +681,7 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
     			    }
     			}
     		    }
+    		    
     		    form.setCreditReportingFields(creditReportingFields);
     		    Brander brand=VU360Branding.getInstance().getBrander((String)request.getSession().getAttribute(VU360Branding.BRAND), new com.softech.vu360.lms.vo.Language());
     		    

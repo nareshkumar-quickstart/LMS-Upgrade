@@ -27,6 +27,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -187,7 +188,12 @@ public class EntitlementServiceImpl implements EntitlementService {
 		HashMap<Long,CourseCustomerEntitlement> map = new HashMap<Long, CourseCustomerEntitlement>();
 		for(CourseCustomerEntitlementItem item: courseItems){
 			if(map.get(item.getCustomerEntitlement().getId())==null){
-				map.put(item.getCustomerEntitlement().getId(), (CourseCustomerEntitlement)item.getCustomerEntitlement());
+				CustomerEntitlement customerEntitlement = item.getCustomerEntitlement();
+				if (customerEntitlement instanceof HibernateProxy)  
+					customerEntitlement = CustomerEntitlement.class.cast(((HibernateProxy) customerEntitlement).getHibernateLazyInitializer().getImplementation());  
+				else  
+					customerEntitlement = CustomerEntitlement.class.cast(customerEntitlement); 
+				map.put(item.getCustomerEntitlement().getId(), (CourseCustomerEntitlement)customerEntitlement);
 			}
 		}
 		Collection<CourseCustomerEntitlement> courseContracts = map.values();

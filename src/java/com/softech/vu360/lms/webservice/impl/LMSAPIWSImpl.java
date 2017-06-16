@@ -3396,6 +3396,14 @@ public class LMSAPIWSImpl implements LMSAPIWS {
 			
 			if( contractEndDatesList != null && !contractEndDatesList.isEmpty() ) {
 				Date maxEndDate = Collections.max(contractEndDatesList);
+				//LMS-22391
+				Calendar now = Calendar.getInstance();
+				now.setTime(maxEndDate);
+				now.set(Calendar.HOUR_OF_DAY, 23);
+				now.set(Calendar.MINUTE, 59);
+				now.set(Calendar.SECOND, 59);
+				maxEndDate = now.getTime();
+				
 				if( courseEndDate.after(maxEndDate) ) {
 					
 					String minEnrollmentEndDate = sdf.format(maxEndDate);

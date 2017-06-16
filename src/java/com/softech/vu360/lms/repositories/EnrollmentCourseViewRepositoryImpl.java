@@ -1,6 +1,7 @@
 package com.softech.vu360.lms.repositories;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -103,7 +104,7 @@ public class EnrollmentCourseViewRepositoryImpl implements EnrollmentCourseViewR
 			}
 			query.append(criteria.get(i));
 		}
-		
+	
 		Query q = entityManager.createNativeQuery(query.toString(), "getCoursesForEnrollmentMapping");
 		q.setParameter("customerId", customerId);
 		
@@ -124,7 +125,7 @@ public class EnrollmentCourseViewRepositoryImpl implements EnrollmentCourseViewR
 		}
 		
 		if(customerEntitlementIds != null){
-			q.setParameter("customerEntitlementIds", customerEntitlementIds);
+			q.setParameter("customerEntitlementIds", Arrays.asList(customerEntitlementIds));
 		}
 		
 		return (List<EnrollmentCourseView>)q.getResultList();

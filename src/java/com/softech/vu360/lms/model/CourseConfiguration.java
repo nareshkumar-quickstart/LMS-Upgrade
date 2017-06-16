@@ -1750,7 +1750,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isCertificateEnabled() {
-		return certificateEnabled;
+		return certificateEnabled == null ? Boolean.FALSE : certificateEnabled;
 	}
 
 	public void setCertificateEnabled(Boolean certificateEnabled) {
@@ -2665,6 +2665,10 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isMustMasterAllLessonActivities() {
+		return mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
+	}
+	
+	public Boolean getMustMasterAllLessonActivities() {
 		return mustMasterAllLessonActivities == null ? Boolean.FALSE : mustMasterAllLessonActivities;
 	}
 

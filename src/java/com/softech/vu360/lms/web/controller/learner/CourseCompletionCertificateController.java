@@ -114,8 +114,10 @@ public class CourseCompletionCertificateController implements Controller{
 					.getPrincipal();
 			isUserValid = le.getLearner().getId().longValue() == user.getLearner().getId().longValue();
 		}
-		le.setCourseStatistics(getStatisticsService().getLearnerCourseStatisticsById(le.getCourseStatistics().getId()));
-		lcs = le.getCourseStatistics();
+		if(null != le) {
+			le.setCourseStatistics(getStatisticsService().getLearnerCourseStatisticsById(le.getCourseStatistics().getId()));
+			lcs = le.getCourseStatistics();
+		}
 
 		if (le != null && (!checkUser || isUserValid)) {
 			if ( /* lcs.isCompleted() */ lcs.isCourseCompleted() || (lcs.getCompleted() && le.isEnableCertificate())) {
