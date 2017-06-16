@@ -202,6 +202,10 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				List<com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingField> creditReportingFields = fieldBuilder.getCreditReportingFieldList();
 				
 				for (com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingField field : creditReportingFields){
+					
+					//LMS-22392
+					ControllerUtils.assignWeightToField(field.getCreditReportingFieldRef());
+					
 					if(field.getCreditReportingFieldRef() instanceof MultiSelectCreditReportingField){
 						List<CreditReportingFieldValueChoice> existingChoices = existingCreditReportingFieldValueChoiceMap.get(field.getCreditReportingFieldRef().getId());
 						Map<Long,CreditReportingFieldValueChoice> existingChoicesMap = new HashMap<Long,CreditReportingFieldValueChoice>();
@@ -219,6 +223,7 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 				}
 				//LMS-22392
 				Collections.sort(creditReportingFields);
+				
 				form.setCreditReportingFields(creditReportingFields);
 				customFieldService.createValueRecordForStaticReportingField(loggedInUser, customFieldList, customFieldValueList);
 				/* ================================================================================ */

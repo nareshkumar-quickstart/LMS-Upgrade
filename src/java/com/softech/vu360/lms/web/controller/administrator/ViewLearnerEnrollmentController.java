@@ -255,8 +255,17 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 			if(searchType.equalsIgnoreCase("simplesearch")){
 			}else if(searchType.equalsIgnoreCase("advancedsearch")){
 				
-				List<VU360User> searchedUsers = new ArrayList<VU360User>();// learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,loggedInUser, 0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0);					
-				List<OrganizationalGroup> tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+				List<VU360User> searchedUsers = new ArrayList<VU360User>();// learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,loggedInUser, 0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0);
+				
+				//handling for TrainingAdministrator Object if the logged in user is Admin and not Manager
+				List<OrganizationalGroup> tempManagedGroups = new ArrayList<OrganizationalGroup>();;
+				Long tAdminID=null;
+				boolean tAdminisManagesAllOrganizationalGroups = true;
+				if(!loggedInUser.isLMSAdministrator()){
+					tempManagedGroups = vu360UserService.findAllManagedGroupsByTrainingAdministratorId(loggedInUser.getTrainingAdministrator().getId());
+					tAdminID = loggedInUser.getTrainingAdministrator().getId();
+					tAdminisManagesAllOrganizationalGroups = loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups();
+				}
 				// to stop empty searches 
 
                 if( enrollForm.getFirstName().trim().length() == 0 &&  enrollForm.getLastName().trim().length() == 0 && enrollForm.getEmailAddress().trim().length() ==0 )
@@ -268,8 +277,8 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
 					String showAllLimit = brander.getBrandElement("lms.resultSet.showAll.Limit") ;
 					int intShowAllLimit = Integer.parseInt(showAllLimit.trim());
 					searchedUsers = learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,
-							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-							loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+							loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+							tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 							loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 							0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0 , intShowAllLimit );
 				}
@@ -280,8 +289,8 @@ public class ViewLearnerEnrollmentController extends VU360BaseMultiActionControl
                 String showAllLimit = brander.getBrandElement("lms.resultSet.showAll.Limit") ;
                 int intShowAllLimit = Integer.parseInt(showAllLimit.trim());
                 searchedUsers = learnerService.findAllLearner(StringUtils.isBlank(enrollForm.getFirstName())?"":enrollForm.getFirstName(), StringUtils.isBlank(enrollForm.getLastName())?"":enrollForm.getLastName() ,  StringUtils.isBlank(enrollForm.getEmailAddress())?"":enrollForm.getEmailAddress() ,
-                		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), loggedInUser.getTrainingAdministrator().getId(), 
-						loggedInUser.getTrainingAdministrator().isManagesAllOrganizationalGroups(), tempManagedGroups, 
+                		loggedInUser.isLMSAdministrator(), loggedInUser.isTrainingAdministrator(), tAdminID, 
+						tAdminisManagesAllOrganizationalGroups, tempManagedGroups, 
 						loggedInUser.getLearner().getCustomer().getId(), loggedInUser.getId(), 
 						0, VelocityPagerTool.DEFAULT_PAGE_SIZE, "", 0 , intShowAllLimit );
 				
