@@ -34,7 +34,7 @@ public class ManagerHelper {
 
 		/*
 		 *
-		 * For users seamlessly landing from Cart (Storefront) 
+		 * For users seamlessly landing from Cart (Storefront) 	
 		 * to My Courses page are not getting through from
 		 * interceptor.do where disabled features are being
 		 * setting up in user session
@@ -58,6 +58,9 @@ public class ManagerHelper {
 				break;
 			case "LMS-MGR-0001":
 				redirectURL = "/mgr_manageLearners.do";
+				break;
+			case "LMS-MGR-0030":
+				redirectURL = "/mgr_manageOrganizationGroup.do";
 				break;
 			case "LMS-MGR-0002":
 				redirectURL = "/mgr_batchImportLearners.do";
