@@ -772,7 +772,8 @@ ApplicationEventPublisherAware, MessageSourceAware {
 
         log.debug("Attempt to switch to user [" + username + "]");
 
-        UserDetails targetUser = userDetailsService.loadUserByUsername(username);
+        String decodedUserName = java.net.URLDecoder.decode(username, "UTF-8");
+        UserDetails targetUser = userDetailsService.loadUserByUsername(decodedUserName);
         //TODO check if targetuser is null
         
         userDetailsChecker.check(targetUser);
