@@ -1750,7 +1750,7 @@ public class CourseConfiguration implements SearchableKey {
 	}
 
 	public Boolean isCertificateEnabled() {
-		return certificateEnabled;
+		return certificateEnabled == null ? Boolean.FALSE : certificateEnabled;
 	}
 
 	public void setCertificateEnabled(Boolean certificateEnabled) {
