@@ -640,11 +640,16 @@ public class LearnerCourseStatistics implements SearchableKey {
 		return certificateIssueDate;
 	}
 
-	public  Boolean isCourseCompleted() {
+	public Boolean isCourseCompleted() {
 		return this.getCompleted()
 				&& (this.getStatus().equals(COMPLETED) || this.getStatus().equals(REPORTED));
 	}
 
+	public Boolean isCompleted() {
+		return this.getCompleted()
+				&& (this.getStatus().equals(COMPLETED) || this.getStatus().equals(REPORTED));
+	}
+	
 	public String getStatusDisplayText() {
 		if (this.getStatus().equals(NOT_STARTED)) {
 			return "Not Started";
