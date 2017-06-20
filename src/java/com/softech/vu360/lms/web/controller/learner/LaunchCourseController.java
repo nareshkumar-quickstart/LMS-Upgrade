@@ -2069,38 +2069,31 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 	    return ipList;
 	}
   
-  private Map<String,String> isValidUSAddress(String ip) {
-  	
-  	Map<String,String> result = null;
-  	String uri = VU360Properties.getVU360Property("lms.restrictedIPservice.endpoint") + "" + ip;
-  	//String uri = VU360Properties.getVU360Property("lms.restrictedIPservice.endpoint") + "208.48.191.1";
-  	try{
-	    	/*com.sun.jersey.api.client.Client client = Client.create();
-	        WebResource webResource = client.resource(ip);
-	        ClientResponse response = webResource.accept("application/json").get(ClientResponse.class);
+	@SuppressWarnings("unchecked")
+	private Map<String, String> isValidUSAddress(String ip) {
 
-			if (response.getStatus() != 200) {
-			   throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatus());
+		Map<String, String> result = null;
+		RestTemplate restTemplate;
+		String uri;
+		String output;
+
+		uri = VU360Properties.getVU360Property("lms.restrictedIPservice.endpoint") + "" + ip;
+		restTemplate = new RestTemplate();
+
+		try {
+			output = restTemplate.getForObject(uri, String.class);
+			if (null != output && !output.trim().isEmpty()) {
+				ObjectMapper mapper = new ObjectMapper();
+				result = mapper.readValue(output, HashMap.class);
 			}
-	
-			String output = response.getEntity(String.class);
-			result = new ObjectMapper().readValue(output, HashMap.class);
-			
-			return result;*/
-  		
-  		RestTemplate restTemplate = new RestTemplate();
-  		String output = restTemplate.getForObject(uri, String.class);
-  		result = new ObjectMapper().readValue(output, HashMap.class);
-  	
-  	}
-  	catch (Exception e) {
-  		e.printStackTrace();
-  	}
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		}
 
-  	return result;
+		return result;
 
-  }
+	}
     
   private List<String> splitIps(String Ips){
 	  //String Ips = "104.236.233.182, 172.16.15.15";
