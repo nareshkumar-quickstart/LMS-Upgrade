@@ -311,6 +311,116 @@ public class CourseGroupRepositoryImpl implements CourseGroupRepositoryCustom{
 			return courseGroups;
 		}
 
+		
+		/**
+		 * 
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public List<CourseGroup> findCoursesAndCourseGroupsByDistributor_Adv(
+				Distributor distributor, String courseName, String entityId,
+				String keywords, String contractType) {
+
+			boolean courseGroupFlag = false;
+			boolean courseFlag =false;
+			boolean courseFlag2=false;
+			boolean entityIdFlag = false;
+			boolean keywordsFlag=false;
+			StringBuilder subQueryBuilder = null;
+			StringBuilder subQueryBuilder2 = null;
+			List<CourseGroup> courseGroups = new ArrayList<CourseGroup>();
+			
+			StringBuilder builder = new StringBuilder("Select p from DistributorEntitlement p");
+			builder.append(" JOIN p.courseGroups c JOIN c.courses d WHERE p.distributor.id=:distributorId");// ).equal(distributor.getId()));
+			builder.append(" AND d.courseStatus=:coursePublished");// Course.PUBLISHED));
+
+			String[] courseNameList=null;
+			List<CourseGroup> courseGroupList = null;
+			List<Course> courseList = null;
+			
+			if (StringUtils.isNotEmpty(courseName)) {
+				
+				courseNameList = courseName.split(",");
+				
+				if (contractType.equalsIgnoreCase("Course")) {
+					
+					/*subQueryBuilder = new StringBuilder("Select s.id from Course s where c.status='active");
+					for (int i = 0; i < courseNameList.length; i++) {
+						if (i == 0) {
+							subQueryBuilder.append(" WHERE s.courseTitle like :per ");
+						} else {
+							subQueryBuilder.append(" or s.courseTitle like ")
+							.append(courseNameList[i].trim()).append(":per");
+						}
+					}
+					
+					String courseTitle = "%";
+					if(courseNameList[0]!=null){
+						courseTitle= courseNameList[0].trim()+"%";
+					}
+					System.out.println(subQueryBuilder.toString());
+					Query subQuery = entityManager.createQuery(subQueryBuilder.toString());
+					subQuery.setParameter("per", courseTitle);
+					courseList = subQuery.getResultList();
+					
+					if(courseList.size()>0)
+						builder.append(" AND d.id IN (:idList1)");
+					
+					courseFlag = true;
+					*/
+					
+				} else { // for Course Group Type Contract
+	
+					subQueryBuilder = new StringBuilder("Select s.id from CourseGroup s");
+						for (int i = 0; i < courseNameList.length; i++) {
+							if (i == 0) {
+								subQueryBuilder.append(" WHERE s.name like :per");
+							} else {
+								subQueryBuilder.append(" or s.name like ").append(":per").append(courseNameList[i].trim())
+										.append(":per");
+							}
+						} 
+						
+						String parm = "%";
+						if(courseNameList[0]!=null){
+							parm= "%"+courseNameList[0].trim()+"%";
+						}
+
+						System.out.println(subQueryBuilder.toString());
+						Query subQuery = entityManager.createQuery(subQueryBuilder.toString());
+						subQuery.setParameter("per", parm);
+						courseGroupList = subQuery.getResultList();
+						
+
+					if(courseGroupList.size()>0)
+						builder.append(" AND c.id IN (:idList2)");
+					
+					courseGroupFlag=true;
+				}
+
+			}
+			
+			System.out.println(builder.toString());
+			Query topQuery = entityManager.createQuery(builder.toString());
+			
+			if(courseGroupList!=null && courseGroupList.size()>0)
+				topQuery.setParameter("idList2", courseGroupList);
+
+			//if(courseList!=null && courseList.size()>0)
+				//topQuery.setParameter("idList1", courseList);
+			
+			topQuery.setParameter("distributorId", distributor.getId());
+			topQuery.setParameter("coursePublished", Course.PUBLISHED);
+
+			List<DistributorEntitlement> result = topQuery.getResultList();
+			
+			for (DistributorEntitlement de : result) {
+				courseGroups.addAll(de.getCourseGroups());
+			}
+				
+			return courseGroups;
+		}
+		
 		@Override
 		public List<CourseGroup> getCourseGroupsByDistributor(Long distributorId) {
 			List<CourseGroup> courseGroups=new ArrayList<CourseGroup>();

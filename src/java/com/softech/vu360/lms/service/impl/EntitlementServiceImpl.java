@@ -1524,7 +1524,9 @@ public class EntitlementServiceImpl implements EntitlementService {
 		Set<CourseGroup> finalCourseGroups = new HashSet<CourseGroup>();
 		HashMap<CourseGroup, List<Course>> finalList =  new HashMap<CourseGroup, List<Course>>();
 
-		List<CourseGroup> courseGroupList = courseGroupRepository.findCoursesAndCourseGroupsByDistributor(distributor, courseName, entityId, keywords,contractType);  //Kaunain Wajeeh
+		//List<CourseGroup> courseGroupList = courseGroupRepository.findCoursesAndCourseGroupsByDistributor(distributor, courseName, entityId, keywords,contractType);  //Kaunain Wajeeh
+		List<CourseGroup> courseGroupList = courseGroupRepository.findCoursesAndCourseGroupsByDistributor_Adv(distributor, courseName, entityId, keywords,contractType);  //Kaunain Wajeeh
+
 
 		// Iterate through all course groups and get all children
 		for(CourseGroup cg:courseGroupList){
