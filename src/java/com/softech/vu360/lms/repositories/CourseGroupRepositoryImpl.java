@@ -344,7 +344,7 @@ public class CourseGroupRepositoryImpl implements CourseGroupRepositoryCustom{
 				
 				if (contractType.equalsIgnoreCase("Course")) {
 					
-					/*subQueryBuilder = new StringBuilder("Select s.id from Course s where c.status='active");
+					subQueryBuilder = new StringBuilder("Select s.id from Course s ");
 					for (int i = 0; i < courseNameList.length; i++) {
 						if (i == 0) {
 							subQueryBuilder.append(" WHERE s.courseTitle like :per ");
@@ -356,7 +356,7 @@ public class CourseGroupRepositoryImpl implements CourseGroupRepositoryCustom{
 					
 					String courseTitle = "%";
 					if(courseNameList[0]!=null){
-						courseTitle= courseNameList[0].trim()+"%";
+						courseTitle= "%"+courseNameList[0].trim()+"%";
 					}
 					System.out.println(subQueryBuilder.toString());
 					Query subQuery = entityManager.createQuery(subQueryBuilder.toString());
@@ -367,7 +367,7 @@ public class CourseGroupRepositoryImpl implements CourseGroupRepositoryCustom{
 						builder.append(" AND d.id IN (:idList1)");
 					
 					courseFlag = true;
-					*/
+					
 					
 				} else { // for Course Group Type Contract
 	
@@ -406,8 +406,8 @@ public class CourseGroupRepositoryImpl implements CourseGroupRepositoryCustom{
 			if(courseGroupList!=null && courseGroupList.size()>0)
 				topQuery.setParameter("idList2", courseGroupList);
 
-			//if(courseList!=null && courseList.size()>0)
-				//topQuery.setParameter("idList1", courseList);
+			if(courseList!=null && courseList.size()>0)
+				topQuery.setParameter("idList1", courseList);
 			
 			topQuery.setParameter("distributorId", distributor.getId());
 			topQuery.setParameter("coursePublished", Course.PUBLISHED);
