@@ -16,12 +16,15 @@ public interface CourseGroupRepositoryCustom {
 	public List<CourseGroup> findCoursesAndCourseGroupsByDistributor(
 			Distributor distributor, String courseName, String entityId,
 			String keywords, String contractType);
-	
+
+	public List<CourseGroup> findCoursesAndCourseGroupsByDistributor_Adv(
+			Distributor distributor, String courseName, String entityId,
+			String keywords, String contractType);
+
 	public List<CourseGroup> getCourseGroupsByDistributor(Long distributorId);
 
 	public List<CourseGroup> getAllChildCourseGroupsForCourseGroups(List<CourseGroup> courseGroups);	
 	
 	public List<Map<Object, Object>> findCourseGroups(String courseName, String entityId, String keywords);
-	
-	
+
 }

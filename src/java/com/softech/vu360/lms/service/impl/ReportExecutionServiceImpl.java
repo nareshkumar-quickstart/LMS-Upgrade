@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.apache.velocity.tools.generic.SortTool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.softech.vu360.lms.exception.ReportNotExecutableException;
 import com.softech.vu360.lms.model.Customer;
@@ -49,6 +50,7 @@ import com.softech.vu360.lms.service.ReportExecutionService;
 import com.softech.vu360.lms.service.ReportingConfigurationService;
 import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.util.ReportFieldComparator;
+import com.softech.vu360.lms.web.filter.VU360UserAuthenticationDetails;
 import com.softech.vu360.util.FormUtil;
 import com.softech.vu360.util.SecurityUtil;
 import com.softech.vu360.util.VU360Properties;
@@ -622,8 +624,8 @@ public class ReportExecutionServiceImpl implements ReportExecutionService {
 				//params.add(new BigDecimal(user.getLearner().getCustomer().getId()));
 				
 				//TODO set customer
-				Customer customer = null; //((VU360UserAuthenticationDetails)SecurityContextHolder.
-						//getContext().getAuthentication().getDetails()).getCurrentCustomer();
+				Customer customer = ((VU360UserAuthenticationDetails)SecurityContextHolder.
+						getContext().getAuthentication().getDetails()).getCurrentCustomer();
 
 				if( customer == null ){
 					params.add(new BigDecimal(user.getLearner().getCustomer().getId()));

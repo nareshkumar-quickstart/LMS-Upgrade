@@ -424,7 +424,7 @@ public class LearnerServiceImpl implements LearnerService {
 			if (!isExpressionReturn) {
 				Object[] ids = (Object[]) ((HashSet) result.get("userIdArray"))
 						.toArray();
-				final int max_limit = 1000;
+				final int max_limit = 2100;
 				int buckets = ids.length % max_limit;
 				int bucketSize = max_limit;
 				boolean loop = buckets > 0;
@@ -1537,7 +1537,7 @@ public class LearnerServiceImpl implements LearnerService {
 			if (!isExpressionReturn) {
 				Object[] ids = (Object[]) ((HashSet) result.get("userIdArray"))
 						.toArray();
-				final int max_limit = 1000;
+				final int max_limit = 2100;
 				int buckets = ids.length % max_limit;
 				int bucketSize = max_limit;
 				boolean loop = buckets > 0;

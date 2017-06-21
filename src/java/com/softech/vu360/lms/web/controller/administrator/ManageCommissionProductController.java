@@ -65,7 +65,7 @@ public class ManageCommissionProductController extends VU360BaseMultiActionContr
 		for(int i = 1; i <= 3; i++)
 		{
 			commissionProductCategory = new CommissionProductCategory();
-			commissionProductCategory.setId(i);
+			commissionProductCategory.setId(new Long(i));
 			commissionProductCategory.setName("PC " + i);
 			commissionProductCategory.setProductCategoryCode("PC-" + i);
 			n = new TreeNode(commissionProductCategory);
@@ -74,14 +74,14 @@ public class ManageCommissionProductController extends VU360BaseMultiActionContr
 			for(int j = 1; j <= 3; j++)
 			{
 				commissionProduct = new CommissionProduct();
-				commissionProduct.setId((10 * i) + j);
+				commissionProduct.setId(new Long( ( 10 * i) + j));
 				commissionProduct.setName("P " + ((10 * i) + j));
 				commissionProduct.setProductCode("P-" + ((10 * i) + j));
 				cn = new TreeNode(commissionProduct);
 				n.addChild(cn);
 				
 				commissionProductCategory = new CommissionProductCategory();
-				commissionProductCategory.setId((10 * i) + j);
+				commissionProductCategory.setId(new Long( (10 * i) + j ));
 				commissionProductCategory.setName("PC " + ((10 * i) + j));
 				commissionProductCategory.setProductCategoryCode("PC-" + ((10 * i) + j));
 				cn = new TreeNode(commissionProductCategory);
@@ -90,7 +90,7 @@ public class ManageCommissionProductController extends VU360BaseMultiActionContr
 				for(int k = 1; k <= 3; k++)
 				{
 					commissionProduct = new CommissionProduct();
-					commissionProduct.setId((100 * i) + (10 * j) + k);
+					commissionProduct.setId(new Long( (100 * i) + (10 * j) + k ) );
 					commissionProduct.setName("P " + ((100 * i) + (10 * j) + k));
 					commissionProduct.setProductCode("P-" + ((100 * i) + (10 * j) + k));
 					gcn = new TreeNode(commissionProduct);
