@@ -170,7 +170,7 @@ InitializingBean {
 		 */
 		try {
 			VU360UserAuthenticationDetails authUserdetails = (VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
-			if(!authUserdetails.getCurrentMode().equals(VU360UserMode.ROLE_LEARNER)) {
+			if(authUserdetails != null  && authUserdetails.getCurrentMode() != null && !authUserdetails.getCurrentMode().equals(VU360UserMode.ROLE_LEARNER)) {
 				log.debug("Implemented for CAS, redirecting to Learner mode");
 				return new ModelAndView("redirect:mgrSwitchLearnerMode.do?managerSwitchLearnerModeTargetURL=" + request.getRequestURI().replace("/lms", "") + "?" + request.getQueryString());
 			}
