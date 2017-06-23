@@ -92,7 +92,7 @@ public class CourseCompletionCertificateController implements Controller{
 		log.debug(user == null ? "User null" : " learnerId=" + user.getLearner().getId());
 
 		if (qsEnrollmentId.trim().isEmpty()) {
-			if (qsLearningSessionGUID.trim().isEmpty()) {
+			if (!qsLearningSessionGUID.trim().isEmpty()) {
 				LearningSession learningSession = statisticsService
 						.getLearningSessionByLearningSessionId(qsLearningSessionGUID);
 				if (learningSession == null) {
