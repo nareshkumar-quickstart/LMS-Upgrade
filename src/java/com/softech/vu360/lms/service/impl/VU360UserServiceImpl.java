@@ -282,6 +282,11 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public LMSRole  getRoleByName(String roleName,Customer customer){
 		return lmsRoleRepository.findByRoleNameAndOwner(roleName, customer);
 	}
+	
+	//Inorder to resolve the issue of multple role of name 'MANAGER' against 1 customer. Select default Role as top-most role 
+	public LMSRole  getTop1RoleByName(String roleName,Customer customer){
+		return lmsRoleRepository.findFirstByRoleNameAndOwner(roleName, customer);
+	}
 
 	public int checkNoOfBefaultReg(Customer customer){
 		return 0;//vu360UserRepository.checkNoOfBefaultReg(customer);

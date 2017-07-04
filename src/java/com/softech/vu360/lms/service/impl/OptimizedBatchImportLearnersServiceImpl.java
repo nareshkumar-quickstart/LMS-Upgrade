@@ -576,7 +576,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
                 LMSRole defaultLearnerRole = this.getLearnerRole(currentCustomer); // fetch it once and assign to all new learner
                 sharedContext.setDefaultLearnerRole(defaultLearnerRole);
-                LMSRole defaultManagerRole = vu360UserService.getRoleByName("MANAGER",currentCustomer);
+                LMSRole defaultManagerRole = vu360UserService.getTop1RoleByName("MANAGER",currentCustomer);
                 sharedContext.setDefaultManagerRole(defaultManagerRole);
 
                 int securityRoleColumnIndex = getColumnNameIndex(headerColumns, "Security Role");
@@ -3200,7 +3200,7 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 
     private LMSRole getLmsRoleByName(String securityRoleName, Customer customer) {
         LMSRole lmsRole = null;
-        lmsRole = vu360UserService.getRoleByName(securityRoleName, customer);
+        lmsRole = vu360UserService.getTop1RoleByName(securityRoleName, customer);
         return lmsRole;
     }
 

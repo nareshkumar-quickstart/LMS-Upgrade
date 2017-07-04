@@ -14,6 +14,7 @@ import com.softech.vu360.lms.model.LMSRole;
  */
 public interface LMSRoleRepository extends CrudRepository<LMSRole, Long>, LMSRoleRepositoryCustom {
 	public LMSRole findByRoleNameAndOwner(String roleName,Customer customer);
+	public LMSRole findFirstByRoleNameAndOwner(String roleName,Customer customer);
 	public List<LMSRole> findByRoleTypeAndOwnerId(String roleType, Long customerId);
 	public List<LMSRole> getByOwner(Customer customer);		
 	public LMSRole findByOwnerAndRoleTypeAndIsSystemCreatedTrue(Customer customer,String roleType);
