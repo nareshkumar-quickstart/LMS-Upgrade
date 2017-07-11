@@ -6,10 +6,7 @@ package com.softech.vu360.lms.web.controller.accreditation;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,13 +111,15 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 		
 		log.debug("IN processFinish");
 		AddPurchasedCertificateForm form = (AddPurchasedCertificateForm) command;
-		List<PurchaseCertificateNumber> newPurchaseCertificates = new ArrayList <PurchaseCertificateNumber>();
+		Set<PurchaseCertificateNumber> newPurchaseCertificates = new HashSet <PurchaseCertificateNumber>();
 		
 		//Parse the file and create a collection of new Purchase Certificates and add them to the original collection to persist.
-		newPurchaseCertificates = parseSavePurchasedCertificateNumbersFile(form);
-		//Going to add purchase certificate numbers
 		CourseApproval cApproval = form.getCourseApproval();
-		cApproval.setPurchaseCertificateNumbers(newPurchaseCertificates);
+		cApproval = accreditationService.getCourseApprovalById(cApproval.getId());//Due to Lazy Exception
+		newPurchaseCertificates = parseSavePurchasedCertificateNumbersFile(cApproval, form);
+		//Going to add purchase certificate numbers
+
+		cApproval.getPurchaseCertificateNumbers().addAll(newPurchaseCertificates);
 		form.setCourseApproval(cApproval);
 		cApproval=	accreditationService.saveCourseApproval(cApproval);
 		
@@ -135,20 +134,16 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 * @param form
 	 * @return
 	 */
-	private List<PurchaseCertificateNumber> parseSavePurchasedCertificateNumbersFile(
-			AddPurchasedCertificateForm form) {
+	private Set<PurchaseCertificateNumber> parseSavePurchasedCertificateNumbersFile(CourseApproval courseApproval, AddPurchasedCertificateForm form) {
 		
-		List<PurchaseCertificateNumber> purchasedCertificateNumberList = null;
+		Set<PurchaseCertificateNumber> purchasedCertificateNumbers = new HashSet<>();
 		PurchaseCertificateNumber certificateNumber = null;
-		CourseApproval courseApproval = form.getCourseApproval();
-		courseApproval = accreditationService.getCourseApprovalById(courseApproval.getId());//Due to Lazy Exception
 		if(courseApproval != null )
 		{
 			 CSVReader reader;
 			try {
 				reader = new CSVReader(new InputStreamReader(form.getFile().getInputStream()), '\t', '\'', 1);  // 1 means skip first line
 			    String [] nextLine;
-			    purchasedCertificateNumberList = courseApproval.getPurchaseCertificateNumbers();
 			    while ((nextLine = reader.readNext()) != null) {
 			    	if(null!=nextLine[0] && (! StringUtils.isBlank(nextLine[0])) && (! nextLine[0].equals("")))
 			    	{
@@ -162,7 +157,7 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				    	{
 				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
 				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
-				    		purchasedCertificateNumberList.add(certificateNumber);
+				    		purchasedCertificateNumbers.add(certificateNumber);
 				    	}
 			    	}
 			    }
@@ -172,7 +167,7 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				log.debug("exception", e);
 			}
 		}
-		return purchasedCertificateNumberList;
+		return purchasedCertificateNumbers;
 	}
 	
 	//LMS-15309  - field 'NumericCertificateNumber' in table 'purchasecertificate' is now useless
@@ -190,15 +185,15 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 * @param certificateNumber
 	 * @return
 	 */
-	public boolean alreadyAssociated(String currCertificateNumber,List<PurchaseCertificateNumber> certificateNumber)
+	public boolean alreadyAssociated(String currCertificateNumber,Set<PurchaseCertificateNumber> certificateNumber)
 	{
 		boolean alreadyAssociated = false;
-		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0)
-		{
-			for(PurchaseCertificateNumber purchaseCertificateNumber : certificateNumber)
-			{
-				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber()))
-				{
+		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
+			Iterator iterator = certificateNumber.iterator();
+			PurchaseCertificateNumber purchaseCertificateNumber = null;
+			while(iterator.hasNext()){
+				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
+				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
 					alreadyAssociated = true;
 					break;
 				}

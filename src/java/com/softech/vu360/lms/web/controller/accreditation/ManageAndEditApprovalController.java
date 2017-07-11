@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -182,7 +183,7 @@ public class ManageAndEditApprovalController extends VU360BaseMultiActionControl
 				CourseApproval courseApproval = accreditationService.loadForUpdateCourseApproval(form.getAppId());
 				form.setCourseApproval(courseApproval);
 //				form.setRegulatorCategories(this.convertToUiObject(courseApproval.getRegulatorCategories()));
-				form.setPurchaseCertificateNumbers(courseApproval.getPurchaseCertificateNumbers());
+				form.setPurchaseCertificateNumbers(courseApproval.getPurchaseCertificateNumbers().stream().collect(Collectors.toList()));
 				form.setCertificateNumberGeneratorNextNumberString(courseApproval.getCertificateNumberGeneratorNextNumber() > 0 ? courseApproval.getCertificateNumberGeneratorNextNumber() + "" : "");
 				form.setEntity(ApprovalForm.COURSE_APPROVAL);
 				Integer certificateExpirationPeriod = courseApproval.getCertificateExpirationPeriod();
@@ -1549,8 +1550,8 @@ public class ManageAndEditApprovalController extends VU360BaseMultiActionControl
 			PagerAttributeMap.put("pageIndex", "0");
 		}
 		// for sorting...
-		String sortColumnIndex = request.getParameter("sortColumnIndex");
-		String sortDirection = request.getParameter("sortDirection");
+		String sortColumnIndex = (request.getParameter("sortColumnIndex") != null) ? request.getParameter("sortColumnIndex") : "1";
+		String sortDirection = request.getParameter("sortDirection") != null ? request.getParameter("sortDirection") : "0";
 		String showAll = request.getParameter("showAll");
 		if ( showAll == null ) showAll = "false";
 		if ( showAll.isEmpty() ) showAll = "true";
@@ -2258,16 +2259,16 @@ public class ManageAndEditApprovalController extends VU360BaseMultiActionControl
 		List<PurchaseCertificateNumber> certificateNumbersToBeDeleted = null;
 		String[] selectedCertificateNumberId = request.getParameterValues("certificateNumbers");
 		CourseApproval courseApproval = form.getCourseApproval();
-		List<PurchaseCertificateNumber> certificateNumbers = courseApproval.getPurchaseCertificateNumbers();
-		
+		Set<PurchaseCertificateNumber> certificateNumbers = courseApproval.getPurchaseCertificateNumbers();
+
 		if(certificateNumbers != null && selectedCertificateNumberId != null && selectedCertificateNumberId.length > 0)
 		{
 			certificateNumbersToBeDeleted = new ArrayList<PurchaseCertificateNumber>();
 			for (int i=0 ; i < selectedCertificateNumberId.length ;i++) {
-				for (int j=0 ; j < certificateNumbers.size(); j++) {
-					if (certificateNumbers.get(j).getId().compareTo(Long.parseLong(selectedCertificateNumberId[i])) == 0 && !certificateNumbers.get(j).isUsed()) {
-						certificateNumbersToBeDeleted.add(certificateNumbers.get(j));
-						certificateNumbers.remove(j);
+				for (PurchaseCertificateNumber purchaseCertificateNumber : certificateNumbers) {
+					if (purchaseCertificateNumber.getId().compareTo(Long.parseLong(selectedCertificateNumberId[i])) == 0 && !purchaseCertificateNumber.isUsed()) {
+						certificateNumbersToBeDeleted.add(purchaseCertificateNumber);
+						certificateNumbers.remove(purchaseCertificateNumber);
 						break;
 					}
 				}

@@ -3,9 +3,7 @@
  */
 package com.softech.vu360.lms.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -108,7 +106,7 @@ public class CourseApproval extends RegulatoryApproval {
 	//for purchase certificate numbers
 	@ManyToMany
     @JoinTable(name="COURSEAPPROVAL_PURCHASECERTIFICATE", joinColumns = @JoinColumn(name="COURSEAPPROVALID"),inverseJoinColumns = @JoinColumn(name="PURCHASECERTIFICATENUMBERID"))
-    private List<PurchaseCertificateNumber> purchaseCertificateNumbers = new ArrayList<PurchaseCertificateNumber>();
+    private Set<PurchaseCertificateNumber> purchaseCertificateNumbers = new HashSet<PurchaseCertificateNumber>();
 
 	@Column(name = "USE_CERTIFICATE_NUMBER_GENERATOR")
 	private Boolean useCertificateNumberGenerator = Boolean.FALSE;
@@ -478,7 +476,7 @@ public class CourseApproval extends RegulatoryApproval {
 	/**
 	 * @return the purchaseCertificateNumbers
 	 */
-	public List<PurchaseCertificateNumber> getPurchaseCertificateNumbers() {
+	public Set<PurchaseCertificateNumber> getPurchaseCertificateNumbers() {
 		return purchaseCertificateNumbers;
 	}
 
@@ -486,7 +484,7 @@ public class CourseApproval extends RegulatoryApproval {
 	 * @param purchaseCertificateNumbers the purchaseCertificateNumbers to set
 	 */
 	public void setPurchaseCertificateNumbers(
-			List<PurchaseCertificateNumber> purchaseCertificateNumbers) {
+			Set<PurchaseCertificateNumber> purchaseCertificateNumbers) {
 		this.purchaseCertificateNumbers = purchaseCertificateNumbers;
 	}
 
