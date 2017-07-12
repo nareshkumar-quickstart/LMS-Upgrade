@@ -269,4 +269,5 @@ public interface AccreditationService {
    public List<Instructor> searchInstructor(String firstName);
    public InstructorApproval getInstructorApprovalDeleteFalseById(Long instructorApprovalID);
    public ProviderApproval getProviderApprovalDeleteFalseById(Long providerApprovalID);
+   public PurchaseCertificateNumber checkForPurchaseNumberAssociation(CourseApproval courseApproval, String certificateNumber);
 }

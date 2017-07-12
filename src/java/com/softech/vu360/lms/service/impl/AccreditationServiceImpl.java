@@ -2303,4 +2303,8 @@ public class AccreditationServiceImpl implements AccreditationService {
 		
 	}
 
+	@Override
+	public PurchaseCertificateNumber checkForPurchaseNumberAssociation(CourseApproval courseApproval, String certificateNumber) {
+		return purchaseCertificateNumberRepository.findOneByCourseApprovalAndCertificateNumber(courseApproval, certificateNumber);
+	}
 }
