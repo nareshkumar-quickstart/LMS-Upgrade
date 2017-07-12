@@ -189,22 +189,22 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	public boolean alreadyAssociated(String currCertificateNumber,CourseApproval courseApproval)
 	{
 		boolean alreadyAssociated = false;
-		//Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
-		PurchaseCertificateNumber p = accreditationService.checkForPurchaseNumberAssociation(courseApproval, currCertificateNumber);
-		if(p != null){
-			alreadyAssociated = true;
-		}
-//		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
-//			Iterator iterator = certificateNumber.iterator();
-//			PurchaseCertificateNumber purchaseCertificateNumber = null;
-//			while(iterator.hasNext()){
-//				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
-//				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
-//					alreadyAssociated = true;
-//					break;
-//				}
-//			}
+		Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
+//		PurchaseCertificateNumber p = accreditationService.checkForPurchaseNumberAssociation(courseApproval, currCertificateNumber);
+//		if(p != null){
+//			alreadyAssociated = true;
 //		}
+		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
+			Iterator iterator = certificateNumber.iterator();
+			PurchaseCertificateNumber purchaseCertificateNumber = null;
+			while(iterator.hasNext()){
+				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
+				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
+					alreadyAssociated = true;
+					break;
+				}
+			}
+		}
 		return alreadyAssociated;
 	}
 
