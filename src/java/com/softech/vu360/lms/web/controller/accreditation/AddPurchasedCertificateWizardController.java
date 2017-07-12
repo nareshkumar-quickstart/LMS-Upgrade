@@ -119,9 +119,9 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 		newPurchaseCertificates = parseSavePurchasedCertificateNumbersFile(cApproval, form);
 		//Going to add purchase certificate numbers
 
-		cApproval.getPurchaseCertificateNumbers().addAll(newPurchaseCertificates);
+//		cApproval.getPurchaseCertificateNumbers().addAll(newPurchaseCertificates);
 		form.setCourseApproval(cApproval);
-		cApproval=	accreditationService.saveCourseApproval(cApproval);
+//		cApproval=	accreditationService.saveCourseApproval(cApproval);
 		
 		Map<Object, Object> context = new HashMap<Object, Object>();
 		context.put("target", "showCourseApprovalPurchasedCertificate");
@@ -150,10 +150,11 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				    	certificateNumber = new PurchaseCertificateNumber();
 				    	certificateNumber.setCertificateNumber(nextLine[0]);
 				    	certificateNumber.setUsed(false);
+				    	certificateNumber.setCourseApproval(courseApproval);
 				    	//certificateNumber.setNumericCertificateNumber(getLongFromString(certificateNumber.getCertificateNumber()));
 				    	//certificateNumber.setCourseApproval(courseApproval);
 				    	//Check certificate existence in course approval
-				    	if(!alreadyAssociated(nextLine[0],courseApproval.getPurchaseCertificateNumbers()))
+				    	if(!alreadyAssociated(nextLine[0],courseApproval))
 				    	{
 				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
 				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
@@ -185,20 +186,25 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 * @param certificateNumber
 	 * @return
 	 */
-	public boolean alreadyAssociated(String currCertificateNumber,Set<PurchaseCertificateNumber> certificateNumber)
+	public boolean alreadyAssociated(String currCertificateNumber,CourseApproval courseApproval)
 	{
 		boolean alreadyAssociated = false;
-		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
-			Iterator iterator = certificateNumber.iterator();
-			PurchaseCertificateNumber purchaseCertificateNumber = null;
-			while(iterator.hasNext()){
-				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
-				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
-					alreadyAssociated = true;
-					break;
-				}
-			}
+		//Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
+		PurchaseCertificateNumber p = accreditationService.checkForPurchaseNumberAssociation(courseApproval, currCertificateNumber);
+		if(p != null){
+			alreadyAssociated = true;
 		}
+//		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
+//			Iterator iterator = certificateNumber.iterator();
+//			PurchaseCertificateNumber purchaseCertificateNumber = null;
+//			while(iterator.hasNext()){
+//				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
+//				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
+//					alreadyAssociated = true;
+//					break;
+//				}
+//			}
+//		}
 		return alreadyAssociated;
 	}
 

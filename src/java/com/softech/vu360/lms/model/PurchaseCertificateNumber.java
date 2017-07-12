@@ -3,13 +3,7 @@
  */
 package com.softech.vu360.lms.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -48,8 +42,10 @@ public class PurchaseCertificateNumber  implements SearchableKey{
 	@Column(name = "numericCertificateNumber")
 	private long  numericCertificateNumber;
 //	private ValueHolderInterface courseApproval ;
-	
-	
+
+	@ManyToOne
+	@JoinTable(name="COURSEAPPROVAL_PURCHASECERTIFICATE", joinColumns = @JoinColumn(name="PURCHASECERTIFICATENUMBERID"),inverseJoinColumns = @JoinColumn(name="COURSEAPPROVALID"))
+	private CourseApproval courseApproval;
 	/**
 	 * @return the id
 	 */
@@ -147,5 +143,15 @@ public class PurchaseCertificateNumber  implements SearchableKey{
         clone.setUsed(this.getUsed());
         return clone;
     }
+
+	public CourseApproval getCourseApproval() {
+		return courseApproval;
+	}
+
+	public void setCourseApproval(CourseApproval courseApproval) {
+		this.courseApproval = courseApproval;
+	}
+
+
 
 }
