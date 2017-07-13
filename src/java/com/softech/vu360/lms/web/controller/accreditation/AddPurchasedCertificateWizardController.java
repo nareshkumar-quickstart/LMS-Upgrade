@@ -112,18 +112,14 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 		
 		log.debug("IN processFinish");
 		AddPurchasedCertificateForm form = (AddPurchasedCertificateForm) command;
-		Set<PurchaseCertificateNumber> newPurchaseCertificates = new HashSet <PurchaseCertificateNumber>();
-		
+
 		//Parse the file and create a collection of new Purchase Certificates and add them to the original collection to persist.
 		CourseApproval cApproval = form.getCourseApproval();
 		cApproval = accreditationService.getCourseApprovalById(cApproval.getId());//Due to Lazy Exception
-		newPurchaseCertificates = parseSavePurchasedCertificateNumbersFile(cApproval, form);
-		//Going to add purchase certificate numbers
+		parseSavePurchasedCertificateNumbersFile(cApproval, form);
 
-//		cApproval.getPurchaseCertificateNumbers().addAll(newPurchaseCertificates);
 		form.setCourseApproval(cApproval);
-//		cApproval=	accreditationService.saveCourseApproval(cApproval);
-		
+
 		Map<Object, Object> context = new HashMap<Object, Object>();
 		context.put("target", "showCourseApprovalPurchasedCertificate");
 		return new ModelAndView(closeTemplate, "context", context);
@@ -137,8 +133,8 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 */
 	private Set<PurchaseCertificateNumber> parseSavePurchasedCertificateNumbersFile(CourseApproval courseApproval, AddPurchasedCertificateForm form) {
 		
-		Set<String> purchasedCertificateNumbers = new HashSet<>();
-        Set<PurchaseCertificateNumber> purchasedCertificateNumbers1 = new HashSet<>();
+		List<String> purchasedCertificateNumbers = new ArrayList<>();
+        Set<PurchaseCertificateNumber> purchasedCertificateNumbersSet = new HashSet<>();
 		PurchaseCertificateNumber certificateNumber = null;
 		if(courseApproval != null )
 		{
@@ -147,34 +143,19 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				reader = new CSVReader(new InputStreamReader(form.getFile().getInputStream()), '\t', '\'', 1);  // 1 means skip first line
 			    String [] nextLine;
 			    while ((nextLine = reader.readNext()) != null) {
-			    	if(null!=nextLine[0] && (! StringUtils.isBlank(nextLine[0])) && (! nextLine[0].equals("")))
-			    	{
+			    	if(null!=nextLine[0] && (! StringUtils.isBlank(nextLine[0])) && (! nextLine[0].equals(""))){
 				    	certificateNumber = new PurchaseCertificateNumber();
 				    	certificateNumber.setCertificateNumber(nextLine[0]);
 				    	certificateNumber.setUsed(false);
 				    	certificateNumber.setCourseApproval(courseApproval);
-				    	//certificateNumber.setNumericCertificateNumber(getLongFromString(certificateNumber.getCertificateNumber()));
-				    	//certificateNumber.setCourseApproval(courseApproval);
-				    	//Check certificate existence in course approval
-
-//				    	if(!alreadyAssociated(certificateNumber,courseApproval)){
-				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
-//				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
-				    		purchasedCertificateNumbers.add(certificateNumber.getCertificateNumber());
-                        purchasedCertificateNumbers1.add(certificateNumber);
-//				    	}
+			    		purchasedCertificateNumbers.add(certificateNumber.getCertificateNumber());
+						purchasedCertificateNumbersSet.add(certificateNumber);
 			    	}
 			    }
 
-                List<PurchaseCertificateNumber> dbExistingCertificateNumbers = accreditationService.findByCourseApprovalAndCertificateNumberIn(courseApproval, purchasedCertificateNumbers);
-
-
-//                List<PurchaseCertificateNumber> existingCertificateNumbers = courseApproval.getPurchaseCertificateNumbers().stream()
-//                                                .filter(purchaseCertificateNumber -> purchasedCertificateNumbers.contains(purchaseCertificateNumber))
-//                                                .collect(Collectors.toList());
-//                 purchasedCertificateNumbers.removeAll(existingCertificateNumbers);
-                purchasedCertificateNumbers1.removeIf(purchaseCertificateNumber -> dbExistingCertificateNumbers.contains(purchaseCertificateNumber));
-			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers1);
+                List<PurchaseCertificateNumber> existingCertificateNumbers = accreditationService.checkPurchaseNumbersByCourseApproval(courseApproval, purchasedCertificateNumbers);
+				purchasedCertificateNumbersSet.removeIf(purchaseCertificateNumber -> existingCertificateNumbers.contains(purchaseCertificateNumber));
+			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbersSet);
 
 			} catch (FileNotFoundException e) {
 				log.debug("exception", e);
@@ -193,31 +174,6 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 			return 0;
 		}
 	}*/
-	
-	/**
-	 * checks whether the certificate number already associated with course approval
-	 * @param currCertificateNumber
-	 * @param certificateNumber
-	 * @return
-	 */
-	public boolean alreadyAssociated(PurchaseCertificateNumber currCertificateNumber,CourseApproval courseApproval){
-		boolean alreadyAssociated = false;
-		Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
-//		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
-//			Iterator iterator = certificateNumber.iterator();
-//			PurchaseCertificateNumber purchaseCertificateNumber = null;
-//			while(iterator.hasNext()){
-//				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
-//				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
-//					alreadyAssociated = true;
-//					break;
-//				}
-//			}
-//		}
-
-
-		return alreadyAssociated;
-	}
 
 	protected ModelAndView processCancel(HttpServletRequest request,
 			HttpServletResponse response, Object command, BindException errors)	throws Exception {
