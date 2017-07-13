@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -136,7 +137,7 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 */
 	private Set<PurchaseCertificateNumber> parseSavePurchasedCertificateNumbersFile(CourseApproval courseApproval, AddPurchasedCertificateForm form) {
 		
-		Set<PurchaseCertificateNumber> purchasedCertificateNumbers = new HashSet<>();
+		Set<String> purchasedCertificateNumbers = new HashSet<>();
 		PurchaseCertificateNumber certificateNumber = null;
 		if(courseApproval != null )
 		{
@@ -154,22 +155,32 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				    	//certificateNumber.setNumericCertificateNumber(getLongFromString(certificateNumber.getCertificateNumber()));
 				    	//certificateNumber.setCourseApproval(courseApproval);
 				    	//Check certificate existence in course approval
-				    	if(!alreadyAssociated(nextLine[0],courseApproval))
-				    	{
+
+//				    	if(!alreadyAssociated(certificateNumber,courseApproval)){
 				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
 //				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
-				    		purchasedCertificateNumbers.add(certificateNumber);
-				    	}
+				    		purchasedCertificateNumbers.add(certificateNumber.getCertificateNumber());
+//				    	}
 			    	}
 			    }
-			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers);
+
+                List<PurchaseCertificateNumber> dbExistingCertificateNumbers = accreditationService.findByCourseApprovalAndCertificateNumberIn(courseApproval, purchasedCertificateNumbers);
+
+
+//                List<PurchaseCertificateNumber> existingCertificateNumbers = courseApproval.getPurchaseCertificateNumbers().stream()
+//                                                .filter(purchaseCertificateNumber -> purchasedCertificateNumbers.contains(purchaseCertificateNumber))
+//                                                .collect(Collectors.toList());
+//                 purchasedCertificateNumbers.removeAll(existingCertificateNumbers);
+                System.out.println(dbExistingCertificateNumbers);
+//			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers);
+
 			} catch (FileNotFoundException e) {
 				log.debug("exception", e);
 			} catch (IOException e) {
 				log.debug("exception", e);
 			}
 		}
-		return purchasedCertificateNumbers;
+		return null;
 	}
 	
 	//LMS-15309  - field 'NumericCertificateNumber' in table 'purchasecertificate' is now useless
@@ -187,20 +198,22 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 * @param certificateNumber
 	 * @return
 	 */
-	public boolean alreadyAssociated(String currCertificateNumber,CourseApproval courseApproval){
+	public boolean alreadyAssociated(PurchaseCertificateNumber currCertificateNumber,CourseApproval courseApproval){
 		boolean alreadyAssociated = false;
 		Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
-		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
-			Iterator iterator = certificateNumber.iterator();
-			PurchaseCertificateNumber purchaseCertificateNumber = null;
-			while(iterator.hasNext()){
-				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
-				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
-					alreadyAssociated = true;
-					break;
-				}
-			}
-		}
+//		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
+//			Iterator iterator = certificateNumber.iterator();
+//			PurchaseCertificateNumber purchaseCertificateNumber = null;
+//			while(iterator.hasNext()){
+//				purchaseCertificateNumber = (PurchaseCertificateNumber)iterator.next();
+//				if(currCertificateNumber.equals(purchaseCertificateNumber.getCertificateNumber())){
+//					alreadyAssociated = true;
+//					break;
+//				}
+//			}
+//		}
+
+
 		return alreadyAssociated;
 	}
 
