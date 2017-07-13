@@ -44,17 +44,17 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 
 //		EntityTransaction transaction = Persistence.createEntityManagerFactory("lmsPersistenceUnit").createEntityManager().getTransaction();
 ////        transaction.begin();
-//		Iterator<PurchaseCertificateNumber> it = purchaseCertificateNumbers.iterator();
-//		PurchaseCertificateNumber p = null;
-//		while(it.hasNext()){
-//			p = it.next();
-//			this.entityManager.persist(p);
-//			if(i > 0 && i % 100 == 0){
-//				entityManager.flush();
-//				entityManager.clear();
-//			}
-//			i++;
-//		}
+		Iterator<PurchaseCertificateNumber> it = purchaseCertificateNumbers.iterator();
+		PurchaseCertificateNumber p = null;
+		while(it.hasNext()){
+			p = it.next();
+			this.entityManager.persist(p);
+			if(i > 0 && i % 100 == 0){
+				entityManager.flush();
+				entityManager.clear();
+			}
+			i++;
+		}
 		return false;
 	}
 }
