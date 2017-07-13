@@ -2307,7 +2307,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 	}
 
     @Override
-    public List<PurchaseCertificateNumber> findByCourseApprovalAndCertificateNumberIn(CourseApproval courseApproval, Set<String> purchaseCertificateNumbers) {
+    public List<PurchaseCertificateNumber> checkPurchaseNumbersByCourseApproval(CourseApproval courseApproval, List<String> purchaseCertificateNumbers) {
         return purchaseCertificateNumberRepository.findByCourseApprovalAndCertificateNumberIn(courseApproval, purchaseCertificateNumbers);
     }
 }

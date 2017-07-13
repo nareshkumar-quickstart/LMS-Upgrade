@@ -270,5 +270,5 @@ public interface AccreditationService {
    public InstructorApproval getInstructorApprovalDeleteFalseById(Long instructorApprovalID);
    public ProviderApproval getProviderApprovalDeleteFalseById(Long providerApprovalID);
    public boolean batchInsertPurchaseNumberCertificates(Set<PurchaseCertificateNumber> purchaseCertificateNumbers);
-	public List<PurchaseCertificateNumber> findByCourseApprovalAndCertificateNumberIn(CourseApproval courseApproval, Set<String> purchaseCertificateNumbers);
+	public List<PurchaseCertificateNumber> checkPurchaseNumbersByCourseApproval(CourseApproval courseApproval, List<String> purchaseCertificateNumbers);
 }

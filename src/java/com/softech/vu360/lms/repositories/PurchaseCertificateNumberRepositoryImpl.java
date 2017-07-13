@@ -1,12 +1,11 @@
 package com.softech.vu360.lms.repositories;
 
 import com.softech.vu360.lms.model.PurchaseCertificateNumber;
-import org.hibernate.Session;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -40,21 +39,22 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 	@Override
 	@Transactional
 	public boolean savePurchaseNumberAsBatch(Set<PurchaseCertificateNumber> purchaseCertificateNumbers) {
-		int i=0;
-
-//		EntityTransaction transaction = Persistence.createEntityManagerFactory("lmsPersistenceUnit").createEntityManager().getTransaction();
-////        transaction.begin();
-		Iterator<PurchaseCertificateNumber> it = purchaseCertificateNumbers.iterator();
-		PurchaseCertificateNumber p = null;
-		while(it.hasNext()){
-			p = it.next();
-			this.entityManager.persist(p);
-			if(i > 0 && i % 100 == 0){
+		int counter=0;
+		boolean result = false;
+		Iterator<PurchaseCertificateNumber> purchaseCertificateNumberIterator = purchaseCertificateNumbers.iterator();
+		PurchaseCertificateNumber purchaseCertificateNumber = null;
+		while(purchaseCertificateNumberIterator.hasNext()){
+			purchaseCertificateNumber = purchaseCertificateNumberIterator.next();
+			this.entityManager.persist(purchaseCertificateNumber);
+			if(counter > 0 && counter % 100 == 0){
 				entityManager.flush();
 				entityManager.clear();
 			}
-			i++;
+			counter++;
 		}
-		return false;
+		entityManager.flush();
+		entityManager.clear();
+		result = true;
+		return result;
 	}
 }
