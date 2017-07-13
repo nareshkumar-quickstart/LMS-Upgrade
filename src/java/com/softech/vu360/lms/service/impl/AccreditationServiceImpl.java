@@ -1974,10 +1974,8 @@ public class AccreditationServiceImpl implements AccreditationService {
 		return purchaseCertificateNumberRepository.findOne(id);
 	}
 
-	public PurchaseCertificateNumber addPurchaseCertificateNumber(
-			PurchaseCertificateNumber purchaseCertificateNumber) {
-		return purchaseCertificateNumberRepository
-				.save(purchaseCertificateNumber);
+	public PurchaseCertificateNumber addPurchaseCertificateNumber(PurchaseCertificateNumber purchaseCertificateNumber) {
+		return purchaseCertificateNumberRepository.save(purchaseCertificateNumber);
 	}
 
 	public void deletePurchaseCertificateNumbers(
@@ -2304,7 +2302,7 @@ public class AccreditationServiceImpl implements AccreditationService {
 	}
 
 	@Override
-	public PurchaseCertificateNumber checkForPurchaseNumberAssociation(CourseApproval courseApproval, String certificateNumber) {
-		return purchaseCertificateNumberRepository.findOneByCourseApprovalAndCertificateNumber(courseApproval, certificateNumber);
+	public boolean batchInsertPurchaseNumberCertificates(Set<PurchaseCertificateNumber> purchaseCertificateNumbers) {
+		return purchaseCertificateNumberRepository.savePurchaseNumberAsBatch(purchaseCertificateNumbers);
 	}
 }
