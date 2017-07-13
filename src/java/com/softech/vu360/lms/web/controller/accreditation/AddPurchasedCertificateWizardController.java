@@ -138,6 +138,7 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	private Set<PurchaseCertificateNumber> parseSavePurchasedCertificateNumbersFile(CourseApproval courseApproval, AddPurchasedCertificateForm form) {
 		
 		Set<String> purchasedCertificateNumbers = new HashSet<>();
+        Set<PurchaseCertificateNumber> purchasedCertificateNumbers1 = new HashSet<>();
 		PurchaseCertificateNumber certificateNumber = null;
 		if(courseApproval != null )
 		{
@@ -160,6 +161,7 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
 //				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
 				    		purchasedCertificateNumbers.add(certificateNumber.getCertificateNumber());
+                        purchasedCertificateNumbers1.add(certificateNumber);
 //				    	}
 			    	}
 			    }
@@ -171,8 +173,8 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 //                                                .filter(purchaseCertificateNumber -> purchasedCertificateNumbers.contains(purchaseCertificateNumber))
 //                                                .collect(Collectors.toList());
 //                 purchasedCertificateNumbers.removeAll(existingCertificateNumbers);
-                System.out.println(dbExistingCertificateNumbers);
-//			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers);
+                purchasedCertificateNumbers1.removeIf(purchaseCertificateNumber -> dbExistingCertificateNumbers.contains(purchaseCertificateNumber));
+			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers1);
 
 			} catch (FileNotFoundException e) {
 				log.debug("exception", e);
