@@ -152,6 +152,22 @@ public class PurchaseCertificateNumber  implements SearchableKey{
 		this.courseApproval = courseApproval;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		boolean isEqual = false;
+		if(obj == null){
+			isEqual = false;
+		}
+		if(this.getCertificateNumber().equals( ((PurchaseCertificateNumber)obj).getCertificateNumber()) &&
+		   this.getCourseApproval().getId() == 	((PurchaseCertificateNumber)obj).getCourseApproval().getId()){
+			isEqual = true;
+		}
+		return isEqual;
+	}
 
-
+	@Override
+	public int hashCode() {
+		int purchaseNumberHash = this.getCertificateNumber().hashCode() + this.getCourseApproval().getId().hashCode();
+		return purchaseNumberHash;
+	}
 }

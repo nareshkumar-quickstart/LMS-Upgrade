@@ -2305,4 +2305,9 @@ public class AccreditationServiceImpl implements AccreditationService {
 	public boolean batchInsertPurchaseNumberCertificates(Set<PurchaseCertificateNumber> purchaseCertificateNumbers) {
 		return purchaseCertificateNumberRepository.savePurchaseNumberAsBatch(purchaseCertificateNumbers);
 	}
+
+    @Override
+    public List<PurchaseCertificateNumber> findByCourseApprovalAndCertificateNumberIn(CourseApproval courseApproval, Set<String> purchaseCertificateNumbers) {
+        return purchaseCertificateNumberRepository.findByCourseApprovalAndCertificateNumberIn(courseApproval, purchaseCertificateNumbers);
+    }
 }
