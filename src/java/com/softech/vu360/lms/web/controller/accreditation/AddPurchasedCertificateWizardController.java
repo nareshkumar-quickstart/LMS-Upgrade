@@ -157,11 +157,12 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 				    	if(!alreadyAssociated(nextLine[0],courseApproval))
 				    	{
 				    		//LMS-15309 - Purchased Certificate Number will save one by one in database
-				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
+//				    		certificateNumber = accreditationService.addPurchaseCertificateNumber(certificateNumber);
 				    		purchasedCertificateNumbers.add(certificateNumber);
 				    	}
 			    	}
 			    }
+			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbers);
 			} catch (FileNotFoundException e) {
 				log.debug("exception", e);
 			} catch (IOException e) {
@@ -186,14 +187,9 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 	 * @param certificateNumber
 	 * @return
 	 */
-	public boolean alreadyAssociated(String currCertificateNumber,CourseApproval courseApproval)
-	{
+	public boolean alreadyAssociated(String currCertificateNumber,CourseApproval courseApproval){
 		boolean alreadyAssociated = false;
 		Set<PurchaseCertificateNumber> certificateNumber = courseApproval.getPurchaseCertificateNumbers();
-//		PurchaseCertificateNumber p = accreditationService.checkForPurchaseNumberAssociation(courseApproval, currCertificateNumber);
-//		if(p != null){
-//			alreadyAssociated = true;
-//		}
 		if(currCertificateNumber != null && !currCertificateNumber.equals("") && certificateNumber != null && certificateNumber.size() > 0){
 			Iterator iterator = certificateNumber.iterator();
 			PurchaseCertificateNumber purchaseCertificateNumber = null;
