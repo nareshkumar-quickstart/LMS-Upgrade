@@ -5,16 +5,8 @@ package com.softech.vu360.lms.model;
 
 import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 /**
  * 
  * @author marium.saud
@@ -104,7 +96,7 @@ public class CourseApproval extends RegulatoryApproval {
 	private Boolean usePurchasedCertificateNumbers = Boolean.FALSE;
 	
 	//for purchase certificate numbers
-	@ManyToMany
+	@OneToMany
     @JoinTable(name="COURSEAPPROVAL_PURCHASECERTIFICATE", joinColumns = @JoinColumn(name="COURSEAPPROVALID"),inverseJoinColumns = @JoinColumn(name="PURCHASECERTIFICATENUMBERID"))
     private Set<PurchaseCertificateNumber> purchaseCertificateNumbers = new HashSet<PurchaseCertificateNumber>();
 

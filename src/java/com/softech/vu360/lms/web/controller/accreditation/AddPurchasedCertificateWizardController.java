@@ -155,7 +155,9 @@ public class AddPurchasedCertificateWizardController  extends AbstractWizardForm
 
                 List<PurchaseCertificateNumber> existingCertificateNumbers = accreditationService.checkPurchaseNumbersByCourseApproval(courseApproval, purchasedCertificateNumbers);
 				purchasedCertificateNumbersSet.removeIf(purchaseCertificateNumber -> existingCertificateNumbers.contains(purchaseCertificateNumber));
-			    accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbersSet);
+				if(!purchasedCertificateNumbersSet.isEmpty()) {
+					accreditationService.batchInsertPurchaseNumberCertificates(purchasedCertificateNumbersSet);
+				}
 
 			} catch (FileNotFoundException e) {
 				log.debug("exception", e);
