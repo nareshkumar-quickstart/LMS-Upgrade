@@ -4,6 +4,7 @@ import com.softech.vu360.lms.model.PurchaseCertificateNumber;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.Iterator;
@@ -41,12 +42,14 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 	public boolean savePurchaseNumberAsBatch(Set<PurchaseCertificateNumber> purchaseCertificateNumbers) {
 		int counter=0;
 		boolean result = false;
+		int batchSize = Integer.valueOf(this.entityManager.getEntityManagerFactory().getProperties().get("hibernate.jdbc.batch_size").toString());
 		Iterator<PurchaseCertificateNumber> purchaseCertificateNumberIterator = purchaseCertificateNumbers.iterator();
 		PurchaseCertificateNumber purchaseCertificateNumber = null;
+		this.entityManager.setFlushMode(FlushModeType.COMMIT);
 		while(purchaseCertificateNumberIterator.hasNext()){
 			purchaseCertificateNumber = purchaseCertificateNumberIterator.next();
 			this.entityManager.persist(purchaseCertificateNumber);
-			if(counter > 0 && counter % 100 == 0){
+			if(counter > 0 && counter % batchSize == 0){
 				entityManager.flush();
 				entityManager.clear();
 			}
