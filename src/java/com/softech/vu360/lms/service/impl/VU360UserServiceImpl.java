@@ -590,4 +590,8 @@ public class VU360UserServiceImpl implements VU360UserService {
 	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO) {
 		vu360UserRepository.updateNumLogons(userVO);
 	}
+	@Override
+	public List<VU360User> findTrainingAdministratorsOfUser(Long userId) {
+		return vu360UserRepository.findTrainingAdministratorsOfUser(userId);
+	}
 }

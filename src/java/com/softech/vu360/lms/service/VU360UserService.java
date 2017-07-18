@@ -97,4 +97,5 @@ public interface VU360UserService extends UserDetailsService {
 	List<String> getEnabledFeatureGroups(Long userId);
 	public void updateNumLogons(com.softech.vu360.lms.vo.VU360User userVO);
 	public LMSRole getTop1RoleByName(String roleName,Customer customer);
+	public List<VU360User> findTrainingAdministratorsOfUser(Long userId);
 }

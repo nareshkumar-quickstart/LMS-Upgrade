@@ -84,4 +84,30 @@ public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU
 			"else\n" + 
 			"	select cast(0 as bit)", nativeQuery = true)
 	public boolean hasInstructorRole(Long userId);
+	
+	@Query(value = "select u.*\n" + 
+			"from vu360user u, learner l, LEARNER_ORGANIZATIONALGROUP lorg,\n" + 
+			"TRAININGADMINISTRATOR tadmin, LMSROLE r, VU360USER_ROLE ur\n" + 
+			"where lorg.ORGANIZATIONALGROUP_ID in (\n" + 
+			"  select org.ID\n" + 
+			"  from vu360user u, learner l, \n" + 
+			"  LEARNER_ORGANIZATIONALGROUP lgg, \n" + 
+			"  ORGANIZATIONALGROUP org\n" + 
+			"  where u.ID = ?1 \n" + 
+			"  and l.VU360USER_ID = u.ID\n" + 
+			"  and lgg.LEARNER_ID = l.ID\n" + 
+			"  and org.ID = lgg.ORGANIZATIONALGROUP_ID\n" + 
+			")\n" + 
+			"and l.ID = lorg.LEARNER_ID\n" + 
+			"and (\n" + 
+			"      tadmin.VU360USER_ID = l.VU360USER_ID\n" + 
+			"      or (tadmin.CUSTOMER_ID = l.CUSTOMER_ID and tadmin.MANAGEALLORGANIZATIONALGROUPTF = 1)\n" + 
+			"    )\n" + 
+			"and (r.CUSTOMER_ID = l.CUSTOMER_ID and r.ROLE_TYPE = '"+ LMSRole.ROLE_TRAININGMANAGER +"')\n" + 
+			"and ur.[USER_ID] = tadmin.VU360USER_ID\n" + 
+			"and ur.ROLE_ID = r.ID\n" + 
+			"and u.ID = ur.[USER_ID]\n" + 
+			"", nativeQuery = true)
+	public List<VU360User> findTrainingAdministratorsOfUser(Long userId);
+	
 }

@@ -20,6 +20,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.softech.vu360.lms.helpers.ProxyVOHelper;
@@ -45,6 +46,7 @@ import com.softech.vu360.lms.service.CourseAndCourseGroupService;
 import com.softech.vu360.lms.service.EntitlementService;
 import com.softech.vu360.lms.service.SecurityAndRolesService;
 import com.softech.vu360.lms.service.StatisticsService;
+import com.softech.vu360.lms.service.VU360UserService;
 import com.softech.vu360.lms.vo.SaveSurveyParam;
 import com.softech.vu360.lms.web.controller.model.CourseGroupItem;
 import com.softech.vu360.lms.web.controller.model.EnrollmentItem;
@@ -65,6 +67,9 @@ public class LearnersToBeMailedService {
 	private CertificateService certificateService= null;
 	private EntitlementService entitlementService= null;
 	private StatisticsService statisticsService= null;
+	
+	@Autowired
+	private VU360UserService vu360UserService;
 
 	
 	/**
@@ -697,7 +702,9 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 						
 						if(resellerFeatureEmailToManaggerEnable && customerFeatureEmailToManagerEnable) {
 							byteArrayInputStream.reset();
-							SendMailService.sendSMTPMessage(le.getLearner().getCustomer().getEmail(), fromAddress,fromCommonName, managerEmailSubject, managerEmailBody,byteArrayInputStream,fileName);
+							List<VU360User> users = vu360UserService.findTrainingAdministratorsOfUser(user.getId());
+							String emailAddressess = users.stream().map(s -> s.getEmailAddress()).reduce("", String::concat);
+							SendMailService.sendSMTPMessage(emailAddressess, fromAddress,fromCommonName, managerEmailSubject, managerEmailBody,byteArrayInputStream,fileName);
 						}
 						
 					}
