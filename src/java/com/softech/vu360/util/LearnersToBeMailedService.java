@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -703,7 +704,8 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 						if(resellerFeatureEmailToManaggerEnable && customerFeatureEmailToManagerEnable) {
 							byteArrayInputStream.reset();
 							List<VU360User> users = vu360UserService.findTrainingAdministratorsOfUser(user.getId());
-							String emailAddressess = users.stream().map(s -> s.getEmailAddress()).reduce("", String::concat);
+							String emailAddressess = users.stream().map(s -> s.getEmailAddress()).collect(Collectors.joining(","));
+							emailAddressess += (emailAddressess.isEmpty() ? "" : ",") + customer.getEmail();
 							SendMailService.sendSMTPMessage(emailAddressess, fromAddress,fromCommonName, managerEmailSubject, managerEmailBody,byteArrayInputStream,fileName);
 						}
 						
