@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.repositories;
 
+import com.softech.vu360.lms.model.CourseApproval;
 import com.softech.vu360.lms.model.PurchaseCertificateNumber;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +25,7 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 			Query query = entityManager.createNativeQuery("{call getUnusedPurchaseCertificateNumber(?)}");
 			query.setParameter(1, courseApprovalId);
 			
-			List results = query.getResultList();          
+			List results = query.getResultList();
                     
 			if(results.size() > 0) {
 //				PurchaseCertificateNumber result = (PurchaseCertificateNumber) results.get(0);
@@ -34,6 +35,9 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 				result.setCertificateNumber(dataArray[1].toString());
 				result.setUsed(Boolean.valueOf(dataArray[2].toString()));
 				result.setNumericCertificateNumber(Long.parseLong(dataArray[3].toString()));
+                CourseApproval c = new CourseApproval();
+                c.setId(courseApprovalId);
+				result.setCourseApproval(c);
 				return result;
 	        }
 		} catch (Exception e) {
