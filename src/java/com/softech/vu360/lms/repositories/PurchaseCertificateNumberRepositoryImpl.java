@@ -21,13 +21,19 @@ public class PurchaseCertificateNumberRepositoryImpl implements PurchaseCertific
 		
 		try {
 			
-			Query query = entityManager.createNativeQuery("{call getUnusedPurchaseCertificateNumber(?)}", PurchaseCertificateNumber.class);
+			Query query = entityManager.createNativeQuery("{call getUnusedPurchaseCertificateNumber(?)}");
 			query.setParameter(1, courseApprovalId);
 			
 			List results = query.getResultList();          
                     
 			if(results.size() > 0) {
-				PurchaseCertificateNumber result = (PurchaseCertificateNumber) results.get(0);
+//				PurchaseCertificateNumber result = (PurchaseCertificateNumber) results.get(0);
+				PurchaseCertificateNumber result = new PurchaseCertificateNumber();
+				Object[] dataArray = (Object[]) results.get(0);
+				result.setId(Long.parseLong(dataArray[0].toString()));
+				result.setCertificateNumber(dataArray[1].toString());
+				result.setUsed(Boolean.valueOf(dataArray[2].toString()));
+				result.setNumericCertificateNumber(Long.parseLong(dataArray[3].toString()));
 				return result;
 	        }
 		} catch (Exception e) {
