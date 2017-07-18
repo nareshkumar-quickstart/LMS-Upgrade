@@ -63,6 +63,7 @@ import com.softech.vu360.util.VU360Branding;
 public class AICCController implements Controller {
 	
 	private static final Logger log = Logger.getLogger(AICCController.class.getName());
+	private static final String USER_AGENT = "Mozilla/5.0";
 		
 	private CustomerService customerService = null;
 	private EntitlementService entitlementService = null;
@@ -88,7 +89,7 @@ public class AICCController implements Controller {
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			return new ModelAndView(statsProcesed, "context", context);
 		}
-		
+		response.setHeader("User-Agent", USER_AGENT);
 		response.setHeader("p3p", "CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\"");
 		
 		log.debug("starting AICC session");
