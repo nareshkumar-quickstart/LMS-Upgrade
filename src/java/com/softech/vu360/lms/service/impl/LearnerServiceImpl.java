@@ -1224,6 +1224,16 @@ public class LearnerServiceImpl implements LearnerService {
 		for (int i = 0; i < userIdArray.length; i++) {
 			VU360User user = vu360UserRepository
 					.findOne(userIdArray[i]);
+			
+			Learner learner = user.getLearner();
+			String[] selectedLearners = new String[]{ learner.getId().toString() };
+			
+			if(orgGroupsList != null) {
+				new HashSet<OrganizationalGroup>(orgGroupsList).forEach(o -> {
+					this.addLearnersInOrgGroup(selectedLearners, o.getId());
+				});
+			}
+			
 			if (lmsRole.getRoleType().equalsIgnoreCase(LMSRole.ROLE_LEARNER)) {
 
 				user.addLmsRole(lmsRole);
@@ -1232,6 +1242,7 @@ public class LearnerServiceImpl implements LearnerService {
 					LMSRole.ROLE_TRAININGMANAGER)) {
 
 				user.addLmsRole(lmsRole);
+				
 				/*
 				 * TODO should be fixed in future.
 				 */
