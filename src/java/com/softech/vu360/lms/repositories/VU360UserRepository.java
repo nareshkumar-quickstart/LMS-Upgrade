@@ -85,7 +85,7 @@ public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU
 			"	select cast(0 as bit)", nativeQuery = true)
 	public boolean hasInstructorRole(Long userId);
 	
-	@Query(value = "select u.*\n" + 
+	@Query(value = "select distinct u.*\n" + 
 			"from vu360user u, learner l, LEARNER_ORGANIZATIONALGROUP lorg,\n" + 
 			"TRAININGADMINISTRATOR tadmin, LMSROLE r, VU360USER_ROLE ur\n" + 
 			"where lorg.ORGANIZATIONALGROUP_ID in (\n" + 
