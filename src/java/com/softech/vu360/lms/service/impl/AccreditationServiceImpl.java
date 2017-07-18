@@ -1957,15 +1957,10 @@ public class AccreditationServiceImpl implements AccreditationService {
 				.findByTemplateIdAndDeletedFalse(ccTemplateId);
 	}
 
-	public PurchaseCertificateNumber savePurchaseCertificateNumber(
-			PurchaseCertificateNumber purchaseCertificateNumber) {
-		PurchaseCertificateNumber newPurchaseCertificateNumber = this
-				.loadForUpdatePurchaseCertificateNumber(purchaseCertificateNumber
-						.getId());
+	public PurchaseCertificateNumber savePurchaseCertificateNumber(PurchaseCertificateNumber purchaseCertificateNumber) {
+		PurchaseCertificateNumber newPurchaseCertificateNumber = this.loadForUpdatePurchaseCertificateNumber(purchaseCertificateNumber.getId());
 		newPurchaseCertificateNumber = purchaseCertificateNumber.clone();
-		newPurchaseCertificateNumber = purchaseCertificateNumberRepository
-				.save(newPurchaseCertificateNumber);
-
+		newPurchaseCertificateNumber = purchaseCertificateNumberRepository.save(newPurchaseCertificateNumber);
 		return newPurchaseCertificateNumber;
 	}
 

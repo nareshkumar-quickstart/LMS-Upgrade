@@ -141,6 +141,7 @@ public class PurchaseCertificateNumber  implements SearchableKey{
         clone.setNumericCertificateNumber(this.getNumericCertificateNumber());
         clone.setUsed(this.isUsed());
         clone.setUsed(this.getUsed());
+        clone.setCourseApproval(this.getCourseApproval());
         return clone;
     }
 
