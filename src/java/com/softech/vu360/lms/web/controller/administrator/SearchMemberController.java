@@ -776,6 +776,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 					loggedInUser, Integer.valueOf(pageIndex), retrieveRowCount,
 					resultset,
 					AdminSearchMemberEnum.LEARNER.getSortBy(sortColumnIndex),
+                    sortColumnIndex,
 					sortDirection);
 		}
 

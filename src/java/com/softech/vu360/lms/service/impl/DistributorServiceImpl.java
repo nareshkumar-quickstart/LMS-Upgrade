@@ -1244,7 +1244,7 @@ public class DistributorServiceImpl implements DistributorService {
 	public List<VU360User> getAllLearners(String firstName, String lastName,
 			String email, String searchCriteria, VU360User loggedInUser,
 			int pageIndex, int retrieveRowCount, ResultSet resultSet,
-			String sortBy, int sortDirection) {
+			String sortBy, String sortColumnIndex, int sortDirection) {
 
 		List<VU360User> userList = new ArrayList<VU360User>();
 		
@@ -1260,7 +1260,7 @@ public class DistributorServiceImpl implements DistributorService {
 				insertIDsINDistributorTempTable(ids);
 			}
 			
-			userList = vU360UserRepository.getAllLearners(firstName,lastName, email, searchCriteria, loggedInUser, pageIndex, retrieveRowCount, sortBy, sortDirection, resultSet);
+			userList = vU360UserRepository.getAllLearners(firstName,lastName, email, searchCriteria, loggedInUser, pageIndex, retrieveRowCount, sortBy, sortDirection, resultSet, sortColumnIndex);
 			return userList;
 		}
 		else{

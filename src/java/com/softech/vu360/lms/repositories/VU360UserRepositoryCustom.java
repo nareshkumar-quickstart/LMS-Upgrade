@@ -66,7 +66,7 @@ public interface VU360UserRepositoryCustom {
 	public List<VU360User> getAllLearners(String firstName, String lastName,
 			String email, String searchCriteria, VU360User loggedInUser,
 			int pageIndex, int retrieveRowCount,
-			String sortBy, int sortDirection,ResultSet resultSet);
+			String sortBy, int sortDirection,ResultSet resultSet, String sortColumnIndex);
 	public List<VU360User> findBylearnerIn(Collection<Long> ids);
 	public Set<Long> getOrganizational_Group_Members(Long userId,Long customerId);
 	
