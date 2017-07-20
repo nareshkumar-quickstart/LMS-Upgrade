@@ -68,7 +68,7 @@ public enum AdminSearchMemberEnum {
 			}else if(sortColumnIndex.equalsIgnoreCase("2")){
 				sortBy="emailAddress";
 			}else if(sortColumnIndex.equalsIgnoreCase("3")){
-				sortBy="accountNonLockedTf";
+				sortBy="accountNonLocked";
 			}else if(sortColumnIndex.equalsIgnoreCase("4")){
 				sortBy="Name";
 			}else if(sortColumnIndex.equalsIgnoreCase("5")){
