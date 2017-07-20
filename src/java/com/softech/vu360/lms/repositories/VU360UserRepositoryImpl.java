@@ -593,6 +593,10 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
             orderByClause.append("ORDER BY u.");
         }
 
+        if(sortColumnIndex.equals("3")){
+			sortBy = "accountNonLockedTf";
+		}
+
 		if (sortDirection == 0)
 			queryString.append(orderByClause).append(sortBy).append(" ASC");
 		else {

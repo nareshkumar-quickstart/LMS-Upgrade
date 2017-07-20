@@ -1149,7 +1149,7 @@ public class DistributorServiceImpl implements DistributorService {
 	public List<VU360User> getLearnersByCustomer(String firstName,
 			String lastName, String email, String searchCriteria,
 			Long customerId, int pageIndex, int retrieveRowCount,
-			ResultSet resultSet, String sortBy, int sortDirection) {
+			ResultSet resultSet, String sortBy, String sortColumnIndex, int sortDirection) {
 
 		List<VU360User> userList = new ArrayList<VU360User>();
 		RepositorySpecificationsBuilder<VU360User> sb_VU360User = new RepositorySpecificationsBuilder<VU360User>();
@@ -1171,6 +1171,11 @@ public class DistributorServiceImpl implements DistributorService {
 			sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
 					email, "AND");
 		}
+		if(sortColumnIndex.equals("4")){
+            sortBy = "learner_customer_name";
+        }else if(sortColumnIndex.equals("5")){
+            sortBy = "learner_customer_distributor_name";
+        }
 		Sort sortSpec = orderBy(sortDirection, sortBy);
 
 		PageRequest pageRequest = null;
@@ -1193,7 +1198,7 @@ public class DistributorServiceImpl implements DistributorService {
 	public List<VU360User> getLearnersByDistributor(String firstName,
 			String lastName, String email, String searchCriteria,
 			Long distributorId, int pageIndex, int retrieveRowCount,
-			ResultSet resultSet, String sortBy, int sortDirection) {
+			ResultSet resultSet, String sortBy, String sortColumnIndex, int sortDirection) {
 
 		List<VU360User> userList = new ArrayList<VU360User>();
 		RepositorySpecificationsBuilder<VU360User> sb_VU360User = new RepositorySpecificationsBuilder<VU360User>();
@@ -1215,6 +1220,11 @@ public class DistributorServiceImpl implements DistributorService {
 			sb_VU360User.with("emailAddress", sb_VU360User.LIKE_IGNORE_CASE,
 					email, "AND");
 		}
+        if(sortColumnIndex.equals("4")){
+            sortBy = "learner_customer_name";
+        }else if(sortColumnIndex.equals("5")){
+            sortBy = "learner_customer_distributor_name";
+        }
 		Sort sortSpec = null;
 		if (StringUtils.isBlank(sortBy)) {
 			sortSpec = orderBy(0, "firstName");

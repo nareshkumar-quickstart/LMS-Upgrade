@@ -751,7 +751,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 						distributor.getId(), Integer.valueOf(pageIndex),
 						retrieveRowCount, resultset,
 						AdminSearchMemberEnum.LEARNER
-								.getSortBy(sortColumnIndex), sortDirection);
+								.getSortBy(sortColumnIndex), sortColumnIndex, sortDirection);
 			}
 			// if customer is selected
 			else if (selectedCustomer != null) {
@@ -763,7 +763,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 						selectedCustomer.getId(), Integer.valueOf(pageIndex),
 						retrieveRowCount, resultset,
 						AdminSearchMemberEnum.LEARNER
-								.getSortBy(sortColumnIndex), sortDirection);
+								.getSortBy(sortColumnIndex), sortColumnIndex, sortDirection);
 			}
 
 		} else {

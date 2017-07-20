@@ -143,7 +143,7 @@ public class SelfServiceServiceImpl implements SelfServiceService{
 					
 					VU360User defaultUserForSelfservice = new VU360User();
 					Distributor distributor = addDistributor(accountdetail, defaultUserForSelfservice.getId());
-					List<VU360User> lstUsr = distributorService.getLearnersByDistributor("", "", "", "", distributor.getId(),-1,-1,new ResultSet(),null,0);
+					List<VU360User> lstUsr = distributorService.getLearnersByDistributor("", "", "", "", distributor.getId(),-1,-1,new ResultSet(),"0", null,0);
 					
 					if(lstUsr.size()>0){ // No Null Checking
 						
