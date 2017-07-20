@@ -96,10 +96,9 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		if (methodName.equals("searchMembers")
 				&& !form.isConstrainedCustomerSearch()) {
 
-			if (form.getSearchType().equalsIgnoreCase(
-					AdminSearchForm.CUSTOMER_SEARCH_TYPE)
-					|| form.getSearchType().equalsIgnoreCase(
-							AdminSearchForm.CUSTOMER_ADVANCE_SEARCH_TYPE)) {
+			if (form.getSearchType() != null &&
+				(form.getSearchType().equalsIgnoreCase(AdminSearchForm.CUSTOMER_SEARCH_TYPE) ||
+				 form.getSearchType().equalsIgnoreCase(AdminSearchForm.CUSTOMER_ADVANCE_SEARCH_TYPE)) ) {
 
 				if (form.getSearchOrderDate() != null
 						&& !form.getSearchOrderDate().equals("")) {
