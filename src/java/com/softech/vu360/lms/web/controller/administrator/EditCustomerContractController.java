@@ -786,17 +786,27 @@ public class EditCustomerContractController extends VU360BaseMultiActionControll
 			entitlementService.deleteEntitlementItems(ent,cgIds);
 		}
 		else{
+			
 			CourseCustomerEntitlement ent=(CourseCustomerEntitlement)form.getCustomerEntitlement();
 			String []strCourseIds = request.getParameterValues("courses");
 			List<CourseCustomerEntitlementItem> items = entitlementService.getItemsByEntitlement(ent);//ent.getEntitlementItems();
 			List<CourseCustomerEntitlementItem> itemsToBeRemoved=new ArrayList<CourseCustomerEntitlementItem>();
 			CourseCustomerEntitlementItem item = null;
 			String []strArray = null;
+			
+			long course = -1;
+			long courseGroup = -1;
+			
 			for(int i=0;i<strCourseIds.length;i++){
+				
 				strArray = strCourseIds[i].split(":");
 
-				//item = entitlementService.findEntitlementItem(ent, Long.valueOf(-1), Long.valueOf(strArray[1]));//ent.findCourseCustomerEntitlementItem(new Long(strArray[0]),new Long(strArray[1]));
-				List<CourseCustomerEntitlementItem> resultItems = entitlementService.findEntitlementItemsByCourse(ent, Long.valueOf(strArray[1]));//ent.findCourseCustomerEntitlementItem(new Long(strArray[0]),new Long(strArray[1]));
+				if(strArray.length == 2) {
+					courseGroup = Long.valueOf(strArray[0]);
+					course = Long.valueOf(strArray[1]);
+				}
+				
+				List<CourseCustomerEntitlementItem> resultItems = entitlementService.findEntitlementItemsByCourse(ent, course);
 				
 				if(resultItems!=null && resultItems.size()>0) item = resultItems.get(0);
 				if(item!=null && items.contains(item)){
@@ -808,7 +818,8 @@ public class EditCustomerContractController extends VU360BaseMultiActionControll
 					Iterator<CourseCustomerEntitlementItem> iterCourseCustomerEntitlementItem=form.getEntitlementItems().iterator();
 					while(iterCourseCustomerEntitlementItem.hasNext()) {
 						CourseCustomerEntitlementItem courseCustomerEntitlementItem=iterCourseCustomerEntitlementItem.next();
-						if(courseCustomerEntitlementItem.getCourse().getId().equals(Long.valueOf(strArray[1]))){
+						if (courseCustomerEntitlementItem.getCourse().getId().equals(course)
+								&& courseCustomerEntitlementItem.getCourseGroup().getId().equals(courseGroup)) {
 							iterCourseCustomerEntitlementItem.remove();
 						}
 					}
