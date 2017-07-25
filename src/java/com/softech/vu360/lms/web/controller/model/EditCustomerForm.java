@@ -13,7 +13,9 @@ import com.softech.vu360.util.Brander;
  */
 public class EditCustomerForm  implements ILMSBaseInterface{
 	private static final long serialVersionUID = 1L;
+	
 	public EditCustomerForm() {
+	
 	}
 	
 	private Customer customer = null;
@@ -60,12 +62,14 @@ public class EditCustomerForm  implements ILMSBaseInterface{
 	private boolean distributorRepresentative = false;
 	private boolean courseCompCertificateEmails = true;
 	private boolean courseCompCertificateEmailsLocked = false;
-	
 	private Brander brander = null ;
-	String eventSource = null ;
-	
 	private String brandName = null;
 	private long brandId;
+	private boolean aiccInterfaceEnabled = Boolean.FALSE;
+
+	String eventSource = null ;
+	
+	
 	public void reset(){
 		
 		customer = null;
@@ -506,6 +510,14 @@ public class EditCustomerForm  implements ILMSBaseInterface{
 
 	public void setBrandId(long brandId) {
 		this.brandId = brandId;
+	}
+
+	public boolean isAiccInterfaceEnabled() {
+		return aiccInterfaceEnabled;
+	}
+
+	public void setAiccInterfaceEnabled(boolean aiccInterfaceEnabled) {
+		this.aiccInterfaceEnabled = aiccInterfaceEnabled;
 	}
 	
 	

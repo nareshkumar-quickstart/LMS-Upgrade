@@ -408,6 +408,7 @@ class CustomerServiceImpl implements CustomerService {
 			customer.setCustomerType(addCustomerForm.getCustomerType());
 			customer.setActive(addCustomerForm.isStatus());
 			customer.setLmsApiEnabledTF(addCustomerForm.isLmsApiEnabledTF());
+			customer.setAiccInterfaceEnabled(addCustomerForm.isAiccInterfaceEnabled());
 			
 			//Removing default brand setting ENGSUP-31747
 			if(addCustomerForm.getBrandId()>0)

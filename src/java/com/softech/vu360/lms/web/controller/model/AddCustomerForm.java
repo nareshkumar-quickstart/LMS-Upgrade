@@ -8,8 +8,11 @@ import com.softech.vu360.lms.web.controller.ILMSBaseInterface;
 import com.softech.vu360.util.Brander;
 
 public class AddCustomerForm  implements ILMSBaseInterface{
+	
 	private static final long serialVersionUID = 1L;
-	public AddCustomerForm(){
+	
+	public AddCustomerForm() {
+
 	}
 	
 	private String customerName = null;
@@ -82,6 +85,7 @@ public class AddCustomerForm  implements ILMSBaseInterface{
 	private ArrayList<Brand>brandsList;
 	
 	private boolean isDefault;
+	private boolean aiccInterfaceEnabled = Boolean.FALSE;
 		
 	public String getCustomerName() {
 		return customerName;
@@ -486,6 +490,12 @@ public class AddCustomerForm  implements ILMSBaseInterface{
 	}
 	public void setLmsApiEnabledTF(boolean lmsApiEnabledTF) {
 		this.lmsApiEnabledTF = lmsApiEnabledTF;
+	}
+	public boolean isAiccInterfaceEnabled() {
+		return aiccInterfaceEnabled;
+	}
+	public void setAiccInterfaceEnabled(boolean aiccInterfaceEnabled) {
+		this.aiccInterfaceEnabled = aiccInterfaceEnabled;
 	}
 	
 }
