@@ -96,10 +96,9 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 		if (methodName.equals("searchMembers")
 				&& !form.isConstrainedCustomerSearch()) {
 
-			if (form.getSearchType().equalsIgnoreCase(
-					AdminSearchForm.CUSTOMER_SEARCH_TYPE)
-					|| form.getSearchType().equalsIgnoreCase(
-							AdminSearchForm.CUSTOMER_ADVANCE_SEARCH_TYPE)) {
+			if (form.getSearchType() != null &&
+				(form.getSearchType().equalsIgnoreCase(AdminSearchForm.CUSTOMER_SEARCH_TYPE) ||
+				 form.getSearchType().equalsIgnoreCase(AdminSearchForm.CUSTOMER_ADVANCE_SEARCH_TYPE)) ) {
 
 				if (form.getSearchOrderDate() != null
 						&& !form.getSearchOrderDate().equals("")) {
@@ -752,7 +751,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 						distributor.getId(), Integer.valueOf(pageIndex),
 						retrieveRowCount, resultset,
 						AdminSearchMemberEnum.LEARNER
-								.getSortBy(sortColumnIndex), sortDirection);
+								.getSortBy(sortColumnIndex), sortColumnIndex, sortDirection);
 			}
 			// if customer is selected
 			else if (selectedCustomer != null) {
@@ -764,7 +763,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 						selectedCustomer.getId(), Integer.valueOf(pageIndex),
 						retrieveRowCount, resultset,
 						AdminSearchMemberEnum.LEARNER
-								.getSortBy(sortColumnIndex), sortDirection);
+								.getSortBy(sortColumnIndex), sortColumnIndex, sortDirection);
 			}
 
 		} else {
@@ -777,6 +776,7 @@ public class SearchMemberController extends VU360BaseMultiActionController {
 					loggedInUser, Integer.valueOf(pageIndex), retrieveRowCount,
 					resultset,
 					AdminSearchMemberEnum.LEARNER.getSortBy(sortColumnIndex),
+                    sortColumnIndex,
 					sortDirection);
 		}
 

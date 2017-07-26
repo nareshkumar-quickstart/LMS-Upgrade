@@ -547,18 +547,18 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 	//Modified By MariumSaud : LMS-22390 - Change the Search JPQL Query to Native Query and eliminating the IN clause that is causing high weightage and made use of 
 	//                         Global Temp table that will be created and dropped at run time and pull distributor Ids from there in case if the user is not global admin.
 	@Override
-	public List<VU360User> getAllLearners(String firstName, String lastName,String email, String searchCriteria, VU360User loggedInUser,int pageIndex, int retrieveRowCount, String sortBy, int sortDirection,ResultSet resultSet) {
+	public List<VU360User> getAllLearners(String firstName, String lastName,String email, String searchCriteria, VU360User loggedInUser,int pageIndex, int retrieveRowCount, String sortBy, int sortDirection,ResultSet resultSet, String sortColumnIndex) {
 		List<VU360User> userList=new ArrayList<VU360User>();
 		Boolean notGlobalAdmin= false;
 		
 		StringBuilder queryString = new StringBuilder("SELECT u.* FROM VU360User u LEFT JOIN LEARNER l on u.ID = l.VU360USER_ID");
 		//LMS-14184
 		if(loggedInUser.getLmsAdministrator()!=null && !loggedInUser.getLmsAdministrator().isGlobalAdministrator()){ 	// apply administrator filtering
-			queryString.append(" LEFT JOIN CUSTOMER c on l.CUSTOMER_ID = c.ID");
-			queryString.append(" LEFT JOIN DISTRIBUTOR d on c.DISTRIBUTOR_ID = d.ID");
 			notGlobalAdmin = true;
 		}
-		
+		queryString.append(" LEFT JOIN CUSTOMER c on l.CUSTOMER_ID = c.ID");
+		queryString.append(" LEFT JOIN DISTRIBUTOR d on c.DISTRIBUTOR_ID = d.ID");
+
 		queryString.append(" WHERE l.ID > = -1 ");
 		
 		if (!StringUtils.isBlank(searchCriteria)) {
@@ -583,11 +583,24 @@ public class VU360UserRepositoryImpl implements VU360UserRepositoryCustom {
 		String countSql="select count(1) from (" + queryString + ") a";
 		StringBuilder countString = new StringBuilder(countSql);
 		Query count = entityManager.createNativeQuery(countString.toString());
-				
+
+		StringBuilder orderByClause = new StringBuilder();
+		if(sortColumnIndex.equals("4")) {
+            orderByClause.append("ORDER BY c.");
+        }else if(sortColumnIndex.equals("5")){
+            orderByClause.append("ORDER BY d.");
+        }else{
+            orderByClause.append("ORDER BY u.");
+        }
+
+        if(sortColumnIndex.equals("3")){
+			sortBy = "accountNonLockedTf";
+		}
+
 		if (sortDirection == 0)
-			queryString.append(" ORDER BY u.").append(sortBy).append(" ASC");
+			queryString.append(orderByClause).append(sortBy).append(" ASC");
 		else {
-			queryString.append(" ORDER BY u.").append(sortBy).append(" DESC");
+			queryString.append(orderByClause).append(sortBy).append(" DESC");
 		}
 		
 		Query query = entityManager.createNativeQuery(queryString.toString(),VU360User.class);

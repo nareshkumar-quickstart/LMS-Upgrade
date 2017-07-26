@@ -60,14 +60,14 @@ public interface DistributorService {
 
 	public List<VU360User> getLearnersByCustomer(String firstName, String lastName, String email, String searchCriteria,
 			Long customerId, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,
-			int sortDirection);
+			String sortColumnIndex, int sortDirection);
 
 	public List<VU360User> getLearnersByDistributor(String firstName, String lastName, String email,
 			String searchCriteria, Long distributorId, int pageIndex, int retrieveRowCount, ResultSet resultSet,
-			String sortBy, int sortDirection);
+			String sortBy, String sortColumnIndex, int sortDirection);
 
 	public List<VU360User> getAllLearners(String firstName, String lastName, String email, String searchCriteria,
-			VU360User loggedInUser, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,
+			VU360User loggedInUser, int pageIndex, int retrieveRowCount, ResultSet resultSet, String sortBy,String sortColumnIndex,
 			int sortDirection);
 
 	public List<LMSAdministrator> getLMSAdministratorsByDistributorGroupId(long distributorGroupId);

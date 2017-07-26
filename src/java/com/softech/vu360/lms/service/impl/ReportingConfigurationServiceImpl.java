@@ -239,6 +239,7 @@ public class ReportingConfigurationServiceImpl implements ReportingConfiguration
 		
 		//List<VU360ReportFilter> copiedFilters = reportCopy.getFilters();
 		List<VU360ReportFilter> addedFilters = new ArrayList<VU360ReportFilter>();
+		List<VU360ReportFilter> removedFilters = new ArrayList<VU360ReportFilter>();
 		
 		//loop over the form filter items
 		for(int i=0; i<filterItems.size(); i++){
@@ -248,7 +249,7 @@ public class ReportingConfigurationServiceImpl implements ReportingConfiguration
 				for(int j=reportCopy.getFilters().size()-1; j>=0; j--){
 					VU360ReportFilter existingFilter = reportCopy.getFilters().get(j); 
 					if(item.getId()!=null && existingFilter.getId().longValue()==item.getId().longValue()){
-						//removedFilters.add(existingFilter);
+						removedFilters.add(existingFilter);
 						//copiedFilters.remove(j);
 						reportCopy.getFilters().remove(j);
 						break;
@@ -317,6 +318,9 @@ public class ReportingConfigurationServiceImpl implements ReportingConfiguration
 				//editedFilters.add(filter);
 			}
 		}
+		
+		if(removedFilters.size() > 0)
+			reportFilterRepository.delete(removedFilters);
 		if(addedFilters.size()>0)
 			reportCopy.getFilters().addAll(addedFilters);
 		reportFilterRepository.save(reportCopy.getFilters());

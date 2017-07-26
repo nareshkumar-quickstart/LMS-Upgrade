@@ -62,18 +62,18 @@ public enum AdminSearchMemberEnum {
 			if(sortColumnIndex.equalsIgnoreCase("0")){
 				if(CONSTRAINT_LEARNER_SEARCH){
 					sortBy="firstName";
-				}
-				else{
+				}else{
 					sortBy="lastName";
 				}
-			}
-			else if(sortColumnIndex.equalsIgnoreCase("2")){
+			}else if(sortColumnIndex.equalsIgnoreCase("2")){
 				sortBy="emailAddress";
-			}
-			else if(sortColumnIndex.equalsIgnoreCase("3")){
+			}else if(sortColumnIndex.equalsIgnoreCase("3")){
 				sortBy="accountNonLocked";
+			}else if(sortColumnIndex.equalsIgnoreCase("4")){
+				sortBy="Name";
+			}else if(sortColumnIndex.equalsIgnoreCase("5")){
+				sortBy="Name";
 			}
-			
 			return sortBy;
 		}};
 	
