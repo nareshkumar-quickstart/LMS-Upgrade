@@ -251,6 +251,8 @@ class CustomerServiceImpl implements CustomerService {
 		origCustomer.getShippingAddress().setStreetAddress(editCustomerForm.getShippingAddress1());
 		origCustomer.getShippingAddress().setStreetAddress2(editCustomerForm.getShippingAddress2());
 		
+		origCustomer.setAiccInterfaceEnabled(editCustomerForm.isAiccInterfaceEnabled());
+		
 		// ---------- code written for B2B Authoring ---------------
 		com.softech.vu360.lms.vo.VU360User loggedInUser = (com.softech.vu360.lms.vo.VU360User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		if(editCustomerForm.isSelfAuthor() && !origCustomer.isSelfAuthor()){
