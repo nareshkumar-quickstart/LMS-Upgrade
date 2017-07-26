@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -704,25 +706,35 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 						final ByteArrayInputStream certificateStream = byteArrayInputStream;
 						
 						if(resellerFeatureEmailToManaggerEnable && customerFeatureEmailToManagerEnable) {
+							
 							byteArrayInputStream.reset();
+							
 							List<VU360User> users = vu360UserService.findTrainingAdministratorsOfUser(user.getId());
+							
+							Set<String> managersEmailAddresses = new HashSet<>();
+							
 							users.forEach(u -> {
 								
 								model.put("manager", u);
 								
 								String emailBody = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, certificateToManagerTemplatePath, model);
-										
+								
+								managersEmailAddresses.add(u.getEmailAddress());
+								
 								SendMailService.sendSMTPMessage(
 										u.getEmailAddress(), fromAddress,fromCommonName, 
 										managerEmailSubject, 
 										emailBody, certificateStream, fileName
 										);
 							});
-							SendMailService.sendSMTPMessage(
-									customer.getEmail(), fromAddress,fromCommonName, 
-									managerEmailSubject, managerEmailBody, 
-									byteArrayInputStream, fileName
-									);
+							
+							if(!managersEmailAddresses.contains(customer.getEmail())) {
+								SendMailService.sendSMTPMessage(
+										customer.getEmail(), fromAddress,fromCommonName, 
+										managerEmailSubject, managerEmailBody, 
+										byteArrayInputStream, fileName
+										);
+							}
 						}
 						
 					}
