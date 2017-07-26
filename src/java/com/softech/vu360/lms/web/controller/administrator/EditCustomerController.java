@@ -274,6 +274,7 @@ public class EditCustomerController extends VU360BaseMultiActionController {
 			customer = customerService.updateCustomer(form, customer);
 			form.setDistributorRepresentative(customer.isDistributorRepresentative());
 			form.setSelfAuthor(customer.isSelfAuthor());
+			form.setAiccInterfaceEnabled(customer.getAiccInterfaceEnabled());
 			form.setCustomer(customer); 
 			
 			VU360UserAuthenticationDetails adminDetails = (VU360UserAuthenticationDetails)SecurityContextHolder.getContext().getAuthentication().getDetails();
