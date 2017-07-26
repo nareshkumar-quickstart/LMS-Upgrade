@@ -119,6 +119,7 @@ public class EditCustomerController extends VU360BaseMultiActionController {
 						form.setFirstName(customer.getFirstName());
 						form.setLastName(customer.getLastName());
 						form.setSelfAuthor(customer.isSelfAuthor());
+						form.setAiccInterfaceEnabled(customer.getAiccInterfaceEnabled());
 						form.setDistributorRepresentative(customer.isDistributorRepresentative());
 						form.setBrandName(customer.getBrandName()); // setting the brand name
 						form.setBrandId(customer.getBrand()!=null?customer.getBrand().getId():0);
