@@ -106,7 +106,7 @@ public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU
 			"and (r.CUSTOMER_ID = l.CUSTOMER_ID and r.ROLE_TYPE = '"+ LMSRole.ROLE_TRAININGMANAGER +"')\n" + 
 			"and ur.[USER_ID] = tadmin.VU360USER_ID\n" + 
 			"and ur.ROLE_ID = r.ID\n" + 
-			"and u.ID = ur.[USER_ID]\n" + 
+			"and (u.ID = ur.[USER_ID] and u.ACCOUNTNONEXPIREDTF = 1 and u.ACCOUNTNONLOCKEDTF = 1 and u.ENABLEDTF = 1 )\n" + 
 			"", nativeQuery = true)
 	public List<VU360User> findTrainingAdministratorsOfUser(Long userId);
 	
