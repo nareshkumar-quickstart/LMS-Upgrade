@@ -703,17 +703,15 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 							}
 						}
 						
-						final ByteArrayInputStream certificateStream = byteArrayInputStream;
+												
 						
 						if(resellerFeatureEmailToManaggerEnable && customerFeatureEmailToManagerEnable) {
-							
-							byteArrayInputStream.reset();
 							
 							List<VU360User> users = vu360UserService.findTrainingAdministratorsOfUser(user.getId());
 							
 							Set<String> managersEmailAddresses = new HashSet<>();
 							
-							users.forEach(u -> {
+							for(VU360User u: users) {
 								
 								model.put("manager", u);
 								
@@ -721,14 +719,20 @@ public boolean SendMailToLearnersForLaunchingInvalidIp( Learner learner,String [
 								
 								managersEmailAddresses.add(u.getEmailAddress());
 								
+								byteArrayInputStream.reset();
+								
 								SendMailService.sendSMTPMessage(
 										u.getEmailAddress(), fromAddress,fromCommonName, 
 										managerEmailSubject, 
-										emailBody, certificateStream, fileName
+										emailBody, byteArrayInputStream, fileName
 										);
-							});
+								
+							}
 							
 							if(!managersEmailAddresses.contains(customer.getEmail())) {
+								
+								byteArrayInputStream.reset();
+								
 								SendMailService.sendSMTPMessage(
 										customer.getEmail(), fromAddress,fromCommonName, 
 										managerEmailSubject, managerEmailBody, 
