@@ -98,6 +98,12 @@ public interface VU360UserRepository extends CrudRepository<VU360User, Long>, VU
 			"  and lgg.LEARNER_ID = l.ID\n" + 
 			"  and org.ID = lgg.ORGANIZATIONALGROUP_ID\n" + 
 			")\n" + 
+			"and l.customer_id in (\n" + 
+			"  select c.id from vu360user u, learner l, customer c\n" + 
+			"  where u.id = ?1\n" + 
+			"  and l.vu360user_id = u.id\n" + 
+			"  and c.id = l.customer_id\n" + 
+			")" +
 			"and l.ID = lorg.LEARNER_ID\n" + 
 			"and (\n" + 
 			"      tadmin.VU360USER_ID = l.VU360USER_ID\n" + 
