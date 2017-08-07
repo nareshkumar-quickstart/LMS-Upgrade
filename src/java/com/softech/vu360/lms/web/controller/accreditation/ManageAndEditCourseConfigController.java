@@ -51,10 +51,13 @@ import com.softech.vu360.util.HtmlEncoder;
 public class ManageAndEditCourseConfigController extends VU360BaseMultiActionController {
 
 	private static final Logger log = Logger.getLogger(ManageAndEditInstructorController.class.getName());
+	
 	private final String PROCTOR_VALIDATOR_ANSI = "ansi";
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
 	private final String PROCTOR_VALIDATOR_TREC = "TREC";
 	private final String ONLINE_PROCTORING = "ONLINEPROCTORING";
+	private final String REMOTE_PROCTORING = "REMOTEPROCTORING";
+	
 	private AccreditationService accreditationService;
 	private CourseAndCourseGroupService courseAndCourseGroupService;
 	@Inject
@@ -1152,17 +1155,17 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 		mycourseConfiguration.setRequireProctorValidation(form.isRequireProctorValidation());
 			
 		if(form.isRequireProctorValidation()){
-			if(form.getProctorValidatorName().equalsIgnoreCase("ansi"))
+			if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_ANSI))
 				mycourseConfiguration.setRequiredAnsi(true);
 			else
 				mycourseConfiguration.setRequiredAnsi(false);
 			
-			if(form.getProctorValidatorName().equalsIgnoreCase("nyInsurance"))
+			if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_NY_INSURANCE))
 				mycourseConfiguration.setRequiredNyInsurance(true);
 			else
 				mycourseConfiguration.setRequiredNyInsurance(false);
 			
-			if(form.getProctorValidatorName().equalsIgnoreCase("TREC"))
+			if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_TREC))
 			    mycourseConfiguration.setRequireSelfRegistrationProctor(true);
 			else
 			    mycourseConfiguration.setRequireSelfRegistrationProctor(false);
@@ -1171,12 +1174,18 @@ public class ManageAndEditCourseConfigController extends VU360BaseMultiActionCon
 			    mycourseConfiguration.setRequireOnlineProctoring(true);
 			else
 			    mycourseConfiguration.setRequireOnlineProctoring(false);
+			
+			if(form.getProctorValidatorName().equalsIgnoreCase(REMOTE_PROCTORING))
+			    mycourseConfiguration.setRequireRemoteProctoring(true);
+			else
+			    mycourseConfiguration.setRequireRemoteProctoring(false);
 		}
 		else{
 			mycourseConfiguration.setRequiredNyInsurance(false);
 			mycourseConfiguration.setRequiredAnsi(false);
 			mycourseConfiguration.setRequireSelfRegistrationProctor(false);
 			mycourseConfiguration.setRequireOnlineProctoring(false);
+			mycourseConfiguration.setRequireRemoteProctoring(false);
 		}
 		
 		mycourseConfiguration.setRequireLearnerValidation(form.isRequireLearnerValidation());

@@ -341,6 +341,9 @@ public class CourseConfiguration implements SearchableKey {
 	@Column(name = "ONLINE_PROCTORING_TF")
 	private Boolean requireOnlineProctoring = Boolean.FALSE;
 	
+	@Column(name = "REMOTE_PROCTORING_TF")
+	private Boolean requireRemoteProctoring = Boolean.FALSE;
+	
 	//Learners Unique Questions
 	@Transient
 	private List<UniqueQuestionsVO> lstUniqueQuestionsVO = new ArrayList<>();
@@ -2718,6 +2721,14 @@ public class CourseConfiguration implements SearchableKey {
 
 	public void setRequireOnlineProctoring(Boolean requireOnlineProctoring) {
 		this.requireOnlineProctoring = requireOnlineProctoring == null ? Boolean.FALSE : requireOnlineProctoring;
+	}
+	
+	public Boolean getRequireRemoteProctoring() {
+		return requireRemoteProctoring == null ? Boolean.FALSE : requireRemoteProctoring;
+	}
+
+	public void setRequireRemoteProctoring(Boolean requireRemoteProctoring) {
+		this.requireRemoteProctoring = requireRemoteProctoring == null ? Boolean.FALSE : requireRemoteProctoring;
 	}
 	
 }

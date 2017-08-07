@@ -55,6 +55,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 	private final String PROCTOR_VALIDATOR_NY_INSURANCE = "nyInsurance";
 	private final String PROCTOR_VALIDATOR_TREC = "TREC";
 	private final String ONLINE_PROCTORING = "ONLINEPROCTORING";
+	private final String REMOTE_PROCTORING = "REMOTEPROCTORING";
 	
 	public AddCourseConfigWizardController() {
 		super();
@@ -602,6 +603,7 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 			courseConfiguration.setRequireProctorValidation(form.isRequireProctorValidation());
 
 			if(form.isRequireProctorValidation()){
+				
 				if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_ANSI))
 					courseConfiguration.setRequiredAnsi(true);
 				else
@@ -611,20 +613,28 @@ public class AddCourseConfigWizardController extends AbstractWizardFormControlle
 					courseConfiguration.setRequiredNyInsurance(true);
 				else
 					courseConfiguration.setRequiredNyInsurance(false);
+				
 				if(form.getProctorValidatorName().equalsIgnoreCase(PROCTOR_VALIDATOR_TREC))
 					courseConfiguration.setRequireSelfRegistrationProctor(true);
 				else
 				    courseConfiguration.setRequireSelfRegistrationProctor(false);
+				
 				if(form.getProctorValidatorName().equalsIgnoreCase(ONLINE_PROCTORING))
 					courseConfiguration.setRequireOnlineProctoring(true);
 				else
 				    courseConfiguration.setRequireOnlineProctoring(false);
+				
+				if(form.getProctorValidatorName().equalsIgnoreCase(REMOTE_PROCTORING))
+					courseConfiguration.setRequireRemoteProctoring(true);
+				else
+				    courseConfiguration.setRequireRemoteProctoring(false);
 			}
 			else{
 				courseConfiguration.setRequiredNyInsurance(false);
 				courseConfiguration.setRequiredAnsi(false);
 				courseConfiguration.setRequireSelfRegistrationProctor(false);
 				courseConfiguration.setRequireOnlineProctoring(false);
+				courseConfiguration.setRequireRemoteProctoring(false);
 			}
 			courseConfiguration.setRequireLearnerValidation(form.isRequireLearnerValidation());
 			courseConfiguration.setCaRealEstateCE(form.isCaRealEstateCE());
