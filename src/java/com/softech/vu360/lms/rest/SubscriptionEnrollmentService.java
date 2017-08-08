@@ -25,33 +25,34 @@ import com.softech.vu360.lms.web.restful.request.EnrollmentRequest;
 @Controller
 @RequestMapping(value = "/subscriptionEnrollment")
 public class SubscriptionEnrollmentService {
-	
+
 	@Inject
 	VU360UserServiceImpl vU360UserServiceImp;
-	
+
 	@Inject
 	private EnrollmentService enrollmentService;
-	
+
 	@RequestMapping(value = "enroll", method = RequestMethod.POST, produces = "application/json")
-	@ResponseBody	
+	@ResponseBody
 	public ResponseEntity<String> subscriptionCancelQuery(@RequestBody EnrollmentRequest enrollReq) {
-		
-			String crsId = enrollReq.getCourseId();
-			String subCode = enrollReq.getSubscriptionId();
-			String uName = enrollReq.getUserName();
-		
-			if (crsId.isEmpty() || subCode.isEmpty() || uName.isEmpty()){				
-				String json= new String("{\"message\":\"courseid, username, subscriptionid cannot be null\"}");				
-				return new ResponseEntity<String>(json,HttpStatus.BAD_REQUEST);
-			}
-		
+
+		String crsId = enrollReq.getCourseId();
+		String subCode = enrollReq.getSubscriptionId();
+		String uName = enrollReq.getUserName();
+		String courseGroupGUID = enrollReq.getCourseGroupGUID();
+
+		if (crsId.isEmpty() || subCode.isEmpty() || uName.isEmpty()){
+			String json= new String("{\"message\":\"courseid, username, subscriptionid cannot be null\"}");
+			return new ResponseEntity<String>(json,HttpStatus.BAD_REQUEST);
+		}
+
 		List<VU360User> user = vU360UserServiceImp.getActiveUserByUsername(uName);
 		Iterator<VU360User> iterator = user.iterator();
 		VU360User userItr = null;
 		while (iterator.hasNext()) {
-			userItr= (VU360User)iterator.next();			
+			userItr= (VU360User)iterator.next();
 		}
-		
+
 		if (userItr == null){
 			String userMsg = "user does not exist";
 			String json= new String("{\"message\":\""+userMsg+"\"}");
@@ -59,7 +60,7 @@ public class SubscriptionEnrollmentService {
 		}
 		LearnerEnrollment le = null;
 		try{
-		 le = enrollmentService.addSubscriptionEnrollments(userItr.getLearner(),subCode , crsId);//.addSelfEnrollmentsForSubscription(userItr.getLearner(),subCode , crsId);
+			le = enrollmentService.addSubscriptionEnrollments(userItr.getLearner(),subCode , crsId);//.addSelfEnrollmentsForSubscription(userItr.getLearner(),subCode , crsId);
 		}catch(Exception e){
 			e.printStackTrace();
 			String userMsg = "Either courseid or subscriptionid does not exist";
@@ -70,7 +71,7 @@ public class SubscriptionEnrollmentService {
 		Long id=le.getId();
 		String msg= new String("{\"enrollmentId\":\""+id+"\"}");
 		return new ResponseEntity<String>(msg,HttpStatus.CREATED);
-		
+
 	}
 
 }

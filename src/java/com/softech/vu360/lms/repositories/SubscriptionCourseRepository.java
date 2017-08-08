@@ -47,4 +47,6 @@ public interface SubscriptionCourseRepository extends
 	@Query(value = "SELECT S.ID, S.SUBSCRIPTION_NAME FROM SUBSCRIPTION_USER SU, SUBSCRIPTION S WHERE UPPER(S.SUBSCRIPTION_STATUS)  IN ('ACTIVE', 'ONHOLD') AND S.ID = SU.SUBSCRIPTION_ID AND SU.VU360USER_ID = :userId ORDER BY S.SUBSCRIPTION_NAME ASC", nativeQuery = true)
 	public Map<Object, Object> getUserSubscriptions(@Param("userId") long userId);
 
+	public List<SubscriptionCourse> findAllBySubscriptionIdAndCourseId(Long subscriptionId, Long courseId);
+
 }
