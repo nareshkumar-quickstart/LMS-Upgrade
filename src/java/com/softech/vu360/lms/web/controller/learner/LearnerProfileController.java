@@ -483,8 +483,8 @@ public class LearnerProfileController extends VU360BaseMultiActionController {
 		
 		LearnerProfileForm form = (LearnerProfileForm)command;
 		VU360User frmUser = form.getVu360User();
-		
-		if(errors.hasErrors()){
+
+		if(errors != null && errors.hasErrors()){
 			CreditReportingFieldBuilder fieldBuilder = new CreditReportingFieldBuilder();
 			List<com.softech.vu360.lms.web.controller.model.creditreportingfield.CreditReportingField> customFieldList=form.getCreditReportingFields();
 			
