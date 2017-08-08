@@ -89,7 +89,6 @@ public class AICCController implements Controller {
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			return new ModelAndView(statsProcesed, "context", context);
 		}
-		response.setHeader("User-Agent", USER_AGENT);
 		response.setHeader("p3p", "CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\"");
 		
 		log.debug("starting AICC session");
@@ -243,6 +242,7 @@ public class AICCController implements Controller {
 			// Set up the initial connection
 			connection = (HttpURLConnection) serverAddress.openConnection();
 			connection.setRequestMethod("POST");
+			connection.setRequestProperty("User-Agent", USER_AGENT);
 			connection.setRequestProperty("CONTENT-TYPE", "application/x-www-form-urlencoded;charset=utf-8");
 			connection.setRequestProperty("Content-Length", String.valueOf(postData.toString().getBytes().length));
 			connection.setDoOutput(true);
