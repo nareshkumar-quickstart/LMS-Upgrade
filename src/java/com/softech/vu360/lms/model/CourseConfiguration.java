@@ -2723,7 +2723,7 @@ public class CourseConfiguration implements SearchableKey {
 		this.requireOnlineProctoring = requireOnlineProctoring == null ? Boolean.FALSE : requireOnlineProctoring;
 	}
 	
-	public Boolean getRequireRemoteProctoring() {
+	public Boolean isRequireRemoteProctoring() {
 		return requireRemoteProctoring == null ? Boolean.FALSE : requireRemoteProctoring;
 	}
 
