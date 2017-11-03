@@ -1,5 +1,6 @@
 package com.softech.vu360.lms.repositories;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class LearnerEnrollmentRepositoryImpl implements LearnerEnrollmentReposit
 			query.setParameter("courseTitle", courseTitle);
 		}
 		if(status != null){
-			query.setParameter("status", status);
+			query.setParameter("status",Arrays.asList( status));
 		}
 		query.setParameter("proctorId", proctor.getId());
 		learnerEnrollmentList=query.getResultList();
