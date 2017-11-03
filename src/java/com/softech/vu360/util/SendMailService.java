@@ -35,8 +35,9 @@ public class SendMailService {
                                          String fromAddrPersonalName,
                                          String subject,
                                          String body) {
-
-
+	   // stop the email
+	   return true;
+	   /*
       return sendSMTPMessage(toAddr,
                              ccAddr,
                              bccAddr,
@@ -48,6 +49,7 @@ public class SendMailService {
                              null,
                              null,
                              null);
+      */                       
    }
 
 
