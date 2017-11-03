@@ -455,6 +455,7 @@ public class CertificateServiceImpl implements CertificateService {
 			if(le == null)
 				return value;
 			
+			Brander brander = VU360Branding.getInstance().getBranderByUser(null, le.getLearner().getVu360User());	
 			String firstName = le.getLearner().getVu360User().getFirstName();
 			String middleName = le.getLearner().getVu360User().getMiddleName();
 			String lastName = le.getLearner().getVu360User().getLastName();
@@ -596,7 +597,8 @@ public class CertificateServiceImpl implements CertificateService {
 			if(fieldLabel.equals("School Name"))
 				value = le.getLearner().getCustomer().getName();
 			if(fieldLabel.equals("Course Name"))
-				value = le.getCourse().getCourseTitle();
+				value = brander.getBrandElement("lms.completionCertificate.appendtextWithCoursename") + " " + le.getCourse().getCourseTitle();
+			
 			if(fieldLabel.equals("Final Exam Score")){
 				if(lcs.getHighestPostTestScore()>0)
 					value = Double.toString(lcs.getHighestPostTestScore());
