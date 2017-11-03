@@ -230,6 +230,9 @@ public class Course implements Serializable {
     @Column(name = "INFORMATIONFORLEARNERREGARDING_REGULATOR")
     private String instructionForLearnerFromRegulator;
     
+	@Column(name = "LABTYPE_ID")
+	private Long labType_id;
+	
     @Transient
     private String demoVideoURL = null;
     
@@ -706,6 +709,16 @@ public class Course implements Serializable {
 	public void setDemoVideoURL(String demoVideoURL) {
 		this.demoVideoURL = demoVideoURL;
 	}
+
+	
+	public Long getLabType_id() {
+		return labType_id;
+	}
+
+	public void setLabType_id(Long labType_id) {
+		this.labType_id = labType_id;
+	}
+
 
 	public enum Types {
     	
