@@ -279,7 +279,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		    // entitlementService.saveOrgGroupEntitlement(origOrgGroupEntitlement);
 		    // }
 	
-		     marketoPacket(learnerEnrollment,COURSE_ENROLLED);
+		     //marketoPacket(learnerEnrollment,COURSE_ENROLLED);
 		    return learnerEnrollment;
 		} catch (Exception ex) {
 		    log.error(ex.getMessage(), ex);
