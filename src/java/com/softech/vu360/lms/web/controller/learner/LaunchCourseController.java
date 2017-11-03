@@ -1111,10 +1111,14 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 			log.info("Propperty SCORM " + VU360Properties.getVU360Property("lms.SCORM"));
 			log.info("Propperty DOMAIN " + VU360Properties.getVU360Property("lms.domain"));
 			
-			if (request.getHeader("Host").equalsIgnoreCase(VU360Properties.getVU360Property("lms.SCORM")))
-				launchURL.append(VU360Properties.getVU360Property("lms.domain"));		
-			else
-				launchURL.append("http://"+ request.getHeader("Host"));
+			
+			//TODO temperary fix for new nodes setting applied
+//			if (request.getHeader("Host").equalsIgnoreCase(VU360Properties.getVU360Property("lms.SCORM")))
+//				launchURL.append(VU360Properties.getVU360Property("lms.domain"));		
+//			else
+//				launchURL.append("http://"+ request.getHeader("Host"));
+			
+			launchURL.append(VU360Properties.getVU360Property("lms.domain"));	
 			
 			if (scos.size() == 1) {
 			    launchURL.append(scos.get(0).getLaunchURI());
