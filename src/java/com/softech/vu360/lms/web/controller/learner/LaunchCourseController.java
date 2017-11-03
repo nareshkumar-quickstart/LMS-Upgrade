@@ -883,6 +883,16 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 
 		form.setMissingCustomFields(missingCustomFieldList2);
     }
+    
+    private boolean isInList(String csv, String idToCheck){
+        String[] IDs = csv.split(",");
+        for (String str : IDs) {
+            if(str.equals(idToCheck)){
+            	return true;
+            }
+        }
+    	return false;
+    }
    
     public ModelAndView launchCourse(HttpServletRequest request, HttpServletResponse response, Object command) {
 
@@ -1147,24 +1157,23 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 	 
 			 Brander brander = VU360Branding.getInstance().getBrander((String) request.getSession().getAttribute(VU360Branding.BRAND), new com.softech.vu360.lms.vo.Language());			 
              String enabledDistributorCodes = brander.getBrandElement("lms.newscormShell.enabledDistributorCodes");
+             String enabledCognativeCoursesIDs = brander.getBrandElement("lms.cognative.enabledCourseId");
              String currentDistCode = learnerEnrollment.getLearner().getCustomer().getDistributor().getDistributorCode();
   
              String view = "learner/learnerScormShellNormal";
 
-             String[] IDs = enabledDistributorCodes.split(",");
-             for (String str : IDs) {
-                 if(str.equals(currentDistCode))
-                 {
-                	 
-        			 context.put("username", learnerEnrollment.getLearner().getVu360User().getUsername());
-        			 context.put("email", learnerEnrollment.getLearner().getVu360User().getEmailAddress());
-        			 context.put("firstName", learnerEnrollment.getLearner().getVu360User().getFirstName());
-        			 context.put("lastName", learnerEnrollment.getLearner().getVu360User().getLastName());     
-        			 context.put("courseDesc", course.getDescription().replace("'", "`"));
-        			 context.put("courseGUID", course.getCourseGUID());
-                     view = "learner/learnerScormShell";
-                     break;
-                 }           
+             boolean isDistributorEnabledForShell = isInList(enabledDistributorCodes, currentDistCode);
+             
+             if(isDistributorEnabledForShell){            	 
+            	 boolean isCourseEnabledClipp = isInList(enabledCognativeCoursesIDs, course.getId().toString());
+    			 context.put("username", learnerEnrollment.getLearner().getVu360User().getUsername());
+    			 context.put("email", learnerEnrollment.getLearner().getVu360User().getEmailAddress());
+    			 context.put("firstName", learnerEnrollment.getLearner().getVu360User().getFirstName());
+    			 context.put("lastName", learnerEnrollment.getLearner().getVu360User().getLastName());     
+    			 context.put("courseDesc", course.getDescription().replace("'", "`"));
+    			 context.put("courseGUID", course.getCourseGUID());
+    			 context.put("enabledForClip", isCourseEnabledClipp);
+                 view = "learner/learnerScormShell";
              }
              
 			return new ModelAndView(view, VIEW_CONTEXT, context);
