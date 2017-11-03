@@ -58,6 +58,7 @@ $(function(){
     $("#javascript-check").attr("class", "correct-icon");
     $("#javascript-text").html("enabled");
 
+	/*
 //Flash Detection
     if(FlashDetect.installed){
         $("#flash-text").html("Adobe Flash Player" + FlashDetect.major + " is detected. ");
@@ -66,7 +67,7 @@ $(function(){
         $("#flash-text").css("color", "red");
         $("#flash-text").html("Adobe Flash Player is detected not detected. ");
     }
-
+*/
 //Acrobat Detection
     if(jQuery.browser.pdf){
         $("#acrobat-text").html("detected");
@@ -77,7 +78,7 @@ $(function(){
     }
     
     
-
+/*
   //QuickTime Detection
       if(haveqt){
           $("#quicktime-text").html("detected.");
@@ -86,5 +87,5 @@ $(function(){
           $("#quicktime-text").css("color", "red");
           $("#quicktime-text").html("not detected.");
       }
-
+*/	
 });
