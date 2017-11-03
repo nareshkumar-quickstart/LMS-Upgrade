@@ -1141,8 +1141,7 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			log.debug("SCORM: launchURL: "+launchURL.toString());
 			 context.put("url", launchURL.toString());
-			 context.put("courseName", course.getName());
-			 context.put("courseDesc", course.getDescription());
+			 context.put("courseName", course.getName());			 
 			 
 			 request.getSession().setAttribute("learningSessionId", learningSessionId);
 	 
@@ -1156,6 +1155,13 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
              for (String str : IDs) {
                  if(str.equals(currentDistCode))
                  {
+                	 
+        			 context.put("username", learnerEnrollment.getLearner().getVu360User().getUsername());
+        			 context.put("email", learnerEnrollment.getLearner().getVu360User().getEmailAddress());
+        			 context.put("firstName", learnerEnrollment.getLearner().getVu360User().getFirstName());
+        			 context.put("lastName", learnerEnrollment.getLearner().getVu360User().getLastName());     
+        			 context.put("courseDesc", course.getDescription().replace("'", "`"));
+        			 context.put("courseGUID", course.getCourseGUID());
                      view = "learner/learnerScormShell";
                      break;
                  }           
