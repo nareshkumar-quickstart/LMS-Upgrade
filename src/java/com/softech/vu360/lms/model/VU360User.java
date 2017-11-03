@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Nationalized;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 import org.hibernate.engine.spi.PersistentAttributeInterceptable;
@@ -61,6 +62,7 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
 	@Column(name = "USERGUID", unique = true, nullable = false)
 	private String userGUID = null;
 
+	@Nationalized
 	@Column(name = "USERNAME", unique = true, nullable = false)
 	private String username = null;
 
@@ -69,15 +71,19 @@ public class VU360User implements Serializable, PersistentAttributeInterceptable
      * @Column(name = "DOMAIN")
         private String domain = null;
     */
+	@Nationalized
 	@Column(name = "EMAILADDRESS", unique = false, nullable = false)
 	private String emailAddress = null;
 
+	@Nationalized
 	@Column(name = "FIRSTNAME", unique = false, nullable = false)
 	private String firstName = null;
 
+	@Nationalized
 	@Column(name = "LASTNAME", unique = false, nullable = false)
 	private String lastName = null;
 
+	@Nationalized
 	@Column(name = "MIDDLENAME")
 	private String middleName = null;
 

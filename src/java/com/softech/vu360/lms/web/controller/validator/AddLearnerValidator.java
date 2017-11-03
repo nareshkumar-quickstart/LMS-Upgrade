@@ -93,9 +93,11 @@ public class AddLearnerValidator implements Validator {
 		{
 			errors.rejectValue("userName", "error.addNewLearner.username.all.required","User name required");
 		}
+		/*
 		else if (FieldsValidation.isInValidUsername(learnerDetails.getUserName())){
 			errors.rejectValue("userName", "error.addNewLearner.username.all.invalidText","Bad characters not allowed (Username)");
 		}
+		*/
 		else if (learnerDetails.getOldUserName()!=null && learnerDetails.getOldUserName().trim().compareToIgnoreCase(learnerDetails.getUserName().trim())!=0) {
 			 			        
 			        if (usr!=null && usr.getUsername().trim().compareToIgnoreCase(learnerDetails.getUserName().trim())==0) {
@@ -121,25 +123,29 @@ public class AddLearnerValidator implements Validator {
 			errors.rejectValue("firstName", "error.all.invalidText");
 		}*/
 
-		else if (FieldsValidation.isInValidGlobalName(learnerDetails.getFirstName())){
+		/*else if (FieldsValidation.isInValidGlobalName(learnerDetails.getFirstName())){
 			errors.rejectValue("firstName", "error.addNewLearner.firstName.all.invalidText" ,"Bad characters not allowed (First name)");
 		}
+		*/
 		if (StringUtils.isBlank(learnerDetails.getFirstName())){
 			errors.rejectValue("firstName", "error.addNewLearner.firstName.required","First Name required");
 		}
 
+		/*
 		if (!StringUtils.isBlank(learnerDetails.getMiddleName())){
 			if (FieldsValidation.isInValidGlobalName(learnerDetails.getMiddleName())){
-				errors.rejectValue("middleName", "error.addNewLearner.middleName.all.invalidText","Bad characters not allowed (Middle name)");
+				errors.rejectValue("middleNme", "error.addNewLearner.middleName.all.invalidText","Bad characters not allowed (Middle name)");
 			}
 		}
-
+		 */
 		if (StringUtils.isBlank(learnerDetails.getLastName())){
 			errors.rejectValue("lastName", "error.addNewLearner.lastName.required","Last Name required");
 		}
+		/*
 		else if (FieldsValidation.isInValidGlobalName(learnerDetails.getLastName())){
 			errors.rejectValue("lastName", "error.addNewLearner.lastName.all.invalidText","Bad characters not allowed (Last name)");
 		}
+		*/
 		//19.01.2009
 		/*else if (!StringUtils.isAlphanumericSpace(learnerDetails.getLastName())){
 			errors.rejectValue("lastName", "error.all.invalidText");

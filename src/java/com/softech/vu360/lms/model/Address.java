@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Nationalized;
+
 /**
  * 
  * @author muhammad.saleem
@@ -24,12 +26,15 @@ public class Address implements SearchableKey {
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "ADDRESS_ID")
 	private Long id;
     
+	@Nationalized
     @Column(name="STREETADDRESS")
 	private String streetAddress = null;
     
+	@Nationalized
     @Column(name="STREETADDRESS2")
 	private String streetAddress2 = null;
     
+	@Nationalized
     @Column(name="STREETADDRESS3")
 	private String streetAddress3 = null;
     

@@ -52,19 +52,22 @@ public class UserValidator implements Validator {
 		VU360User vu360User = form.getVu360User();
 		if(StringUtils.isBlank(vu360User.getFirstName())){
 			errors.rejectValue("vu360User.firstName", "error.editLearnerFirstName.required","");
-		}else if (FieldsValidation.isInValidGlobalName(vu360User.getFirstName())){
+		}
+		/*else if (FieldsValidation.isInValidGlobalName(vu360User.getFirstName())){
 			errors.rejectValue("vu360User.firstName", "error.editLearnerFirstName.required","");
 		}
+		
 		if (StringUtils.isNotBlank(vu360User.getMiddleName())){
 			if (FieldsValidation.isInValidGlobalName(vu360User.getMiddleName())){
 				errors.rejectValue("vu360User.middleName", "error.editLearnerMiddleName.invalid","");
 			}
 		}
+		*/
 		if(StringUtils.isBlank(vu360User.getLastName())){
 			errors.rejectValue("vu360User.lastName", "error.editLearnerFirstName.invalid","");
-		}else if (FieldsValidation.isInValidGlobalName(vu360User.getLastName())){
+		}/*else if (FieldsValidation.isInValidGlobalName(vu360User.getLastName())){
 			errors.rejectValue("vu360User.lastName", "error.editLearnerLastName.invalid","");
-		}
+		}*/
 		if (StringUtils.isNotBlank(vu360User.getLearner().getLearnerProfile().getLearnerAddress().getStreetAddress())){
 			if (FieldsValidation.isInValidAddress(vu360User.getLearner().getLearnerProfile().getLearnerAddress().getStreetAddress())){
 				errors.rejectValue("vu360User.learner.learnerProfile.learnerAddress.streetAddress", "error.all.invalidText","");
