@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import com.lowagie.text.pdf.BaseFont;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -300,6 +300,12 @@ public class CertificateServiceImpl implements CertificateService {
 		// filling in the form
 		AcroFields formField = stamp2.getAcroFields();
 
+		StringBuilder fontPath = new StringBuilder();
+		fontPath.append(System.getProperty( "catalina.base" )); 
+		fontPath.append(brander.getBrandElement("lms.learner.certificate.font.path"));
+		BaseFont unicode =  BaseFont.createFont(fontPath.toString(), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+		formField.setFieldProperty("name", "textfont", unicode, null);
+		
 		List<CustomFieldValue> customFieldValues = le.getLearner().getLearnerProfile().getCustomFieldValues();
 		/* POPULATE CUSTOM FIELDS DEFAULT */
 		if (customFieldValues != null) {
