@@ -2528,6 +2528,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     
     @Override
     public void marketoPacket(LearnerEnrollment le, String eventName){
+    	/*
     	if(isMarketoEnabled){
 	    	try {
 				final String firstName = le.getLearner().getVu360User().getFirstName();
@@ -2557,10 +2558,12 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		   		else if((emailAddress!=null) && (emailAddress.length() > 0)){
 				  log.debug("Invalid Marketo Email address" + emailAddress);
 				}
+				
 			} catch (Exception e) {
 				log.error(e);
 			}
     	}
+    	*/
      }
 	
 	@Override
