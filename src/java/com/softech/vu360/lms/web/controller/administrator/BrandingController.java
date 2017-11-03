@@ -75,7 +75,7 @@ public class BrandingController extends VU360BaseMultiActionController {
 			//Since we don't want logos to be updated from default, load empty values beforehand if no logos exist for this brand
 			//This would be a one time operation perbrand
 			boolean saveFlag=false;
-			String defImgPath=VU360Properties.getVU360Property("brands.basefolder")+"default/en/images/logo_360_52.gif"; //LMS-13716
+			String defImgPath=VU360Properties.getVU360Property("brands.basefolder")+"default/en/images/logo_360_52.png"; //LMS-13716
 			String imageRelativePath= defImgPath.substring(defImgPath.indexOf("brands"));
 			imageRelativePath=addPathCorrection().concat(imageRelativePath);
 			if(brands.getProperty("lms.header.logo.src")==null || brands.getProperty("lms.header.logo.src").length()<=0){
@@ -84,7 +84,7 @@ public class BrandingController extends VU360BaseMultiActionController {
 			}
 			String path=brandingService.getProperty(brands,form.getBrandName(),"lms.header.logo.src");
 			form.setLmsLogoPath(path.length()>0?path:null);
-			form.setShowLmsLogoRemoveLink(path.indexOf("logo_360_52.gif")<0?true:false);
+			form.setShowLmsLogoRemoveLink(path.indexOf("logo_360_52.png")<0?true:false);
 			
 			if(brands.getProperty("lms.courseplayer.logo.src")==null || brands.getProperty("lms.courseplayer.logo.src").length()<=0){								
 				brands.setProperty("lms.courseplayer.logo.src", imageRelativePath);
@@ -100,7 +100,7 @@ public class BrandingController extends VU360BaseMultiActionController {
 			}
 			path=brandingService.getProperty(brands,form.getBrandName(),"lms.courseplayer.logo.src");
 			form.setCoursePlayerLogoPath(path);
-			form.setShowCoursePlayerLogoRemoveLink(path.indexOf("logo_360_52.gif")<0?true:false);
+			form.setShowCoursePlayerLogoRemoveLink(path.indexOf("logo_360_52.png")<0?true:false);
 			
 			form.setLoginMessage(brandingService.getProperty(brands,form.getBrandName(),"lms.login.caption.message"));
 			form.setUsernameLabel(brandingService.getProperty(brands,form.getBrandName(),"lms.login.caption.username"));
@@ -697,7 +697,7 @@ public class BrandingController extends VU360BaseMultiActionController {
    */
   private String removeLogo(BrandingForm form, String key) {
 		Properties brands= brandingService.getBrandProperties(form.getBrandName());								
-		String absolutePathToDefaultImage=VU360Properties.getVU360Property("brands.basefolder")+"default/en/images/logo_360_52.gif";		
+		String absolutePathToDefaultImage=VU360Properties.getVU360Property("brands.basefolder")+"default/en/images/logo_360_52.png";		
 		String relativePathToDefaultImage= absolutePathToDefaultImage.substring(absolutePathToDefaultImage.indexOf("brands"));
 		relativePathToDefaultImage=addPathCorrection().concat(relativePathToDefaultImage);//deploy env. compat				 		
 		brands.setProperty(key, relativePathToDefaultImage);		
