@@ -5,6 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.List;
+import org.apache.axis.utils.StringUtils;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+import com.softech.vu360.util.VU360Properties;
 
 import net.sf.json.JSONObject;
 
@@ -48,6 +56,37 @@ public class RestClient implements RestOperations{
 
 	}
 
+	
+	public String getExpertise(String parmGuid){
+		String endpoint = VU360Properties.getVU360Property("magento.endpoint.getexpertisebyGuid");
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		String url = endpoint+""+parmGuid;
+		String response =  restTemplate.getForObject(url, String.class); 
+		JSONObject JSO = JSONObject.fromObject("{\"expertiseResponse\":"+ StringUtils.strip(response.replace("\\", ""), "\"") +"}");
+		
+		
+		JSONObject parentObject = (JSONObject) JSO.get("expertiseResponse");
+		
+		List<String> topics = ((List<String>)parentObject.get("topics"));
+		List<String> guid = (List<String>)parentObject.get("guid");
+		String message = (String)parentObject.get("message");
+		
+		StringBuffer returnMessage = new StringBuffer();
+		if(message.equalsIgnoreCase("Success")){
+			if(topics.size()>0){
+		 		   returnMessage.append(String.join(",", topics));
+				   returnMessage.append("|" );
+				   returnMessage.append(String.join(",", guid));
+			}else{
+				   returnMessage.append("Not Available");
+			}
+			}else{
+				   return message;
+		}
+		return returnMessage.toString();
+	}
 	public String postForObject(Object obj, String servicePath)
 			throws IOException {
 		return postForObject(obj, servicePath, 10000);
