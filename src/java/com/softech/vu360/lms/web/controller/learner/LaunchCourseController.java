@@ -1145,7 +1145,23 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 			 context.put("courseDesc", course.getDescription());
 			 
 			 request.getSession().setAttribute("learningSessionId", learningSessionId);
-			return new ModelAndView("learner/learnerScormShell", VIEW_CONTEXT, context);
+	 
+			 Brander brander = VU360Branding.getInstance().getBrander((String) request.getSession().getAttribute(VU360Branding.BRAND), new com.softech.vu360.lms.vo.Language());			 
+             String enabledDistributorCodes = brander.getBrandElement("lms.newscormShell.enabledDistributorCodes");
+             String currentDistCode = learnerEnrollment.getLearner().getCustomer().getDistributor().getDistributorCode();
+  
+             String view = "learner/learnerScormShellNormal";
+
+             String[] IDs = enabledDistributorCodes.split(",");
+             for (String str : IDs) {
+                 if(str.equals(currentDistCode))
+                 {
+                     view = "learner/learnerScormShell";
+                     break;
+                 }           
+             }
+             
+			return new ModelAndView(view, VIEW_CONTEXT, context);
 
 	    } else if (course instanceof SynchronousCourse || course instanceof WebinarCourse ) {
 		    	
