@@ -152,7 +152,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 									proctor.setStatus(ProctorStatusEnum.Disable.toString());
 									proctorService.updateProctor(proctor);
 									
-									// send Proctor disable email to 360training staff
+									// send Proctor disable email to QuickStart staff
 									sendEmailToProctorSuperviser(proctor);
 									
 								}
@@ -174,7 +174,7 @@ public class ChangeMemberRoleController extends MultiActionController implements
 							//userIdArray[0] = proctor.getUser().getId().toString();
 							//learnerService.unAssignUsersFromAllRolesOfType(userIdArray, LMSRole.ROLE_PROCTOR);
 							
-							// send Proctor disable email to 360training staff
+							// send Proctor disable email to QuickStart staff
 							sendEmailToProctorSuperviser(proctor);
 						}
 					}

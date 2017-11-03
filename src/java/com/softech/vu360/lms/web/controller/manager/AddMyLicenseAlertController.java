@@ -174,7 +174,7 @@ public class AddMyLicenseAlertController extends AbstractWizardFormController {
 				SendMailService
 				.sendSMTPMessage(
 						new String[] { VU360Properties.getVU360Property("lms.email.globalException.toAddress") },
-						null,"lmsalerts@360training.com",
+						null,"lmsalerts@domain.com",
 						VU360Properties.getVU360Property("lms.email.globalException.title"),
 						VU360Properties.getVU360Property("lms.email.globalException.subject"),
 						"<br> Request for Lernere License Registration. ");

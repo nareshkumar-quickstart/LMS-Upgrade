@@ -275,8 +275,8 @@ public class StorefrontClientWSImpl implements StorefrontClientWS{
 
 	/**
 	 * 
-	 * 360training would like to use learner referrals (via e-mail, social media, and similar channels) 
-	 * to promote the 360training web stores and their product, in order to increase sales. 
+	 * QuickStart would like to use learner referrals (via e-mail, social media, and similar channels) 
+	 * to promote the QuickStart web stores and their product, in order to increase sales. 
 	 * 
 	 * http://jira.360training.com/browse/LMS-14265
 	 */

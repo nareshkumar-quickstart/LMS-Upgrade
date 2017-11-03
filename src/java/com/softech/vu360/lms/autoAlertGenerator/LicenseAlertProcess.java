@@ -46,7 +46,7 @@ public class LicenseAlertProcess implements Runnable {
 						String licenseexpirationdate = learnerLicenseAlert.getLearnerlicense().getSupportingInformation();
 						if(!StringUtils.isEmpty(email)) {
 							
-							SendMailService.sendSMTPMessage(email, "support@360training.com", "360training.com Support", "License Expiration Alert","Your "+learnerLicenseAlert.getAlertName()+ " will expire on " + licenseexpirationdate);
+							SendMailService.sendSMTPMessage(email, "support@domain.com", "QuickStart.com Support", "License Expiration Alert","Your "+learnerLicenseAlert.getAlertName()+ " will expire on " + licenseexpirationdate);
 							System.out.println("Your "+learnerLicenseAlert.getAlertName()+ " will expire on " + licenseexpirationdate);
 						}			
 						 

@@ -405,7 +405,7 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	}
 	
 	/*
-	 * Created By: Faisal Ahmed Siddiqui (faisal.ahmed@360training.com)
+	 * Created By: Faisal Ahmed Siddiqui (faisal.ahmed@domain.com)
 	 * Created On: 26th March 2009
 	 * Description: This method is created for the integration of StoreFront & LMS Application
 	 * 			 All courses are mapped through GUID b/w StoreFront & LMS Courses

@@ -16,8 +16,8 @@ import com.softech.vu360.util.GUIDGeneratorUtil;
 
 
 /**
- * 360training would like to use learner referrals (via e-mail, social media, and similar channels) 
- * to promote the 360training web stores and their product, in order to increase sales
+ * QuickStart would like to use learner referrals (via e-mail, social media, and similar channels) 
+ * to promote the QuickStart web stores and their product, in order to increase sales
  * @date 9-25-2013
  * @author haider.ali
  *

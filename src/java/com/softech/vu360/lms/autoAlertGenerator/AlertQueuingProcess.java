@@ -120,11 +120,11 @@ public class AlertQueuingProcess {
 				if(isExpirationDateToday(learnerlicensealert.getTriggerSingleDate()))
 						{
 					     
-					SendMailService.sendSMTPMessage("abdullah.mashood@360training.com", "abdullah.mashood@360training.com", "friendlyName", "Learner License Alert", "Template");      
+					SendMailService.sendSMTPMessage("abdullah.mashood@domain.com", "abdullah.mashood@domain.com", "friendlyName", "Learner License Alert", "Template");      
 					/*
 					SendMailService.sendSMTPMessage(
 									new String[] { learnerService.getLearnerByID(learnerlicensealert.getLearner().getId()).getVu360User().getEmailAddress() },
-									null,"lmsalerts@360training.com",
+									null,"lmsalerts@domain.com",
 									VU360Properties.getVU360Property("lms.email.globalException.title"),
 									"Learner License Alert Email",
 									"<br> Request for Lernere License Registration. ");
