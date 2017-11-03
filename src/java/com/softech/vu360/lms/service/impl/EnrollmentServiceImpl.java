@@ -2773,7 +2773,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 		this.marketoJMSTemplate = marketoJMSTemplate;
 	}
 	
-	public LearnerEnrollment addSubscriptionEnrollments(Learner learner, String subscriptionId, String courseId) {
+	public LearnerEnrollment addSubscriptionEnrollments(Learner learner, String subscriptionId, String courseId,String classGuid) {
     	List<LearnerEnrollment> enrollments = new ArrayList<LearnerEnrollment>();
     	Map<Object, Object> returnVal = new HashMap<Object, Object>();
     	LearnerEnrollment le = this.getActiveLearnerEnrollment(learner.getId(), Long.valueOf(courseId));
@@ -2797,11 +2797,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 			{
 				log.info("This is Synchronous Course");
 				SynchronousClass syncClass = null;
+				/*
 				List<SynchronousClass> syncClasses = synchronousClassService.getSynchronousClassByCourseId(course.getId());
 				if(syncClasses != null && syncClasses.size()>0) {
 						syncClass = syncClasses.get(0);
 						log.info("enrolled into:" + syncClass.getSectionName() + "("+ syncClass.getId() +")");
 					}
+				*/
+				if (!classGuid.isEmpty())
+					syncClass = synchronousClassService.getSynchronousClassByGUID(classGuid);
+				
 				if (syncClass != null) {
 			    	le.setSynchronousClass(syncClass);
 			    }

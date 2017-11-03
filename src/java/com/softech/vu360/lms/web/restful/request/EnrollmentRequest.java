@@ -6,7 +6,15 @@ public class EnrollmentRequest {
     private String courseId;
     private String subscriptionId;
     private String courseGroupGUID;
-
+    private String classGuid;
+    
+    
+   	public String getClassGuid() {
+   		return classGuid;
+   	}
+   	public void setClassGuid(String classGuid) {
+   		this.classGuid = classGuid;
+   	}
     public void setUserName(String userName){
         this.userName = userName;
     }

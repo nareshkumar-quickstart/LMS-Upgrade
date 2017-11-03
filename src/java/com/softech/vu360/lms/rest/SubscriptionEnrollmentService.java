@@ -39,7 +39,7 @@ public class SubscriptionEnrollmentService {
 		String crsId = enrollReq.getCourseId();
 		String subCode = enrollReq.getSubscriptionId();
 		String uName = enrollReq.getUserName();
-		String courseGroupGUID = enrollReq.getCourseGroupGUID();
+		String classGuid = enrollReq.getClassGuid();
 
 		if (crsId.isEmpty() || subCode.isEmpty() || uName.isEmpty()){
 			String json= new String("{\"message\":\"courseid, username, subscriptionid cannot be null\"}");
@@ -60,7 +60,7 @@ public class SubscriptionEnrollmentService {
 		}
 		LearnerEnrollment le = null;
 		try{
-			le = enrollmentService.addSubscriptionEnrollments(userItr.getLearner(),subCode , crsId);//.addSelfEnrollmentsForSubscription(userItr.getLearner(),subCode , crsId);
+			le = enrollmentService.addSubscriptionEnrollments(userItr.getLearner(),subCode , crsId,classGuid);//.addSelfEnrollmentsForSubscription(userItr.getLearner(),subCode , crsId);
 		}catch(Exception e){
 			e.printStackTrace();
 			String userMsg = "Either courseid or subscriptionid does not exist";

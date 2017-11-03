@@ -110,6 +110,6 @@ public interface EnrollmentService {
 	public boolean getviewAssessmentResults(long learnerEnrollmentId);
 	public void marketoPacket(LearnerEnrollment le, String eventName);
 	
-	public LearnerEnrollment addSubscriptionEnrollments(Learner learner, String subscriptionId, String courseId);
+	public LearnerEnrollment addSubscriptionEnrollments(Learner learner, String subscriptionId, String courseId,String classGuid);
 	public List<LearnerEnrollment> findByLearnerIdAndEnrollmentStatusAndCourseStatisticsStatusIn(long learnerId, String status, Set<String> courseStatisticsStatuses);	
 }
