@@ -11,9 +11,11 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -27,7 +29,8 @@ import org.apache.log4j.Logger;
 
 public class SendMailService {
    private static Logger log = Logger.getLogger(SendMailService.class.getName());
-		
+   //private static final 
+   private static Properties props;	
    public static boolean sendSMTPMessage(String[] toAddr,
                                          String[] ccAddr,
                                          String[] bccAddr,
@@ -36,8 +39,8 @@ public class SendMailService {
                                          String subject,
                                          String body) {
 	   // stop the email
-	   return true;
-	   /*
+	 //  return true;
+	   
       return sendSMTPMessage(toAddr,
                              ccAddr,
                              bccAddr,
@@ -49,7 +52,7 @@ public class SendMailService {
                              null,
                              null,
                              null);
-      */                       
+                          
    }
 
 
@@ -66,8 +69,26 @@ public class SendMailService {
                                          Map<Object,Object> headers) {
 
 
-		Session session = Session.getDefaultInstance(
-				VU360Properties.getVU360Properties(), null);
+		//Session session = Session.getDefaultInstance(VU360Properties.getVU360Properties(), null);
+	   String smtpAddress = VU360Properties.getVU360Property("mail.smtp.host");
+	   String smtpUsername = VU360Properties.getVU360Property("mail.smtp.userName");
+	   String smtpPassword = VU360Properties.getVU360Property("mail.smtp.password");
+	   
+	   props = new Properties();
+	    props.put("mail.smtp.starttls.enable", "true");
+	    props.put("mail.smtp.port", "587");
+	    props.put("mail.smtp.host", smtpAddress);
+	    props.put("mail.smtp.auth", "true");
+	   
+	   Session session = Session.getDefaultInstance(props, 
+			   new Authenticator() {
+
+           @Override
+           protected PasswordAuthentication getPasswordAuthentication() {
+               return new PasswordAuthentication(smtpUsername, smtpPassword);
+           }
+
+       });
 		session.setDebug(log.isDebugEnabled());
 
 		try {
