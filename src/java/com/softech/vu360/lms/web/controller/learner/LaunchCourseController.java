@@ -1141,6 +1141,9 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
 			Map<Object, Object> context = new HashMap<Object, Object>();
 			log.debug("SCORM: launchURL: "+launchURL.toString());
 			 context.put("url", launchURL.toString());
+			 context.put("courseName", course.getName());
+			 context.put("courseDesc", course.getDescription());
+			 
 			 request.getSession().setAttribute("learningSessionId", learningSessionId);
 			return new ModelAndView("learner/learnerScormShell", VIEW_CONTEXT, context);
 
