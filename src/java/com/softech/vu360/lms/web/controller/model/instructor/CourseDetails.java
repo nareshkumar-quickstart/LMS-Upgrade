@@ -34,6 +34,7 @@ public class CourseDetails implements ILMSBaseInterface {
 	// SCORM Package properties remains to be added.
 	private String courseGuide = null;
 	private String preRequisites = null;
+	private String courseOutline = null;
 	private String learningObjectives = null;
 	private String quizInformation = null;
 	private String finalExamInformation = null;
@@ -534,6 +535,14 @@ public class CourseDetails implements ILMSBaseInterface {
 
 	public void setBlankHomeAssignementfile(boolean blankHomeAssignementfile) {
 		this.blankHomeAssignementfile = blankHomeAssignementfile;
+	}
+
+	public String getCourseOutline() {
+		return courseOutline;
+	}
+
+	public void setCourseOutline(String courseOutline) {
+		this.courseOutline = courseOutline;
 	}
 
 

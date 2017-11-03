@@ -103,6 +103,7 @@ VU360BaseMultiActionController {
 		//Setting Up Course  Over View
 		form.setCourseGuide(course.getCourseGuide());
 		form.setPreRequisites(course.getCoursePrereq());
+		form.setCourseOutline(course.getTopicsCovered());
 		
 		//Setting Up Course Additional Info View
 		try{
@@ -199,7 +200,8 @@ VU360BaseMultiActionController {
 
 		course.setCourseGuide(form.getCourseGuide());
 		course.setCoursePrereq(form.getPreRequisites());
-
+		course.setTopicsCovered(form.getCourseOutline());
+		
 		courseAndCourseGroupService.saveCourse(course);
 
 		return new ModelAndView(closeTemplate);
@@ -575,6 +577,7 @@ VU360BaseMultiActionController {
 		//Course Over View
 		course.setCourseGuide(form.getCourseGuide());
 		course.setCoursePrereq(form.getPreRequisites());
+		course.setTopicsCovered(form.getCourseOutline());
 		
 		//Course Exam Over View
 		
