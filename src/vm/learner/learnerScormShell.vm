@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+   <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
 <html lang="en" class="no-js">
 <head>
     <meta charset="utf-8">
@@ -56,10 +56,10 @@
 
     <script type='text/javascript' src="assets/scripts/ui.js?v=1"></script>
 
-	
-	
+
+
     <script type="text/javascript" src="https://platform.linkedin.com/in.js">
-	  api_key: 77te46kcsw2ijq  
+	  api_key: 77te46kcsw2ijq
 	  onLoad: ui.social.in.init
 	  authorize: false
 	</script>
@@ -108,7 +108,7 @@
             <!-- END DYNAMIC -->
         </div>
         <!-- END MODALS -->
-       
+
         <!-- BEGIN CD MODALS -->
         <div class="cd-modals">
             <!-- BEGIN CD MODAL -->
@@ -132,9 +132,9 @@
                 </div>
             </div>
             <!-- END CD MODAL -->
-           
-          
-          
+
+
+
             <div class="cd-cover-layer">
             </div>
         </div>
@@ -154,37 +154,53 @@
         <!-- BEGIN LEFT MENU -->
         <div class="left-menu menu-wrapper">
             <div class="side-menu-brand">
-                <span>${context.courseName}</span>				
+                <span>${context.courseName}</span>
             </div>
             <div class="side-menu-container">
                 <div id="player-options" class="menu-body">
-                    <ul class="side-menu-nav items">                       
+                    <ul class="side-menu-nav items">
+
+						#if( "$!context.labURL" != "" )
 						<li class="active">
 							<div>
 								<span class="badge">New</span>
-								<a href="javascript:ui.discussions.full();">Mentoring & Discussions </a>
+								<a href="javascript:ui.nav.labs();">Labs</a>
 							</div>
-						</li>	
-						#if ($context.enabledForClip == "true")						
+						</li>
+						#end
+						<li class="active">
+							<div>
+								<span class="badge">New</span>
+								#if ($context.topicsCount==0)
+									<a href="javascript:;" data-guid="" data-label= "" onclick="ui.discussions.full(this);"> Mentoring & Discussions</a>
+								#elseif ($context.topicsCount==1)
+									<a href="javascript:;" data-guid="$!context.topicGUIDs[0]" data-label= "$!context.topicNames[0]" onclick="ui.discussions.full(this);"> Mentoring & Discussions</a>
+								#else
+									<a href="javascript:ui.nav.mentoring();">Mentoring & Discussions </a>
+								#end
+							</div>
+						</li>
+
+						#if ($context.enabledForClip == "true")
 						<li class="active">
 							<div><span class="badge">New</span>
 								<a href="javascript:ui.clipp.open();"><img src="assets/img/clipp.png" style="width:45px;"> <span style="top:2px;position:relative;">Knowledge</span></a>
 							</div>
 						</li>
-						#end   						
+						#end
                         <li class="active hide">
                             <div>
                                 <span class="badge">9</span> <a href="javascript:;" data-group="modal-dynamic" data-trg="recommendation"
                                     data-type="cd-modal-trigger">Related Courses</a>
                             </div>
                         </li>
-                       
+
                         <li class="active hide">
                             <div>
                                 <span class="badge">16</span> <a href="javascript:ui.discussions.full();">Discussions</a>
                             </div>
                         </li>
-                                                  
+
                         <li class="active">
                             <div>
                                 <a href="javascript:;" data-group="modal-dynamic" data-trg="support" data-type="cd-modal-trigger">
@@ -193,7 +209,42 @@
                         </li>
                     </ul>
                 </div>
-              
+				<div id="course-labs" class="menu-body">
+					<ul class="side-menu-nav">
+						<li class="active">
+							<div class="secondary-menu-description"><span class="title">Labs</span><p>Below are the list of virtual-labs offer hands-on practice with certain areas within this course. Clicking the labs below with launch a new window.</p> <a href="javascript:ui.nav.home();" class="btn menu-back-secondary"></a></div>
+						</li>
+					</ul>
+					<ul class="side-menu-nav items">
+						<li class="active">
+							<div>
+								<a href="javascript:;" onclick="ui.labs.open(event);"><i class="glyphicon glyphicon-blackboard"></i>$context.labName</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+				
+              	<div id="course-mentoring" class="menu-body">
+					<ul class="side-menu-nav">
+						<li class="active">
+							<div class="secondary-menu-description"><span class="title">Mentoring & Discussions</span><p>Take part in discussions, questions, mentoring and social engagement through different topics of interest associated with this course.</p> <a href="javascript:ui.nav.home();" class="btn menu-back-secondary"></a></div>
+						</li>
+					</ul>
+
+					<ul class="side-menu-nav items">					
+						#set($topicsCount = $context.topicsCount - 1)
+						#if ($topicsCount >0)
+							#foreach($loopIndex in [0..$topicsCount])
+								<li class="active">
+									<div>
+										<a href="javascript:;" data-guid="$!context.topicGUIDs[$loopIndex]" data-label= "$!context.topicNames[$loopIndex]" onclick="ui.discussions.full(this);"> $!context.topicNames[$loopIndex]</a>
+									</div>
+								</li>
+							#end					
+						#end
+					</ul>
+				</div>
+				
             </div>
             <div class="side-menu-social">
                 <div class="social-label">
@@ -237,14 +288,14 @@
                  <style type="text/css">
 
 							div.fadeMe {
-								opacity:    0.5; 
-								background: #000; 
+								opacity:    0.5;
+								background: #000;
 								width:      100%;
-								height:     100%; 
+								height:     100%;
 								z-index:    1000;
-								top:        0; 
-								left:       0; 
-								position:   absolute; 
+								top:        0;
+								left:       0;
+								position:   absolute;
 								-moz-opacity: 0.50;
 								opacity:.50;
 								filter: alpha(opacity=50);
@@ -308,36 +359,36 @@
 								}
 
 				</style>
-			    
+
 				<script src="javascript/lmsSCORMShellAdapter.js?ts=' + (new Date()).getTime() + '"\></script>
-                
+
 				<script type="text/javascript">
-				     
+
 					window.onload = function()
-						{							
+						{
 						var id = "proxyframe"; //Look for existing frame with name "proxyframe"
 						var proxy = frames[id];
-						var url = ''; 										
-						var scormURL = '${context.url}'; 
+						var url = '';
+						var scormURL = '${context.url}';
 							if (proxy){
 									proxy.location.href = url; //Redirect to the new URL
 									  }
 							else {
-								
+
 								var iframeAOL = document.createElement("iframe");
 								iframeAOL.id = "course";
 								iframeAOL.name = "course";
 								iframeAOL.src = scormURL;
 								iframeAOL.width = "100%";
 								iframeAOL.height = "100%";
-								iframeAOL.scrolling="no";								
+								iframeAOL.scrolling="no";
 								iframeAOL.onload = "iframeLoaded()";
 								document.getElementById("main").appendChild(iframeAOL);
-								
+
 								}
 						}
-					 
-                     function iframeLoaded() { 
+
+                     function iframeLoaded() {
                         var iFrameID = document.getElementById('course');
                             if(iFrameID) {
                                             //debugger;
@@ -345,9 +396,9 @@
                                             iFrameID.height = "";
 											iFrameID.height = getDocHeight();
                                             //iFrameID.height = document.body.scrollHeight + "px";
-                                          }   
-                                             } 
-                        
+                                          }
+                                             }
+
 					  function getDocHeight() {
                                 var D = document;
                                  return Math.max(
@@ -355,27 +406,27 @@
                                                     Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
                                                     Math.max(D.body.clientHeight, D.documentElement.clientHeight)
                                                 );
-                                          }                   	
-						
+                                          }
+
 						$(window).on('resize', iframeLoaded);
-						
+
 						function overlay() {
 							el = document.getElementById("fadeMe");
 							el.style.visibility = (el.style.visibility == "visible") ? "hidden" : "visible";
 							mb = document.getElementById("examIdleTimerDialogue");
 							mb.style.visibility = (mb.style.visibility == "visible") ? "hidden" : "visible";
 						}
-					
+
                 </script>
             </div>
             <div id="content-overlay">
             </div>
         </div>
-        <!-- END PAGE CONTENT -->       
+        <!-- END PAGE CONTENT -->
         <!-- BEGIN BOTTOM -->
         <div class="bottom-wrapper not-for-assessment hide">
             <div class="wrapper-body">
-                <div class="t-row">                   
+                <div class="t-row">
                     <div class="t-col notifications">
                         <div class="btn-group dropup">
                             <button onclick="ui.discussions.click()" type="button" title="Show 360Discussions"
@@ -406,8 +457,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
-                                  
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -416,9 +467,9 @@
     <!-- END WRAPPER -->
 
     <script>
-	
+
 		function getHumHumObj()
-		{	
+		{
 			var objHumHub = {
 				user: {
 					"username": "${context.username}",
@@ -437,18 +488,18 @@
 				 "description":'${context.courseDesc}',
 				 "guid": '${context.courseGUID}'
 				}
-			}; 
+			};
 		return 	objHumHub;
 		}
- 
+
 		var playPauseFeature = true;
 		var JSplayerEnabled = true;
-		
-		var dummyOutline = [	
-		"CourseConclude"	
+
+		var dummyOutline = [
+		"CourseConclude"
 		];
 		var slideAt = 0;
-		
+
 		var recObg = {
 			"affiliateItems": [
 			{
@@ -459,24 +510,26 @@
 			}
 		  ]
 		};
-		
+
 		$(document).ready(function ()
 		{
 			setTimeout(function(){
 				course_launch();
 			},1000);
 		});
-		
+
 		function course_launch()
 		{
 			var access_token = ui.discussions.contract.access_token;
-			ui.discussions.contract = getHumHumObj();                        
+			ui.discussions.contract = getHumHumObj();
 
 			ui.discussions.contract.access_token = access_token;
 			ui.init();
 			ui.discussions.domain = '$brander.getBrandElement("lms.scormShell.humhub.url")';
-			ui.discussions.init();			
+			ui.discussions.init();
 			ui.nav.nestedBtn();
+			ui.labs.domain = '${context.labURL}';
+            ui.labs.key = '${context.labKey}';
 			ui.clipp.courseName = '${context.courseName}';
 			ui.clipp.courseGuid = '${context.courseGUID}';
 			ui.social.title = '${context.courseName}';
@@ -491,7 +544,7 @@
 				uat = 1226425764055886
 				live = 1073273936037737
 				fb_Quickstart=267687227041241 //player.quickstart.com
-				fb_Quickstart_localhost=319254465163587 
+				fb_Quickstart_localhost=319254465163587
 				fb_Quickstart=1337758796260761 //lms.quickstart.com
 				qalms-qucikstart =120943548513899
 				qaplayer-qucikstart = 450560175313626
@@ -528,13 +581,13 @@
 			}).bootstrapSwitch('setSizeClass', 'switch-small');
 
 			$(".for-assessment").addClass("hide");
-			
+
 			var templateName = dummyOutline[slideAt];
 			ui.slide.dummyLoad(templateName,function(){
-			
+
 				//	initialize this template base transition
 				ui.slide.transition(dummyOutline[slideAt]);
-				
+
 				//	hide main course player loader
 				ui.loader("hide", function()
 				{
@@ -545,12 +598,12 @@
 						{
 							ui.nav.move("outline",'600px');
 						},3000);*/
-						
+
 					},1000);
 				},"launching");
 			});
 		}
-		
+
 		function course_exit()
 		{
 			//	this should be call when all information saved
@@ -559,7 +612,7 @@
 				window.open("exit.html","_self");
 			},"saving");
 		}
-		
+
 		function svg_modal_open($trg)
 		{
 			var attr = $trg.attr("data-group");
@@ -590,7 +643,7 @@
 									'</div>';
 					}
 					$thisModal.html(bodyHtml);
-				break;														
+				break;
 				case "support":
 					$(".cd-modals").addClass("cd-modal-with-nav");
 					var $thisModal = $('.cd-modal[data-modal="'+ attr +'"] > .cd-modal-content');
@@ -599,12 +652,12 @@
 							var bodyHtml =	'<h1>Support</h1>'+
 											'<p>Find 24-hour support for any online course here. Access our knowledge base, submit a support ticket, troubleshoot issues, recover passwords, chat, e-mail or call our customer support desk, and more. We look forward to helping you.</p>'+
 											'<div>'+
-												'<a href="https://www.quickstart.com/contact-us/" target="_blank" class="cd-btn main-action">Get Support</a>'+												
+												'<a href="https://www.quickstart.com/contact-us/" target="_blank" class="cd-btn main-action">Get Support</a>'+
 											'</div>';
 							$thisModal.removeClass('pre-loader please-wait').html(bodyHtml);
 						},100);
 				break;
-						
+
 				case "idle":
 					var $thisModal = $('.cd-modal[data-modal="'+ attr +'"] > .cd-modal-content');
 						$thisModal.addClass('pre-loader please-wait');
@@ -646,7 +699,7 @@
 														'<a href="javascript:;" onclick="ui.isoTope.getData(false);" class="cd-btn main-action">See More Courses</a>'+
 													'</div>'+
 												'</div>';
-								
+
 								$thisModal.removeClass('pre-loader please-wait').html(bodyHtml);
 								ui.isoTope.scrollElm = ".modal-is-visible > .cd-modal-content";
 								ui.isoTope.init('course_recomendations',true);
@@ -659,7 +712,7 @@
 					$thisModal.addClass('pre-loader please-wait');
 					ui.discussions.createSpace($thisModal);
 				break;
-			 
+
 				case "clipp":
 					$(".cd-modals").addClass("cd-modal-with-nav");
 					var $thisModal = $('.cd-modal[data-modal="'+ attr +'"] > .cd-modal-content');
@@ -673,20 +726,26 @@
 							setTimeout(function(){
 								var bodyHtml =	'<h1>Social Sharing</h1>'+
 												'<h2>What\'s on your mind?</h2>'+
-												'<div class="blockquote-list interactive">'+													
+												'<div class="blockquote-list interactive">'+
 													'<blockquote>'+
 														'<a href="javascript:ui.social.fb.share(2);" class="fb-social">Share on Facebook</a>'+
 													'</blockquote>'+
 													'<blockquote>'+
 														'<a href="javascript:ui.social.in.share(2);" class="ln-social">Share on Linkedin</a>'+
-													'</blockquote>'+													
+													'</blockquote>'+
 												'</div>';
 								$thisModal.removeClass('pre-loader please-wait').html(bodyHtml);
 							},100);
 				break;
+			   case "labs":
+					$(".cd-modals").addClass("cd-modal-with-nav");
+					var $thisModal = $('.cd-modal[data-modal="'+ attr +'"] > .cd-modal-content');
+					$thisModal.addClass('pre-loader please-wait');
+					ui.labs.load($thisModal);
+				break;
 			}
 		}
-		
+
 		function svg_modal_close(id,modal)
 		{
 			switch(id)

@@ -80,6 +80,9 @@ public class SecurityUtil {
 		return sUtil;
 	}
 
+	public static String encodeReal64bit (String input){
+		return encoder.encode(input.getBytes());
+	}
 	/**
 	 * It generates a hard coded 128-bit Key
 	 * @return

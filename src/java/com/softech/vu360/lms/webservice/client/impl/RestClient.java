@@ -1,6 +1,7 @@
 package com.softech.vu360.lms.webservice.client.impl;
 
 import java.io.BufferedReader;
+import java.util.Arrays;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,9 +73,11 @@ public class RestClient implements RestOperations{
 			
 			
 			JSONObject parentObject = (JSONObject) JSO.get("expertiseResponse");
-			    
-			List<String> topics = ((List<String>)parentObject.get("topics"));
-			List<String> guid = (List<String>)parentObject.get("guid");
+			
+			if (parentObject.get("topics") ==null) return "";
+			
+			List<String> topics = parentObject.get("topics").toString().contains("[")? ((List<String>)parentObject.get("topics")) : Arrays.asList(((String) parentObject.get("topics")).split(",")); 
+			List<String> guid = parentObject.get("guid").toString().contains("[")? ((List<String>)parentObject.get("guid")) : Arrays.asList(((String) parentObject.get("guid")).split(","));
 			String message = (String)parentObject.get("message");
 			   
 			StringBuffer returnMessage = new StringBuffer();

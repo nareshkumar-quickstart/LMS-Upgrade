@@ -195,7 +195,7 @@ var ui = function () {
 			
 			home:function ()
 			{
-				if($("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("outline"))
+				if($("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("labs") || $("#wrapper").hasClass("outline") || $("#wrapper").hasClass("mentoring"))
 				{
 					$("#wrapper").toggleClass("options");
 				}
@@ -203,12 +203,12 @@ var ui = function () {
 				{
 					$("#wrapper").toggleClass("toggled-left").toggleClass("options");
 				}
-				$("#wrapper").removeClass("toggled-right glossary material outline");
+				$("#wrapper").removeClass("toggled-right glossary material outline labs mentoring");
 			},
-			
+
 			outline:function ()
 			{
-				if($("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("options"))
+				if($("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("labs") || $("#wrapper").hasClass("options") || $("#wrapper").hasClass("mentoring"))
 				{
 					$("#wrapper").toggleClass("outline");
 				}
@@ -216,12 +216,12 @@ var ui = function () {
 				{
 					$("#wrapper").toggleClass("toggled-left").toggleClass("outline");
 				}
-				$("#wrapper").removeClass("toggled-right glossary material options");
+				$("#wrapper").removeClass("toggled-right glossary material labs options mentoring");
 			},
-			
+
 			glossary:function ()
 			{
-				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("options"))
+				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("labs") || $("#wrapper").hasClass("options") || $("#wrapper").hasClass("mentoring"))
 				{
 					$("#wrapper").toggleClass("glossary");
 				}
@@ -229,12 +229,12 @@ var ui = function () {
 				{
 					$("#wrapper").toggleClass("toggled-left").toggleClass("glossary");
 				}
-				$("#wrapper").removeClass("toggled-right outline material options");
+				$("#wrapper").removeClass("toggled-right outline material labs options mentoring");
 			},
-			
+
 			material:function ()
 			{
-				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("options"))
+				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("labs") || $("#wrapper").hasClass("options") || $("#wrapper").hasClass("mentoring"))
 				{
 					$("#wrapper").toggleClass("material");
 				}
@@ -242,7 +242,33 @@ var ui = function () {
 				{
 					$("#wrapper").toggleClass("toggled-left").toggleClass("material");
 				}
-				$("#wrapper").removeClass("toggled-right outline glossary options");
+				$("#wrapper").removeClass("toggled-right outline glossary labs options mentoring");
+			},
+
+			labs:function ()
+			{
+				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("options") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("mentoring"))
+				{
+					$("#wrapper").toggleClass("labs");
+				}
+				else
+				{
+					$("#wrapper").toggleClass("toggled-left").toggleClass("labs");
+				}
+				$("#wrapper").removeClass("toggled-right outline glossary material options mentoring");
+			},
+			
+			mentoring:function ()
+			{
+				if($("#wrapper").hasClass("outline") || $("#wrapper").hasClass("glossary") || $("#wrapper").hasClass("options") || $("#wrapper").hasClass("material") || $("#wrapper").hasClass("labs"))
+				{
+					$("#wrapper").toggleClass("mentoring");
+				}
+				else
+				{
+					$("#wrapper").toggleClass("toggled-left").toggleClass("mentoring");
+				}
+				$("#wrapper").removeClass("toggled-right outline glossary material options labs");
 			}
 		},
 		
@@ -1152,8 +1178,7 @@ var ui = function () {
 				ui.svgModal.open($("<a data-group='modal-dynamic' data-trg='social-sharing'></a>"));
 			}
 		},
-		
-	discussions:
+		discussions:
 		{
 			contract:{
 				'user': {
@@ -1215,290 +1240,15 @@ var ui = function () {
 				$("#notificationList > .visitSpace").attr("href",ui.discussions.domain+"/s/"+ui.discussions.contract.space.guid+"/");
 			},
 
-			getMore:function (trg)
-			{
-				if(!$(trg).hasClass('elm-loader'))
-				{
-					$(trg).addClass('elm-loader');
-					setTimeout(function(){
-						//$(trg).removeClass('elm-loader');
-					},1000);
-				}
-			},
-
-			dateConverion:function(stamp,withTime)
-			{
-			  var month = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
-			  stamp = stamp.split(" ");
-			  var sDate = String(stamp[0]).split("-");
-			  //sDate = sDate[1]+"/"+sDate[2]+"/"+sDate[0];
-			  sDate = month[Number(sDate[1])-1]+" "+sDate[2]+", "+sDate[0];
-
-			  if(!withTime)
-			  {
-				return sDate;
-			  }
-
-			  var ext = 0;
-			  var sTime = String(stamp[1]).split(":");
-			  if(sTime[0]<12)
-			  {
-				(sTime[0] == 0? sTime[0] = 12:"");
-				ext = "AM";
-			  }
-			  else
-			  {
-				ext = "PM";
-				(sTime[0] >= 13? sTime[0] = sTime[0]-12:"");
-			  }
-			  sTime = sTime[0]+":"+sTime[1];
-			  return sDate + " " + sTime + " " + ext + " CST";
-			},
-			
-			getPostList:function()
-			{
-				$("#notificationList").addClass("elm-loader");
-				if(ui.discussions.shouldBlink)
-				{
-					$("#notifyPosts").addClass("firstblink");
-				}
-				
-				data = [];
-				var apiPath = ui.discussions.domain+"/index.php/api/post/?";
-				$.getJSON(
-					apiPath,
-					{
-						eager:true,
-						contentcontainer_id: ui.discussions.ccId,
-						access_token: ui.discussions.contract.access_token
-					},
-					function (data)
-					{
-						var elm = '';
-						for (i in data)
-						{
-							elm += ui.discussions.createElm({
-								"postId":data[i]["id"],
-								"isComment":false,
-								"i":i,
-								"username":ui.discussions.spaceUsers[data[i]["created_by"]].profile.firstname+' '+ui.discussions.spaceUsers[data[i]["created_by"]].profile.lastname,
-								//"img":"https://"+ui.discussions.domain+"/uploads/profile_image/4f95952e-5629-4d46-97a9-d3453d850ed9_org.jpg",
-								"img":ui.discussions.domain+"/static/img/default_user.jpg",
-								"message":data[i]["message"],
-								"date":ui.discussions.dateConverion(data[i]["updated_at"],false)
-							});
-						}
-
-						if(ui.discussions.shouldBlink)
-						{
-							$("#notifyPosts").html(elm)
-
-							setTimeout(function()
-							{
-								$("#notifyPosts").removeClass("firstblink");
-							},500);
-						}
-						else
-						{
-							$("#notifyPosts").html(elm);
-						}
-
-						$("#notificationList > div > .post").val("");
-						ui.discussions.shouldBlink = false;
-						ui.discussions.cache = data;
-						$("#notificationList").removeClass("elm-loader");
-					}
-				).fail(function(response)
-				{
-					//console.log('Error: ' + response.responseText);
-					ui.discussions.shouldBlink = false;
-					$("#notificationList").removeClass("elm-loader");
-				});
-			},
-
-			getCommentList:function()
-			{
-				$("#notificationList").addClass("elm-loader");
-				if(ui.discussions.shouldBlink)
-				{
-					$("#notifyPosts").addClass("firstblink");
-				}
-
-				var apiPath = ui.discussions.domain+"/index.php/api/comment/post/?";
-				$.getJSON(
-					apiPath,
-					{
-						id: ui.discussions.pId,
-						access_token: ui.discussions.contract.access_token
-					},
-					function (data)
-					{
-						var elm = '';
-						for (i in data)
-						{
-							elm += ui.discussions.createElm({
-								"isComment":true,
-								"i":i,
-								"username":ui.discussions.spaceUsers[data[i]["created_by"]].profile.firstname+' '+ui.discussions.spaceUsers[data[i]["created_by"]].profile.lastname,
-								"img":ui.discussions.domain+"/static/img/default_user.jpg",
-								"message":data[i]["message"],
-								"date":ui.discussions.dateConverion(data[i]["updated_at"],false)
-							});
-						}
-
-						if(ui.discussions.shouldBlink)
-						{
-							$("#notifyComments").html(elm)
-							setTimeout(function()
-							{
-								$("#notifyComments").removeClass("firstblink");
-							},500);
-						}
-						else
-						{
-							$("#notifyComments").html(elm);
-						}
-
-						$("#notificationList > div > .comment").val("");
-						ui.discussions.shouldBlink = false;
-						//ui.discussions.cache = data;
-						$("#notificationList").removeClass("elm-loader");
-					}
-				).fail(function(response)
-				{
-					//console.log('Error: ' + response.responseText);
-					ui.discussions.shouldBlink = false;
-					$("#notificationList").removeClass("elm-loader");
-				});
-			},
-
-			enter:function(isPost,trg,e,isMini)
-			{
-				pId = pId || false;
-				var key = e.which || e.keyCode;
-
-				// Enter is pressed
-				if (key == 13)
-				{
-					if(isMini)
-					{
-						$("#notificationList").addClass("elm-loader");
-					}
-					else
-					{
-						$("body").addClass("static-loader");
-					}
-					
-					if(isPost)
-					{
-						ui.discussions.sendPost($(trg).val(),isMini);
-					}
-					else
-					{
-						ui.discussions.pId = pId;
-						ui.discussions.sendComment($(trg).val(),isMini);
-					}
-					$(trg).val("");
-				}
-			},
-			
-			submit:function(isPost,trg,isMini)
-			{
-				pId = pId || false;
-				if(isMini)
-				{
-					$("#notificationList").addClass("elm-loader");
-				}
-				else
-				{
-					$("body").addClass("static-loader");
-				}
-				
-				if(isPost)
-				{
-					ui.discussions.sendPost($(trg).val(),isMini);
-				}
-				else
-				{
-					ui.discussions.pId = pId;
-					ui.discussions.sendComment($(trg).val(),isMini);
-				}
-				$(trg).val("");
-			},
-
-			sendComment:function(msg,isMini)
-			{
-				var apiPath = ui.discussions.domain+"/index.php/api/comment?access_token="+ui.discussions.contract.access_token;
-				
-				$.ajax({
-					type:"POST",
-					url: apiPath,
-					data: {
-						message:msg,
-						post_id:ui.discussions.pId,
-						user_id:ui.discussions.uId
-					},
-					success: function(data)
-					{
-						if(isMini)
-						{
-							//	console.log(data);
-							//	For Future need to get all post in this result
-							//	ui.discussions.shouldBlink = true;
-							ui.discussions.getCommentList();
-						}
-						else
-						{
-							$("body").removeClass("static-loader");
-							ui.discussions.dInit();
-						}
-					},
-					fail: function(){
-						console.log('Error: ' + response.responseText);
-					}
-				});
-			},
-
-			sendPost:function(msg,isMini)
-			{
-				var apiPath = ui.discussions.domain+"/index.php/api/post?access_token="+ui.discussions.contract.access_token;
-				
-				$.ajax({
-					type:"POST",
-					url: apiPath,
-					data: {
-						containerClass:"humhub\\modules\\space\\models\\Space",
-						message:msg,
-						user_id:ui.discussions.uId,
-						containerGuid:ui.discussions.contract.space.guid,
-						visibility:0
-					},
-					success: function(data){
-						if(isMini)
-						{
-							//	For Future need to get all post in this result
-							ui.discussions.shouldBlink = true;
-							ui.discussions.getPostList();
-						}else{
-							$("body").removeClass("static-loader");
-							ui.discussions.dInit();
-						}
-					},
-					fail: function(){
-						console.log('Error: ' + response.responseText);
-					}
-				});
-			},
-			
 			createSpace:function($thisModal)
 			{
 				var vhtml = $.parseHTML(ui.discussions.contract.space.description);
 				ui.discussions.contract.space.description = $(vhtml).text();
-				
+
 				var apiPath = ui.discussions.domain+"/index.php/api/quickstart/enrol-user/?access_token="+ui.discussions.contract.access_token;
 				$.ajax({
 					type:"POST",
-					url: apiPath,
+					url:apiPath,
 					data:{
 						User:ui.discussions.contract.user,
 						Password:ui.discussions.contract.password,
@@ -1508,7 +1258,7 @@ var ui = function () {
 					success: function(data){
 						//ui.discussions.contract.csrfToken = data.csrfToken;
 						var requestURL = ui.discussions.domain + "/index.php/user/auth/auto-login/?a="+btoa(ui.discussions.contract.user.username+"|360.quickstart.360@humhub.com|"+ui.discussions.contract.space.guid);
-						
+
 						var newWin = window.open(requestURL,"_blank");
 						$thisModal.removeClass('pre-loader please-wait');
 						if(!newWin || newWin.closed || typeof newWin.closed=='undefined')
@@ -1520,7 +1270,7 @@ var ui = function () {
 							ui.svgModal.close('modal-dynamic');
 						}
 						return;
-						
+
 						//	Return Place above because store of the task changed after all developments.
 						ui.discussions.color = data.Space.color;
 						ui.discussions.uId = data.User.id;
@@ -1534,91 +1284,15 @@ var ui = function () {
 					}
 				});
 			},
-			
-			getSpace:function()
-			{
-			$("#discussion-banner > .bg-img-2").css({
-				"background-image":"url("+ui.discussions.domain + "/uploads/profile_image/" + ui.discussions.contract.space.guid+".jpg)",
-				"background-color":ui.discussions.color
-			});
-			$("#discussion-banner > .bg-img").css({
-				"background-image":"url("+ui.discussions.domain + "/uploads/profile_image/banner/" + ui.discussions.contract.space.guid+".jpg)",
-				"background-color":ui.discussions.color
-			});
-				
-				
-				var apiPath = ui.discussions.domain+"/index.php/api/space/?";
-				$.getJSON(
-					apiPath,
-					{
-						guid: ui.discussions.contract.space.guid,
-						access_token: ui.discussions.contract.access_token
-					},
-					function (data)
-					{
-						console.log(data);
-						if(data.space.status == "1")
-						{							
-							ui.discussions.afterFetchSpace(data);
-							ui.discussions.dGetData();
-						}
-						else
-						{
-							console.log('Space is disabled');
-						}
-					}
-				).fail(function(response)
-				{
-					console.log('Error: ' + response.responseText);
-				});
-			},
-			
-			afterFetchSpace:function(data)
-			{
-				ui.discussions.ccId = data.space.contentcontainer_id;
-				ui.discussions.description = data.space.description;
-				$("#discussion-banner > .bg-desc").attr("data-desc",data.space.description);
-				var obj = {};
-				for(var i=0;i<data.users.length;i++)
-				{
-					obj[data.users[i].id] = data.users[i];
-				}
-				ui.discussions.spaceUsers = obj;
-			},
 
-			createElm:function(data)
-			{
-				var elm;
-
-				if(data.isComment)
-				{
-					elm =	'<blockquote>'+
-								'<div>'+
-									'<i class="avatar" style="background-image:url(\''+data.img+'\')"></i>'+
-									'<h5>'+data.username+'</h5>'+
-									'<p>'+data.message+'</p>'+
-									'<small>'+data.date+'</small>'+
-								'</div>'+
-							'</blockquote>';
-				}
-				else
-				{
-					elm =	'<blockquote>'+
-								'<a href="javascript:;" onclick="ui.discussions.openComments('+data.i+','+data.postId+')">'+
-									'<i class="avatar" style="background-image:url(\''+data.img+'\')"></i>'+
-									'<h5>'+data.username+'</h5>'+
-									'<p>'+data.message+'</p>'+
-									'<small>'+data.date+'</small>'+
-								'</a>'+
-							'</blockquote>';
-				}
-				return elm;
-			},
-			
-			full:function(e)
+			full:function(trg)
 			{
 				if(ui.discussions.isEnable)
 				{
+					ui.discussions.contract.space.name = $(trg).data("label");
+					ui.discussions.contract.space.description = "";
+					ui.discussions.contract.space.guid = $(trg).data("guid");
+					
 					ui.svgModal.open($('<a data-group="modal-dynamic" data-trg="discussions" data-type="cd-modal-trigger"></a>'));
 				}
 				else
@@ -1626,203 +1300,14 @@ var ui = function () {
 					//	BEGIN - MODAL BOX -------------------------------
 					var $trgModal = $("#dynamicModal");
 					$trgModal.find(".modal-title").html("");
-					$trgModal.find(".modal-body").html("").load("templates/disscussion-enable.html");
+					$trgModal.find(".modal-body").html("").load("assets/templates/disscussion-enable.html");
 					$trgModal.find(".modal-footer").html("");
 					$trgModal.modal('show');
 					//	END - MODAL BOX --------------------------------
-				}
-			},
-
-			click:function(e)
-			{
-				if(ui.discussions.isEnable)
-				{
-					var apiPath = ui.discussions.domain+"/index.php/api/space/?";
-					$.getJSON(
-						apiPath,
-						{
-							guid: ui.discussions.contract.space.guid,
-							access_token: ui.discussions.contract.access_token
-						},
-						function (data)
-						{
-							if(data.space.status == "1")
-							{
-								ui.discussions.afterFetchSpace(data);
-								ui.discussions.getPostList();
-							}
-							else
-							{
-								console.log('Space is disabled');
-							}
-						}
-					).fail(function(response)
-					{
-						console.log('Error: ' + response.responseText);
-					});
-				}
-				else
-				{
-					//	BEGIN - MODAL BOX -------------------------------
-					var $trgModal = $("#dynamicModal");
-					$trgModal.find(".modal-title").html("");
-					$trgModal.find(".modal-body").html("").load("templates/disscussion-enable.html");
-					$trgModal.find(".modal-footer").html("");
-					$trgModal.modal('show');
-					//	END - MODAL BOX --------------------------------
-				}
-			},
-
-			goBack:function()
-			{
-				$("#notificationList").toggleClass("showComments");
-			},
-
-			openComments:function(i,postId)
-			{
-				ui.discussions.pId = postId;
-				$("#notificationList").toggleClass("showComments");
-				var elm = '';
-				var comments = ui.discussions.cache[i].comments;
-				for (j in comments)
-				{
-					elm += ui.discussions.createElm({
-						"isComment":true,
-						"username":ui.discussions.spaceUsers[comments[j]["created_by"]].profile.firstname+' '+ui.discussions.spaceUsers[comments[j]["created_by"]].profile.lastname,
-						"img":ui.discussions.domain+"/static/img/default_user.jpg",
-						"message":comments[j]["message"],
-						"date":ui.discussions.dateConverion(comments[j]["created_at"],false)
-					});
-				}
-				$("#notifyComments").html(elm);
-			},
-
-			report:function()
-			{
-				//	BEGIN - MODAL BOX -------------------------------
-				var $trgModal = $("#dynamicModal");
-				$trgModal.find(".modal-title").html("Help Us Understand What's Happening");
-
-				var body = '<br><p>Why do you want to report this post?</p>'+
-							'<ul class="list-inline">'+
-								'<li><label><input type="radio" name="r1"> Does not belong to this space</label></li>'+
-								'<li><label><input type="radio" name="r1"> It\'s offensive</label></li>'+
-								'<li><label><input type="radio" name="r1"> It\'s spam</label></li>'+
-							'</ul>';
-
-				$trgModal.find(".modal-body").html(body);
-				$trgModal.find(".modal-footer").html('<a href="javascript:;" type="button" class="cd-btn main-action">Submit</a>');
-				$trgModal.modal('show');
-				//	END - MODAL BOX --------------------------------
-			},
-
-			getPostHTML:function(data)
-			{
-				var html =	'<div class="panel panel-default">'+
-								'<div class="panel-heading">'+
-									'<i class="avatar" style="background-image:url('+ui.discussions.domain+'/static/img/default_user.jpg)"></i>'+
-									'<div class="info">'+
-										'<h5><span>'+ui.discussions.spaceUsers[data.created_by].profile.firstname+' '+ui.discussions.spaceUsers[data.created_by].profile.lastname+'</span><br><small>'+ui.discussions.dateConverion(data.updated_at)+'</small></h5>'+
-									'</div>'+
-								'</div>'+
-								'<div class="panel-body">'+
-									'<p>'+data.message+'</p>'+
-									'<ul class="list-inline">'+
-										'<li class="hide"><a href="javascript:;">Like</a></li>'+
-										'<li><a href="javascript:;">Comment</a></li>'+
-										'<li class="hide"><a href="javascript:ui.discussions.report();">Report</a></li>'+
-									'</ul>'+
-								'</div>'+
-								'<div class="comments">';
-
-						for(var i=0; i<data["comments"].length; i++)
-						{
-							html +=	ui.discussions.getCommentHTML(data["comments"][i]);
-						}
-
-						html +=	'</div>'+
-									'<div class="input-group">'+
-										'<input type="text" class="form-control cd-input" id="discussion-comment-input" placeholder="Write a new comment..." onkeyup="ui.discussions.enter(false,this,event,false,'+data.id+');">'+
-										'<span class="input-group-btn">'+
-											'<button class="cd-btn main-action" type="button" onclick="ui.discussions.submit(false,\'#discussion-comment-input\',false,'+data.id+');"><span class="glyphicon glyphicon-comment"></span></button>'+
-										'</span>'+
-									'</div>'+
-								'</div>';
-
-				return html;
-			},
-
-			getCommentHTML:function(data)
-			{
-				var html =	'<div class="panel panel-default">'+
-								'<div class="panel-heading">'+
-									'<i class="avatar" style="background-image:url('+ui.discussions.domain+'/static/img/default_user.jpg)"></i>'+
-									'<div class="info">'+
-										'<h5><span>'+ui.discussions.spaceUsers[data.created_by].profile.firstname+' '+ui.discussions.spaceUsers[data.created_by].profile.lastname+'</span> <small>'+ui.discussions.dateConverion(data.updated_at)+'</small></h5>'+
-										'<p>'+data.message+'</p>'+
-										'<ul class="list-inline">'+
-											'<li class="hide"><a href="javascript:;">Like</a></li>'+
-										'</ul>'+
-									'</div>'+
-								'</div>'+
-							'</div>';
-				return html;
-			},
-			
-			dInit:function()
-			{
-				var apiPath = ui.discussions.domain+"/index.php/api/post/?";
-				$.getJSON(
-					apiPath,
-					{
-						eager:true,
-						contentcontainer_id: ui.discussions.ccId,
-						access_token: ui.discussions.contract.access_token
-					},
-					function (data)
-					{
-						console.log(data);
-						var html = "";
-						for(var i=0; i<data.length; i++)
-						{
-							html += ui.discussions.getPostHTML(data[i]);
-						}
-
-						$("#post-lists").html(html);
-
-						$(".modal-is-visible > .cd-modal-content").on("scroll",ui.discussions.dScrollHandle);
-					}
-				).fail(function(response)
-				{
-					//console.log('Error: ' + response.responseText);
-				});
-			},
-
-			dScrollHandle:function(e)
-			{
-				var el = e.target;
-				//  At Bottom
-				if(el.offsetHeight-el.scrollHeight+el.scrollTop>-15)
-				{
-					//ui.discussions.dGetData();
-				}
-			},
-
-			dGetData:function()
-			{
-				$trg = $(".modal-is-visible > .cd-modal-content").find(".load-more > a");
-				if(!$trg.hasClass('elm-loader'))
-				{
-					$trg.addClass('elm-loader');
-					setTimeout(function(){
-						$trg.removeClass('elm-loader');
-						ui.discussions.dInit();
-					},1000);
 				}
 			}
-
 		},
-		
+
 		clipp:
 		{
 			courseName:'',
@@ -2111,25 +1596,45 @@ var ui = function () {
 				}
 			}
 		},
-
-    storage:
-    {
-      get:function(name)
-      {
-        if (typeof(Storage) !== "undefined")
-        {
-          return (sessionStorage.getItem(name));
-        }
-        return false;
-      },
-      set:function(name,value)
-      {
-        if (typeof(Storage) !== "undefined")
-        {
-          sessionStorage.setItem(name, value);
-        }
-      }
-    },
+		labs:
+		{
+			domain:"http://10.0.100.102:8081",
+			key:btoa("lod|password1"),
+			init:function()
+			{
+				$("#labs-course-action").attr("action",ui.labs.domain);
+				$("#labs-access-key").val(ui.labs.key);
+			},
+			load:function($thisModal)
+			{
+				$thisModal.html("").load("assets/templates/labs.html", function()
+				{
+					$thisModal.removeClass('pre-loader please-wait');
+				});
+			},
+			open:function(e)
+			{
+				ui.svgModal.open($('<a data-group="modal-dynamic" data-trg="labs" data-type="cd-modal-trigger"></a>'));
+			}
+		},
+		storage:
+		{
+		  get:function(name)
+		  {
+			if (typeof(Storage) !== "undefined")
+			{
+			  return (sessionStorage.getItem(name));
+			}
+			return false;
+		  },
+		  set:function(name,value)
+		  {
+			if (typeof(Storage) !== "undefined")
+			{
+			  sessionStorage.setItem(name, value);
+			}
+		  }
+		},
 		
 		relatedCourses:
 		{

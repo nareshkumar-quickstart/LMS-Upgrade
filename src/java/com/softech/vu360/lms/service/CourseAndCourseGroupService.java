@@ -13,6 +13,7 @@ import com.softech.vu360.lms.model.CustomerEntitlement;
 import com.softech.vu360.lms.model.DiscussionForumCourse;
 import com.softech.vu360.lms.model.DistributorEntitlement;
 import com.softech.vu360.lms.model.Document;
+import com.softech.vu360.lms.model.LabType;
 import com.softech.vu360.lms.model.Language;
 import com.softech.vu360.lms.model.Learner;
 import com.softech.vu360.lms.model.LearnerEnrollment;
@@ -115,6 +116,7 @@ public interface CourseAndCourseGroupService {
 	public List<RecommendedCourseVO> getRecommendedCoursesFromSF (Brander brand, VU360User user);
 	public List<Language> getAllLanguages();
     public List<Course> refreshCoursesCache(String[] courseGUIDs);
+    public LabType getLabTypeById(long id);
     public List<CourseView> getEntitlementsByCourseGroupId(Learner learner,Long courseGroupId, boolean isTrainingPlan, boolean isMiscellaneous);
     
    // public List<TreeNode> searchCourseGroupsByDistributor(Distributor distributor, Set<CourseGroup> courseGroupSet, String title,

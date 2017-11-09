@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
+import com.softech.vu360.lms.model.LabType;
+import com.softech.vu360.lms.webservice.client.impl.RestClient;
+import com.softech.vu360.util.SecurityUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -1166,13 +1168,54 @@ public class LaunchCourseController extends VU360BaseMultiActionController {// i
              
              if(isDistributorEnabledForShell){            	 
             	 boolean isCourseEnabledClipp = isInList(enabledCognativeCoursesIDs, course.getId().toString());
-    			 context.put("username", learnerEnrollment.getLearner().getVu360User().getUsername());
+            	 
+            	 
+            	 String labURL = "";
+            	 String labKey = "";
+            	 String labInstructions = "";
+            	 String labName = "";
+            	 
+            	 if(course.getLabType_id()!=null){
+            	 LabType lt = courseAndCourseGroupService.getLabTypeById(course.getLabType_id());
+            	 
+	            	 if (lt.getIsActive() && !lt.getIsThirdParty()){
+		            	 labKey =  learnerEnrollment.getLearner().getVu360User().getUsername() + "-" + learnerEnrollment.getId() + "|" +  brander.getBrandElement("lms.labuser.password");
+		            	 labKey = SecurityUtil.encodeReal64bit(labKey);
+		            	 labURL = lt.getLabURL(); 
+		            	 labInstructions = lt.getInstructions();
+		            	 labName = lt.getLabName();
+	            	 }  
+            	 }
+            	 
+            	 int topicsCount = 0;
+            	 String topicNames = "";
+            	 String topicGUIDs = "";
+            	 RestClient restC = new RestClient();            	 
+            	 String expertise = restC.getExpertise(course.getCourseGUID());            	 
+            	 
+            	 if (expertise.contains("|")){
+            	             		 
+	            	 String[] arrayExp =  expertise.split("\\|");
+	            	 topicNames = arrayExp[0];
+	            	 topicGUIDs = arrayExp[1];
+	            	 topicsCount = topicGUIDs.split(",").length;
+            	 
+            	 }
+            	 
+            	 context.put("username", learnerEnrollment.getLearner().getVu360User().getUsername());
     			 context.put("email", learnerEnrollment.getLearner().getVu360User().getEmailAddress());
     			 context.put("firstName", learnerEnrollment.getLearner().getVu360User().getFirstName());
     			 context.put("lastName", learnerEnrollment.getLearner().getVu360User().getLastName());     
     			 context.put("courseDesc", course.getDescription().replace("'", "`"));
     			 context.put("courseGUID", course.getCourseGUID());
     			 context.put("enabledForClip", isCourseEnabledClipp);
+    			 context.put("labKey", labKey);
+    			 context.put("labURL", labURL);
+    			 context.put("labInstructions", labInstructions);
+    			 context.put("labName", labName);
+    			 context.put("topicNames", topicNames.length()>0 ? StringUtils.split(topicNames, ',') : topicNames);
+    			 context.put("topicsCount", topicsCount);
+    			 context.put("topicGUIDs", topicGUIDs.length()>0 ? StringUtils.split(topicGUIDs, ',') : topicGUIDs); 
                  view = "learner/learnerScormShell";
              }
              

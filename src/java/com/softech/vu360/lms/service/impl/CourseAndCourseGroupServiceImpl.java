@@ -52,6 +52,7 @@ import com.softech.vu360.lms.repositories.ContentOwnerRepository;
 import com.softech.vu360.lms.repositories.CourseGroupRepository;
 import com.softech.vu360.lms.repositories.CourseRepository;
 import com.softech.vu360.lms.repositories.InstructorCourseRepository;
+import com.softech.vu360.lms.repositories.LabTypeRepository;
 import com.softech.vu360.lms.repositories.LanguageRepository;
 import com.softech.vu360.lms.repositories.RepositorySpecificationsBuilder;
 import com.softech.vu360.lms.repositories.TrainingPlanAssignmentRepository;
@@ -100,6 +101,9 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 	
 	@Inject 
 	private TrainingPlanRepository trainingPlanRepository = null;
+	
+	@Inject 
+	private LabTypeRepository labTypeRepository = null;
 	
 	@Inject 
 	private TrainingPlanAssignmentRepository trainingPlanAssignmentRepository = null; 
@@ -1110,7 +1114,11 @@ public class CourseAndCourseGroupServiceImpl implements CourseAndCourseGroupServ
 		return treeNodeList;
 	}
 	
-
+	@Override
+	@Transactional
+	public com.softech.vu360.lms.model.LabType getLabTypeById(long id){
+		return labTypeRepository.findOne(id);	
+	}
 	/**
 	 * LMS-6504
 	 */
