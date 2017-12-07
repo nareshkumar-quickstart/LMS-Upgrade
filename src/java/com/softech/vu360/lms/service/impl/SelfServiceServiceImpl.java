@@ -140,10 +140,10 @@ public class SelfServiceServiceImpl implements SelfServiceService{
 					
 					log.info(" ************** More then 1 Line item Received in SelfService Order *********************** ");
 					log.info(" ************** Creating vu360user/distributor/customer agists the User Name : " + userName);
-					
+					String sortBy = "firstName";
 					VU360User defaultUserForSelfservice = new VU360User();
 					Distributor distributor = addDistributor(accountdetail, defaultUserForSelfservice.getId());
-					List<VU360User> lstUsr = distributorService.getLearnersByDistributor("", "", "", "", distributor.getId(),-1,-1,new ResultSet(),"0", null,0);
+					List<VU360User> lstUsr = distributorService.getLearnersByDistributor("", "", "", "", distributor.getId(),-1,-1,new ResultSet(), sortBy, "0",0);
 					
 					if(lstUsr.size()>0){ // No Null Checking
 						
