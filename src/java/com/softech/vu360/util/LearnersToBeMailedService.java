@@ -122,7 +122,7 @@ public class LearnersToBeMailedService {
 					/*if(ecv.getCourseId() == Long.valueOf(learnerEnrollment.getCourse().getId()) && 
 					   ecv.getEnrollmentId() == learnerEnrollment.getId()){*/
 					if(ecv.getCourseId().equals(learnerEnrollment.getCourse().getId()) && 
-							   ecv.getEnrollmentId().equals(learnerEnrollment.getId())){
+							ecv.getEnrollmentId() !=null && ecv.getEnrollmentId().equals(learnerEnrollment.getId())){
 						courseGroupId = ecv.getCourseGroupId();
 						break;
 					}
