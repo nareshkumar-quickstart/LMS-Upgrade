@@ -1015,6 +1015,7 @@ public class LearnerServiceImpl implements LearnerService {
 				}
 			}
 		}
+		/*
 		List<OrganizationalGroupMember> existingOrgGroupMembers =
 				organizationalGroupMemberRepository.findByOrganizationalGroupIdLearnerIdIn(learnerGroup.getOrganizationalGroup().getId(), learnersArray);
 		if (CollectionUtils.isNotEmpty(existingOrgGroupMembers)) {
@@ -1025,7 +1026,7 @@ public class LearnerServiceImpl implements LearnerService {
 					listSelectedLearner.remove(member.getLearner());
 				}
 			}
-		}
+		}*/
 
 		LearnerGroupMember learnerGroupMember = null;
 		for (Learner learner : listSelectedLearner) {
@@ -1037,6 +1038,7 @@ public class LearnerServiceImpl implements LearnerService {
 			log.debug("...addLearnersInLearnerGroup end *3");
 		}
 
+		/*
 		OrganizationalGroupMember orgGroupMember = null;
 		for (Learner learner : listSelectedLearner) {
 			log.debug("... addLearnersInOrgGroup start *4 learner.getVu360User().getId()"
@@ -1047,6 +1049,7 @@ public class LearnerServiceImpl implements LearnerService {
 			organizationalGroupMemberRepository.saveOGM(orgGroupMember).getLearner();
 			log.debug("...addLearnersInOrgGroup end *4");
 		}
+		*/
 	}
 
 
