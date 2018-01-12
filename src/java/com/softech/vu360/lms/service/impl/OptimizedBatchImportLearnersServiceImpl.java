@@ -2147,15 +2147,10 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
             }
 
             List<LabelBean> states;
-            if( stateBean.isEmpty() || stateBean.equalsIgnoreCase("US") || stateBean.equalsIgnoreCase("United States") )
+            if( stateBean.isEmpty() || stateBean.equalsIgnoreCase("US") || stateBean.equalsIgnoreCase("United States") ){
                 states = brander.getBrandMapElements("lms.manageUser.AddLearner.State");
-            else
-                states = brander.getBrandMapElements("lms.manageUser.AddLearner."+stateBean+".State");
-            if(StringUtils.isEmpty(rowColumns[COL_STATE]))//Since State is an optional field
-        		validState=true;
-            else
-            {
-	            for( LabelBean bean : states )
+               
+                for( LabelBean bean : states )
 	            {
 	                if( rowColumns[COL_STATE].equalsIgnoreCase(bean.getValue()) ||
 	                        rowColumns[COL_STATE].equalsIgnoreCase(bean.getLabel()) ) {
@@ -2163,6 +2158,11 @@ public class OptimizedBatchImportLearnersServiceImpl implements BatchImportLearn
 	                    validState = true;
 	                    break;
 	                }
+	            }
+            }else{ 
+            	validState=true; //Since State is an optional field if not 'US'
+            	if(!StringUtils.isEmpty(rowColumns[COL_STATE])){
+	            	address.setState(rowColumns[COL_STATE]);
 	            }
             }
 
